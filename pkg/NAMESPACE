@@ -1,0 +1,19 @@
+exportPattern("^[[:alpha:]]+")
+
+import(mboost)
+
+
+export(glmboostLSS,
+       gamboostLSS,
+       blackboostLSS,
+       mboostLSS,
+       risk,
+       NBinomialLSS, NBinomialMu, NBinomialSigma,
+       StudentTLSS, StudentTMu, StudentTSigma, StudentTDf)
+
+
+S3method(mstop, oobag)
+S3method(mstop, mboostLSS)
+S3method(coef, mboostLSS)
+S3method(risk, mboostLSS)
+S3method("[", mboostLSS)
