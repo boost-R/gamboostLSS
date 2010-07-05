@@ -25,6 +25,8 @@
 \method{mstop}{oobag}(object, ...)
 
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
+
+\method{selected}{mboostLSS}(object, ...)
 }
 
 \arguments{

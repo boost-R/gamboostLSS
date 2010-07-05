@@ -33,8 +33,22 @@ mstop.oobag <- function(object, ...){
 
 "[.mboostLSS" <- function(x, i, return = TRUE, ...) {
     stopifnot(length(i) == 1 && i > 0)
-    if (mstop(x) < i) stop("not implemented yet")
-    lapply(x, function(a) a$subset(i))
+    attr(x, "subset")(i)
     if (return) return(x)
     invisible(NULL)
+}
+
+
+selected.mboostLSS <- function(object, ...){
+    lapply(object, selected)
+}
+
+
+plot.glmboostLSS <- function(x, ...){
+    lapply(x, plot, ...)
+}
+
+
+print.mboostLSS <- function(x, ...){
+    lapply(x, print, ...)
 }

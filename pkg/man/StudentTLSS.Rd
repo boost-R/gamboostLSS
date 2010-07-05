@@ -57,19 +57,22 @@ StudentTDf(off = list(sigma = 1, mu = 0))
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
+library(gamlss)   ## required for rTF
+set.seed(1907)
+n <- 5000
+x1  <- runif(n)
+x2 <- runif(n)
+mu <- 2 -1*x1 - 3*x2
+sigma <- exp(-1*x1 + 3*x2)
+df <- exp(1 + 3*x1 + 1*x2)
 
-## The function is currently defined as
-function (mu = 0, sigma = 1, df = 1) 
-{
-    RET <- list(mu = StudentTMu(off = list(sigma = sigma, df = df)), 
-        sigma = StudentTSigma(off = list(mu = mu, df = df)), 
-        df = StudentTDf(off = list(mu = mu, sigma = sigma)))
-    class(RET) <- "families"
-    return(RET)
-  }
+y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
+
+model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
+                     ctrl = boost_control(mstop = 100),
+                     center = TRUE)
+coef(model, off2int = TRUE)
+selected(model)
 }
 
 \keyword{ models }
