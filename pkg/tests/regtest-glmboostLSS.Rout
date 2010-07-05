@@ -1,0 +1,338 @@
+
+R version 2.11.1 (2010-05-31)
+Copyright (C) 2010 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> require("mboost")
+Loading required package: mboost
+> require("gamboostLSS")
+Loading required package: gamboostLSS
+> require(gamlss)
+Loading required package: gamlss
+Loading required package: splines
+Loading required package: gamlss.dist
+Loading required package: gamlss.data
+ **********   GAMLSS Version 4.0-0 ********** 
+For more on GAMLSS look at http://www.gamlss.com/ 
+Type gamlssNews() to see new features/changes/bug fixes.
+> 
+> set.seed(1907)
+> n <- 5000
+> x1  <- runif(n)
+> x2 <- runif(n)
+> mu <- 2 -1*x1 - 3*x2
+> sigma <- exp(-1*x1 + 3*x2)
+> df <- exp(1 + 3*x1 + 1*x2)
+> y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
+> 
+> ### check subset method
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
++                      ctrl = boost_control(mstop = 10),
++                      center = TRUE)
+> model2 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
++                           ctrl = boost_control(mstop = 20),
++                           center = TRUE)
+> model[20]
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: mu (id link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - f)^2/(df *  
+         sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 20 
+Step size:  0.1 
+Offset:  0 
+
+Coefficients: 
+(Intercept)          x2 
+  0.7102134  -1.4337659 
+attr(,"offset")
+[1] 0
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: sigma (log link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - f - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - mu)^2/(df *  
+         exp(2 * f)))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 20 
+Step size:  0.1 
+Offset:  1 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ -0.8212192  -1.1539573   2.9707170 
+attr(,"offset")
+[1] 1
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: df (log link) 
+
+Loss function: { 
+     -1 * (lgamma((exp(f) + 1)/2) - log(sigma) - lgamma(1/2) -  
+         lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +  
+         (y - mu)^2/(exp(f) * sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 20 
+Step size:  0.1 
+Offset:  1 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ 0.16376032  0.02136727 -0.07376949 
+attr(,"offset")
+[1] 1
+
+> stopifnot(all.equal(coef(model),coef(model2)))
+> stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) ==
++           length(coef(model, aggregate = "none")[[1]][[1]]))
+> stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) == 20)
+> 
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
++                      ctrl = boost_control(mstop = 10),
++                      center = TRUE)
+> model2[10]
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: mu (id link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - f)^2/(df *  
+         sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 10 
+Step size:  0.1 
+Offset:  0 
+
+Coefficients: 
+(Intercept)          x2 
+  0.3417614  -0.6899417 
+attr(,"offset")
+[1] 0
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: sigma (log link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - f - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - mu)^2/(df *  
+         exp(2 * f)))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 10 
+Step size:  0.1 
+Offset:  1 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ -0.8287077  -0.7360303   2.5617299 
+attr(,"offset")
+[1] 1
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: df (log link) 
+
+Loss function: { 
+     -1 * (lgamma((exp(f) + 1)/2) - log(sigma) - lgamma(1/2) -  
+         lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +  
+         (y - mu)^2/(exp(f) * sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 10 
+Step size:  0.1 
+Offset:  1 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ 0.08056646  0.02136727 -0.07376949 
+attr(,"offset")
+[1] 1
+
+> stopifnot(all.equal(coef(model),coef(model2)))
+> stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) ==
++           length(coef(model, aggregate = "none")[[1]][[1]]))
+> stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) == 10)
+> 
+> ### check trace
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
++                      ctrl = boost_control(mstop = 10, trace =TRUE),
++                      center = TRUE)
+[  1] ........
+Final risk: 13125.83 
+> model[20]
+[ 11] ........
+Final risk: 12868.77 
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: mu (id link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - f)^2/(df *  
+         sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 20 
+Step size:  0.1 
+Offset:  0 
+
+Coefficients: 
+(Intercept)          x2 
+  0.7102134  -1.4337659 
+attr(,"offset")
+[1] 0
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: sigma (log link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - f - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - mu)^2/(df *  
+         exp(2 * f)))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 20 
+Step size:  0.1 
+Offset:  1 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ -0.8212192  -1.1539573   2.9707170 
+attr(,"offset")
+[1] 1
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = ctrl, family = families[[j]])
+
+
+	 Student's t-distribution: df (log link) 
+
+Loss function: { 
+     -1 * (lgamma((exp(f) + 1)/2) - log(sigma) - lgamma(1/2) -  
+         lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +  
+         (y - mu)^2/(exp(f) * sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 20 
+Step size:  0.1 
+Offset:  1 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ 0.16376032  0.02136727 -0.07376949 
+attr(,"offset")
+[1] 1
+
+> 
+> ### check formula-interface with lists
+> set.seed(1907)
+> n <- 5000
+> x1  <- runif(n)
+> x2 <- runif(n)
+> mu <- 2 - 3*x2
+> sigma <- exp(-1*x1 + 3*x2)
+> df <- exp(1 + 3*x1)
+> y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
+> model <- glmboostLSS(list(mu = y ~ x2,
++                           sigma = y ~ x1 + x2,
++                           df = y ~ x1),
++                      families = StudentTLSS(),
++                      ctrl = boost_control(mstop = 10, trace =TRUE),
++                      center = TRUE)
+[  1] ........
+Final risk: 13974.87 
+> 
+> stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
++                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
+> 
+> model <- glmboostLSS(list(mu = y ~ x2,
++                           df = y ~ x1,
++                           sigma = y ~ x1 + x2),
++                      families = StudentTLSS(),
++                      ctrl = boost_control(mstop = 10, trace =TRUE),
++                      center = TRUE)
+[  1] ........
+Final risk: 13974.87 
+> 
+> stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
++                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
+> 
