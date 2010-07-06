@@ -17,18 +17,19 @@ mboostLSS(...)
 glmboostLSS(...)
 gamboostLSS(...)
 blackboostLSS(...)
+
+## fit function:
 mboostLSS_fit(formula, data, families = list(), ctrl = boost_control(),
               weights = NULL, fun = mboost, ...)
 }
 
 \arguments{
   \item{formula}{ a symbolic description of the model to be fit. See
-    \code{\link{mboost}} for details. If formula is a single formula,
-    the same formula is used for all model components.
-    ADD: Can also be a (named) list, where each list element corresponds
+    \code{\link{mboost}} for details. If \code{formula} is a single formula,
+    the same formula is used for all model components. \code{formula}
+    can also be a (named) list, where each list element corresponds
     to one component of the LSS model. The names must be the same as in
-    the family (see example for details).
-}
+    the family (see example for details). }
   \item{data}{ a data frame containing the variables in the model.}
   \item{families}{ a list of mboost-\code{\link{Family}}s. }
   \item{ctrl}{ a list of parameters controlling the algorithm. For
@@ -38,30 +39,104 @@ mboostLSS_fit(formula, data, families = list(), ctrl = boost_control(),
     \code{\link{glmboost}}, \code{\link{gamboost}} or
     \code{\link{blackboost}}. Specified directly via the according LSS
     function. E.g. \code{gamboostLSS()} calls
-    \code{mboostLSS_fit(..., fun = gamboost)}. }  
-  \item{\dots}{ Further arguments to be passed to \code{\link{mboost}}
-    and \code{\link{mboost_fit}}. See there for details. }
+    \code{mboostLSS_fit(..., fun = gamboost)}. }
+  \item{\dots}{ Further arguments to be passed to \code{mboostLSS_fit}.
+    See there for possible arguments and details. In
+    \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
+    passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
+    \code{\dots} can be all arguments of \code{mboostLSS_fit} and
+    \code{mboost_fit}. }
 }
 \details{
-  Add details later.
+  \code{glmboostLSS} uses \code{\link{glmboost}} to fit the components
+  of an LSS (location, shape and scale) model, i.e., a component-wise
+  linear boosting model is fitted for each component. Fitting is achieved
+  by iterating the updates of the single components and using the fitted
+  values in the other components.
+
+  \code{gamboostLSS} uses \code{\link{gamboost}} to fit the components
+  of an LSS (location, shape and scale) model, i.e., a component-wise
+  additive boosting model is fitted for each component.
+
+  \code{mboostLSS} uses \code{\link{mboost}} to fit the components
+  of an LSS (location, shape and scale) model.
+
+  \code{blackboostLSS} uses \code{\link{blackboost}} to fit the components
+  of an LSS (location, shape and scale) model, i.e., a tree-based
+  boosting model is fitted for each component.
+
+  \code{mboostLSS}, \code{glmboostLSS}, \code{gamboostLSS} and
+  \code{blackboostLSS} call \code{mboostLSS_fit} with \code{fun}
+  being the corresponding \code{\link{mboost}} function, i.e., the same
+  function without \code{LSS}. For possible arguments
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  An object of class \code{mboostLSS} with corresponding methods to
+  extract information.
 }
 \references{
   %% ~put references to the literature/web site here ~
 }
 
 \seealso{
-  \code{\link{mboost}}
+  \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
+  \code{\link{blackboost}} for the underlying boosting functions.
+
+  See for example \code{\link{risk}} for methods that can be used to
+  extract information from \code{\link{mboostLSS}} objects.
 }
 \examples{
-## names of the family
-names(NBinomialLSS())
+### Data generating process:
+set.seed(1907)
+x1 <- rnorm(1000)
+x2 <- rnorm(1000)
+x3 <- rnorm(1000)
+x4 <- rnorm(1000)
+x5 <- rnorm(1000)
+x6 <- rnorm(1000)
+mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+y <- numeric(1000)
+for( i in 1:1000)
+    y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+
+
+
+### simple model with y ~ . for both components:
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     ctrl = boost_control(mstop = 400),
+                     center = TRUE)
+coef(model, off2int = TRUE)
+
+
+
+### estimate model with different formulas for mu and sigma:
+names(NBinomialLSS())      # names of the family
+
+# Note: Multiple formulas must be specified via a _named list_
+#       where the names correspond to the names of the family
+#       (see above)
+model <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
+                                    sigma = y ~ x3 + x4 + x5 + x6),
+                     families = NBinomialLSS(), data = dat,
+                     ctrl = boost_control(mstop = 400),
+                     center = TRUE)
+coef(model, off2int = TRUE)
+
+
+
+### Offset needs to be specified via family:
+model <- glmboostLSS(y ~ ., data = dat,
+                     families = NBinomialLSS(mu = mean(mu),
+                                             sigma = mean(sigma)),
+                     ctrl = boost_control(mstop = 10),
+                     center = TRUE)
+# Note: mu-offset = log(mean(mu)) and sigma-offset = log(mean(sigma))
+#       as we use a log-link in both families
+coef(model)
+log(mean(mu))
+log(mean(sigma))
 }
 
 \keyword{models}

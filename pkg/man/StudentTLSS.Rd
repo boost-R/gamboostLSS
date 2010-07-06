@@ -11,50 +11,37 @@
   ...
 }
 \usage{
-StudentTLSS(mu = 0, sigma = 1, df = 1)
-StudentTMu(off = list(df = 1, sigma = 1))
-StudentTSigma(off = list(df = 1, mu = 0))
-StudentTDf(off = list(sigma = 1, mu = 0))
+StudentTLSS(mu = 0, sigma = 1, df = 4)
 
-
+## 'Sub-families':
+StudentTMu(mu = NULL, sigma = NULL, df = NULL)
+StudentTSigma(mu = NULL, sigma = NULL, df = NULL)
+StudentTDf(mu = NULL, sigma = NULL, df = NULL)
 }
 
 \arguments{
   \item{mu}{
-%%     ~~Describe \code{mu} here~~
-}
+    ...
+  }
   \item{sigma}{
-%%     ~~Describe \code{sigma} here~~
-}
+    ...
+  }
   \item{df}{
-%%     ~~Describe \code{df} here~~
-}
-\item{off}{
-%%     ~~Describe \code{off} here~~
-}
+    ...
+  }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  An object of type class \code{families}.
 }
 \references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
+
 }
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  Other families: \code{\link{NBinomialLSS}}
 }
 \examples{
 library(gamlss)   ## required for rTF
@@ -65,7 +52,6 @@ x2 <- runif(n)
 mu <- 2 -1*x1 - 3*x2
 sigma <- exp(-1*x1 + 3*x2)
 df <- exp(1 + 3*x1 + 1*x2)
-
 y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
 
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),

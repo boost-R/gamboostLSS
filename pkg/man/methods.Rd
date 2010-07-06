@@ -10,6 +10,10 @@
 \alias{mstop.mboostLSS}
 \alias{mstop.oobag}
 
+\alias{selected.mboostLSS}
+\alias{plot.glmboostLSS}
+
+
 \title{
   Methods for mboostLSS
 }
@@ -27,11 +31,13 @@
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
 \method{selected}{mboostLSS}(object, ...)
+
+\method{plot}{glmboostLSS}(x, ...)
 }
 
 \arguments{
-  \item{x}{ model of class \code{mboostLSS}. }
-  \item{object}{ model of class \code{mboostLSS}. }
+  \item{x}{ an object of the appropriate class (see usage). }
+  \item{object}{ an object of the appropriate class (see usage). }
   \item{merge}{ logical. Should the risk vectors of the single
     components be merged to one risk vector? Per default (\code{merge =
       FALSE}) a (named) list of risk vectors is returned. }
