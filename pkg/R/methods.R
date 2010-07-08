@@ -44,8 +44,11 @@ selected.mboostLSS <- function(object, ...){
 }
 
 
-plot.glmboostLSS <- function(x, ...){
-    lapply(x, plot, ...)
+plot.glmboostLSS <- function(x, main = names(x), off2int = FALSE, ...){
+    lapply(1:length(x), function(i, x, main, off2int,  ...) plot(x[[i]], main =
+                                                                 main[[i]], off2int = off2int,  ...),
+           x = x, main = main, off2int = off2int, ...)
+    invisible(coef(x, aggregate = "cumsum", off2int = off2int))
 }
 
 

@@ -10,7 +10,7 @@
   ...
 }
 \usage{
-NBinomialLSS(mu = 1, sigma = 1)
+NBinomialLSS(mu = NULL, sigma = NULL)
 
 ## 'Sub-families':
 NBinomialMu(mu = NULL, sigma = NULL)
@@ -18,21 +18,19 @@ NBinomialSigma(mu = NULL, sigma = NULL)
 }
 
 \arguments{
-  \item{mu}{
-    ...
-  }
-  \item{sigma}{
-    ...
-  }
+  \item{mu}{ offset value for mu component. }
+  \item{sigma}{ offset value for sigma component. }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
+  Offsets can be either scalar, a vector with length equal to the number
+  of observations or NULL (default). In the latter case, a scalar offset
+  for this component is computed by minimizing the risk function w.r.t.
+  the corresponding component (keeping the other component fixed).
+
 }
 \value{
   An object of type class \code{families}.
-}
-\references{
-
 }
 
 \seealso{

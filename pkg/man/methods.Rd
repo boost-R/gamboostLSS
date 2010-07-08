@@ -32,7 +32,7 @@
 
 \method{selected}{mboostLSS}(object, ...)
 
-\method{plot}{glmboostLSS}(x, ...)
+\method{plot}{glmboostLSS}(x, main = names(x), off2int = FALSE, ...)
 }
 
 \arguments{
@@ -48,6 +48,10 @@
             is reached. See details for more information. }
   \item{return}{ a logical indicating whether the changed object is
                  returned. }
+  \item{main}{ a title for the plots.}
+  \item{off2int}{ logical indicating whether the offset should be
+    added to the intercept (if there is any) or if the offset is
+    neglected for plotting (default).}
   \item{\dots}{ Further arguments to the functions. }
 }
 \details{
@@ -57,11 +61,6 @@
 \section{Warning}{
   The \code{[.mboostLSS} function changes the original object, i.e.
   \code{LSSmodel[10]} changes \code{LSSmodel} directly!
-}
-
-
-\references{
-  ...
 }
 
 \seealso{

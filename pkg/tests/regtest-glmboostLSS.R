@@ -1,6 +1,5 @@
-require("mboost")
+#require("mboost")
 require("gamboostLSS")
-require(gamlss)
 
 set.seed(1907)
 n <- 5000
@@ -67,3 +66,33 @@ model <- glmboostLSS(list(mu = y ~ x2,
 
 stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
+
+
+### check weights interface
+set.seed(1907)
+n <- 2500
+x1  <- runif(n)
+x2 <- runif(n)
+mu <- 2 - 3*x2
+sigma <- exp(-1*x1 + 3*x2)
+df <- exp(1 + 3*x1)
+y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
+dat <- data.frame(x1, x2, y)
+dat2 <- rbind(dat, dat) # data frame with duplicate entries
+
+model <- glmboostLSS(list(mu = y ~ x2,
+                          sigma = y ~ x1 + x2,
+                          df = y ~ x1),
+                     data = dat, weights = rep(2, nrow(dat)),
+                     families = StudentTLSS(),
+                     ctrl = boost_control(mstop = 10, trace =TRUE),
+                     center = TRUE)
+
+model2 <- glmboostLSS(list(mu = y ~ x2,
+                           sigma = y ~ x1 + x2,
+                           df = y ~ x1),
+                      data = dat2, families = StudentTLSS(),
+                      ctrl = boost_control(mstop = 10, trace =TRUE),
+                      center = TRUE)
+
+stopifnot(all.equal(coef(model),coef(model2)))

@@ -75,7 +75,7 @@ mboostLSS_fit(formula, data, families = list(), ctrl = boost_control(),
   extract information.
 }
 \references{
-  %% ~put references to the literature/web site here ~
+  Put some refs here!
 }
 
 \seealso{

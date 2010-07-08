@@ -11,7 +11,7 @@
   ...
 }
 \usage{
-StudentTLSS(mu = 0, sigma = 1, df = 4)
+StudentTLSS(mu = NULL, sigma = NULL, df = NULL)
 
 ## 'Sub-families':
 StudentTMu(mu = NULL, sigma = NULL, df = NULL)
@@ -20,24 +20,20 @@ StudentTDf(mu = NULL, sigma = NULL, df = NULL)
 }
 
 \arguments{
-  \item{mu}{
-    ...
-  }
-  \item{sigma}{
-    ...
-  }
-  \item{df}{
-    ...
-  }
+  \item{mu}{ offset value for mu component. }
+  \item{sigma}{ offset value for sigma component. }
+  \item{df}{ offset value for df component. }
 }
 \details{
+
+  Offsets can be either scalar, a vector with length equal to the number
+  of observations or NULL (default). In the latter case, scalar offset
+  for this component is computed by minimizing the risk function w.r.t.
+  the corresponding component (keeping the other components fixed).
 
 }
 \value{
   An object of type class \code{families}.
-}
-\references{
-
 }
 
 \seealso{
