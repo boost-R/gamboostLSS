@@ -4,7 +4,7 @@
 \alias{NBinomialSigma}
 
 \title{
-  Family for Negative Binomial Family for LSS Models
+  Family for Negative Binomial LSS Models
 }
 \description{
   ...

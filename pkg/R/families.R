@@ -210,3 +210,274 @@ StudentTLSS <- function(mu = NULL, sigma = NULL, df = NULL){
     class(RET) <- "families"
     return(RET)
 }
+
+
+
+###
+# Log-Normal LSS Family
+
+LogNormalMu <- function (mu = NULL, sigma = NULL){
+    loss <- function(sigma, y, f) {
+        fw <- function(pred)
+            dnorm(pred)
+        Sw <- function(pred)
+            1 - pnorm(pred)
+        eta <- (log(y[,1]) - f)/sigma
+        -y[,2] * log(fw(eta)/sigma) - (1 - y[,2]) * log(Sw(eta))
+    }
+    risk <- function(y, f, w = 1)
+        sum(w * loss(y = y, f = f, sigma = sigma))
+    ngradient <- function(y, f, w = 1) {
+        eta <- (log(y[,1]) - f)/sigma
+        (y[,2] * eta + (1 - y[,2]) * dnorm(eta)/(1 - pnorm(eta)))/sigma
+    }
+    offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- log(mu)
+        } else {
+            if (is.null(sigma))
+                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            ## look for starting value of f = log(mu) in "interval"
+            ## i.e. mu possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
+            ## <FIXME> intervall wit or without log? and: is mu = f or mu = exp(f)?
+        }
+        return(RET)
+    }
+
+    Family(ngradient = ngradient, risk = risk, offset = offset,
+           response = function(f) f,
+           check_y = function(y) {
+               if (!inherits(y, "Surv"))
+                   stop("response is not an object of class ", sQuote("Surv"),
+                        " but ", sQuote("family = Lognormal()"))
+               y
+           }, name = "Log-Normal AFT Model: mu (id link)")
+}
+
+LogNormalSigma <- function(mu = NULL, sigma = NULL){
+    loss <- function(mu, y, f) {
+        fw <- function(pred)
+            dnorm(pred)
+        Sw <- function(pred)
+            1 - pnorm(pred)
+        eta <- (log(y[,1]) - mu)/exp(f)
+        -y[,2] * log(fw(eta)/exp(f)) - (1 - y[,2]) * log(Sw(eta))
+    }
+    risk <- function(y, f, w = 1)
+        sum(w * loss(y = y, f = f, mu = mu))
+    ngradient <- function(y, f, w = 1) {
+        eta <- (log(y[,1]) - mu)/exp(f)
+        -(y[,2] - y[,2]*eta^2 + (y[,2]-1)*eta*dnorm(eta)/(1-pnorm(eta)))
+    }
+    offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- log(mu)
+        } else {
+            if (is.null(sigma))
+                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            ## look for starting value of f = log(mu) in "interval"
+            ## i.e. mu possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
+        }
+        return(RET)
+    }
+
+    Family(ngradient = ngradient, risk = risk, offset = offset,
+           response = function(f) exp(f),
+           check_y = function(y) {
+               if (!inherits(y, "Surv"))
+                   stop("response is not an object of class ", sQuote("Surv"),
+                        " but ", sQuote("family = Lognormal()"))
+               y
+           }, name = "Log-Normal AFT Model: sigma (log link)")
+}
+
+LogNormalLSS <- function(mu = NULL, sigma = NULL){
+    if ((!is.null(sigma) && sigma <= 0))
+        stop(sQuote("sigma"), " must be greater than zero")
+    RET <- list(mu = LogNormalMu(mu = mu, sigma = sigma),
+                sigma = LogNormalSigma(mu = mu, sigma = sigma))
+    class(RET) <- "families"
+    return(RET)
+}
+
+
+###
+# LogLog LSS Family
+
+LogLogMu <- function (mu = NULL, sigma = NULL){
+    loss <- function(sigma, y, f) {
+        fw <- function(pred)
+            exp(pred)/(1 + exp(pred))^2
+        Sw <- function(pred)
+            1/(1 + exp(pred))
+        eta <- (log(y[,1]) - f)/sigma
+        -y[,2] * log(fw(eta)/sigma) - (1 - y[,2]) * log(Sw(eta))
+    }
+    risk <- function(y, f, w = 1)
+        sum(w * loss(y = y, f = f, sigma = sigma))
+    ngradient <- function(y, f, w = 1) {
+        eta <- (log(y[,1]) - f)/sigma
+        nom <- (exp(-eta) + 1)
+        (y[,2] * (2/nom - 1) + (1 - y[,2])/nom)/sigma
+    }
+    offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- log(mu)
+        } else {
+            if (is.null(sigma))
+                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            ## look for starting value of f = log(mu) in "interval"
+            ## i.e. mu possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
+            ## <FIXME> intervall wit or without log? and: is mu = f or mu = exp(f)?
+        }
+        return(RET)
+    }
+
+
+    Family(ngradient = ngradient, risk = risk, offset = offset,
+           check_y = function(y) {
+               if (!inherits(y, "Surv"))
+                   stop("response is not an object of class ", sQuote("Surv"),
+                        " but ", sQuote("family = Loglog()"))
+               y
+           }, name = "Log-Logistic AFT Model: mu (id link)")
+}
+
+LogLogSigma <- function (mu = NULL, sigma = NULL){
+    loss <- function(mu, y, f) {
+        fw <- function(pred)
+            exp(pred)/(1 + exp(pred))^2
+        Sw <- function(pred)
+            1/(1 + exp(pred))
+        eta <- (log(y[,1]) - mu)/exp(f)
+        -y[,2] * log(fw(eta)/exp(f)) - (1 - y[,2]) * log(Sw(eta))
+    }
+    risk <- function(y, f, w = 1)
+        sum(w * loss(y = y, f = f, mu = mu))
+    ngradient <- function(y, f, w = 1) {
+        eta <- (log(y[,1]) - mu)/exp(f)
+        -(y[,2] + y[,2]*eta -(y[,2]+1)*eta/(1+exp(-eta)))
+    }
+    offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- log(mu)
+        } else {
+            if (is.null(sigma))
+                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            ## look for starting value of f = log(mu) in "interval"
+            ## i.e. mu possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
+        }
+        return(RET)
+    }
+
+    Family(ngradient = ngradient, risk = risk, offset = offset,
+           response = function(f) exp(f),
+           check_y = function(y) {
+               if (!inherits(y, "Surv"))
+                   stop("response is not an object of class ", sQuote("Surv"),
+                        " but ", sQuote("family = Loglog()"))
+               y
+           },  name = "Log-Logistic AFT Model: sigma (log link)")
+}
+
+LogLogLSS <- function(mu = NULL, sigma = NULL){
+    if ((!is.null(sigma) && sigma <= 0))
+        stop(sQuote("sigma"), " must be greater than zero")
+    RET <- list(mu = LogLogMu(mu = mu, sigma = sigma),
+                sigma = LogLogSigma(mu = mu, sigma = sigma))
+    class(RET) <- "families"
+    return(RET)
+}
+
+
+###
+# Weibull LSS Family
+WeibullMu <- function (mu = NULL, sigma = NULL){
+    loss <- function(sigma, y, f) {
+        fw <- function(pred)
+            exp(pred - exp(pred))
+        Sw <- function(pred)
+            exp(-exp(pred))
+        eta <- (log(y[,1]) - f)/sigma
+        -y[,2] * log(fw(eta)/sigma) - (1 - y[,2]) * log(Sw(eta))
+    }
+    risk <- function(y, f, w = 1)
+        sum(w * loss(y = y, f = f, sigma = sigma))
+    ngradient <- function(y, f, w = 1){
+        eta <- (log(y[,1]) - f)/sigma
+        (y[,2] * (exp(eta) - 1) + (1 - y[,2]) * exp(eta))/sigma
+    }
+    offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- log(mu)
+        } else {
+            if (is.null(sigma))
+                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            ## look for starting value of f = log(mu) in "interval"
+            ## i.e. mu possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
+            ## <FIXME> intervall wit or without log? and: is mu = f or mu = exp(f)?
+        }
+        return(RET)
+    }
+
+    Family(ngradient = ngradient, risk = risk, offset = offset,
+           check_y = function(y) {
+               if (!inherits(y, "Surv"))
+                   stop("response is not an object of class ", sQuote("Surv"),
+                        " but ", sQuote("family = Weibull()"))
+               y
+           }, name = "Weibull AFT Model: mu (id link)")
+}
+
+
+WeibullSigma <- function (mu = NULL, sigma = NULL){
+    loss <- function(mu, y, f) {
+        fw <- function(pred)
+            exp(pred - exp(pred))
+        Sw <- function(pred)
+            exp(-exp(pred))
+        eta <- (log(y[,1]) - mu)/exp(f)
+        -y[,2] * log(fw(eta)/exp(f)) - (1 - y[,2]) * log(Sw(eta))
+        }
+    risk <- function(y, f, w = 1)
+        sum(w * loss(y = y, f = f, mu = mu))
+    ngradient <- function(y, f, w = 1) {
+        eta <- (log(y[,1]) - mu)/exp(f)
+        -(y[,2] * (eta + 1) - eta * exp(eta))
+    }
+    offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- log(mu)
+        } else {
+            if (is.null(sigma))
+                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            ## look for starting value of f = log(mu) in "interval"
+            ## i.e. mu possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
+        }
+        return(RET)
+    }
+
+    Family(ngradient = ngradient, risk = risk, offset = offset,
+           response = function(f) exp(f),
+           check_y = function(y) {
+               if (!inherits(y, "Surv"))
+                   stop("response is not an object of class ", sQuote("Surv"),
+                        " but ", sQuote("family = Weibull()"))
+               y
+           }, name = "Weibull AFT Model: sigma (log link)")
+}
+
+WeibullLSS <- function(mu = NULL, sigma = NULL){
+    if ((!is.null(sigma) && sigma <= 0))
+        stop(sQuote("sigma"), " must be greater than zero")
+    RET <- list(mu = WeibullMu(mu = mu, sigma = sigma),
+                sigma = WeibullSigma(mu = mu, sigma = sigma))
+    class(RET) <- "families"
+    return(RET)
+}

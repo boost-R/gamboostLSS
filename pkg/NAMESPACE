@@ -6,7 +6,10 @@ export(glmboostLSS,
        mboostLSS,
        risk,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
-       StudentTLSS, StudentTMu, StudentTSigma, StudentTDf)
+       StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
+       LogNormalLSS, LogNormalMu, LogNormalSigma,
+       LogLogLSS, LogLogMu, LogLogSigma,
+       WeibullLSS, WeibullMu, WeibullSigma)
 
 
 S3method(mstop, oobag)
