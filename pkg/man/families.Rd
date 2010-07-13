@@ -1,16 +1,35 @@
-\name{StudentTLSS}
+\name{Families}
+\alias{Families}
+
+\alias{makeFamilies}
+\alias{NBinomialLSS}
+\alias{NBinomialMu}
+\alias{NBinomialSigma}
+
 \alias{StudentTLSS}
 \alias{StudentTMu}
 \alias{StudentTSigma}
 \alias{StudentTDf}
 
 \title{
-  Family for Student's t Distribution for LSS Models
+  Families for LSS Models
 }
 \description{
-  ...
+  Negative binomial and Student's t distribution for LSS models fitted
+  via boosting.
 }
 \usage{
+## Constructor function
+makeFamilies(...)
+
+
+NBinomialLSS(mu = NULL, sigma = NULL)
+
+## 'Sub-families':
+NBinomialMu(mu = NULL, sigma = NULL)
+NBinomialSigma(mu = NULL, sigma = NULL)
+
+
 StudentTLSS(mu = NULL, sigma = NULL, df = NULL)
 
 ## 'Sub-families':
@@ -23,13 +42,14 @@ StudentTDf(mu = NULL, sigma = NULL, df = NULL)
   \item{mu}{ offset value for mu component. }
   \item{sigma}{ offset value for sigma component. }
   \item{df}{ offset value for df component. }
+  \item{\dots}{ sub-families to be passed to constructor. }
 }
 \details{
 
   Offsets can be either scalar, a vector with length equal to the number
-  of observations or NULL (default). In the latter case, scalar offset
+  of observations or NULL (default). In the latter case, a scalar offset
   for this component is computed by minimizing the risk function w.r.t.
-  the corresponding component (keeping the other components fixed).
+  the corresponding component (keeping the other component fixed).
 
 }
 \value{
@@ -37,9 +57,12 @@ StudentTDf(mu = NULL, sigma = NULL, df = NULL)
 }
 
 \seealso{
-  Other families: \code{\link{NBinomialLSS}}
+  AFT families for survival models: \code{\link{AftLSS}}
 }
 \examples{
+NBinomialLSS()
+
+### Student's t:
 library(gamlss)   ## required for rTF
 set.seed(1907)
 n <- 5000
@@ -51,7 +74,7 @@ df <- exp(1 + 3*x1 + 1*x2)
 y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
 
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
-                     ctrl = boost_control(mstop = 100),
+                     control = boost_control(mstop = 100),
                      center = TRUE)
 coef(model, off2int = TRUE)
 selected(model)

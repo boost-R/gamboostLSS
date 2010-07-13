@@ -18,7 +18,7 @@ blackboostLSS <- function(...)
 ###
 # Todo:
 # allow to specify a list of formulas (in formula)
-mboostLSS_fit <- function(formula, data, families = list(), ctrl = boost_control(),
+mboostLSS_fit <- function(formula, data, families = list(), control = boost_control(),
                           weights = NULL, fun = mboost, ...){
 
     cl <- match.call()
@@ -42,12 +42,12 @@ mboostLSS_fit <- function(formula, data, families = list(), ctrl = boost_control
     }
 
 
-    mstop <- ctrl$mstop
+    mstop <- control$mstop
     mstart <- 0
-    ctrl$mstop <- 1
+    control$mstop <- 1
 
-    trace <- ctrl$trace
-    ctrl$trace <- FALSE
+    trace <- control$trace
+    control$trace <- FALSE
 
     w <<- eval(weights)
 
@@ -64,7 +64,7 @@ mboostLSS_fit <- function(formula, data, families = list(), ctrl = boost_control
         }
         ## <FIXME> Do we need to recompute ngradient?
         fit[[j]] <- fun(formula[[names(families)[[j]]]], data = data, family = families[[j]],
-                        control=ctrl, weights = w, ...)
+                        control=control, weights = w, ...)
     }
     if (trace)
         mboost:::do_trace(1, mstop = mstart, risk = fit[[length(fit)]]$risk(),

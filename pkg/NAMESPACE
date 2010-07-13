@@ -1,10 +1,12 @@
 import(mboost)
+importFrom(survival, Surv)
 
 export(glmboostLSS,
        gamboostLSS,
        blackboostLSS,
        mboostLSS,
        risk,
+       makeFamilies,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
        LogNormalLSS, LogNormalMu, LogNormalSigma,

@@ -19,7 +19,7 @@ gamboostLSS(...)
 blackboostLSS(...)
 
 ## fit function:
-mboostLSS_fit(formula, data, families = list(), ctrl = boost_control(),
+mboostLSS_fit(formula, data, families = list(), control = boost_control(),
               weights = NULL, fun = mboost, ...)
 }
 
@@ -32,7 +32,7 @@ mboostLSS_fit(formula, data, families = list(), ctrl = boost_control(),
     the family (see example for details). }
   \item{data}{ a data frame containing the variables in the model.}
   \item{families}{ a list of mboost-\code{\link{Family}}s. }
-  \item{ctrl}{ a list of parameters controlling the algorithm. For
+  \item{control}{ a list of parameters controlling the algorithm. For
     more details see \code{\link{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }
   \item{fun}{ fit function. Either \code{\link{mboost}},
@@ -105,7 +105,7 @@ dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 
 ### simple model with y ~ . for both components:
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     ctrl = boost_control(mstop = 400),
+                     control = boost_control(mstop = 400),
                      center = TRUE)
 coef(model, off2int = TRUE)
 
@@ -120,7 +120,7 @@ names(NBinomialLSS())      # names of the family
 model <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                                     sigma = y ~ x3 + x4 + x5 + x6),
                      families = NBinomialLSS(), data = dat,
-                     ctrl = boost_control(mstop = 400),
+                     control = boost_control(mstop = 400),
                      center = TRUE)
 coef(model, off2int = TRUE)
 
@@ -130,7 +130,7 @@ coef(model, off2int = TRUE)
 model <- glmboostLSS(y ~ ., data = dat,
                      families = NBinomialLSS(mu = mean(mu),
                                              sigma = mean(sigma)),
-                     ctrl = boost_control(mstop = 10),
+                     control = boost_control(mstop = 10),
                      center = TRUE)
 # Note: mu-offset = log(mean(mu)) and sigma-offset = log(mean(sigma))
 #       as we use a log-link in both families
