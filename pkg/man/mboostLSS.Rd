@@ -19,8 +19,8 @@ gamboostLSS(...)
 blackboostLSS(...)
 
 ## fit function:
-mboostLSS_fit(formula, data, families = list(), control = boost_control(),
-              weights = NULL, fun = mboost, ...)
+mboostLSS_fit(formula, data = list(), families = list(),
+              control = boost_control(), weights = NULL, fun = mboost, ...)
 }
 
 \arguments{

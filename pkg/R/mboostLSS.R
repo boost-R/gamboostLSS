@@ -18,7 +18,7 @@ blackboostLSS <- function(...)
 ###
 # Todo:
 # allow to specify a list of formulas (in formula)
-mboostLSS_fit <- function(formula, data, families = list(), control = boost_control(),
+mboostLSS_fit <- function(formula, data = list(), families = list(), control = boost_control(),
                           weights = NULL, fun = mboost, ...){
 
     cl <- match.call()
@@ -33,7 +33,11 @@ mboostLSS_fit <- function(formula, data, families = list(), control = boost_cont
             length(unique(names(formula))) != length(names(families)))
             stop(sQuote("formula"), " can be either a formula or a named list",
                  " of formulas with same names as ",  sQuote("families"), ".")
+        response <- eval(as.expression(formula[[1]][[2]]), envir = data,
+                         enclos = environment(formula[[1]]))
     } else {
+        response <- eval(as.expression(formula[[2]]), envir = data,
+                         enclos = environment(formula))
         tmp <- vector("list", length = length(families))
         names(tmp) <- names(families)
         for (i in 1:length(tmp))
@@ -49,12 +53,27 @@ mboostLSS_fit <- function(formula, data, families = list(), control = boost_cont
     trace <- control$trace
     control$trace <- FALSE
 
-    w <<- eval(weights)
+    w <<- weights
+    if (is.null(weights)) weights <- rep.int(1, NROW(response))
+    weights <- mboost:::rescale_weights(weights)
 
     fit <- vector("list", length = length(families))
     names(fit) <- names(families)
 
     mods <- 1:length(fit)
+
+    offset <- vector("list", length = length(mods))
+    names(offset) <- names(families)
+    for (j in mods){
+        offset[[j]] <- families[[j]]@offset(y = response, w = weights)
+        for (k in mods){
+            for (l in mods){
+                if (!is.null(offset[[l]]))
+                    assign(names(offset)[l], families[[l]]@response(offset[[l]]),
+                           environment(families[[k]]@ngradient))
+            }
+        }
+    }
     for (j in mods){
         ## update value of nuisance parameters in families
         for (k in mods[-j]){

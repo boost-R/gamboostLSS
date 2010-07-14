@@ -14,11 +14,48 @@ mu <- 2 -1*x1 - 3*x2
 sigma <- exp(-1*x1 + 3*x2)
 df <- exp(1 + 3*x1 + 1*x2)
 y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
+data <- data.frame(y = y, x1 = x1, x2 = x2)
+rm("y", "x1", "x2")
 
-#model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 10),
-#                     control = boost_control(mstop = 10))
+model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5),
+                     data = data,
+                     control = boost_control(mstop = 10))
+coef(model)
 
+model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(sigma = 1),
+                     data = data,
+                     control = boost_control(mstop = 10))
+coef(model)
 
+model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(df = 4),
+                     data = data,
+                     control = boost_control(mstop = 10))
+coef(model)
+
+model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5, df = 1),
+                     data = data,
+                     control = boost_control(mstop = 10))
+coef(model)
+
+### multivariate minimum for offset
+loss <- function(df, sigma,y, f){
+    -1 * (lgamma((df+1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) - 0.5 *
+          log(df) - (df+1)/2 * log(1 + (y-f)^2 / (df * sigma^2)))
+}
+riski <- function(x, y, w = rep(1, length(y))){
+    f <- x[[1]]
+    df <- exp(x[[2]])
+    sigma <- exp(x[[3]])
+    sum(w * loss(y = y, f = f, df = df, sigma = sigma))
+}
+
+res <- optim(fn = riski, par = c(0, 1, 1), y = data$y, w = rep(1, length(data$y)))$par
+model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1], sigma =
+                                  exp(res[2]), df = exp(res[3])),
+                     data = data,
+                     control = boost_control(mstop = 10))
+model[100]
+coef(model)
 
 ### check survival families
 

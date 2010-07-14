@@ -16,7 +16,6 @@ y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
 ### check subset method
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
                      control = boost_control(mstop = 10),
-
                      center = TRUE)
 model2 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
                           control = boost_control(mstop = 20),

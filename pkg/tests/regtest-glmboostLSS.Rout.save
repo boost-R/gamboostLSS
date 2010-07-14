@@ -50,7 +50,6 @@ The following object(s) are masked from 'package:survival':
 > ### check subset method
 > model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
 +                      control = boost_control(mstop = 10),
-+ 
 +                      center = TRUE)
 > model2 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
 +                           control = boost_control(mstop = 20),
@@ -78,7 +77,7 @@ Offset:  0.5774545
 
 Coefficients: 
 (Intercept)          x2 
-  0.3374527  -0.6812433 
+  0.3266739  -0.6594833 
 attr(,"offset")
 [1] 0.5774545
 
@@ -100,13 +99,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 20 
 Step size:  0.1 
-Offset:  1.151436 
+Offset:  1.152757 
 
 Coefficients: 
 (Intercept)          x1          x2 
- -0.9594055  -1.0080369   2.9597684 
+  -1.001545   -1.017766    3.054712 
 attr(,"offset")
-[1] 1.151436
+[1] 1.152757
 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
@@ -126,13 +125,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 20 
 Step size:  0.1 
-Offset:  1.269653 
+Offset:  0.8341285 
 
 Coefficients: 
 (Intercept)          x2 
- 0.14095409 -0.05180893 
+ 0.21437293 -0.02875744 
 attr(,"offset")
-[1] 1.269653
+[1] 0.8341285
 
 > stopifnot(all.equal(coef(model),coef(model2)))
 > stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) ==
@@ -165,7 +164,7 @@ Offset:  0.5774545
 
 Coefficients: 
 (Intercept)          x2 
-  0.1747382  -0.3527582 
+  0.1561652  -0.3152635 
 attr(,"offset")
 [1] 0.5774545
 
@@ -187,13 +186,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 10 
 Step size:  0.1 
-Offset:  1.151436 
+Offset:  1.152757 
 
 Coefficients: 
 (Intercept)          x1          x2 
- -0.8731911  -0.7449505   2.5187449 
+ -1.0243963  -0.6289237   2.7062533 
 attr(,"offset")
-[1] 1.151436
+[1] 1.152757
 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
@@ -213,13 +212,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 10 
 Step size:  0.1 
-Offset:  1.269653 
+Offset:  0.8341285 
 
 Coefficients: 
 (Intercept)          x2 
- 0.07406752 -0.05180893 
+ 0.10897376 -0.02875744 
 attr(,"offset")
-[1] 1.269653
+[1] 0.8341285
 
 > stopifnot(all.equal(coef(model),coef(model2)))
 > stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) ==
@@ -231,10 +230,10 @@ attr(,"offset")
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 12951.01 
+Final risk: 13128.64 
 > model[20]
 [ 11] ........
-Final risk: 12846.07 
+Final risk: 12997.03 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
 
@@ -257,7 +256,7 @@ Offset:  0.5774545
 
 Coefficients: 
 (Intercept)          x2 
-  0.3374527  -0.6812433 
+  0.3266739  -0.6594833 
 attr(,"offset")
 [1] 0.5774545
 
@@ -279,13 +278,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 20 
 Step size:  0.1 
-Offset:  1.151436 
+Offset:  1.152757 
 
 Coefficients: 
 (Intercept)          x1          x2 
- -0.9594055  -1.0080369   2.9597684 
+  -1.001545   -1.017766    3.054712 
 attr(,"offset")
-[1] 1.151436
+[1] 1.152757
 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
@@ -305,13 +304,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 20 
 Step size:  0.1 
-Offset:  1.269653 
+Offset:  0.8341285 
 
 Coefficients: 
 (Intercept)          x2 
- 0.14095409 -0.05180893 
+ 0.21437293 -0.02875744 
 attr(,"offset")
-[1] 1.269653
+[1] 0.8341285
 
 > 
 > ### check formula-interface with lists
@@ -330,7 +329,7 @@ attr(,"offset")
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13121.43 
+Final risk: 13288.43 
 > 
 > stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
 +                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
@@ -342,7 +341,7 @@ Final risk: 13121.43
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13121.43 
+Final risk: 13288.43 
 > 
 > stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
 +                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
@@ -368,7 +367,7 @@ Final risk: 13121.43
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13149.01 
+Final risk: 13288.02 
 > 
 > model2 <- glmboostLSS(list(mu = y ~ x2,
 +                            sigma = y ~ x1 + x2,
@@ -377,7 +376,7 @@ Final risk: 13149.01
 +                       control = boost_control(mstop = 10, trace =TRUE),
 +                       center = TRUE)
 [  1] ........
-Final risk: 13149.01 
+Final risk: 13288.02 
 > 
 > stopifnot(all.equal(coef(model),coef(model2)))
 > 

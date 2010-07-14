@@ -48,11 +48,216 @@ The following object(s) are masked from 'package:survival':
 > sigma <- exp(-1*x1 + 3*x2)
 > df <- exp(1 + 3*x1 + 1*x2)
 > y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
+> data <- data.frame(y = y, x1 = x1, x2 = x2)
+> rm("y", "x1", "x2")
 > 
-> #model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 10),
-> #                     control = boost_control(mstop = 10))
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5),
++                      data = data,
++                      control = boost_control(mstop = 10))
+> coef(model)
+$mu
+(Intercept)          x2 
+  0.1743629  -0.3520006 
+attr(,"offset")
+[1] 0.5
+
+$sigma
+(Intercept)          x1          x2 
+ -0.8953163  -0.7540091   2.5726033 
+attr(,"offset")
+[1] 1.151955
+
+$df
+(Intercept)          x2 
+ 0.10870783 -0.02897715 
+attr(,"offset")
+[1] 0.8369583
+
 > 
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(sigma = 1),
++                      data = data,
++                      control = boost_control(mstop = 10))
+> coef(model)
+$mu
+(Intercept)          x2 
+  0.2684299  -0.5419014 
+attr(,"offset")
+[1] 0.5774545
+
+$sigma
+(Intercept)          x2 
+  -1.480476    2.988759 
+attr(,"offset")
+[1] 0
+
+$df
+(Intercept)          x1          x2 
+  0.1661285   0.1057652  -0.4217916 
+attr(,"offset")
+[1] -0.1776425
+
 > 
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(df = 4),
++                      data = data,
++                      control = boost_control(mstop = 10))
+> coef(model)
+$mu
+(Intercept)          x2 
+  0.1537689  -0.3104259 
+attr(,"offset")
+[1] 0.5774545
+
+$sigma
+(Intercept)          x1          x2 
+ -0.8640059  -0.7435193   2.4987496 
+attr(,"offset")
+[1] 1.152757
+
+$df
+(Intercept)          x1          x2 
+ 0.05557042  0.01616506 -0.05414564 
+attr(,"offset")
+[1] 1.386294
+
+> 
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5, df = 1),
++                      data = data,
++                      control = boost_control(mstop = 10))
+> coef(model)
+$mu
+(Intercept)          x2 
+  0.3228816  -0.6518276 
+attr(,"offset")
+[1] 0.5
+
+$sigma
+(Intercept)          x2 
+  -2.419432    4.884306 
+attr(,"offset")
+[1] 0.548112
+
+$df
+(Intercept)          x2 
+ 0.08637356  0.04414274 
+attr(,"offset")
+[1] 0
+
+> 
+> ### multivariate minimum for offset
+> loss <- function(df, sigma,y, f){
++     -1 * (lgamma((df+1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) - 0.5 *
++           log(df) - (df+1)/2 * log(1 + (y-f)^2 / (df * sigma^2)))
++ }
+> riski <- function(x, y, w = rep(1, length(y))){
++     f <- x[[1]]
++     df <- exp(x[[2]])
++     sigma <- exp(x[[3]])
++     sum(w * loss(y = y, f = f, df = df, sigma = sigma))
++ }
+> 
+> res <- optim(fn = riski, par = c(0, 1, 1), y = data$y, w = rep(1, length(data$y)))$par
+> model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1], sigma =
++                                   exp(res[2]), df = exp(res[3])),
++                      data = data,
++                      control = boost_control(mstop = 10))
+> model[100]
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
+
+
+	 Student's t-distribution: mu (id link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - f)^2/(df *  
+         sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 100 
+Step size:  0.1 
+Offset:  0.5228725 
+
+Coefficients: 
+(Intercept)          x1          x2 
+   1.507443   -1.272131   -1.840329 
+attr(,"offset")
+[1] 0.5228725
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
+
+
+	 Student's t-distribution: sigma (log link) 
+
+Loss function: { 
+     -1 * (lgamma((df + 1)/2) - f - lgamma(1/2) - lgamma(df/2) -  
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - mu)^2/(df *  
+         exp(2 * f)))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 100 
+Step size:  0.1 
+Offset:  0.3968482 
+
+Coefficients: 
+(Intercept)          x1          x2 
+  -4.857660   -1.229536    9.336231 
+attr(,"offset")
+[1] 0.3968482
+
+
+	 Generalized Linear Models Fitted via Gradient Boosting
+
+Call:
+glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
+
+
+	 Student's t-distribution: df (log link) 
+
+Loss function: { 
+     -1 * (lgamma((exp(f) + 1)/2) - log(sigma) - lgamma(1/2) -  
+         lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +  
+         (y - mu)^2/(exp(f) * sigma^2))) 
+ } 
+ 
+
+Number of boosting iterations: mstop = 100 
+Step size:  0.1 
+Offset:  0.7357846 
+
+Coefficients: 
+(Intercept)          x1          x2 
+ -2.4181928   0.1476135   3.6072253 
+attr(,"offset")
+[1] 0.7357846
+
+> coef(model)
+$mu
+(Intercept)          x1          x2 
+   1.507443   -1.272131   -1.840329 
+attr(,"offset")
+[1] 0.5228725
+
+$sigma
+(Intercept)          x1          x2 
+  -4.857660   -1.229536    9.336231 
+attr(,"offset")
+[1] 0.3968482
+
+$df
+(Intercept)          x1          x2 
+ -2.4181928   0.1476135   3.6072253 
+attr(,"offset")
+[1] 0.7357846
+
 > 
 > ### check survival families
 > 
@@ -79,10 +284,10 @@ Loglik(model)= -6051   Loglik(intercept only)= -6199.6
 n= 1000 
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogNormalLSS(),
 +                      control = boost_control(trace = TRUE))
-[   1] ...................................... -- risk: 1552.035 
-[  41] ...................................... -- risk: 1543.920 
+[   1] ...................................... -- risk: 1552.695 
+[  41] ...................................... -- risk: 1543.948 
 [  81] ..................
-Final risk: 1543.558 
+Final risk: 1543.569 
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0, 0, 0, 0.2))) < 0.25)
@@ -108,19 +313,19 @@ Loglik(model)= -6681.6   Loglik(intercept only)= -6721.9
 n= 1000 
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),
 +                      control = boost_control(trace = TRUE))
-[   1] ...................................... -- risk: 2246.602 
-[  41] ...................................... -- risk: 2240.116 
+[   1] ...................................... -- risk: 2246.758 
+[  41] ...................................... -- risk: 2240.168 
 [  81] ..................
-Final risk: 2238.513 
+Final risk: 2238.548 
 > model[350]
-[ 101] ...................................... -- risk: 2236.762 
-[ 141] ...................................... -- risk: 2235.899 
-[ 181] ...................................... -- risk: 2235.418 
-[ 221] ...................................... -- risk: 2235.150 
-[ 261] ...................................... -- risk: 2235.002 
-[ 301] ...................................... -- risk: 2234.919 
+[ 101] ...................................... -- risk: 2236.777 
+[ 141] ...................................... -- risk: 2235.907 
+[ 181] ...................................... -- risk: 2235.422 
+[ 221] ...................................... -- risk: 2235.153 
+[ 261] ...................................... -- risk: 2235.003 
+[ 301] ...................................... -- risk: 2234.92 
 [ 341] ........
-Final risk: 2234.905 
+Final risk: 2234.906 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
 
@@ -145,7 +350,7 @@ Offset:  4.428274
 
 Coefficients: 
 (Intercept)          x1          x2          x3 
- -1.1736364   0.6072744   1.9915746  -0.2065566 
+ -1.1733139   0.6072775   1.9909091  -0.2065531 
 attr(,"offset")
 [1] 4.428274
 
@@ -168,13 +373,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 350 
 Step size:  0.1 
-Offset:  0.2689448 
+Offset:  0.2709814 
 
 Coefficients: 
  (Intercept)           x1           x2           x3 
--0.043191263 -0.088159918  0.007866414  0.086310938 
+-0.045221333 -0.088175343  0.007858947  0.086315716 
 attr(,"offset")
-[1] 0.2689448
+[1] 0.2709814
 
 > stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
@@ -203,17 +408,17 @@ n= 1000
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3,
 +                      families = WeibullLSS(),
 +                      control = boost_control(trace = TRUE))
-[   1] ...................................... -- risk: 1803.967 
-[  41] ...................................... -- risk: 1780.522 
+[   1] ...................................... -- risk: 2134.384 
+[  41] ...................................... -- risk: 1904.389 
 [  81] ..................
-Final risk: 1776.832 
+Final risk: 1858.757 
 > model[300]
-[ 101] ...................................... -- risk: 1774.304 
-[ 141] ...................................... -- risk: 1773.746 
-[ 181] ...................................... -- risk: 1773.615 
-[ 221] ...................................... -- risk: 1773.577 
+[ 101] ...................................... -- risk: 1804.158 
+[ 141] ...................................... -- risk: 1782.137 
+[ 181] ...................................... -- risk: 1775.546 
+[ 221] ...................................... -- risk: 1773.984 
 [ 261] ......................................
-Final risk: 1773.565 
+Final risk: 1773.656 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
 
@@ -233,13 +438,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 300 
 Step size:  0.1 
-Offset:  4.804055 
+Offset:  1.569460 
 
 Coefficients: 
-(Intercept)          x1          x2          x3 
--1.80328101  1.03767254  2.01525023 -0.01837571 
+(Intercept)          x1          x2 
+   1.435110    1.012545    1.992845 
 attr(,"offset")
-[1] 4.804055
+[1] 1.569460
 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
@@ -260,13 +465,13 @@ Loss function: {
 
 Number of boosting iterations: mstop = 300 
 Step size:  0.1 
-Offset:  0.294634 
+Offset:  0.313215 
 
 Coefficients: 
 (Intercept)          x1          x2          x3 
--0.01296774 -0.06173852 -0.14768701  0.05033678 
+-0.03347056 -0.05420302 -0.13905380  0.04472299 
 attr(,"offset")
-[1] 0.294634
+[1] 0.313215
 
 > stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
