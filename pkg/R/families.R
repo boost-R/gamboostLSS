@@ -148,7 +148,7 @@ StudentTSigma <- function(mu = NULL, sigma = NULL, df = NULL) {
         sum(w * loss(y = y, f = f, df = df, mu = mu))
     }
     ngradient <- function(y, f, w = 1) {
-        (-1 + ((df+1)*(y-mu)^2)/(df*exp(2*f) + (y-mu)^2/exp(2*f)))
+        (-1 + (df+1)/(df*exp(2*f)/(y-mu)^2 + 1))
     }
     offset <- function(y, w){
         if (!is.null(sigma)){

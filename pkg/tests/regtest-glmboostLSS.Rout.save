@@ -77,7 +77,7 @@ Offset:  0.5774545
 
 Coefficients: 
 (Intercept)          x2 
-  0.3266739  -0.6594833 
+  0.2309757  -0.4662895 
 attr(,"offset")
 [1] 0.5774545
 
@@ -103,7 +103,7 @@ Offset:  1.152757
 
 Coefficients: 
 (Intercept)          x1          x2 
-  -1.001545   -1.017766    3.054712 
+ -0.9775043  -0.1715909   1.9935805 
 attr(,"offset")
 [1] 1.152757
 
@@ -129,7 +129,7 @@ Offset:  0.8341285
 
 Coefficients: 
 (Intercept)          x2 
- 0.21437293 -0.02875744 
+  0.2077862  -0.1735146 
 attr(,"offset")
 [1] 0.8341285
 
@@ -164,7 +164,7 @@ Offset:  0.5774545
 
 Coefficients: 
 (Intercept)          x2 
-  0.1561652  -0.3152635 
+ 0.09857352 -0.19899842 
 attr(,"offset")
 [1] 0.5774545
 
@@ -189,8 +189,8 @@ Step size:  0.1
 Offset:  1.152757 
 
 Coefficients: 
-(Intercept)          x1          x2 
- -1.0243963  -0.6289237   2.7062533 
+(Intercept)          x2 
+ -0.7647995   1.5439633 
 attr(,"offset")
 [1] 1.152757
 
@@ -216,7 +216,7 @@ Offset:  0.8341285
 
 Coefficients: 
 (Intercept)          x2 
- 0.10897376 -0.02875744 
+  0.1252391  -0.1735146 
 attr(,"offset")
 [1] 0.8341285
 
@@ -230,10 +230,10 @@ attr(,"offset")
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13128.64 
+Final risk: 13591.79 
 > model[20]
 [ 11] ........
-Final risk: 12997.03 
+Final risk: 13219.00 
 
 	 Generalized Linear Models Fitted via Gradient Boosting
 
@@ -256,7 +256,7 @@ Offset:  0.5774545
 
 Coefficients: 
 (Intercept)          x2 
-  0.3266739  -0.6594833 
+  0.2309757  -0.4662895 
 attr(,"offset")
 [1] 0.5774545
 
@@ -282,7 +282,7 @@ Offset:  1.152757
 
 Coefficients: 
 (Intercept)          x1          x2 
-  -1.001545   -1.017766    3.054712 
+ -0.9775043  -0.1715909   1.9935805 
 attr(,"offset")
 [1] 1.152757
 
@@ -308,7 +308,7 @@ Offset:  0.8341285
 
 Coefficients: 
 (Intercept)          x2 
- 0.21437293 -0.02875744 
+  0.2077862  -0.1735146 
 attr(,"offset")
 [1] 0.8341285
 
@@ -329,9 +329,9 @@ attr(,"offset")
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13288.43 
+Final risk: 13810.72 
 > 
-> stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
+> stopifnot(all.equal(lapply(coef(model, which = ""), function(x) names(x)[-1]),
 +                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
 > 
 > model <- glmboostLSS(list(mu = y ~ x2,
@@ -341,9 +341,9 @@ Final risk: 13288.43
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13288.43 
+Final risk: 13810.72 
 > 
-> stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
+> stopifnot(all.equal(lapply(coef(model, which = ""), function(x) names(x)[-1]),
 +                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
 > 
 > 
@@ -367,7 +367,7 @@ Final risk: 13288.43
 +                      control = boost_control(mstop = 10, trace =TRUE),
 +                      center = TRUE)
 [  1] ........
-Final risk: 13288.02 
+Final risk: 13810.99 
 > 
 > model2 <- glmboostLSS(list(mu = y ~ x2,
 +                            sigma = y ~ x1 + x2,
@@ -376,7 +376,7 @@ Final risk: 13288.02
 +                       control = boost_control(mstop = 10, trace =TRUE),
 +                       center = TRUE)
 [  1] ........
-Final risk: 13288.02 
+Final risk: 13810.99 
 > 
 > stopifnot(all.equal(coef(model),coef(model2)))
 > 

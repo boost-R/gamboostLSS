@@ -57,7 +57,7 @@ model <- glmboostLSS(list(mu = y ~ x2,
                      control = boost_control(mstop = 10, trace =TRUE),
                      center = TRUE)
 
-stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
+stopifnot(all.equal(lapply(coef(model, which = ""), function(x) names(x)[-1]),
                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
 
 model <- glmboostLSS(list(mu = y ~ x2,
@@ -67,7 +67,7 @@ model <- glmboostLSS(list(mu = y ~ x2,
                      control = boost_control(mstop = 10, trace =TRUE),
                      center = TRUE)
 
-stopifnot(all.equal(lapply(coef(model), function(x) names(x)[-1]),
+stopifnot(all.equal(lapply(coef(model, which = ""), function(x) names(x)[-1]),
                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
 
 
