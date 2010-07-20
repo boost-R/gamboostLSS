@@ -11,8 +11,9 @@
 \alias{mstop.oobag}
 
 \alias{selected.mboostLSS}
-\alias{plot.glmboostLSS}
 
+\alias{plot.glmboostLSS}
+\alias{plot.gamboostLSS}
 
 \title{
   Methods for mboostLSS
@@ -32,7 +33,8 @@
 
 \method{selected}{mboostLSS}(object, ...)
 
-\method{plot}{glmboostLSS}(x, main = names(x), off2int = FALSE, ...)
+\method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x), off2int = FALSE, ...)
+\method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x), ...)
 }
 
 \arguments{
@@ -49,6 +51,9 @@
   \item{return}{ a logical indicating whether the changed object is
                  returned. }
   \item{main}{ a title for the plots.}
+  \item{parameter}{ This can be either a vector of indizes or a vector
+     of parameter names which should be plotted. See expamles for
+     details. }
   \item{off2int}{ logical indicating whether the offset should be
     added to the intercept (if there is any) or if the offset is
     neglected for plotting (default).}
@@ -67,7 +72,41 @@
   ...
 }
 \examples{
-### ADD SOMETHING
+
+### generate data
+set.seed(1907)
+x1 <- rnorm(1000)
+x2 <- rnorm(1000)
+x3 <- rnorm(1000)
+x4 <- rnorm(1000)
+x5 <- rnorm(1000)
+x6 <- rnorm(1000)
+mu    <- exp(1.5 + x1^2 +0.5 * x2 - 3 * sin(x3) -1 * x4)
+sigma <- exp(-0.2 * x4 +0.2 * x5 +0.4 * x6)
+y <- numeric(1000)
+for( i in 1:1000)
+    y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+
+### fit a model
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 400))
+
+### extract coefficients
+coef(model)
+### plot complete model
+par(mfrow=c(4,3))
+plot(model)
+### plot first parameter only
+par(mfrow=c(2,3))
+plot(model, parameter = "mu")
+### now plot only effect of x3 of both parameters
+par(mfrow = c(1, 2))
+plot(model, which = "x3")
+### first component second parameter (sigma)
+par(mfrow = c(1, 1))
+plot(model, which = 1, parameter = 2)
+
 }
 \keyword{methods}
 

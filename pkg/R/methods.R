@@ -44,14 +44,53 @@ selected.mboostLSS <- function(object, ...){
 }
 
 
-plot.glmboostLSS <- function(x, main = names(x), off2int = FALSE, ...){
-    lapply(1:length(x), function(i, x, main, off2int,  ...) plot(x[[i]], main =
-                                                                 main[[i]], off2int = off2int,  ...),
+plot.glmboostLSS <- function(x, main = names(x), parameter = names(x),
+                             off2int = FALSE, ...){
+    if (is.character(parameter)) {
+        idx <- sapply(parameter, function(w) {
+            wi <- grep(w, names(x), fixed = TRUE)
+            if (length(wi) > 0) return(wi)
+            return(NA)
+        })
+        if (any(is.na(idx)))
+            warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
+        parameter <- idx
+    }
+    lapply(parameter, function(i, x, main, off2int,  ...)
+                    plot(x[[i]], main = main[[i]], off2int = off2int,  ...),
            x = x, main = main, off2int = off2int, ...)
     invisible(coef(x, aggregate = "cumsum", off2int = off2int))
 }
 
 
+plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
+    if (is.character(parameter)) {
+        idx <- sapply(parameter, function(w) {
+            wi <- grep(w, names(x), fixed = TRUE)
+            if (length(wi) > 0) return(wi)
+            return(NA)
+        })
+        if (any(is.na(idx)))
+            warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
+        parameter <- idx
+    }
+    lapply(parameter, function(i, x, main, ...)
+                    plot(x[[i]], main = main[[i]], ...),
+           x = x, main = main, ...)
+    invisible(x)
+}
+
+
 print.mboostLSS <- function(x, ...){
-    lapply(x, print, ...)
+    cl <- match.call()
+    cat("\n")
+    cat("\t LSS Models fitted via Model-based Boosting\n")
+    cat("\n")
+    if (!is.null(attr(x, "call")))
+        cat("Call:\n", deparse(attr(x, "call")), "\n\n", sep = "")
+    cat("Number of boosting iterations: mstop =", mstop(x), "\n")
+    cat("Step size: ", x[[1]]$control$nu, "\n\n")
+    cat("Families:\n")
+    lapply(x, function(xi) show(xi$family))
+    invisible(x)
 }

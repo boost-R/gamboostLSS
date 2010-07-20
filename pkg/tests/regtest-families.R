@@ -104,6 +104,7 @@ stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.4)
 
+
 ### Check that "families"-object contains a response function
 NBinomialMu2 <- function(...){
     RET <- NBinomialMu(...)

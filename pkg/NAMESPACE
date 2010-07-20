@@ -23,3 +23,4 @@ S3method(print, mboostLSS)
 S3method(selected, mboostLSS)
 
 S3method(plot, glmboostLSS)
+S3method(plot, gamboostLSS)

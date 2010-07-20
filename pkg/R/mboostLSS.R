@@ -1,19 +1,37 @@
 ###
 # Generic implementation for multiple component LSS-models
 
+# do.call("glmboost", list(...))
+
 ### (glm/gam/m/black)boostLSS functions
 
-mboostLSS <- function(...)
-    mboostLSS_fit(..., fun = mboost)
+mboostLSS <- function(...){
+    cl <- match.call()
+    fit <- mboostLSS_fit(..., fun = mboost)
+    attr(fit, "call") <- cl
+    return(fit)
+}
 
-glmboostLSS <- function(...)
-    mboostLSS_fit(..., fun = glmboost)
+glmboostLSS <- function(...){
+    cl <- match.call()
+    fit <- mboostLSS_fit(..., fun = glmboost)
+    attr(fit, "call") <- cl
+    return(fit)
+}
 
-gamboostLSS <- function(...)
-    mboostLSS_fit(..., fun = gamboost)
+gamboostLSS <- function(...){
+    cl <- match.call()
+    fit <- mboostLSS_fit(..., fun = gamboost)
+    attr(fit, "call") <- cl
+    return(fit)
+}
 
-blackboostLSS <- function(...)
-    mboostLSS_fit(..., fun = blackboost)
+blackboostLSS <- function(...){
+    cl <- match.call()
+    fit <- mboostLSS_fit(..., fun = blackboost)
+    attr(fit, "call") <- cl
+    return(fit)
+}
 
 ###
 # Todo:
@@ -53,7 +71,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(), control = b
     trace <- control$trace
     control$trace <- FALSE
 
-    w <<- weights
+    w <- weights
     if (is.null(weights)) weights <- rep.int(1, NROW(response))
     weights <- mboost:::rescale_weights(weights)
 
@@ -82,8 +100,10 @@ mboostLSS_fit <- function(formula, data = list(), families = list(), control = b
                        environment(families[[j]]@ngradient))
         }
         ## <FIXME> Do we need to recompute ngradient?
-        fit[[j]] <- fun(formula[[names(families)[[j]]]], data = data, family = families[[j]],
-                        control=control, weights = w, ...)
+        fit[[j]] <- do.call(fun, list(formula[[names(families)[[j]]]],
+                                      data = data, family = families[[j]],
+                                      control=control, weights = w,
+                                      ...))
     }
     if (trace)
         mboost:::do_trace(1, mstop = mstart, risk = fit[[length(fit)]]$risk(),
