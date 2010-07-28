@@ -36,10 +36,14 @@ blackboostLSS <- function(...){
 ###
 # Todo:
 # allow to specify a list of formulas (in formula)
-mboostLSS_fit <- function(formula, data = list(), families = list(), control = boost_control(),
-                          weights = NULL, fun = mboost, ...){
+mboostLSS_fit <- function(formula, data = list(), families = list(),
+                          control = boost_control(), weights = NULL,
+                          fun = mboost, ...){
 
     cl <- match.call()
+
+    if (length(families) == 0)
+        stop(sQuote("families"), " not specified")
 
     if ("offset" %in% names(list(...)))
         stop("Do not use argument ", sQuote("offset"),
@@ -64,9 +68,31 @@ mboostLSS_fit <- function(formula, data = list(), families = list(), control = b
     }
 
 
+    if (is.list(control$risk) || is.list(control$center) || is.list(control$trace))
+        stop(sQuote("risk"),", ", sQuote("center"), " and ", sQuote("trace") ,
+             " cannot be lists in ", sQuote("boost_control"))
+
     mstop <- control$mstop
-    mstart <- 0
     control$mstop <- 1
+
+    if (is.list(mstop)){
+        if (!all(names(mstop) %in% names(families)) ||
+            length(unique(names(mstop))) != length(names(families)))
+            stop(sQuote("mstop"), " can be either a scalar or a named list",
+                 " of mstop values with same names as ",  sQuote("families"), "in ",
+                 sQuote("boost_control"))
+        mstop <- mstop[names(families)] ## sort in order of families
+        mstop <- unlist(mstop)
+    } else {
+        if(length(mstop) != 1)
+            stop(sQuote("mstop"), " can be either a scalar or a named list",
+                 " of mstop values with same names as ",  sQuote("families"), "in ",
+                 sQuote("boost_control"))
+        mstop <- rep(mstop, length(families))
+        names(mstop) <- names(families)
+    }
+
+    ## <FIXME> Add checks etc. for nu (as a list) here!
 
     trace <- control$trace
     control$trace <- FALSE
@@ -106,13 +132,21 @@ mboostLSS_fit <- function(formula, data = list(), families = list(), control = b
                                       ...))
     }
     if (trace)
-        mboost:::do_trace(1, mstop = mstart, risk = fit[[length(fit)]]$risk(),
-                          width = mstop)
+        do_trace(current = 1, mstart = 0,
+                 mstop = max(mstop),
+                 risk = fit[[length(fit)]]$risk())
 
     ### set up a function for iterating boosting steps
     iBoost <- function(niter) {
-        start <- ifelse(mstart == 0, mstart + 2, mstart + 1)
-        for(m in start:(mstart + niter)){
+        start <- sapply(fit, mstop)
+        mvals <- vector("list", length(niter))
+        for (j in 1:length(niter)){
+            mvals[[j]] <- rep(start[j] + niter[j], max(niter))
+            if (niter[j] > 0)
+                mvals[[j]][1:niter[j]] <- (start[j] + 1):(start[j] + niter[j])
+        }
+
+        for (i in 1:max(niter)){
             for (j in mods){
                 ## update value of nuisance parameters
                 for (k in mods[-j])
@@ -120,26 +154,30 @@ mboostLSS_fit <- function(formula, data = list(), families = list(), control = b
                            environment(get("ngradient", environment(fit[[j]]$subset))))
                 ## update value of u, i.e. compute ngradient with new nuisance parameters
                 evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
-                ## update j-th component to m boosting steps
-                fit[[j]][m]
+                ## update j-th component to "m-th" boosting step
+                fit[[j]][mvals[[j]][i]]
             }
             if (trace)
-                mboost:::do_trace(m, mstop = mstart, risk = fit[[length(fit)]]$risk(),
-                                  width = niter)
+                do_trace(current = max(sapply(mvals, function(x) x[i])),
+                         mstart = ifelse(firstRun, 0, max(start)),
+                         mstop = ifelse(firstRun, max(niter) + 1, max(niter)),
+                         risk = fit[[length(fit)]]$risk())
         }
-        mstart <<- mstart + niter
         return(TRUE)
     }
 
-    if (mstop == 1){
+    if (all(mstop == 1)){
         class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
         return(fit)
     }
 
     ### actually go for initial mstop iterations!
-    tmp <- iBoost(mstop)
+    firstRun <- TRUE
+    tmp <- iBoost(mstop - 1)
+    firstRun <- FALSE
 
     class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
+
 
     ### update to a new number of boosting iterations mstop
     ### i <= mstop means less iterations than current
@@ -147,14 +185,50 @@ mboostLSS_fit <- function(formula, data = list(), families = list(), control = b
     ### updates take place in THIS ENVIRONMENT,
     ### some models are CHANGED!
     attr(fit, "subset") <- function(i) {
-        if (i <= mstart){
-            #stop("Use ", sQuote("model[i]"), " to decrease mstop")
-            lapply(fit, function(a) a$subset(i))
-            mstop <- i
-        } else {
-            tmp <- iBoost(i - mstart)
-            mstop <- i
+        if (length(i) == 1)
+            i <- rep(i, length(fit))
+
+        minStart <- min(mstop(fit), i)
+
+        ## reduce models first (when necessary)
+        if (any(mstop(fit) > minStart)){
+            lapply(fit, function(obj) obj$subset(minStart))
+
+            lapply(fit, function(obj){
+                   #assign("mstop", minStart,
+                   #       environment(obj$subset))
+                   evalq({xselect <- xselect[1:mstop];
+                          mrisk <- mrisk[1:mstop];
+                          ens <- ens[1:mstop];
+                          nuisance <- nuisance[1:mstop]},
+                         environment(obj$subset))
+               })
+
+            lapply(fit, function(obj)
+                   get("ens", environment(obj$subset))
+                   )
+
+
+            #mods <- 1:length(fit)
+            #for (j in mods){
+            #    ## update value of nuisance parameters
+            #    for (k in mods[-j])
+            #        assign(names(fit)[k], fitted(fit[[k]], type = "response"),
+            #               environment(get("ngradient", environment(fit[[j]]$subset))))
+            #    ## update value of u, i.e. compute ngradient with new nuisance parameters
+            #    evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
+            #}
+
+            cat("Model first reduced to mstop = ", minStart, ".\n",
+                "Now continue ...\n", sep ="")
         }
+
+        ## now increase models (when necessary)
+        if (any(i > minStart)){
+            tmp <- iBoost(i - minStart)
+        }
+
+        mstop <<- i
     }
     return(fit)
 }

@@ -57,19 +57,19 @@ The following object(s) are masked from 'package:survival':
 > coef(model)
 $mu
 (Intercept)          x2 
-  0.1743629  -0.3520006 
+  0.1075190  -0.2170573 
 attr(,"offset")
 [1] 0.5
 
 $sigma
-(Intercept)          x1          x2 
- -0.8953163  -0.7540091   2.5726033 
+(Intercept)          x2 
+ -0.7575752   1.5293790 
 attr(,"offset")
 [1] 1.151955
 
 $df
 (Intercept)          x2 
- 0.10870783 -0.02897715 
+  0.1255079  -0.1746240 
 attr(,"offset")
 [1] 0.8369583
 
@@ -80,19 +80,19 @@ attr(,"offset")
 > coef(model)
 $mu
 (Intercept)          x2 
-  0.2684299  -0.5419014 
+  0.2464260  -0.4974803 
 attr(,"offset")
 [1] 0.5774545
 
 $sigma
 (Intercept)          x2 
-  -1.480476    2.988759 
+ -0.4516042   0.9116904 
 attr(,"offset")
 [1] 0
 
 $df
-(Intercept)          x1          x2 
-  0.1661285   0.1057652  -0.4217916 
+(Intercept)          x2 
+  0.3149720  -0.6358598 
 attr(,"offset")
 [1] -0.1776425
 
@@ -103,19 +103,19 @@ attr(,"offset")
 > coef(model)
 $mu
 (Intercept)          x2 
-  0.1537689  -0.3104259 
+  0.1074937  -0.2170063 
 attr(,"offset")
 [1] 0.5774545
 
 $sigma
-(Intercept)          x1          x2 
- -0.8640059  -0.7435193   2.4987496 
+(Intercept)          x2 
+  -0.889911    1.796536 
 attr(,"offset")
 [1] 1.152757
 
 $df
 (Intercept)          x1          x2 
- 0.05557042  0.01616506 -0.05414564 
+ 0.07962737  0.06912987 -0.23090205 
 attr(,"offset")
 [1] 1.386294
 
@@ -126,19 +126,19 @@ attr(,"offset")
 > coef(model)
 $mu
 (Intercept)          x2 
-  0.3228816  -0.6518276 
+  0.1953042  -0.3942766 
 attr(,"offset")
 [1] 0.5
 
 $sigma
 (Intercept)          x2 
-  -2.419432    4.884306 
+ -0.5914862   1.1940815 
 attr(,"offset")
 [1] 0.548112
 
 $df
 (Intercept)          x2 
- 0.08637356  0.04414274 
+  0.1911318  -0.2203124 
 attr(,"offset")
 [1] 0
 
@@ -162,11 +162,15 @@ attr(,"offset")
 +                      control = boost_control(mstop = 10))
 > model[100]
 
-	 Generalized Linear Models Fitted via Gradient Boosting
+	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
+glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1],     sigma = exp(res[2]), df = exp(res[3])), data = data, control = boost_control(mstop = 10))
 
+Number of boosting iterations: mstop = 100 100 100 
+Step size:  0.1 
+
+Families:
 
 	 Student's t-distribution: mu (id link) 
 
@@ -177,23 +181,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 100 
-Step size:  0.1 
-Offset:  0.5228725 
-
-Coefficients: 
-(Intercept)          x1          x2 
-   1.507443   -1.272131   -1.840329 
-attr(,"offset")
-[1] 0.5228725
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: sigma (log link) 
 
 Loss function: { 
@@ -203,23 +190,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 100 
-Step size:  0.1 
-Offset:  0.3968482 
-
-Coefficients: 
-(Intercept)          x1          x2 
-  -4.857660   -1.229536    9.336231 
-attr(,"offset")
-[1] 0.3968482
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: df (log link) 
 
 Loss function: { 
@@ -228,33 +198,22 @@ Loss function: {
          (y - mu)^2/(exp(f) * sigma^2))) 
  } 
  
-
-Number of boosting iterations: mstop = 100 
-Step size:  0.1 
-Offset:  0.7357846 
-
-Coefficients: 
-(Intercept)          x1          x2 
- -2.4181928   0.1476135   3.6072253 
-attr(,"offset")
-[1] 0.7357846
-
 > coef(model)
 $mu
 (Intercept)          x1          x2 
-   1.507443   -1.272131   -1.840329 
+   1.244688   -0.897833   -1.634227 
 attr(,"offset")
 [1] 0.5228725
 
 $sigma
 (Intercept)          x1          x2 
-  -4.857660   -1.229536    9.336231 
+ -0.5893432  -0.8476283   2.7681255 
 attr(,"offset")
 [1] 0.3968482
 
 $df
 (Intercept)          x1          x2 
- -2.4181928   0.1476135   3.6072253 
+  0.3707909   0.6081607  -0.6771414 
 attr(,"offset")
 [1] 0.7357846
 
@@ -327,11 +286,15 @@ Final risk: 2238.548
 [ 341] ........
 Final risk: 2234.906 
 
-	 Generalized Linear Models Fitted via Gradient Boosting
+	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
+glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),     control = boost_control(trace = TRUE))
 
+Number of boosting iterations: mstop = 350 350 
+Step size:  0.1 
+
+Families:
 
 	 Log-Logistic AFT Model: mu (id link) 
 
@@ -344,23 +307,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 350 
-Step size:  0.1 
-Offset:  4.428274 
-
-Coefficients: 
-(Intercept)          x1          x2          x3 
- -1.1733139   0.6072775   1.9909091  -0.2065531 
-attr(,"offset")
-[1] 4.428274
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
-
-
 	 Log-Logistic AFT Model: sigma (log link) 
 
 Loss function: { 
@@ -370,17 +316,6 @@ Loss function: {
      -y[, 2] * (logfw(eta) - f) - (1 - y[, 2]) * logSw(eta) 
  } 
  
-
-Number of boosting iterations: mstop = 350 
-Step size:  0.1 
-Offset:  0.2709814 
-
-Coefficients: 
- (Intercept)           x1           x2           x3 
--0.045221333 -0.088175343  0.007858947  0.086315716 
-attr(,"offset")
-[1] 0.2709814
-
 > stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.25)
@@ -420,11 +355,15 @@ Final risk: 1858.757
 [ 261] ......................................
 Final risk: 1773.656 
 
-	 Generalized Linear Models Fitted via Gradient Boosting
+	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
+glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = WeibullLSS(),     control = boost_control(trace = TRUE))
 
+Number of boosting iterations: mstop = 300 300 
+Step size:  0.1 
+
+Families:
 
 	 Weibull AFT Model: mu (id link) 
 
@@ -436,23 +375,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 300 
-Step size:  0.1 
-Offset:  1.569460 
-
-Coefficients: 
-(Intercept)          x1          x2 
-   1.435110    1.012545    1.992845 
-attr(,"offset")
-[1] 1.569460
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, control = control, family = families[[j]])
-
-
 	 Weibull AFT Model: sigma (log link) 
 
 Loss function: { 
@@ -462,20 +384,10 @@ Loss function: {
      -y[, 2] * (logfw(eta) - f) - (1 - y[, 2]) * logSw(eta) 
  } 
  
-
-Number of boosting iterations: mstop = 300 
-Step size:  0.1 
-Offset:  0.313215 
-
-Coefficients: 
-(Intercept)          x1          x2          x3 
--0.03347056 -0.05420302 -0.13905380  0.04472299 
-attr(,"offset")
-[1] 0.313215
-
 > stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.4)
+> 
 > 
 > ### Check that "families"-object contains a response function
 > NBinomialMu2 <- function(...){

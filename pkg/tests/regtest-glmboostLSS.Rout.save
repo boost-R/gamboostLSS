@@ -56,11 +56,15 @@ The following object(s) are masked from 'package:survival':
 +                           center = TRUE)
 > model[20]
 
-	 Generalized Linear Models Fitted via Gradient Boosting
+	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
+glmboostLSS(y ~ x1 + x2, families = StudentTLSS(), control = boost_control(mstop = 10),     center = TRUE)
 
+Number of boosting iterations: mstop = 20 20 20 
+Step size:  0.1 
+
+Families:
 
 	 Student's t-distribution: mu (id link) 
 
@@ -71,23 +75,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 20 
-Step size:  0.1 
-Offset:  0.5774545 
-
-Coefficients: 
-(Intercept)          x2 
-  0.2309757  -0.4662895 
-attr(,"offset")
-[1] 0.5774545
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: sigma (log link) 
 
 Loss function: { 
@@ -97,23 +84,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 20 
-Step size:  0.1 
-Offset:  1.152757 
-
-Coefficients: 
-(Intercept)          x1          x2 
- -0.9775043  -0.1715909   1.9935805 
-attr(,"offset")
-[1] 1.152757
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: df (log link) 
 
 Loss function: { 
@@ -122,17 +92,6 @@ Loss function: {
          (y - mu)^2/(exp(f) * sigma^2))) 
  } 
  
-
-Number of boosting iterations: mstop = 20 
-Step size:  0.1 
-Offset:  0.8341285 
-
-Coefficients: 
-(Intercept)          x2 
-  0.2077862  -0.1735146 
-attr(,"offset")
-[1] 0.8341285
-
 > stopifnot(all.equal(coef(model),coef(model2)))
 > stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) ==
 +           length(coef(model, aggregate = "none")[[1]][[1]]))
@@ -142,12 +101,18 @@ attr(,"offset")
 +                      control = boost_control(mstop = 10),
 +                      center = TRUE)
 > model2[10]
+Model first reduced to mstop = 10.
+Now continue ...
 
-	 Generalized Linear Models Fitted via Gradient Boosting
+	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
+glmboostLSS(y ~ x1 + x2, families = StudentTLSS(), control = boost_control(mstop = 20),     center = TRUE)
 
+Number of boosting iterations: mstop = 10 10 10 
+Step size:  0.1 
+
+Families:
 
 	 Student's t-distribution: mu (id link) 
 
@@ -158,23 +123,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 10 
-Step size:  0.1 
-Offset:  0.5774545 
-
-Coefficients: 
-(Intercept)          x2 
- 0.09857352 -0.19899842 
-attr(,"offset")
-[1] 0.5774545
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: sigma (log link) 
 
 Loss function: { 
@@ -184,23 +132,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 10 
-Step size:  0.1 
-Offset:  1.152757 
-
-Coefficients: 
-(Intercept)          x2 
- -0.7647995   1.5439633 
-attr(,"offset")
-[1] 1.152757
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: df (log link) 
 
 Loss function: { 
@@ -209,17 +140,6 @@ Loss function: {
          (y - mu)^2/(exp(f) * sigma^2))) 
  } 
  
-
-Number of boosting iterations: mstop = 10 
-Step size:  0.1 
-Offset:  0.8341285 
-
-Coefficients: 
-(Intercept)          x2 
-  0.1252391  -0.1735146 
-attr(,"offset")
-[1] 0.8341285
-
 > stopifnot(all.equal(coef(model),coef(model2)))
 > stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) ==
 +           length(coef(model, aggregate = "none")[[1]][[1]]))
@@ -235,11 +155,15 @@ Final risk: 13591.79
 [ 11] ........
 Final risk: 13219.00 
 
-	 Generalized Linear Models Fitted via Gradient Boosting
+	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
+glmboostLSS(y ~ x1 + x2, families = StudentTLSS(), control = boost_control(mstop = 10,     trace = TRUE), center = TRUE)
 
+Number of boosting iterations: mstop = 20 20 20 
+Step size:  0.1 
+
+Families:
 
 	 Student's t-distribution: mu (id link) 
 
@@ -250,23 +174,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 20 
-Step size:  0.1 
-Offset:  0.5774545 
-
-Coefficients: 
-(Intercept)          x2 
-  0.2309757  -0.4662895 
-attr(,"offset")
-[1] 0.5774545
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: sigma (log link) 
 
 Loss function: { 
@@ -276,23 +183,6 @@ Loss function: {
  } 
  
 
-Number of boosting iterations: mstop = 20 
-Step size:  0.1 
-Offset:  1.152757 
-
-Coefficients: 
-(Intercept)          x1          x2 
- -0.9775043  -0.1715909   1.9935805 
-attr(,"offset")
-[1] 1.152757
-
-
-	 Generalized Linear Models Fitted via Gradient Boosting
-
-Call:
-glmboost.formula(formula = formula[[names(families)[[j]]]], data = data,     weights = w, center = TRUE, control = control, family = families[[j]])
-
-
 	 Student's t-distribution: df (log link) 
 
 Loss function: { 
@@ -301,17 +191,6 @@ Loss function: {
          (y - mu)^2/(exp(f) * sigma^2))) 
  } 
  
-
-Number of boosting iterations: mstop = 20 
-Step size:  0.1 
-Offset:  0.8341285 
-
-Coefficients: 
-(Intercept)          x2 
-  0.2077862  -0.1735146 
-attr(,"offset")
-[1] 0.8341285
-
 > 
 > ### check formula-interface with lists
 > set.seed(1907)

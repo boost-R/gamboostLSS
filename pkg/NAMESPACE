@@ -24,3 +24,5 @@ S3method(selected, mboostLSS)
 
 S3method(plot, glmboostLSS)
 S3method(plot, gamboostLSS)
+
+S3method(fitted, mboostLSS)

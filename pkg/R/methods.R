@@ -4,35 +4,37 @@ risk <- function(object, ...)
     UseMethod("risk", object)
 
 risk.mboostLSS <- function(object, merge = FALSE, ...){
-    if (merge){
+    lo <- length(unique(mstop(object)))
+    if (merge && lo == 1){
         RES <- sapply(object, function(x) x$risk())
         RES <- as.vector(t(RES))
         class(RES) <- object[[1]]$control$risk
         return(RES)
-    } else {
-        RES <- lapply(object, function(x) x$risk())
-        class(RES) <- object[[1]]$control$risk
-        return(RES)
     }
+    if (merge && lo != 1)
+        warning(sQuote("merge = TRUE"), " not possible for multiple mstops")
+    RES <- lapply(object, function(x) x$risk())
+    class(RES) <- object[[1]]$control$risk
+    return(RES)
 }
 
 coef.mboostLSS <- function(object, ...)
     lapply(object, coef, ...)
 
 mstop.mboostLSS <- function(object, ...){
-    RET <- sapply(object, function(x) x$mstop())[length(object)]
-    names(RET) <- NULL
+    RET <- sapply(object, function(x) x$mstop())
+    names(RET) <- names(object)
     RET
 }
 
 mstop.oobag <- function(object, ...){
-    RET <- sapply(object, which.min)[length(object)]
-    names(RET) <- NULL
+    RET <- sapply(object, which.min)
+    names(RET) <- names(object)
     RET
 }
 
 "[.mboostLSS" <- function(x, i, return = TRUE, ...) {
-    stopifnot(length(i) == 1 && i > 0)
+    stopifnot((length(i) == 1 | length(i) == length(model)) && i > 0)
     attr(x, "subset")(i)
     if (return) return(x)
     invisible(NULL)
@@ -94,3 +96,24 @@ print.mboostLSS <- function(x, ...){
     lapply(x, function(xi) show(xi$family))
     invisible(x)
 }
+
+
+fitted.mboostLSS <- function(object, parameter = names(object), ...){
+    if (is.character(parameter)) {
+        idx <- sapply(parameter, function(w) {
+            wi <- grep(w, names(object), fixed = TRUE)
+            if (length(wi) > 0) return(wi)
+            return(NA)
+        })
+        if (any(is.na(idx)))
+            warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
+        parameter <- idx
+    }
+    sapply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
+           mod = object, ...)
+}
+
+do_trace <- function(current, mstart, mstop, risk,
+                     linebreak = options("width")$width/2)
+    mboost:::do_trace(m = current, mstop = mstart, risk = risk,
+                      step = linebreak, width = mstop)
