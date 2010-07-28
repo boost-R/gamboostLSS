@@ -185,11 +185,15 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                 ## update j-th component to "m-th" boosting step
                 fit[[j]][mvals[[j]][i]]
             }
-            if (trace)
+            if (trace){
+                ## which is the current risk? rev() needed to get the last
+                ## list element with maximum length
+                whichRisk <- names(which.max(rev(lapply(lapply(fit, function(x) x$risk()), length))))
                 do_trace(current = max(sapply(mvals, function(x) x[i])),
                          mstart = ifelse(firstRun, 0, max(start)),
                          mstop = ifelse(firstRun, max(niter) + 1, max(niter)),
-                         risk = fit[[length(fit)]]$risk())
+                         risk = fit[[whichRisk]]$risk())
+            }
         }
         return(TRUE)
     }
@@ -216,14 +220,27 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         if (length(i) == 1)
             i <- rep(i, length(fit))
 
-        minStart <- min(mstop(fit), i)
+        msf <- mstop(fit)
+        niter <- i - msf
+        minStart <- min(msf[niter != 0], i[niter != 0])
+
+        ## check if minStart bigger than mstop of parameters that are not touched
+        #if (length(msf[niter == 0]) > 0 && minStart < min(msf[niter == 0]))
+           #minStart <- min(msf[niter == 0])
 
         ## reduce models first (when necessary)
-        if (any(mstop(fit) > minStart)){
-            lapply(fit, function(obj) obj$subset(minStart))
+        if (any(msf > minStart)){
+            cf <- class(fit)
+            class(fit) <- "list" ## needed to use [] operator for lists
+
+            #cat("processed parameters: ", paste(names(fit[msf > minStart]),
+            #                                    collapse = ", "), "\n")
+
+            lapply(fit[msf > minStart],
+                   function(obj) obj$subset(minStart))
 
             ## remove additional boosting iterations from environments
-            lapply(fit, function(obj){
+            lapply(fit[msf > minStart], function(obj){
                    evalq({xselect <- xselect[1:mstop];
                           mrisk <- mrisk[1:mstop];
                           ens <- ens[1:mstop];
@@ -231,13 +248,18 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                          environment(obj$subset))
                })
 
+            class(fit) <- cf
+
             cat("Model first reduced to mstop = ", minStart, ".\n",
                 "Now continue ...\n", sep ="")
         }
 
         ## now increase models (when necessary)
         if (any(i > minStart)){
-            tmp <- iBoost(i - minStart)
+            ## set negative values to 0
+            ## (only applicable if some parameters do not need to be touched
+            inc <- ifelse(i - minStart > 0, i - minStart, 0)
+            tmp <- iBoost(inc)
         }
 
         mstop <<- i

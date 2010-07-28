@@ -101,6 +101,45 @@ model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 stopifnot(all.equal(risk(model), risk(model2)))
 
 
+### check subset method where only bigger mstop-value is touched
+# increase model
+ms <- list(mu = 10, sigma = 20)
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = ms, trace = TRUE),
+                     center = TRUE)
+model[c(10,25)]
+mstop(model)
+ms <- list(mu = 10, sigma = 25)
+model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                      control = boost_control(mstop = ms, trace = TRUE),
+                      center = TRUE)
+stopifnot(all.equal(risk(model), risk(model2)))
+
+# reduce model
+ms <- list(mu = 10, sigma = 20)
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = ms, trace = TRUE),
+                     center = TRUE)
+model[c(10,15)]
+mstop(model)
+ms <- list(mu = 10, sigma = 15)
+model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                      control = boost_control(mstop = ms, trace = TRUE),
+                      center = TRUE)
+stopifnot(all.equal(risk(model), risk(model2)))
+
+# reduce such that mu needs to be touced again
+ms <- list(mu = 10, sigma = 20)
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = ms, trace = TRUE),
+                     center = TRUE)
+model[c(10,9)]
+mstop(model)
+ms <- list(mu = 10, sigma = 9)
+model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                      control = boost_control(mstop = ms, trace = TRUE),
+                      center = TRUE)
+stopifnot(all.equal(risk(model), risk(model2)))
 
 ### check multiple values of nu
 
