@@ -1,38 +1,5 @@
 ### Methods
 
-risk <- function(object, ...)
-    UseMethod("risk", object)
-
-risk.mboostLSS <- function(object, merge = FALSE, ...){
-    lo <- length(unique(mstop(object)))
-    if (merge && lo == 1){
-        RES <- sapply(object, function(x) x$risk())
-        RES <- as.vector(t(RES))
-        class(RES) <- object[[1]]$control$risk
-        return(RES)
-    }
-    if (merge && lo != 1)
-        warning(sQuote("merge = TRUE"), " not possible for multiple mstops")
-    RES <- lapply(object, function(x) x$risk())
-    class(RES) <- object[[1]]$control$risk
-    return(RES)
-}
-
-coef.mboostLSS <- function(object, ...)
-    lapply(object, coef, ...)
-
-mstop.mboostLSS <- function(object, ...){
-    RET <- sapply(object, function(x) x$mstop())
-    names(RET) <- names(object)
-    RET
-}
-
-mstop.oobag <- function(object, ...){
-    RET <- sapply(object, which.min)
-    names(RET) <- names(object)
-    RET
-}
-
 "[.mboostLSS" <- function(x, i, return = TRUE, ...) {
     stopifnot((length(i) == 1 | length(i) == length(x)) && i > 0)
     attr(x, "subset")(i)
@@ -40,24 +7,75 @@ mstop.oobag <- function(object, ...){
     invisible(NULL)
 }
 
+coef.mboostLSS <- function(object, which = NULL,
+                           aggregate = c("sum", "cumsum", "none"),
+                           parameter = names(object), ...){
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
+    lapply(parameter, function(i, object)
+             coef(object[[i]], which = which,
+                  aggregate = aggregate, ...),
+           object = object)
+}
 
-selected.mboostLSS <- function(object, ...){
+coef.glmboostLSS <- function(object, which = NULL,
+                             aggregate = c("sum", "cumsum", "none"),
+                             off2int = FALSE, parameter = names(object), ...){
+    coef.mboostLSS(object, which = which, aggregate = aggregate,
+                   parameter = parameter, off2int = off2int, ...)
+}
+
+
+risk <- function(object, ...)
+    UseMethod("risk", object)
+
+risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...){
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
+
+    lo <- length(unique(mstop(object)))
+    if (merge && lo == 1){
+        RES <- sapply(parameter, function(i, object)  object[[i]]$risk(),
+                      object = object)
+        RES <- as.vector(t(RES))
+        class(RES) <- object[[1]]$control$risk
+        return(RES)
+    }
+    if (merge && lo != 1)
+        warning(sQuote("merge = TRUE"), " not possible for multiple mstops")
+    RES <- lapply(parameter, function(i, object)  object[[i]]$risk(),
+                  object = object)
+    class(RES) <- object[[1]]$control$risk
+    return(RES)
+}
+
+mstop.mboostLSS <- function(object, parameter = names(object), ...){
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
+    RET <- sapply(parameter, function(i, object)  object[[i]]$mstop(),
+                  object = object)
+    names(RET) <- names(object)
+    RET
+}
+
+mstop.oobag <- function(object, parameter = names(object), ...){
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
+    RET <- sapply(parameter, function(i, object)  which.min(object[[i]]),
+                  object = object)
+    names(RET) <- names(object)
+    RET
+}
+
+selected.mboostLSS <- function(object){
     lapply(object, selected)
 }
 
 
 plot.glmboostLSS <- function(x, main = names(x), parameter = names(x),
                              off2int = FALSE, ...){
-    if (is.character(parameter)) {
-        idx <- sapply(parameter, function(w) {
-            wi <- grep(w, names(x), fixed = TRUE)
-            if (length(wi) > 0) return(wi)
-            return(NA)
-        })
-        if (any(is.na(idx)))
-            warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
-        parameter <- idx
-    }
+    if (is.character(parameter))
+        parameter <- extract_parameter(x, parameter)
     lapply(parameter, function(i, x, main, off2int,  ...)
                     plot(x[[i]], main = main[[i]], off2int = off2int,  ...),
            x = x, main = main, off2int = off2int, ...)
@@ -66,16 +84,8 @@ plot.glmboostLSS <- function(x, main = names(x), parameter = names(x),
 
 
 plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
-    if (is.character(parameter)) {
-        idx <- sapply(parameter, function(w) {
-            wi <- grep(w, names(x), fixed = TRUE)
-            if (length(wi) > 0) return(wi)
-            return(NA)
-        })
-        if (any(is.na(idx)))
-            warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
-        parameter <- idx
-    }
+    if (is.character(parameter))
+        parameter <- extract_parameter(x, parameter)
     lapply(parameter, function(i, x, main, ...)
                     plot(x[[i]], main = main[[i]], ...),
            x = x, main = main, ...)
@@ -99,21 +109,46 @@ print.mboostLSS <- function(x, ...){
 
 
 fitted.mboostLSS <- function(object, parameter = names(object), ...){
-    if (is.character(parameter)) {
-        idx <- sapply(parameter, function(w) {
-            wi <- grep(w, names(object), fixed = TRUE)
-            if (length(wi) > 0) return(wi)
-            return(NA)
-        })
-        if (any(is.na(idx)))
-            warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
-        parameter <- idx
-    }
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
     sapply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
            mod = object, ...)
 }
 
+
+predict.mboostLSS <- function(object, newdata = NULL,
+                              type = c("link", "response", "class"),
+                              which = NULL,
+                              aggregate = c("sum", "cumsum", "none"),
+                              parameter = names(object), ...) {
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
+    sapply(parameter, function(i, mod, ...)
+             predict(mod[[i]], newdata = newdata, type = type, which = which,
+                     aggregate = aggregate, ...),
+           mod = object, ...)
+}
+
+
+
+
+
+
+
+### helpers
 do_trace <- function(current, mstart, mstop, risk,
                      linebreak = options("width")$width/2)
     mboost:::do_trace(m = current, mstop = mstart, risk = risk,
                       step = linebreak, width = mstop)
+
+
+extract_parameter <- function(x, parameter) {
+    idx <- sapply(parameter, function(w) {
+        wi <- grep(w, names(x), fixed = TRUE)
+        if (length(wi) > 0) return(wi)
+        return(NA)
+    })
+    if (any(is.na(idx)))
+        warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
+    parameter <- idx
+}

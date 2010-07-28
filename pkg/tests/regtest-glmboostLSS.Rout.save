@@ -59,7 +59,7 @@ The following object(s) are masked from 'package:survival':
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboostLSS(y ~ x1 + x2, families = StudentTLSS(), control = boost_control(mstop = 10),     center = TRUE)
+glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 10), center = TRUE)
 
 Number of boosting iterations: mstop = 20 20 20 
 Step size:  0.1 
@@ -107,7 +107,7 @@ Now continue ...
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboostLSS(y ~ x1 + x2, families = StudentTLSS(), control = boost_control(mstop = 20),     center = TRUE)
+glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 20), center = TRUE)
 
 Number of boosting iterations: mstop = 10 10 10 
 Step size:  0.1 
@@ -158,7 +158,7 @@ Final risk: 13219.00
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboostLSS(y ~ x1 + x2, families = StudentTLSS(), control = boost_control(mstop = 10,     trace = TRUE), center = TRUE)
+glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 10, trace = TRUE), center = TRUE)
 
 Number of boosting iterations: mstop = 20 20 20 
 Step size:  0.1 

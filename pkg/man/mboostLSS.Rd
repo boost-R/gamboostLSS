@@ -13,10 +13,14 @@
   boosting techniques.
 }
 \usage{
-mboostLSS(...)
-glmboostLSS(...)
-gamboostLSS(...)
-blackboostLSS(...)
+mboostLSS(formula, data = list(), families = list(),
+          control = boost_control(), weights = NULL, ...)
+glmboostLSS(formula, data = list(), families = list(),
+            control = boost_control(), weights = NULL, ...)
+gamboostLSS(formula, data = list(), families = list(),
+            control = boost_control(), weights = NULL, ...)
+blackboostLSS(formula, data = list(), families = list(),
+              control = boost_control(), weights = NULL, ...)
 
 ## fit function:
 mboostLSS_fit(formula, data = list(), families = list(),

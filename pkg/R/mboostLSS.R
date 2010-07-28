@@ -1,34 +1,44 @@
 ###
 # Generic implementation for multiple component LSS-models
 
-# do.call("glmboost", list(...))
-
 ### (glm/gam/m/black)boostLSS functions
 
-mboostLSS <- function(...){
+mboostLSS <- function(formula, data = list(), families = list(),
+                      control = boost_control(), weights = NULL, ...){
     cl <- match.call()
-    fit <- mboostLSS_fit(..., fun = mboost)
+    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                         control = control, weights = weights, ...,
+                         fun = mboost)
     attr(fit, "call") <- cl
     return(fit)
 }
 
-glmboostLSS <- function(...){
+glmboostLSS <- function(formula, data = list(), families = list(),
+                        control = boost_control(), weights = NULL, ...){
     cl <- match.call()
-    fit <- mboostLSS_fit(..., fun = glmboost)
+    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                         control = control, weights = weights, ...,
+                         fun = glmboost)
     attr(fit, "call") <- cl
     return(fit)
 }
 
-gamboostLSS <- function(...){
+gamboostLSS <- function(formula, data = list(), families = list(),
+                        control = boost_control(), weights = NULL, ...){
     cl <- match.call()
-    fit <- mboostLSS_fit(..., fun = gamboost)
+    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                         control = control, weights = weights, ...,
+                         fun = gamboost)
     attr(fit, "call") <- cl
     return(fit)
 }
 
-blackboostLSS <- function(...){
+blackboostLSS <- function(formula, data = list(), families = list(),
+                          control = boost_control(), weights = NULL, ...){
     cl <- match.call()
-    fit <- mboostLSS_fit(..., fun = blackboost)
+    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                         control = control, weights = weights, ...,
+                         fun = blackboost)
     attr(fit, "call") <- cl
     return(fit)
 }
@@ -212,30 +222,14 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         if (any(mstop(fit) > minStart)){
             lapply(fit, function(obj) obj$subset(minStart))
 
+            ## remove additional boosting iterations from environments
             lapply(fit, function(obj){
-                   #assign("mstop", minStart,
-                   #       environment(obj$subset))
                    evalq({xselect <- xselect[1:mstop];
                           mrisk <- mrisk[1:mstop];
                           ens <- ens[1:mstop];
                           nuisance <- nuisance[1:mstop]},
                          environment(obj$subset))
                })
-
-            lapply(fit, function(obj)
-                   get("ens", environment(obj$subset))
-                   )
-
-
-            #mods <- 1:length(fit)
-            #for (j in mods){
-            #    ## update value of nuisance parameters
-            #    for (k in mods[-j])
-            #        assign(names(fit)[k], fitted(fit[[k]], type = "response"),
-            #               environment(get("ngradient", environment(fit[[j]]$subset))))
-            #    ## update value of u, i.e. compute ngradient with new nuisance parameters
-            #    evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
-            #}
 
             cat("Model first reduced to mstop = ", minStart, ".\n",
                 "Now continue ...\n", sep ="")

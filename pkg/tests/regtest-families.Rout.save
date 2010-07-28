@@ -165,7 +165,7 @@ attr(,"offset")
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1],     sigma = exp(res[2]), df = exp(res[3])), data = data, control = boost_control(mstop = 10))
+glmboostLSS(formula = y ~ x1 + x2, data = data, families = StudentTLSS(mu = res[1],     sigma = exp(res[2]), df = exp(res[3])), control = boost_control(mstop = 10))
 
 Number of boosting iterations: mstop = 100 100 100 
 Step size:  0.1 
@@ -289,7 +289,7 @@ Final risk: 2234.906
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),     control = boost_control(trace = TRUE))
+glmboostLSS(formula = Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),     control = boost_control(trace = TRUE))
 
 Number of boosting iterations: mstop = 350 350 
 Step size:  0.1 
@@ -358,7 +358,7 @@ Final risk: 1773.656
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = WeibullLSS(),     control = boost_control(trace = TRUE))
+glmboostLSS(formula = Surv(time, status) ~ x1 + x2 + x3, families = WeibullLSS(),     control = boost_control(trace = TRUE))
 
 Number of boosting iterations: mstop = 300 300 
 Step size:  0.1 

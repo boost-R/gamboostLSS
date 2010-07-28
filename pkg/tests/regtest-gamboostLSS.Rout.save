@@ -145,7 +145,7 @@ attr(,"offset")
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat, control = boost_control(mstop = 200))
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 200))
 
 Number of boosting iterations: mstop = 400 400 
 Step size:  0.1 
@@ -173,7 +173,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 	 LSS Models fitted via Model-based Boosting
 
 Call:
-gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat, control = boost_control(mstop = 200))
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 200))
 
 Number of boosting iterations: mstop = 600 600 
 Step size:  0.1 
