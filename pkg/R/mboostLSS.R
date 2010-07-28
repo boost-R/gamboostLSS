@@ -67,15 +67,10 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         formula <- tmp
     }
 
-
-    if (is.list(control$risk) || is.list(control$center) || is.list(control$trace))
-        stop(sQuote("risk"),", ", sQuote("center"), " and ", sQuote("trace") ,
-             " cannot be lists in ", sQuote("boost_control"))
-
     mstop <- control$mstop
     control$mstop <- 1
 
-    if (is.list(mstop)){
+    if (is.list(mstop)) {
         if (!all(names(mstop) %in% names(families)) ||
             length(unique(names(mstop))) != length(names(families)))
             stop(sQuote("mstop"), " can be either a scalar or a named list",
@@ -92,7 +87,28 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         names(mstop) <- names(families)
     }
 
-    ## <FIXME> Add checks etc. for nu (as a list) here!
+    nu <- control$nu
+
+    if (is.list(nu)) {
+        if (!all(names(nu) %in% names(families)) ||
+            length(unique(names(nu))) != length(names(families)))
+            stop(sQuote("nu"), " can be either a scalar or a named list",
+                 " of nu values with same names as ",  sQuote("families"), "in ",
+                 sQuote("boost_control"))
+        nu <- nu[names(families)] ## sort in order of families
+        nu <- unlist(nu)
+    } else {
+        if(length(nu) != 1)
+            stop(sQuote("nu"), " can be either a scalar or a named list",
+                 " of nu values with same names as ",  sQuote("families"), "in ",
+                 sQuote("boost_control"))
+        nu <- rep(nu, length(families))
+        names(nu) <- names(families)
+    }
+
+    if (is.list(control$risk) || is.list(control$center) || is.list(control$trace))
+        stop(sQuote("risk"),", ", sQuote("center"), " and ", sQuote("trace") ,
+             " cannot be lists in ", sQuote("boost_control"))
 
     trace <- control$trace
     control$trace <- FALSE
@@ -125,6 +141,8 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                 assign(names(fit)[k], fitted(fit[[k]], type = "response"),
                        environment(families[[j]]@ngradient))
         }
+        ## use appropriate nu for the model
+        control$nu <- nu[[j]]
         ## <FIXME> Do we need to recompute ngradient?
         fit[[j]] <- do.call(fun, list(formula[[names(families)[[j]]]],
                                       data = data, family = families[[j]],

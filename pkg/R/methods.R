@@ -34,7 +34,7 @@ mstop.oobag <- function(object, ...){
 }
 
 "[.mboostLSS" <- function(x, i, return = TRUE, ...) {
-    stopifnot((length(i) == 1 | length(i) == length(model)) && i > 0)
+    stopifnot((length(i) == 1 | length(i) == length(x)) && i > 0)
     attr(x, "subset")(i)
     if (return) return(x)
     invisible(NULL)

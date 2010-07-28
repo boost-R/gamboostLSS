@@ -64,8 +64,6 @@ model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                       center = TRUE)
 
 model[c(20, 30)]   # check if two values can be specified
-#cbind(1:20, risk(model)[[1]] - risk(modela)[[1]])
-
 ms <- list(mu = 20, sigma = 30)
 modela <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = ms, trace = TRUE),
@@ -90,3 +88,25 @@ model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                       control = boost_control(mstop = 20, trace = TRUE),
                       center = TRUE)
 stopifnot(all.equal(risk(model), risk(model2)))
+
+ms <- list(mu = 10, sigma = 20)
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = ms, trace = TRUE),
+                     center = TRUE)
+model[c(5,10)]
+ms <- list(mu = 5, sigma = 10)
+model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                      control = boost_control(mstop = ms, trace = TRUE),
+                      center = TRUE)
+stopifnot(all.equal(risk(model), risk(model2)))
+
+
+
+### check multiple values of nu
+
+nus <- list(mu = 0, sigma = 0.2)
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                      control = boost_control(mstop = 10, nu = nus, trace = TRUE),
+                      center = TRUE)
+stopifnot(all(coef(model)[[1]] == 0))
+stopifnot(any(coef(model)[[2]] != 0))
