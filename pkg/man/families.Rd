@@ -53,7 +53,7 @@ StudentTDf(mu = NULL, sigma = NULL, df = NULL)
 
 }
 \value{
-  An object of type class \code{families}.
+  An object of class \code{families}.
 }
 
 \seealso{

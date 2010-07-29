@@ -35,7 +35,8 @@ mboostLSS_fit(formula, data = list(), families = list(),
     to one component of the LSS model. The names must be the same as in
     the family (see example for details). }
   \item{data}{ a data frame containing the variables in the model.}
-  \item{families}{ a list of mboost-\code{\link{Family}}s. }
+  \item{families}{ a list of mboost-\code{\link{Family}}s constructed
+    via \code{\link{makeFamilies}}. }
   \item{control}{ a list of parameters controlling the algorithm. For
     more details see \code{\link{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }
@@ -70,9 +71,19 @@ mboostLSS_fit(formula, data = list(), families = list(),
   boosting model is fitted for each component.
 
   \code{mboostLSS}, \code{glmboostLSS}, \code{gamboostLSS} and
-  \code{blackboostLSS} call \code{mboostLSS_fit} with \code{fun}
-  being the corresponding \code{\link{mboost}} function, i.e., the same
-  function without \code{LSS}. For possible arguments
+  \code{blackboostLSS} all call \code{mboostLSS_fit} while \code{fun} is
+  the corresponding \code{\link{mboost}} function, i.e., the same
+  function without \code{LSS}. For further possible arguments see
+  these functions as well as \code{\link{mboost_fit}}.
+
+  In all four fitting functions it is possible to specify one or
+  multiple \code{mstop} and \code{nu} values via
+  \code{\link{boost_control}}. In the case of one value, this value is
+  used for all parameters of the LSS model. Alternatively, a named
+  list with seperate values for each component can be used to specify a
+  seperate value for each parameter of the LSS model. The names of the
+  list must correspond to the names of the parameters of the LSS family.
+
 }
 \value{
   An object of class \code{mboostLSS} with corresponding methods to
@@ -121,12 +132,12 @@ names(NBinomialLSS())      # names of the family
 # Note: Multiple formulas must be specified via a _named list_
 #       where the names correspond to the names of the family
 #       (see above)
-model <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
+model2 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                                     sigma = y ~ x3 + x4 + x5 + x6),
                      families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 400),
+                     control = boost_control(mstop = 400, trace = TRUE),
                      center = TRUE)
-coef(model, off2int = TRUE)
+coef(model2, off2int = TRUE)
 
 
 
@@ -141,6 +152,25 @@ model <- glmboostLSS(y ~ ., data = dat,
 coef(model)
 log(mean(mu))
 log(mean(sigma))
+
+\dontrun{## (only as is takes some time)
+### use different mstop values
+model3 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
+                                    sigma = y ~ x3 + x4 + x5 + x6),
+                     families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = list(mu = 400,
+                                                          sigma = 300),
+                                             trace  = TRUE),
+                     center = TRUE)
+coef(model3, off2int = TRUE)
+}
+### Alternatively we can subset model2:
+# here it is assumed that the first element in the vector corresponds to
+# the first parameter of model2 etc.
+model2[c(400, 300)]
+par(mfrow = c(1,2))
+plot(model2, xlim = c(0, max(mstop(model2))))
+## all.equal(coef(model2), coef(model3)) # same!
 }
 
 \keyword{models}

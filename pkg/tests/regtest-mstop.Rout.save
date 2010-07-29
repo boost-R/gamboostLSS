@@ -244,6 +244,137 @@ Final risk: 3232.999
 > stopifnot(all.equal(risk(model), risk(model2)))
 > 
 > 
+> ### check subset method where only bigger mstop-value is touched
+> # increase model
+> ms <- list(mu = 10, sigma = 20)
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = ms, trace = TRUE),
++                      center = TRUE)
+[  1] ..................
+Final risk: 3197.832 
+> model[c(10,25)]
+[21] ...
+Final risk: 3193.834 
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+glmboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = ms, trace = TRUE), center = TRUE)
+
+Number of boosting iterations: mstop = 10 25 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> mstop(model)
+   mu sigma 
+   10    25 
+> ms <- list(mu = 10, sigma = 25)
+> model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                       control = boost_control(mstop = ms, trace = TRUE),
++                       center = TRUE)
+[  1] .......................
+Final risk: 3193.834 
+> stopifnot(all.equal(risk(model), risk(model2)))
+> 
+> # reduce model
+> ms <- list(mu = 10, sigma = 20)
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = ms, trace = TRUE),
++                      center = TRUE)
+[  1] ..................
+Final risk: 3197.832 
+> model[c(10,15)]
+Model first reduced to mstop = 15.
+Now continue ...
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+glmboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = ms, trace = TRUE), center = TRUE)
+
+Number of boosting iterations: mstop = 10 15 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> mstop(model)
+   mu sigma 
+   10    15 
+> ms <- list(mu = 10, sigma = 15)
+> model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                       control = boost_control(mstop = ms, trace = TRUE),
++                       center = TRUE)
+[  1] .............
+Final risk: 3202.876 
+> stopifnot(all.equal(risk(model), risk(model2)))
+> 
+> # reduce such that mu needs to be touced again
+> ms <- list(mu = 10, sigma = 20)
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = ms, trace = TRUE),
++                      center = TRUE)
+[  1] ..................
+Final risk: 3197.832 
+> model[c(10,9)]
+Model first reduced to mstop = 9.
+Now continue ...
+
+Final risk: 3210.562 
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+glmboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = ms, trace = TRUE), center = TRUE)
+
+Number of boosting iterations: mstop = 10 9 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> mstop(model)
+   mu sigma 
+   10     9 
+> ms <- list(mu = 10, sigma = 9)
+> model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                       control = boost_control(mstop = ms, trace = TRUE),
++                       center = TRUE)
+[  1] ........
+Final risk: 3210.562 
+> stopifnot(all.equal(risk(model), risk(model2)))
 > 
 > ### check multiple values of nu
 > 
