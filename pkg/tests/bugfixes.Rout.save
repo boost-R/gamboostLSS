@@ -1,0 +1,70 @@
+
+R version 2.11.1 (2010-05-31)
+Copyright (C) 2010 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ###
+> # Bugfixes
+> 
+> require("gamboostLSS")
+Loading required package: gamboostLSS
+Loading required package: mboost
+Loading required package: survival
+Loading required package: splines
+> 
+> ## subset method was missing if initial mstop = 1
+> set.seed(1907)
+> x1 <- rnorm(1000)
+> x2 <- rnorm(1000)
+> x3 <- rnorm(1000)
+> x4 <- rnorm(1000)
+> x5 <- rnorm(1000)
+> x6 <- rnorm(1000)
+> mu    <- exp(1.5 + x1^2 +0.5 * x2 - 3 * sin(x3) -1 * x4)
+> sigma <- exp(-0.2 * x4 +0.2 * x5 +0.4 * x6)
+> y <- numeric(1000)
+> for( i in 1:1000)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 1))
+Warning message:
+In asMethod(object) :
+  as(.,"dsCMatrix") is deprecated; do use as(., "symmetricMatrix")
+> model[10]
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 1))
+
+Number of boosting iterations: mstop = 10 10 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> 

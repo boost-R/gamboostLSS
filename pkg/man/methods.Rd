@@ -40,7 +40,7 @@
 
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
-\method{selected}{mboostLSS}(object)
+\method{selected}{mboostLSS}(object, parameter = names(object), ...)
 
 \method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x),
                            off2int = FALSE, ...)

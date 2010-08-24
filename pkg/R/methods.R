@@ -12,10 +12,13 @@ coef.mboostLSS <- function(object, which = NULL,
                            parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    lapply(parameter, function(i, object)
-             coef(object[[i]], which = which,
-                  aggregate = aggregate, ...),
-           object = object)
+    RET <- lapply(parameter, function(i, object)
+                  coef(object[[i]], which = which,
+                       aggregate = aggregate, ...),
+                  object = object)
+    if (length(RET) == 1)
+        RET <- RET[[1]]
+    return(RET)
 }
 
 coef.glmboostLSS <- function(object, which = NULL,
@@ -54,8 +57,10 @@ mstop.mboostLSS <- function(object, parameter = names(object), ...){
         parameter <- extract_parameter(object, parameter)
     RET <- sapply(parameter, function(i, object)  object[[i]]$mstop(),
                   object = object)
-    names(RET) <- names(object)
-    RET
+    names(RET) <- names(object)[parameter]
+    if (length(RET) == 1)
+        RET <- RET[[1]]
+    return(RET)
 }
 
 mstop.oobag <- function(object, parameter = names(object), ...){
@@ -63,12 +68,21 @@ mstop.oobag <- function(object, parameter = names(object), ...){
         parameter <- extract_parameter(object, parameter)
     RET <- sapply(parameter, function(i, object)  which.min(object[[i]]),
                   object = object)
-    names(RET) <- names(object)
-    RET
+    names(RET) <- names(object)[parameter]
+    if (length(RET) == 1)
+        RET <- RET[[1]]
+    return(RET)
 }
 
-selected.mboostLSS <- function(object){
-    lapply(object, selected)
+selected.mboostLSS <- function(object, parameter = names(object), ...){
+    if (is.character(parameter))
+        parameter <- extract_parameter(object, parameter)
+    RET <- lapply(parameter, function(i, object)  selected(object[[i]]),
+                  object = object)
+    names(RET) <- names(object)[parameter]
+    if (length(RET) == 1)
+        RET <- RET[[1]]
+    return(RET)
 }
 
 

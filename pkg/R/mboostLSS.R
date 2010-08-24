@@ -198,18 +198,19 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         return(TRUE)
     }
 
-    if (all(mstop == 1)){
-        class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
-        return(fit)
+    #if (all(mstop == 1)){
+    #    class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
+    #    return(fit)
+    #}
+
+    if (any(mstop > 1)){
+        ## actually go for initial mstop iterations!
+        firstRun <- TRUE
+        tmp <- iBoost(mstop - 1)
     }
 
-    ### actually go for initial mstop iterations!
-    firstRun <- TRUE
-    tmp <- iBoost(mstop - 1)
     firstRun <- FALSE
-
     class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
-
 
     ### update to a new number of boosting iterations mstop
     ### i <= mstop means less iterations than current
