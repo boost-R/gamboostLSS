@@ -12,10 +12,10 @@
 \alias{StudentTDf}
 
 \title{
-  Families for LSS Models
+  Families for GAMLSS models
 }
 \description{
-  Negative binomial and Student's t distribution for LSS models fitted
+  Negative binomial and Student's t distribution for GAMLSS models fitted
   via boosting.
 }
 \usage{

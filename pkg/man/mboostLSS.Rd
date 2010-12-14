@@ -6,10 +6,10 @@
 \alias{mboostLSS_fit}
 
 \title{
-  Fitting mboostLSS models
+  Fitting mboostLSS Models
 }
 \description{
-  Functions for fitting LSS (location, shape and scale) models using
+  Functions for fitting GAMLSS (generalized additive models for location, shape and scale) using
   boosting techniques.
 }
 \usage{
@@ -53,21 +53,24 @@ mboostLSS_fit(formula, data = list(), families = list(),
     \code{mboost_fit}. }
 }
 \details{
-  \code{glmboostLSS} uses \code{\link{glmboost}} to fit the components
-  of an LSS (location, shape and scale) model, i.e., a component-wise
+  For information on GAMLSS theory see (Rigby and Stasinopoulos, 2005), 
+  or the information provided at \url{http://gamlss.org}.
+  
+  \code{glmboostLSS} uses \code{\link{glmboost}} to fit thedistribution parameters
+  of an GAMLSS (location, shape and scale) model, i.e., a component-wise
   linear boosting model is fitted for each component. Fitting is achieved
   by iterating the updates of the single components and using the fitted
   values in the other components.
 
-  \code{gamboostLSS} uses \code{\link{gamboost}} to fit the components
-  of an LSS (location, shape and scale) model, i.e., a component-wise
+  \code{gamboostLSS} uses \code{\link{gamboost}} to fit the distribution parameters
+  of an GAMLSS  (location, shape and scale) model, i.e., a component-wise
   additive boosting model is fitted for each component.
 
-  \code{mboostLSS} uses \code{\link{mboost}} to fit the components
-  of an LSS (location, shape and scale) model.
+  \code{mboostLSS} uses \code{\link{mboost}} to fit the distribution parameters
+  of an GAMLSS  (location, shape and scale) model.
 
-  \code{blackboostLSS} uses \code{\link{blackboost}} to fit the components
-  of an LSS (location, shape and scale) model, i.e., a tree-based
+  \code{blackboostLSS} uses \code{\link{blackboost}} to fit the distribution parameters
+  of an GAMLSS (location, shape and scale) model, i.e., a tree-based
   boosting model is fitted for each component.
 
   \code{mboostLSS}, \code{glmboostLSS}, \code{gamboostLSS} and
@@ -79,10 +82,10 @@ mboostLSS_fit(formula, data = list(), families = list(),
   In all four fitting functions it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one value, this value is
-  used for all parameters of the LSS model. Alternatively, a named
+  used for all distribution parameters of the GAMLSS model. Alternatively, a named
   list with seperate values for each component can be used to specify a
-  seperate value for each parameter of the LSS model. The names of the
-  list must correspond to the names of the parameters of the LSS family.
+  seperate value for each parameter of the GAMLSS model. The names of the
+  list must correspond to the names of the distribution parameters of the GAMLSS family.
 
 }
 \value{
@@ -90,7 +93,12 @@ mboostLSS_fit(formula, data = list(), families = list(),
   extract information.
 }
 \references{
-  Put some refs here!
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
+for high-dimensional data - A flexible approach based on boosting. 
+Department of Statistics: Technical Reports, Nr. 98.
+
+Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
+shape (with discussion). Applied Statistics 54, 507-554.
 }
 
 \seealso{
@@ -130,8 +138,8 @@ coef(model, off2int = TRUE)
 names(NBinomialLSS())      # names of the family
 
 # Note: Multiple formulas must be specified via a _named list_
-#       where the names correspond to the names of the family
-#       (see above)
+#       where the names correspond to the names of the distribution parameters
+#       in the family (see above)
 model2 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                                     sigma = y ~ x3 + x4 + x5 + x6),
                      families = NBinomialLSS(), data = dat,
@@ -166,7 +174,7 @@ coef(model3, off2int = TRUE)
 }
 ### Alternatively we can subset model2:
 # here it is assumed that the first element in the vector corresponds to
-# the first parameter of model2 etc.
+# the first distribution parameter of model2 etc.
 model2[c(400, 300)]
 par(mfrow = c(1,2))
 plot(model2, xlim = c(0, max(mstop(model2))))

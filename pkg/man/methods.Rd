@@ -23,7 +23,7 @@
   Methods for mboostLSS
 }
 \description{
-  Methods for LSS models fitted by boosting algorithms.
+  Methods for GAMLSS models fitted by boosting algorithms.
 }
 \usage{
 \method{coef}{mboostLSS}(object, which = NULL,
@@ -75,7 +75,7 @@
      selected in this iteration).}
   \item{parameter}{ This can be either a vector of indizes or a vector
      of parameter names which should be processed. See expamles for
-     details. Per default all parameters of the LSS family are
+     details. Per default all distribution parameters of the GAMLSS family are
      returned. }
   \item{off2int}{ logical indicating whether the offset should be
     added to the intercept (if there is any) or if the offset is
