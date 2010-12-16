@@ -3,7 +3,7 @@
 
 \docType{package}
 \title{
-  Boosting Algorithms for GAMLSS models
+  Boosting algorithms for GAMLSS models
 }
 \description{
   Boosting models for fitting generalized additive models for
