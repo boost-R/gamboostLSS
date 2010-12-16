@@ -17,7 +17,7 @@
   GAMLSS families for accelerated failure time models
 }
 \description{
-  Log-normal, log-logistic and Weibull accelerated failure time models for GAMLSS,  
+  Log-normal, log-logistic and Weibull accelerated failure time models for GAMLSS,
   where both distribution parameters, location (mu) and scale (sigma), are modeled via boosting.
 }
 \usage{
@@ -59,15 +59,15 @@ WeibullSigma(mu = NULL, sigma = NULL)
 }
 
 \seealso{
-  Other families: \code{\link{Families}} (with constructor \code{\link{makeFamilies}})
+  Other families: \code{\link{Families}} (with constructor \code{\link{Families}})
 }
 \references{
 
 Klein, J. P. and M. L. Moeschberger (2003). Survival Analysis: Techniques for Censored and
 Truncated Data (Second ed.). Springer.
 
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - A flexible approach based on boosting. 
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS
+for high-dimensional data - A flexible approach based on boosting.
 Department of Statistics: Technical Reports, Nr. 98.
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and

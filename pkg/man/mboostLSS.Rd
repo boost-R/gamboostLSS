@@ -36,7 +36,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
     the family (see example for details). }
   \item{data}{ a data frame containing the variables in the model.}
   \item{families}{ a list of mboost-\code{\link{Family}}s constructed
-    via \code{\link{makeFamilies}}. }
+    via \code{\link{Families}}. }
   \item{control}{ a list of parameters controlling the algorithm. For
     more details see \code{\link{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }
@@ -53,9 +53,9 @@ mboostLSS_fit(formula, data = list(), families = list(),
     \code{mboost_fit}. }
 }
 \details{
-  For information on GAMLSS theory see (Rigby and Stasinopoulos, 2005), 
+  For information on GAMLSS theory see (Rigby and Stasinopoulos, 2005),
   or the information provided at \url{http://gamlss.org}.
-  
+
   \code{glmboostLSS} uses \code{\link{glmboost}} to fit thedistribution parameters
   of an GAMLSS (location, shape and scale) model, i.e., a component-wise
   linear boosting model is fitted for each component. Fitting is achieved
@@ -93,8 +93,8 @@ mboostLSS_fit(formula, data = list(), families = list(),
   extract information.
 }
 \references{
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - A flexible approach based on boosting. 
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS
+for high-dimensional data - A flexible approach based on boosting.
 Department of Statistics: Technical Reports, Nr. 98.
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and

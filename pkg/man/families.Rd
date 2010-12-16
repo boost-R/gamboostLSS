@@ -1,7 +1,6 @@
 \name{Families}
 \alias{Families}
 
-\alias{makeFamilies}
 \alias{NBinomialLSS}
 \alias{NBinomialMu}
 \alias{NBinomialSigma}
@@ -20,7 +19,7 @@
 }
 \usage{
 ## Constructor function
-makeFamilies(...)
+Families(...)
 
 
 NBinomialLSS(mu = NULL, sigma = NULL)

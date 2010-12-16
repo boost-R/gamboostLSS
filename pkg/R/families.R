@@ -1,7 +1,7 @@
 ###
 # Constructor Function
 
-makeFamilies <- function(...){
+Families <- function(...){
     RET <- list(...)
     class(RET) <- "families"
     ## check if response function is not specified
@@ -95,8 +95,8 @@ NBinomialLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(mu) && mu <= 0))
         stop(sQuote("sigma"), " and ", sQuote("mu"),
              " must be greater than zero")
-    makeFamilies(mu = NBinomialMu(mu = mu, sigma = sigma),
-                 sigma = NBinomialSigma(mu = mu, sigma = sigma))
+    Families(mu = NBinomialMu(mu = mu, sigma = sigma),
+             sigma = NBinomialSigma(mu = mu, sigma = sigma))
 }
 
 
@@ -219,9 +219,9 @@ StudentTLSS <- function(mu = NULL, sigma = NULL, df = NULL){
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(df) && df <= 0))
         stop(sQuote("sigma"), " and ", sQuote("df"),
              " must be greater than zero")
-    makeFamilies(mu = StudentTMu(mu = mu, sigma = sigma, df = df),
-                 sigma = StudentTSigma(mu = mu, sigma = sigma, df = df),
-                 df = StudentTDf(mu = mu, sigma = sigma, df = df))
+    Families(mu = StudentTMu(mu = mu, sigma = sigma, df = df),
+             sigma = StudentTSigma(mu = mu, sigma = sigma, df = df),
+             df = StudentTDf(mu = mu, sigma = sigma, df = df))
 }
 
 
@@ -308,8 +308,8 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL){
 LogNormalLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
-    makeFamilies(mu = LogNormalMu(mu = mu, sigma = sigma),
-                 sigma = LogNormalSigma(mu = mu, sigma = sigma))
+    Families(mu = LogNormalMu(mu = mu, sigma = sigma),
+             sigma = LogNormalSigma(mu = mu, sigma = sigma))
 }
 
 
@@ -402,8 +402,8 @@ LogLogSigma <- function (mu = NULL, sigma = NULL){
 LogLogLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
-    makeFamilies(mu = LogLogMu(mu = mu, sigma = sigma),
-                 sigma = LogLogSigma(mu = mu, sigma = sigma))
+    Families(mu = LogLogMu(mu = mu, sigma = sigma),
+             sigma = LogLogSigma(mu = mu, sigma = sigma))
 }
 
 
@@ -489,6 +489,6 @@ WeibullSigma <- function (mu = NULL, sigma = NULL){
 WeibullLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
-    makeFamilies(mu = WeibullMu(mu = mu, sigma = sigma),
-                 sigma = WeibullSigma(mu = mu, sigma = sigma))
+    Families(mu = WeibullMu(mu = mu, sigma = sigma),
+             sigma = WeibullSigma(mu = mu, sigma = sigma))
 }

@@ -17,7 +17,7 @@ Type 'q()' to quit R.
 
 > ###
 > # check families
-> 
+>
 > require("gamboostLSS")
 Loading required package: gamboostLSS
 Loading required package: mboost
@@ -27,8 +27,8 @@ Loading required package: splines
 Loading required package: gamlss
 Loading required package: gamlss.dist
 Loading required package: gamlss.data
- **********   GAMLSS Version 4.0-0 ********** 
-For more on GAMLSS look at http://www.gamlss.com/ 
+ **********   GAMLSS Version 4.0-0 **********
+For more on GAMLSS look at http://www.gamlss.com/
 Type gamlssNews() to see new features/changes/bug fixes.
 
 Attaching package: 'gamlss'
@@ -37,8 +37,8 @@ The following object(s) are masked from 'package:survival':
 
     ridge
 
-> 
-> 
+>
+>
 > ### check families with only one offset specified (other to choose via optim)
 > set.seed(1907)
 > n <- 5000
@@ -50,99 +50,99 @@ The following object(s) are masked from 'package:survival':
 > y <- rTF(n = n, mu = mu, sigma = sigma, nu = df)
 > data <- data.frame(y = y, x1 = x1, x2 = x2)
 > rm("y", "x1", "x2")
-> 
+>
 > model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5),
 +                      data = data,
 +                      control = boost_control(mstop = 10))
 > coef(model)
 $mu
-(Intercept)          x2 
-  0.1075190  -0.2170573 
+(Intercept)          x2
+  0.1075190  -0.2170573
 attr(,"offset")
 [1] 0.5
 
 $sigma
-(Intercept)          x2 
- -0.7575752   1.5293790 
+(Intercept)          x2
+ -0.7575752   1.5293790
 attr(,"offset")
 [1] 1.151955
 
 $df
-(Intercept)          x2 
-  0.1255079  -0.1746240 
+(Intercept)          x2
+  0.1255079  -0.1746240
 attr(,"offset")
 [1] 0.8369583
 
-> 
+>
 > model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(sigma = 1),
 +                      data = data,
 +                      control = boost_control(mstop = 10))
 > coef(model)
 $mu
-(Intercept)          x2 
-  0.2464260  -0.4974803 
+(Intercept)          x2
+  0.2464260  -0.4974803
 attr(,"offset")
 [1] 0.5774545
 
 $sigma
-(Intercept)          x2 
- -0.4516042   0.9116904 
+(Intercept)          x2
+ -0.4516042   0.9116904
 attr(,"offset")
 [1] 0
 
 $df
-(Intercept)          x2 
-  0.3149720  -0.6358598 
+(Intercept)          x2
+  0.3149720  -0.6358598
 attr(,"offset")
 [1] -0.1776425
 
-> 
+>
 > model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(df = 4),
 +                      data = data,
 +                      control = boost_control(mstop = 10))
 > coef(model)
 $mu
-(Intercept)          x2 
-  0.1074937  -0.2170063 
+(Intercept)          x2
+  0.1074937  -0.2170063
 attr(,"offset")
 [1] 0.5774545
 
 $sigma
-(Intercept)          x2 
-  -0.889911    1.796536 
+(Intercept)          x2
+  -0.889911    1.796536
 attr(,"offset")
 [1] 1.152757
 
 $df
-(Intercept)          x1          x2 
- 0.07962737  0.06912987 -0.23090205 
+(Intercept)          x1          x2
+ 0.07962737  0.06912987 -0.23090205
 attr(,"offset")
 [1] 1.386294
 
-> 
+>
 > model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5, df = 1),
 +                      data = data,
 +                      control = boost_control(mstop = 10))
 > coef(model)
 $mu
-(Intercept)          x2 
-  0.1953042  -0.3942766 
+(Intercept)          x2
+  0.1953042  -0.3942766
 attr(,"offset")
 [1] 0.5
 
 $sigma
-(Intercept)          x2 
- -0.5914862   1.1940815 
+(Intercept)          x2
+ -0.5914862   1.1940815
 attr(,"offset")
 [1] 0.548112
 
 $df
-(Intercept)          x2 
-  0.1911318  -0.2203124 
+(Intercept)          x2
+  0.1911318  -0.2203124
 attr(,"offset")
 [1] 0
 
-> 
+>
 > ### multivariate minimum for offset
 > loss <- function(df, sigma,y, f){
 +     -1 * (lgamma((df+1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) - 0.5 *
@@ -154,7 +154,7 @@ attr(,"offset")
 +     sigma <- exp(x[[3]])
 +     sum(w * loss(y = y, f = f, df = df, sigma = sigma))
 + }
-> 
+>
 > res <- optim(fn = riski, par = c(0, 1, 1), y = data$y, w = rep(1, length(data$y)))$par
 > model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1], sigma =
 +                                   exp(res[2]), df = exp(res[3])),
@@ -167,65 +167,65 @@ attr(,"offset")
 Call:
 glmboostLSS(formula = y ~ x1 + x2, data = data, families = StudentTLSS(mu = res[1],     sigma = exp(res[2]), df = exp(res[3])), control = boost_control(mstop = 10))
 
-Number of boosting iterations: mstop = 100 100 100 
-Step size:  0.1 
+Number of boosting iterations: mstop = 100 100 100
+Step size:  0.1
 
 Families:
 
-	 Student's t-distribution: mu (id link) 
+	 Student's t-distribution: mu (id link)
 
-Loss function: { 
-     -1 * (lgamma((df + 1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) -  
-         0.5 * log(df) - (df + 1)/2 * log(1 + (y - f)^2/(df *  
-         sigma^2))) 
- } 
- 
+Loss function: {
+     -1 * (lgamma((df + 1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) -
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - f)^2/(df *
+         sigma^2)))
+ }
 
-	 Student's t-distribution: sigma (log link) 
 
-Loss function: { 
-     -1 * (lgamma((df + 1)/2) - f - lgamma(1/2) - lgamma(df/2) -  
-         0.5 * log(df) - (df + 1)/2 * log(1 + (y - mu)^2/(df *  
-         exp(2 * f)))) 
- } 
- 
+	 Student's t-distribution: sigma (log link)
 
-	 Student's t-distribution: df (log link) 
+Loss function: {
+     -1 * (lgamma((df + 1)/2) - f - lgamma(1/2) - lgamma(df/2) -
+         0.5 * log(df) - (df + 1)/2 * log(1 + (y - mu)^2/(df *
+         exp(2 * f))))
+ }
 
-Loss function: { 
-     -1 * (lgamma((exp(f) + 1)/2) - log(sigma) - lgamma(1/2) -  
-         lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +  
-         (y - mu)^2/(exp(f) * sigma^2))) 
- } 
- 
+
+	 Student's t-distribution: df (log link)
+
+Loss function: {
+     -1 * (lgamma((exp(f) + 1)/2) - log(sigma) - lgamma(1/2) -
+         lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +
+         (y - mu)^2/(exp(f) * sigma^2)))
+ }
+
 > coef(model)
 $mu
-(Intercept)          x1          x2 
-   1.244688   -0.897833   -1.634227 
+(Intercept)          x1          x2
+   1.244688   -0.897833   -1.634227
 attr(,"offset")
 [1] 0.5228725
 
 $sigma
-(Intercept)          x1          x2 
- -0.5893432  -0.8476283   2.7681255 
+(Intercept)          x1          x2
+ -0.5893432  -0.8476283   2.7681255
 attr(,"offset")
 [1] 0.3968482
 
 $df
-(Intercept)          x1          x2 
-  0.3707909   0.6081607  -0.6771414 
+(Intercept)          x1          x2
+  0.3707909   0.6081607  -0.6771414
 attr(,"offset")
 [1] 0.7357846
 
-> 
+>
 > ### check survival families
-> 
+>
 > # LogNormalLSS()
 > x1 <- runif(1000)
 > x2 <- runif(1000)
 > x3 <- runif(1000)
 > w <- rnorm(1000)
-> 
+>
 > time <-  exp(3 + 1*x1 +2*x2  + exp(0.2 * x3) * w)
 > status <- rep(1, 1000)
 > (m1 <- survreg(Surv(time, status) ~ x1 + x2 + x3, dist="lognormal"))
@@ -233,24 +233,24 @@ Call:
 survreg(formula = Surv(time, status) ~ x1 + x2 + x3, dist = "lognormal")
 
 Coefficients:
-(Intercept)          x1          x2          x3 
- 2.88588933  1.15548098  2.03642866  0.09869623 
+(Intercept)          x1          x2          x3
+ 2.88588933  1.15548098  2.03642866  0.09869623
 
-Scale= 1.135837 
+Scale= 1.135837
 
 Loglik(model)= -6051   Loglik(intercept only)= -6199.6
-	Chisq= 297.2 on 3 degrees of freedom, p= 0 
-n= 1000 
+	Chisq= 297.2 on 3 degrees of freedom, p= 0
+n= 1000
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogNormalLSS(),
 +                      control = boost_control(trace = TRUE))
-[   1] ...................................... -- risk: 1552.695 
-[  41] ...................................... -- risk: 1543.948 
+[   1] ...................................... -- risk: 1552.695
+[  41] ...................................... -- risk: 1543.948
 [  81] ..................
-Final risk: 1543.569 
+Final risk: 1543.569
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0, 0, 0, 0.2))) < 0.25)
-> 
+>
 > # LogLogLSS()
 > etamu <- 3 + 1*x1 +2*x2
 > etasi <- exp(rep(0.2, 1000))
@@ -262,64 +262,64 @@ Call:
 survreg(formula = Surv(time, status) ~ x1 + x2 + x3, dist = "loglogistic")
 
 Coefficients:
-(Intercept)          x1          x2          x3 
-  3.2109423   0.6543336   2.0799870  -0.2505811 
+(Intercept)          x1          x2          x3
+  3.2109423   0.6543336   2.0799870  -0.2505811
 
-Scale= 1.257854 
+Scale= 1.257854
 
 Loglik(model)= -6681.6   Loglik(intercept only)= -6721.9
-	Chisq= 80.57 on 3 degrees of freedom, p= 0 
-n= 1000 
+	Chisq= 80.57 on 3 degrees of freedom, p= 0
+n= 1000
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),
 +                      control = boost_control(trace = TRUE))
-[   1] ...................................... -- risk: 2246.758 
-[  41] ...................................... -- risk: 2240.168 
+[   1] ...................................... -- risk: 2246.758
+[  41] ...................................... -- risk: 2240.168
 [  81] ..................
-Final risk: 2238.548 
+Final risk: 2238.548
 > model[350]
-[ 101] ...................................... -- risk: 2236.777 
-[ 141] ...................................... -- risk: 2235.907 
-[ 181] ...................................... -- risk: 2235.422 
-[ 221] ...................................... -- risk: 2235.153 
-[ 261] ...................................... -- risk: 2235.003 
-[ 301] ...................................... -- risk: 2234.92 
+[ 101] ...................................... -- risk: 2236.777
+[ 141] ...................................... -- risk: 2235.907
+[ 181] ...................................... -- risk: 2235.422
+[ 221] ...................................... -- risk: 2235.153
+[ 261] ...................................... -- risk: 2235.003
+[ 301] ...................................... -- risk: 2234.92
 [ 341] ........
-Final risk: 2234.906 
+Final risk: 2234.906
 
 	 LSS Models fitted via Model-based Boosting
 
 Call:
 glmboostLSS(formula = Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),     control = boost_control(trace = TRUE))
 
-Number of boosting iterations: mstop = 350 350 
-Step size:  0.1 
+Number of boosting iterations: mstop = 350 350
+Step size:  0.1
 
 Families:
 
-	 Log-Logistic AFT Model: mu (id link) 
+	 Log-Logistic AFT Model: mu (id link)
 
-Loss function: { 
-     logfw <- function(pred) dlogis(pred, log = TRUE) 
-     logSw <- function(pred) plogis(pred, lower.tail = FALSE,  
-         log.p = TRUE) 
-     eta <- (log(y[, 1]) - f)/sigma 
-     -y[, 2] * (logfw(eta) - log(sigma)) - (1 - y[, 2]) * logSw(eta) 
- } 
- 
+Loss function: {
+     logfw <- function(pred) dlogis(pred, log = TRUE)
+     logSw <- function(pred) plogis(pred, lower.tail = FALSE,
+         log.p = TRUE)
+     eta <- (log(y[, 1]) - f)/sigma
+     -y[, 2] * (logfw(eta) - log(sigma)) - (1 - y[, 2]) * logSw(eta)
+ }
 
-	 Log-Logistic AFT Model: sigma (log link) 
 
-Loss function: { 
-     logfw <- function(pred) dlogis(pred, log = TRUE) 
-     logSw <- function(pred) pnorm(pred, lower.tail = FALSE, log.p = TRUE) 
-     eta <- (log(y[, 1]) - mu)/exp(f) 
-     -y[, 2] * (logfw(eta) - f) - (1 - y[, 2]) * logSw(eta) 
- } 
- 
+	 Log-Logistic AFT Model: sigma (log link)
+
+Loss function: {
+     logfw <- function(pred) dlogis(pred, log = TRUE)
+     logSw <- function(pred) pnorm(pred, lower.tail = FALSE, log.p = TRUE)
+     eta <- (log(y[, 1]) - mu)/exp(f)
+     -y[, 2] * (logfw(eta) - f) - (1 - y[, 2]) * logSw(eta)
+ }
+
 > stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.25)
-> 
+>
 > # WeibullLSS()
 > etamu <- 3 + 1*x1 +2*x2
 > etasi <- exp(rep(0.2, 1000))
@@ -332,89 +332,89 @@ Call:
 survreg(formula = Surv(time, status) ~ x1 + x2 + x3, dist = "weibull")
 
 Coefficients:
- (Intercept)           x1           x2           x3 
- 3.047471670  1.008282745  1.934326789 -0.007107055 
+ (Intercept)           x1           x2           x3
+ 3.047471670  1.008282745  1.934326789 -0.007107055
 
-Scale= 1.230652 
+Scale= 1.230652
 
 Loglik(model)= -5567.4   Loglik(intercept only)= -5684.9
-	Chisq= 235.11 on 3 degrees of freedom, p= 0 
-n= 1000 
+	Chisq= 235.11 on 3 degrees of freedom, p= 0
+n= 1000
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3,
 +                      families = WeibullLSS(),
 +                      control = boost_control(trace = TRUE))
-[   1] ...................................... -- risk: 2134.384 
-[  41] ...................................... -- risk: 1904.389 
+[   1] ...................................... -- risk: 2134.384
+[  41] ...................................... -- risk: 1904.389
 [  81] ..................
-Final risk: 1858.757 
+Final risk: 1858.757
 > model[300]
-[ 101] ...................................... -- risk: 1804.158 
-[ 141] ...................................... -- risk: 1782.137 
-[ 181] ...................................... -- risk: 1775.546 
-[ 221] ...................................... -- risk: 1773.984 
+[ 101] ...................................... -- risk: 1804.158
+[ 141] ...................................... -- risk: 1782.137
+[ 181] ...................................... -- risk: 1775.546
+[ 221] ...................................... -- risk: 1773.984
 [ 261] ......................................
-Final risk: 1773.656 
+Final risk: 1773.656
 
 	 LSS Models fitted via Model-based Boosting
 
 Call:
 glmboostLSS(formula = Surv(time, status) ~ x1 + x2 + x3, families = WeibullLSS(),     control = boost_control(trace = TRUE))
 
-Number of boosting iterations: mstop = 300 300 
-Step size:  0.1 
+Number of boosting iterations: mstop = 300 300
+Step size:  0.1
 
 Families:
 
-	 Weibull AFT Model: mu (id link) 
+	 Weibull AFT Model: mu (id link)
 
-Loss function: { 
-     logfw <- function(pred) pred - exp(pred) 
-     logSw <- function(pred) -exp(pred) 
-     eta <- (log(y[, 1]) - f)/sigma 
-     -y[, 2] * (logfw(eta) - log(sigma)) - (1 - y[, 2]) * logSw(eta) 
- } 
- 
+Loss function: {
+     logfw <- function(pred) pred - exp(pred)
+     logSw <- function(pred) -exp(pred)
+     eta <- (log(y[, 1]) - f)/sigma
+     -y[, 2] * (logfw(eta) - log(sigma)) - (1 - y[, 2]) * logSw(eta)
+ }
 
-	 Weibull AFT Model: sigma (log link) 
 
-Loss function: { 
-     logfw <- function(pred) pred - exp(pred) 
-     logSw <- function(pred) -exp(pred) 
-     eta <- (log(y[, 1]) - mu)/exp(f) 
-     -y[, 2] * (logfw(eta) - f) - (1 - y[, 2]) * logSw(eta) 
- } 
- 
+	 Weibull AFT Model: sigma (log link)
+
+Loss function: {
+     logfw <- function(pred) pred - exp(pred)
+     logSw <- function(pred) -exp(pred)
+     eta <- (log(y[, 1]) - mu)/exp(f)
+     -y[, 2] * (logfw(eta) - f) - (1 - y[, 2]) * logSw(eta)
+ }
+
 > stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.4)
-> 
-> 
+>
+>
 > ### Check that "families"-object contains a response function
 > NBinomialMu2 <- function(...){
 +     RET <- NBinomialMu(...)
 +     RET@response <- function(f) NA
 +     RET
 + }
-> 
+>
 > NBinomialSigma2 <- function(...){
 +     RET <- NBinomialSigma(...)
 +     RET@response <- function(f) NA
 +     RET
 + }
-> 
+>
 > NBinomialLSS2 <- function(mu = NULL, sigma = NULL){
 +     if ((!is.null(sigma) && sigma <= 0) || (!is.null(mu) && mu <= 0))
 +         stop(sQuote("sigma"), " and ", sQuote("mu"),
 +              " must be greater than zero")
-+     RET <- makeFamilies(mu = NBinomialMu2(mu = mu, sigma = sigma),
++     RET <- Families(mu = NBinomialMu2(mu = mu, sigma = sigma),
 +                         sigma = NBinomialSigma2(mu = mu, sigma = sigma))
 +     return(RET)
 + }
-> 
+>
 > try(NBinomialLSS2())
-Error in makeFamilies(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSigma2(mu = mu,  : 
+Error in Families(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSigma2(mu = mu,  :
   response function not specified in families for:
 	mu, sigma
-> 
+>
 > #detach("package:gamboostLSS", unload = TRUE)
-> 
+>

@@ -122,7 +122,7 @@ NBinomialLSS2 <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(mu) && mu <= 0))
         stop(sQuote("sigma"), " and ", sQuote("mu"),
              " must be greater than zero")
-    RET <- makeFamilies(mu = NBinomialMu2(mu = mu, sigma = sigma),
+    RET <- Families(mu = NBinomialMu2(mu = mu, sigma = sigma),
                         sigma = NBinomialSigma2(mu = mu, sigma = sigma))
     return(RET)
 }
