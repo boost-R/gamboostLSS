@@ -2,24 +2,16 @@
 \alias{gamboostLSS-package}
 
 \docType{package}
-\title{
-  Boosting algorithms for GAMLSS models
+\title{ Boosting algorithms for GAMLSS
 }
 \description{
-  Boosting models for fitting generalized additive models for
+  Boosting methods for fitting generalized additive models for
   location, scale and shape (GAMLSS).
 }
 \details{
-\tabular{ll}{
-Package: \tab gamboostLSS\cr
-Version: \tab 0.5-0\cr
-Date: \tab 2010-07-02\cr
-License: \tab GPL-2\cr
-LazyLoad: \tab yes\cr
-}
 
 This package uses boosting algorithms for fitting GAMLSS (generalized additive models for
-location, scale and shape). For information on GAMLSS theory see (Rigby and Stasinopoulos, 2005), 
+location, scale and shape). For information on GAMLSS theory see Rigby and Stasinopoulos (2005), 
 or the information provided at \url{http://gamlss.org}.
 
 
@@ -30,11 +22,14 @@ variable selecion and model choice for potentially high-dimensional data setting
 
 \code{\link{glmboostLSS}} (for linear effects)  and \code{\link{gamboostLSS}} (for smooth effects) depend on their analogous 
 companions \code{\link[mboost]{glmboost}} and \code{\link[mboost]{gamboost}} for 
-generalized additive models and are similar in their usage.
+generalized additive models and are similar in their usage. 
 
-COMMENT: blackboostLSS
+The package includes some pre-defined GAMLSS distributions, but the user can also 
+specify new distributions with \code{\link{Families}}. 
 
-A wide range of different base-learners is available for covariate effects (see \code{\link[mboost]{baselearners}}). The 
+
+A wide range of different base-learners is available for covariate effects (see \code{\link[mboost]{baselearners}}) including 
+also random (\code{brandom}) or spatial effects (\code{bspatial} or \code{bmrf}). The 
 selection of base-learnes is crucial as it implies the kind of effect the covariate has on each distribution parameter in the final 
 GAMLSS. 
 
@@ -45,18 +40,24 @@ Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
 Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
 }
 \references{
+
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - A flexible approach based on boosting. 
-Department of Statistics: Technical Reports, Nr. 98.
+for high-dimensional data - a flexible approach based on boosting. 
+Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
 shape (with discussion). Applied Statistics 54, 507-554.
 
 Stasinopoulos, D. M. and R. A. Rigby (2007). Generalized additive models for location scale and
 shape (GAMLSS) in R. Journal of Statistical Software 23(7).
+
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization, 
+prediction and model fitting. Statistical Science, 22(4), 477--505. 
 }
 \keyword{ package }
-\seealso{ ...
+\seealso{ The \code{\link{mboost}} package for more on model-based boosting, or the 
+          \code{\link[gamlss]{gamlss}} package for the original GAMLSS algorithms 
+          provided by Rigby and Stasinopoulos.
 }
 \examples{
 
@@ -71,9 +72,10 @@ y <- numeric(100)
 for( i in 1:100)  y[i] <- rnbinom(1, size=exp(eta_sigma[i]), mu=exp(eta_mu[i]))
 
 # Model fitting, 300 boosting steps
-mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(), control=boost_control(mstop=300))
+mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(), 
+        control=boost_control(mstop=300))
 
-# Shrinked estimates
+# Shrinked effect estimates
 coef(mod1, off2int=TRUE)
 
 # Empirical risk with respect to mu

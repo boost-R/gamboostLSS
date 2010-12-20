@@ -54,14 +54,13 @@
                             aggregate = c("sum", "cumsum", "none"),
                             parameter = names(object), ...)
 }
-
 \arguments{
   \item{x}{ an object of the appropriate class (see usage). }
   \item{object}{ an object of the appropriate class (see usage). }
-  \item{which}{ a subset of base-learners to take into account for computing
+  \item{which}{ a subset of base-learners to take into account when computing
      predictions or coefficients. If \code{which} is given
      (as an integer vector or characters corresponding
-     to base-learners) a list or matrix is returned.}
+     to base-learners), a list or matrix is returned.}
    \item{aggregate}{ a character specifying how to aggregate predictions
      or coefficients of single base-learners. The default
      returns the prediction or coefficient for the final number of
@@ -73,7 +72,7 @@
      of the base-learner of the \eqn{j}th boosting
      iteration (and zero if the base-learner is not
      selected in this iteration).}
-  \item{parameter}{ This can be either a vector of indizes or a vector
+  \item{parameter}{ This can be either a vector of indices or a vector
      of parameter names which should be processed. See expamles for
      details. Per default all distribution parameters of the GAMLSS family are
      returned. }
@@ -96,7 +95,7 @@
   \item{type}{ the type of prediction required.  The default is on the scale
     of the predictors; the alternative \code{"response"} is on
     the scale of the response variable.  Thus for a
-    binomial model the default predictions are of log-odds
+    binomial model the default predictions are on the log-odds scale
     (probabilities on logit scale) and \code{type = "response"} gives
     the predicted probabilities.  The \code{"class"} option returns
     predicted classes.}
@@ -105,8 +104,27 @@
 \details{
   These functions can be used to extract details from fitted models.
   \code{print} shows a dense representation of the model fit.
+  
+  The function \code{coef} extracts the regression coefficients of linear models 
+  fitted using the \code{\link{glmboostLSS}} function or additive models fitted 
+  using  \code{\link{glmboostLSS}}. Per default, only coefficients of selected 
+  base-learners are returned for all distribution parameters. However, any desired coefficient can be extracted 
+  using the \code{which} argument.  Furhtermore, one can select to extract only coefficients 
+  for a single distribution parameter via the \code{parameter} argument (see examples for details). 
+ 
+  Analogical the function \code{plot} per default displays the coefficient paths for the complete GAMLSS 
+  but can be restricted to single distribution parameters or covariates (or subsets) using the 
+  \code{parameter} or \code{which} arguments respectively. 
 
-  ...
+  The \code{predict} function can be used for predictions for the distribution parameters 
+  depending on new observations whereas \code{fitted} extracts the regression fits for 
+  the observations in the learning sample. For \code{predict}, \code{newdata} can be specified --
+  otherwise the fitted values are returned. If \code{which} is specified, marginal effects 
+  of the corresponding base-learner(s) are returned. The argument \code{type} can be used to make 
+  predictions on the scale of the link (i.e., the linear predictor X * beta), the \code{response} 
+  (i.e. h(X * beta), where h is the response function) or the \code{class} (in case of classification). 
+
+
 }
 
 \section{Warning}{
@@ -114,8 +132,23 @@
   \code{LSSmodel[10]} changes \code{LSSmodel} directly!
 }
 
+\references{
+
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization, 
+prediction and model fitting. Statistical Science, 22(4), 477--505. 
+
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
+for high-dimensional data - a flexible approach based on boosting. 
+Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+
+Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
+shape (with discussion). Applied Statistics 54, 507-554.
+}
+
 \seealso{
-  ...
+ \code{\link{glmboostLSS}}, \code{\link{gamboostLSS}} and \code{\link{blackboostLSS}} for fitting
+ of GAMLSS. See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods 
+ for \code{\link[mboost]{mboost}} objects. 
 }
 \examples{
 
@@ -140,6 +173,14 @@ model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 
 ### extract coefficients
 coef(model)
+
+### only for distribution parameter mu
+coef(model, parameter="mu")
+
+### only for covariate x1
+coef(model, which="x1")
+
+
 ### plot complete model
 par(mfrow=c(4,3))
 plot(model)
@@ -153,6 +194,25 @@ plot(model, which = "x3")
 par(mfrow = c(1, 1))
 plot(model, which = 1, parameter = 2)
 
+# subset model for mstop=300 (one-dimensional) 
+model[300]
+
+# WARNING: Subsetting via model[mstopnew] changes the model directly! 
+# For the original fit one has to subset again: model[mstop]
+ 
+par(mfrow = c(2, 2))
+plot(risk(model)$mu)
+plot(risk(model)$sigma)
+# get back to orignal fit
+model[400]
+plot(risk(model)$mu)
+plot(risk(model)$sigma)
+
+
+
+
+ 
+
 }
 \keyword{methods}
-
+      
