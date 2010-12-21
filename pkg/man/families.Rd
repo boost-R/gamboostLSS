@@ -31,7 +31,7 @@
  Objects of the class \code{families} provide a convenient way to specify GAMLSS 
  distributions to be fitted by one of the boosting 
  algorithms implemented in this package. The package provides some pre-defined GAMLSS families, 
- but the user can also specify new distributions by \code{Families}. 
+ but the user can also specify new distributions using the \code{Families} function. 
  
 }
 \usage{
@@ -86,8 +86,9 @@ WeibullSigma(mu = NULL, sigma = NULL)
   itself are objects of the class \code{boost_family}, and can be
   constructed via the function \code{\link[mboost]{Family}} of the
   \code{mboost} Package. The \code{loss} for every distribution
-  parameter is the negative log-likelihood of the corresponding
-  distribution. The \code{ngradient} is the negative partial derivative
+  parameter (contained in objects of class \code{boost_family}) is the
+  negative log-likelihood of the corresponding distribution. The
+  \code{ngradient} is the negative partial derivative
   of the loss function with respect to the distribution parameter. For a
   two-parameter distribution (e.g. mu and sigma), the user therefore has
   to specify two sub-families with \code{\link{Family}}. The \code{loss}
@@ -105,14 +106,15 @@ WeibullSigma(mu = NULL, sigma = NULL)
 
   Note that gamboostLSS is not restricted to the three components
   \code{mu}, \code{sigma} and \code{df} but can handle an arbitrary
-  number of components. However, it is important that the names (for the
-  offsets, in the subfamilies etc.) are chosen \emph{consistently}. }
+  number of components (which, of course, depends on the GAMLSS distribution).
+  However, it is important that the names (for the offsets, in the subfamilies
+  etc.) are chosen \emph{consistently}. }
   \value{ An object of class \code{families}. }
 
 \references{
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
 for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
 shape (with discussion). Applied Statistics 54, 507-554.

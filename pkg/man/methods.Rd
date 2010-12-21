@@ -106,8 +106,8 @@
   \code{print} shows a dense representation of the model fit.
   
   The function \code{coef} extracts the regression coefficients of
-  linear models fitted using the \code{\link{glmboostLSS}} function or
-  additive models fitted using \code{\link{glmboostLSS}}. Per default,
+  linear predictors fitted using the \code{\link{glmboostLSS}} function or
+  additive predictors fitted using \code{\link{glmboostLSS}}. Per default,
   only coefficients of selected base-learners are returned for all
   distribution parameters. However, any desired coefficient can be
   extracted using the \code{which} argument. Furhtermore, one can
@@ -145,7 +145,7 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
 for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
 shape (with discussion). Applied Statistics 54, 507-554.

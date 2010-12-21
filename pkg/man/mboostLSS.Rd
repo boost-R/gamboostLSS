@@ -57,7 +57,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
 }
 \details{
 
-  For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
+  For information on GAMLSS theory see Rigby and Stasinopoulos (2005)
   or the information provided at \url{http://gamlss.org}.
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
@@ -106,7 +106,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
 for high-dimensional data -- a flexible approach based on boosting. 
-Department of Statistics: Technical Reports, Nr. 98. 
+Department of Statistics: Technical Report 98. 
 \url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
@@ -118,7 +118,8 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
 
 \seealso{
   \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
-  \code{\link{blackboost}} for the underlying boosting functions.
+  \code{\link{blackboost}} for the underlying boosting functions
+  contained in \code{\link{mboost}}.
 
   See for example \code{\link{risk}} or \code{\link{coef}} for methods 
   that can be used to extract information from \code{\link{mboostLSS}} objects.

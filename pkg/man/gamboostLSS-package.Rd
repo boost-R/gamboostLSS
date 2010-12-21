@@ -27,8 +27,9 @@ model choice for potentially high-dimensional data settings.
 \code{\link{glmboostLSS}} (for linear effects) and
 \code{\link{gamboostLSS}} (for smooth effects) depend on their analogous
 companions \code{\link[mboost]{glmboost}} and
-\code{\link[mboost]{gamboost}} for generalized additive models and are
-similar in their usage.
+\code{\link[mboost]{gamboost}} for generalized additive models
+(contained in package \code{\link{mboost}}, see Hothorn et al.
+2010a, b) and are similar in their usage.
 
 The package includes some pre-defined GAMLSS distributions, but the user
 can also specify new distributions with \code{\link{Families}}.
@@ -51,7 +52,7 @@ Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
 for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
 shape (with discussion). Applied Statistics 54, 507-554.
@@ -59,8 +60,17 @@ shape (with discussion). Applied Statistics 54, 507-554.
 Stasinopoulos, D. M. and R. A. Rigby (2007). Generalized additive models for location scale and
 shape (GAMLSS) in R. Journal of Statistical Software 23(7).
 
-Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization, 
+Buehlmann, P. and Hothorn, T. (2007). Boosting algorithms: Regularization, 
 prediction and model fitting. Statistical Science, 22(4), 477--505. 
+
+Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2010a).
+Model-based boosting 2.0. Journal of Machine Learning Research 11(Aug),
+2109-2113.
+
+Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2010b).
+mboost: Model-based boosting 2.0. R package version 2.0-9.
+\url{http://cran.r-project.org/web/packages/mboost}
+
 }
 \keyword{ package }
 \seealso{ The \code{\link{mboost}} package for more on model-based boosting, or the 
