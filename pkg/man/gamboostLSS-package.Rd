@@ -2,7 +2,8 @@
 \alias{gamboostLSS-package}
 
 \docType{package}
-\title{ Boosting algorithms for GAMLSS
+\title{ 
+  Boosting algorithms for GAMLSS
 }
 \description{
   Boosting methods for fitting generalized additive models for
@@ -10,28 +11,35 @@
 }
 \details{
 
-This package uses boosting algorithms for fitting GAMLSS (generalized additive models for
-location, scale and shape). For information on GAMLSS theory see Rigby and Stasinopoulos (2005), 
-or the information provided at \url{http://gamlss.org}.
+This package uses boosting algorithms for fitting GAMLSS (generalized
+additive models for location, scale and shape). For information on
+GAMLSS theory see Rigby and Stasinopoulos (2005), or the information
+provided at \url{http://gamlss.org}.
 
 
-The fitting methods \code{\link{glmboostLSS}} and \code{\link{gamboostLSS}}, are alternatives for the 
-algorithms provided with \code{\link[gamlss]{gamlss}} in the \code{gamlss} package. They offer shrinkage of effect estimates, intrinsic 
-variable selecion and model choice for potentially high-dimensional data settings.  
+The fitting methods \code{\link{glmboostLSS}} and
+\code{\link{gamboostLSS}}, are alternatives for the algorithms provided
+with \code{\link[gamlss]{gamlss}} in the \code{gamlss} package. They
+offer shrinkage of effect estimates, intrinsic variable selecion and
+model choice for potentially high-dimensional data settings.
 
 
-\code{\link{glmboostLSS}} (for linear effects)  and \code{\link{gamboostLSS}} (for smooth effects) depend on their analogous 
-companions \code{\link[mboost]{glmboost}} and \code{\link[mboost]{gamboost}} for 
-generalized additive models and are similar in their usage. 
+\code{\link{glmboostLSS}} (for linear effects) and
+\code{\link{gamboostLSS}} (for smooth effects) depend on their analogous
+companions \code{\link[mboost]{glmboost}} and
+\code{\link[mboost]{gamboost}} for generalized additive models and are
+similar in their usage.
 
-The package includes some pre-defined GAMLSS distributions, but the user can also 
-specify new distributions with \code{\link{Families}}. 
+The package includes some pre-defined GAMLSS distributions, but the user
+can also specify new distributions with \code{\link{Families}}.
 
 
-A wide range of different base-learners is available for covariate effects (see \code{\link[mboost]{baselearners}}) including 
-also random (\code{brandom}) or spatial effects (\code{bspatial} or \code{bmrf}). The 
-selection of base-learnes is crucial as it implies the kind of effect the covariate has on each distribution parameter in the final 
-GAMLSS. 
+A wide range of different base-learners is available for covariate
+effects (see \code{\link[mboost]{baselearners}}) including also random
+(\code{brandom}) or spatial effects (\code{bspatial} or Markov random
+fields \code{bmrf}). The selection of base-learnes is crucial as it
+implies the kind of effect the covariate has on each distribution
+parameter in the final GAMLSS.
 
 }
 \author{
@@ -51,7 +59,7 @@ shape (with discussion). Applied Statistics 54, 507-554.
 Stasinopoulos, D. M. and R. A. Rigby (2007). Generalized additive models for location scale and
 shape (GAMLSS) in R. Journal of Statistical Software 23(7).
 
-Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization, 
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization, 
 prediction and model fitting. Statistical Science, 22(4), 477--505. 
 }
 \keyword{ package }

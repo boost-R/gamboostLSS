@@ -105,30 +105,36 @@
   These functions can be used to extract details from fitted models.
   \code{print} shows a dense representation of the model fit.
   
-  The function \code{coef} extracts the regression coefficients of linear models 
-  fitted using the \code{\link{glmboostLSS}} function or additive models fitted 
-  using  \code{\link{glmboostLSS}}. Per default, only coefficients of selected 
-  base-learners are returned for all distribution parameters. However, any desired coefficient can be extracted 
-  using the \code{which} argument.  Furhtermore, one can select to extract only coefficients 
-  for a single distribution parameter via the \code{parameter} argument (see examples for details). 
+  The function \code{coef} extracts the regression coefficients of
+  linear models fitted using the \code{\link{glmboostLSS}} function or
+  additive models fitted using \code{\link{glmboostLSS}}. Per default,
+  only coefficients of selected base-learners are returned for all
+  distribution parameters. However, any desired coefficient can be
+  extracted using the \code{which} argument. Furhtermore, one can
+  extract only coefficients for a single distribution parameter via the
+  \code{parameter} argument (see examples for details).
  
-  Analogical the function \code{plot} per default displays the coefficient paths for the complete GAMLSS 
-  but can be restricted to single distribution parameters or covariates (or subsets) using the 
-  \code{parameter} or \code{which} arguments respectively. 
+  Analogical, the function \code{plot} per default displays the
+  coefficient paths for the complete GAMLSS but can be restricted to
+  single distribution parameters or covariates (or subsets) using the
+  \code{parameter} or \code{which} arguments, respectively.
 
-  The \code{predict} function can be used for predictions for the distribution parameters 
-  depending on new observations whereas \code{fitted} extracts the regression fits for 
-  the observations in the learning sample. For \code{predict}, \code{newdata} can be specified --
-  otherwise the fitted values are returned. If \code{which} is specified, marginal effects 
-  of the corresponding base-learner(s) are returned. The argument \code{type} can be used to make 
-  predictions on the scale of the link (i.e., the linear predictor X * beta), the \code{response} 
-  (i.e. h(X * beta), where h is the response function) or the \code{class} (in case of classification). 
+  The \code{predict} function can be used for predictions for the
+  distribution parameters depending on new observations whereas
+  \code{fitted} extracts the regression fits for the observations in the
+  learning sample. For \code{predict}, \code{newdata} can be specified
+  -- otherwise the fitted values are returned. If \code{which} is
+  specified, marginal effects of the corresponding base-learner(s) are
+  returned. The argument \code{type} can be used to make predictions on
+  the scale of the link (i.e., the linear predictor X * beta), the
+  \code{response} (i.e. h(X * beta), where h is the response function)
+  or the \code{class} (in case of classification).
 
 
 }
 
 \section{Warning}{
-  The \code{[.mboostLSS} function changes the original object, i.e.
+  The \code{[.mboostLSS} function changes the original object, i.e.,
   \code{LSSmodel[10]} changes \code{LSSmodel} directly!
 }
 
@@ -175,17 +181,17 @@ model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 coef(model)
 
 ### only for distribution parameter mu
-coef(model, parameter="mu")
+coef(model, parameter = "mu")
 
 ### only for covariate x1
-coef(model, which="x1")
+coef(model, which = "x1")
 
 
 ### plot complete model
-par(mfrow=c(4,3))
+par(mfrow = c(4, 3))
 plot(model)
 ### plot first parameter only
-par(mfrow=c(2,3))
+par(mfrow = c(2, 3))
 plot(model, parameter = "mu")
 ### now plot only effect of x3 of both parameters
 par(mfrow = c(1, 2))
@@ -194,24 +200,19 @@ plot(model, which = "x3")
 par(mfrow = c(1, 1))
 plot(model, which = 1, parameter = 2)
 
-# subset model for mstop=300 (one-dimensional) 
+### subset model for mstop = 300 (one-dimensional) 
 model[300]
 
 # WARNING: Subsetting via model[mstopnew] changes the model directly! 
 # For the original fit one has to subset again: model[mstop]
  
 par(mfrow = c(2, 2))
-plot(risk(model)$mu)
-plot(risk(model)$sigma)
-# get back to orignal fit
+plot(risk(model, parameter = "mu")[[1]])
+plot(risk(model, parameter = "sigma")[[1]])
+### get back to orignal fit
 model[400]
-plot(risk(model)$mu)
-plot(risk(model)$sigma)
-
-
-
-
- 
+plot(risk(model, parameter = "mu")[[1]])
+plot(risk(model, parameter = "sigma")[[1]]) 
 
 }
 \keyword{methods}

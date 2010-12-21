@@ -1,0 +1,718 @@
+
+R version 2.12.0 (2010-10-15)
+Copyright (C) 2010 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "gamboostLSS"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('gamboostLSS')
+Loading required package: mboost
+Loading required package: survival
+Loading required package: splines
+> 
+> assign(".oldSearch", search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("families")
+> ### * families
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: Families
+> ### Title: Families for GAMLSS models
+> ### Aliases: Families NBinomialLSS NBinomialMu NBinomialSigma StudentTLSS
+> ###   StudentTMu StudentTSigma StudentTDf LogNormalLSS LogNormalMu
+> ###   LogNormalSigma WeibullLSS WeibullMu WeibullSigma LogLogLSS LogLogMu
+> ###   LogLogSigma
+> ### Keywords: models distributions
+> 
+> ### ** Examples
+> 
+> 
+> # Example to define a new distribution:
+> # Students t-distribution with two parameters, df and mu:
+> 
+> # Sub-Family for mu
+> newStudentTMu  <- function(mu, df){
++ 
++     # loss is negative log-Likelihood, f is the parameter to be fitted with 
++     # id link -> f = mu
++     loss <- function(df,  y, f) {
++         -1 * (lgamma((df + 1)/2)  - lgamma(1/2) -
++             lgamma(df/2) - 0.5 * log(df) - (df + 1)/2 * log(1 +
++             (y - f)^2/(df )))
++     }
++     # risk is sum of loss
++     risk <- function(y, f, w = 1) {
++         sum(w * loss(y = y, f = f, df = df))
++     }
++     # ngradient is the negative derivate w.r.t. mu
++     ngradient <- function(y, f, w = 1) {
++         (df + 1) * (y - f)/(df  + (y - f)^2)
++     }
++ 
++     # use the Family constructor of mboost
++     Family(ngradient = ngradient, risk = risk, loss = loss,
++         response = function(f) f,  
++         name = "new Student's t-distribution: mu (id link)")
++ }
+> 
+> # Sub-Family for df
+> newStudentTDf <- function(mu, df){
++ 
++      # loss is negative log-Likelihood, f is the parameter to be fitted with
++      # log-link: exp(f) = df
++     loss <- function( mu, y, f) {
++         -1 * (lgamma((exp(f) + 1)/2)  - lgamma(1/2) -
++             lgamma(exp(f)/2) - 0.5 * f - (exp(f) + 1)/2 * log(1 +
++             (y - mu)^2/(exp(f) )))
++     }
++     # risk is sum of loss
++     risk <- function(y, f, w = 1) {
++         sum(w * loss(y = y, f = f,  mu = mu))
++     }
++         # ngradient is the negative derivate w.r.t. df
++      ngradient <- function(y, f, w = 1) {
++         exp(f)/2 * (digamma((exp(f) + 1)/2) - digamma(exp(f)/2)) -
++             0.5 - (exp(f)/2 * log(1 + (y - mu)^2/(exp(f) )) -
++             (y - mu)^2/(1 + (y - mu)^2/exp(f)) * (exp(-f) +
++                 1)/2)
++     }
++     # use the Family constructor of mboost
++       Family(ngradient = ngradient, risk = risk, loss = loss,
++         response = function(f) exp(f),
++         name = "Student's t-distribution: df (log link)")
++ }
+>     
+> # families object for new distribution
+> newStudentT <- Families(mu= newStudentTMu(mu=mu, df=df), 
++                                     df=newStudentTDf(mu=mu, df=df))
+> 
+> 
+> ### usage of the new Student's t distribution:
+> library(gamlss)   ## required for rTF
+Loading required package: gamlss.dist
+Loading required package: gamlss.data
+ **********   GAMLSS Version 4.0-0 ********** 
+For more on GAMLSS look at http://www.gamlss.com/ 
+Type gamlssNews() to see new features/changes/bug fixes.
+
+Attaching package: 'gamlss'
+
+The following object(s) are masked from 'package:survival':
+
+    ridge
+
+> set.seed(1907)
+> n <- 5000
+> x1  <- runif(n)
+> x2 <- runif(n)
+> mu <- 2 -1*x1 - 3*x2
+> df <- exp(1 + 0.5*x1 )
+> y <- rTF(n = n, mu = mu, nu = df)
+> 
+> # model fitting
+> model <- glmboostLSS(y ~ x1 + x2, families = newStudentT,
++                      control = boost_control(mstop = 100),
++                      center = TRUE)
+> # shrinked effect estimates                     
+> coef(model, off2int = TRUE)
+$mu
+(Intercept)          x1          x2 
+  2.0013497  -0.9745979  -2.9987269 
+
+$df
+(Intercept)          x1 
+  1.0798780   0.1213042 
+
+> 
+> # compare to pre-defined three parametric t-distribution:
+> model2 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
++                      control = boost_control(mstop = 100),
++                      center = TRUE)
+> coef(model2, off2int = TRUE)
+$mu
+(Intercept)          x1          x2 
+  1.9900788  -0.9658828  -2.9889112 
+
+$sigma
+(Intercept)          x1          x2 
+ 0.01314517 -0.02731268  0.03867761 
+
+$df
+(Intercept)          x1 
+  1.3213044   0.1913091 
+
+> 
+> # with effect on sigma:
+> sigma <- 3+ 1*x2
+> y <- rTF(n = n, mu = mu, nu = df, sigma=sigma)
+> model3 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
++                      control = boost_control(mstop = 100),
++                      center = TRUE)
+> coef(model3, off2int = TRUE)
+$mu
+(Intercept)          x2 
+  0.5625243  -1.1556618 
+
+$sigma
+(Intercept)          x1          x2 
+ 1.17619100 -0.09742086  0.32657481 
+
+$df
+(Intercept)          x1          x2 
+ 1.14269183  0.33422503 -0.02387359 
+
+> 
+> 
+> 
+> 
+> 
+> 
+> cleanEx()
+
+detaching ‘package:gamlss’, ‘package:gamlss.data’,
+  ‘package:gamlss.dist’
+
+> nameEx("gamboostLSS-package")
+> ### * gamboostLSS-package
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: gamboostLSS-package
+> ### Title: Boosting algorithms for GAMLSS
+> ### Aliases: gamboostLSS-package
+> ### Keywords: package
+> 
+> ### ** Examples
+> 
+> 
+> # Generate covariates
+> x1 <- runif(100)
+> x2 <- runif(100)
+> eta_mu <-     2 - 2*x1
+> eta_sigma <-  -1  + 2*x2
+> 
+> # Generate response: Negative Binomial Distribution
+> y <- numeric(100)
+> for( i in 1:100)  y[i] <- rnbinom(1, size=exp(eta_sigma[i]), mu=exp(eta_mu[i]))
+> 
+> # Model fitting, 300 boosting steps
+> mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(), 
++         control=boost_control(mstop=300))
+> 
+> # Shrinked effect estimates
+> coef(mod1, off2int=TRUE)
+$mu
+(Intercept)          x1          x2 
+  2.3629336  -1.7168786  -0.7736104 
+
+$sigma
+(Intercept)          x1          x2 
+ -0.3578277  -0.7798227   1.8236642 
+
+> 
+> # Empirical risk with respect to mu
+> plot(risk(mod1)$mu)
+> 
+> # Empirical risk with respect to sigma
+> plot(risk(mod1)$sigma)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("mboostLSS")
+> ### * mboostLSS
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: mboostLSS
+> ### Title: Fitting GAMLSS by Boosting
+> ### Aliases: mboostLSS blackboostLSS glmboostLSS gamboostLSS mboostLSS_fit
+> ### Keywords: models nonlinear fitting
+> 
+> ### ** Examples
+> 
+> 
+> ### Data generating process:
+> set.seed(1907)
+> x1 <- rnorm(1000)
+> x2 <- rnorm(1000)
+> x3 <- rnorm(1000)
+> x4 <- rnorm(1000)
+> x5 <- rnorm(1000)
+> x6 <- rnorm(1000)
+> mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+> sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+> y <- numeric(1000)
+> for( i in 1:1000)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> 
+> 
+> ### linear model with y ~ . for both components: 400 boosting iterations
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 400),
++                      center = TRUE)
+> coef(model, off2int = TRUE)
+$mu
+(Intercept)          x1          x2          x3          x4 
+  1.6393420   0.9521780   0.4673262  -0.4553981  -0.8812657 
+
+$sigma
+(Intercept)          x1          x2          x3          x4          x5 
+-0.21020036  0.18090752  0.03140973 -0.36216479 -0.27645482  0.13696243 
+         x6 
+ 0.32951818 
+
+> 
+> 
+> ### estimate model with different formulas for mu and sigma:
+> names(NBinomialLSS())      # names of the family
+[1] "mu"    "sigma"
+> 
+> # Note: Multiple formulas must be specified via a _named list_
+> #       where the names correspond to the names of the distribution parameters
+> #       in the family (see above)
+> model2 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
++                                     sigma = y ~ x3 + x4 + x5 + x6),
++                      families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 400, trace = TRUE),
++                      center = TRUE)
+[   1] ...................................... -- risk: 3102.966 
+[  41] ...................................... -- risk: 3026.774 
+[  81] ...................................... -- risk: 2963.095 
+[ 121] ...................................... -- risk: 2901.378 
+[ 161] ...................................... -- risk: 2841.724 
+[ 201] ...................................... -- risk: 2788.547 
+[ 241] ...................................... -- risk: 2746.665 
+[ 281] ...................................... -- risk: 2717.919 
+[ 321] ...................................... -- risk: 2700.384 
+[ 361] ......................................
+Final risk: 2690.598 
+> coef(model2, off2int = TRUE)
+$mu
+(Intercept)          x1          x2          x3          x4 
+  1.6068969   0.9754679   0.4773533  -0.4662399  -0.8897124 
+
+$sigma
+(Intercept)          x3          x4          x5          x6 
+ -0.1230353  -0.3630656  -0.2697534   0.1403490   0.3301615 
+
+> 
+> 
+> 
+> ### Offset needs to be specified via the arguments of families object:
+> model <- glmboostLSS(y ~ ., data = dat,
++                      families = NBinomialLSS(mu = mean(mu),
++                                              sigma = mean(sigma)),
++                      control = boost_control(mstop = 10),
++                      center = TRUE)
+> # Note: mu-offset = log(mean(mu)) and sigma-offset = log(mean(sigma))
+> #       as we use a log-link in both families
+> coef(model)
+$mu
+(Intercept)          x1          x4 
+-0.00644371  0.32790393 -0.22505852 
+attr(,"offset")
+[1] 2.843104
+
+$sigma
+(Intercept) 
+ -0.6069266 
+attr(,"offset")
+[1] 0.1828927
+
+> log(mean(mu))
+[1] 2.843104
+> log(mean(sigma))
+[1] 0.1828927
+> 
+> ## Not run: 
+> ##D ## (only as is takes some time)
+> ##D ### use different mstop values for the two distribution parameters
+> ##D ### (two-dimensional early stopping) 
+> ##D ### the number of iterations is passed to boost_control via a named list
+> ##D model3 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
+> ##D                                     sigma = y ~ x3 + x4 + x5 + x6),
+> ##D                      families = NBinomialLSS(), data = dat,
+> ##D                      control = boost_control(mstop = list(mu = 400,
+> ##D                                                           sigma = 300),
+> ##D                                              trace  = TRUE),
+> ##D                      center = TRUE)
+> ##D coef(model3, off2int = TRUE)
+> ## End(Not run)
+> ### Alternatively we can subset model2:
+> # here it is assumed that the first element in the vector corresponds to
+> # the first distribution parameter of model2 etc.
+> model2[c(400, 300)]
+Model first reduced to mstop = 300.
+Now continue ...
+[ 301] ...................................... -- risk: 2714.448 
+[ 341] ...................................... -- risk: 2706.160 
+[ 381] ..................
+Final risk: 2703.712 
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4, sigma = y ~     x3 + x4 + x5 + x6), data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 400, trace = TRUE), center = TRUE)
+
+Number of boosting iterations: mstop = 400 300 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> par(mfrow = c(1,2))
+> plot(model2, xlim = c(0, max(mstop(model2))))
+> ## all.equal(coef(model2), coef(model3)) # same!
+> 
+> ### WARNING: Subsetting via model[mstopnew] changes the model directly! 
+> ### For the original fit one has to subset again: model[mstop]
+> 
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx()
+> nameEx("methods")
+> ### * methods
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: methods
+> ### Title: Methods for mboostLSS
+> ### Aliases: coef.mboostLSS coef.glmboostLSS risk risk.mboostLSS
+> ###   [.mboostLSS mstop.mboostLSS mstop.oobag selected.mboostLSS
+> ###   fitted.mboostLSS predict.mboostLSS plot.glmboostLSS plot.gamboostLSS
+> ### Keywords: methods
+> 
+> ### ** Examples
+> 
+> 
+> ### generate data
+> set.seed(1907)
+> x1 <- rnorm(1000)
+> x2 <- rnorm(1000)
+> x3 <- rnorm(1000)
+> x4 <- rnorm(1000)
+> x5 <- rnorm(1000)
+> x6 <- rnorm(1000)
+> mu    <- exp(1.5 + x1^2 +0.5 * x2 - 3 * sin(x3) -1 * x4)
+> sigma <- exp(-0.2 * x4 +0.2 * x5 +0.4 * x6)
+> y <- numeric(1000)
+> for( i in 1:1000)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> ### fit a model
+> model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 400))
+Warning in asMethod(object) :
+  as(.,"dsCMatrix") is deprecated; do use as(., "symmetricMatrix")
+> 
+> ### extract coefficients
+> coef(model)
+$mu
+$mu$`bbs(x1, df = dfbase)`
+         1          2          3          4          5          6          7 
+ 3.7744357  2.4943623  1.3015658  0.2687567 -0.5911343 -1.3578842 -2.0179900 
+         8          9         10         11         12         13         14 
+-2.5108574 -2.8168757 -2.9651132 -2.9963119 -2.9263065 -2.7439881 -2.4078886 
+        15         16         17         18         19         20         21 
+-1.8684865 -1.1146929 -0.1272423  1.1206964  2.6098333  4.2796262  6.0525975 
+        22         23         24 
+ 7.8396756  9.5950001 11.3316527 
+
+$mu$`bbs(x2, df = dfbase)`
+          1           2           3           4           5           6 
+-0.40744401 -0.43200544 -0.45665349 -0.48145102 -0.50618645 -0.53010799 
+          7           8           9          10          11          12 
+-0.55180273 -0.56903945 -0.57931438 -0.58083177 -0.57297223 -0.54630799 
+         13          14          15          16          17          18 
+-0.48858177 -0.39716247 -0.27744373 -0.13334890  0.01935622  0.15770471 
+         19          20          21          22          23          24 
+ 0.28474678  0.39804299  0.50600676  0.61150306  0.71285230  0.81329209 
+
+$mu$`bbs(x3, df = dfbase)`
+          1           2           3           4           5           6 
+-0.60997113 -0.41033394 -0.21159201 -0.01537387  0.17394918  0.34120337 
+          7           8           9          10          11          12 
+ 0.43719300  0.36701421  0.06269561 -0.40604166 -0.85323305 -1.14764293 
+         13          14          15          16          17          18 
+-1.26251173 -1.23016955 -1.11336954 -0.97110335 -0.84034251 -0.73673661 
+         19          20          21          22          23          24 
+-0.66221038 -0.61055096 -0.57434601 -0.54812047 -0.52741908 -0.50869611 
+
+$mu$`bbs(x4, df = dfbase)`
+          1           2           3           4           5           6 
+ 2.36194291  2.02440959  1.68543776  1.33767075  0.98083298  0.63002876 
+          7           8           9          10          11          12 
+ 0.28907173 -0.02495013 -0.28459664 -0.49233043 -0.67090280 -0.80605963 
+         13          14          15          16          17          18 
+-0.87411558 -0.88346277 -0.85610151 -0.81002009 -0.75386409 -0.69262037 
+         19          20          21          22          23          24 
+-0.62915801 -0.56472604 -0.50032709 -0.43639747 -0.37295509 -0.30972054 
+
+attr(,"offset")
+[1] 8.98795
+
+$sigma
+$sigma$`bbs(x1, df = dfbase)`
+          1           2           3           4           5           6 
+ 1.08422597  0.96317044  0.83254987  0.68468526  0.51846309  0.34354574 
+          7           8           9          10          11          12 
+ 0.17653070  0.03631016 -0.06576543 -0.12235850 -0.12846941 -0.07733857 
+         13          14          15          16          17          18 
+ 0.03533138  0.18648810  0.34302795  0.48935209  0.61703241  0.71659496 
+         19          20          21          22          23          24 
+ 0.78437581  0.82436154  0.84573229  0.86122112  0.87814767  0.89615722 
+
+$sigma$`bbs(x2, df = dfbase)`
+          1           2           3           4           5           6 
+-0.54507155 -0.50098630 -0.45583938 -0.40859854 -0.35858753 -0.30622990 
+          7           8           9          10          11          12 
+-0.25523599 -0.20910186 -0.16875949 -0.12662445 -0.07580083 -0.01590654 
+         13          14          15          16          17          18 
+ 0.04964570  0.11352643  0.16987641  0.21267830  0.24144049  0.27232033 
+         19          20          21          22          23          24 
+ 0.31047088  0.35371597  0.39723698  0.43917040  0.47996353  0.52038508 
+
+$sigma$`bbs(x3, df = dfbase)`
+          1           2           3           4           5           6 
+ 0.09285414  0.31117698  0.53763262  0.77774477  1.02195994  1.23996073 
+          7           8           9          10          11          12 
+ 1.39100497  1.46142006  1.47329455  1.40440685  1.20953914  0.87735090 
+         13          14          15          16          17          18 
+ 0.45762784  0.03995949 -0.32735051 -0.61711547 -0.81655154 -0.89802708 
+         19          20          21          22          23          24 
+-0.85608907 -0.72192902 -0.52396821 -0.29652034 -0.05663804  0.18713479 
+
+$sigma$`bbs(x4, df = dfbase)`
+          1           2           3           4           5           6 
+ 1.03403354  0.96448089  0.89893039  0.84204196  0.79724140  0.76502268 
+          7           8           9          10          11          12 
+ 0.75124866  0.73741650  0.69860420  0.62946067  0.54701385  0.44721949 
+         13          14          15          16          17          18 
+ 0.31596328  0.15147428 -0.02130205 -0.19473930 -0.38072373 -0.57837395 
+         19          20          21          22          23          24 
+-0.78770833 -1.00611721 -1.23126427 -1.45663111 -1.67683422 -1.89182533 
+
+$sigma$`bbs(x5, df = dfbase)`
+          1           2           3           4           5           6 
+-0.25483571 -0.24906242 -0.24109068 -0.22824559 -0.20871152 -0.18215697 
+          7           8           9          10          11          12 
+-0.14956639 -0.10737572 -0.04912022  0.01673107  0.06640063  0.09663367 
+         13          14          15          16          17          18 
+ 0.11978486  0.14050258  0.16410308  0.19142032  0.21824689  0.24432001 
+         19          20          21          22          23          24 
+ 0.26836923  0.29092365  0.31248136  0.33305283  0.35170610  0.36867956 
+
+$sigma$`bbs(x6, df = dfbase)`
+          1           2           3           4           5           6 
+-0.51740394 -0.35156491 -0.19519161 -0.06060509  0.03187729  0.07149125 
+          7           8           9          10          11          12 
+ 0.06590564  0.04257780  0.03012488  0.04019927  0.06924798  0.11516654 
+         13          14          15          16          17          18 
+ 0.17741869  0.24512705  0.28821069  0.30950005  0.33142549  0.36299364 
+         19          20          21          22          23          24 
+ 0.40353663  0.45080734  0.50207764  0.55672281  0.61373101  0.67191684 
+
+attr(,"offset")
+[1] -2.427222
+
+> 
+> ### only for distribution parameter mu
+> coef(model, parameter = "mu")
+$`bbs(x1, df = dfbase)`
+         1          2          3          4          5          6          7 
+ 3.7744357  2.4943623  1.3015658  0.2687567 -0.5911343 -1.3578842 -2.0179900 
+         8          9         10         11         12         13         14 
+-2.5108574 -2.8168757 -2.9651132 -2.9963119 -2.9263065 -2.7439881 -2.4078886 
+        15         16         17         18         19         20         21 
+-1.8684865 -1.1146929 -0.1272423  1.1206964  2.6098333  4.2796262  6.0525975 
+        22         23         24 
+ 7.8396756  9.5950001 11.3316527 
+
+$`bbs(x2, df = dfbase)`
+          1           2           3           4           5           6 
+-0.40744401 -0.43200544 -0.45665349 -0.48145102 -0.50618645 -0.53010799 
+          7           8           9          10          11          12 
+-0.55180273 -0.56903945 -0.57931438 -0.58083177 -0.57297223 -0.54630799 
+         13          14          15          16          17          18 
+-0.48858177 -0.39716247 -0.27744373 -0.13334890  0.01935622  0.15770471 
+         19          20          21          22          23          24 
+ 0.28474678  0.39804299  0.50600676  0.61150306  0.71285230  0.81329209 
+
+$`bbs(x3, df = dfbase)`
+          1           2           3           4           5           6 
+-0.60997113 -0.41033394 -0.21159201 -0.01537387  0.17394918  0.34120337 
+          7           8           9          10          11          12 
+ 0.43719300  0.36701421  0.06269561 -0.40604166 -0.85323305 -1.14764293 
+         13          14          15          16          17          18 
+-1.26251173 -1.23016955 -1.11336954 -0.97110335 -0.84034251 -0.73673661 
+         19          20          21          22          23          24 
+-0.66221038 -0.61055096 -0.57434601 -0.54812047 -0.52741908 -0.50869611 
+
+$`bbs(x4, df = dfbase)`
+          1           2           3           4           5           6 
+ 2.36194291  2.02440959  1.68543776  1.33767075  0.98083298  0.63002876 
+          7           8           9          10          11          12 
+ 0.28907173 -0.02495013 -0.28459664 -0.49233043 -0.67090280 -0.80605963 
+         13          14          15          16          17          18 
+-0.87411558 -0.88346277 -0.85610151 -0.81002009 -0.75386409 -0.69262037 
+         19          20          21          22          23          24 
+-0.62915801 -0.56472604 -0.50032709 -0.43639747 -0.37295509 -0.30972054 
+
+attr(,"offset")
+[1] 8.98795
+> 
+> ### only for covariate x1
+> coef(model, which = "x1")
+$mu
+$mu$`bbs(x1, df = dfbase)`
+         1          2          3          4          5          6          7 
+ 3.7744357  2.4943623  1.3015658  0.2687567 -0.5911343 -1.3578842 -2.0179900 
+         8          9         10         11         12         13         14 
+-2.5108574 -2.8168757 -2.9651132 -2.9963119 -2.9263065 -2.7439881 -2.4078886 
+        15         16         17         18         19         20         21 
+-1.8684865 -1.1146929 -0.1272423  1.1206964  2.6098333  4.2796262  6.0525975 
+        22         23         24 
+ 7.8396756  9.5950001 11.3316527 
+
+attr(,"offset")
+[1] 8.98795
+
+$sigma
+$sigma$`bbs(x1, df = dfbase)`
+          1           2           3           4           5           6 
+ 1.08422597  0.96317044  0.83254987  0.68468526  0.51846309  0.34354574 
+          7           8           9          10          11          12 
+ 0.17653070  0.03631016 -0.06576543 -0.12235850 -0.12846941 -0.07733857 
+         13          14          15          16          17          18 
+ 0.03533138  0.18648810  0.34302795  0.48935209  0.61703241  0.71659496 
+         19          20          21          22          23          24 
+ 0.78437581  0.82436154  0.84573229  0.86122112  0.87814767  0.89615722 
+
+attr(,"offset")
+[1] -2.427222
+
+> 
+> 
+> ### plot complete model
+> par(mfrow = c(4, 3))
+> plot(model)
+> ### plot first parameter only
+> par(mfrow = c(2, 3))
+> plot(model, parameter = "mu")
+> ### now plot only effect of x3 of both parameters
+> par(mfrow = c(1, 2))
+> plot(model, which = "x3")
+> ### first component second parameter (sigma)
+> par(mfrow = c(1, 1))
+> plot(model, which = 1, parameter = 2)
+> 
+> ### subset model for mstop = 300 (one-dimensional) 
+> model[300]
+Model first reduced to mstop = 300.
+Now continue ...
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 400))
+
+Number of boosting iterations: mstop = 300 300 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> 
+> # WARNING: Subsetting via model[mstopnew] changes the model directly! 
+> # For the original fit one has to subset again: model[mstop]
+>  
+> par(mfrow = c(2, 2))
+> plot(risk(model, parameter = "mu")[[1]])
+> plot(risk(model, parameter = "sigma")[[1]])
+> ### get back to orignal fit
+> model[400]
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 400))
+
+Number of boosting iterations: mstop = 400 400 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> plot(risk(model, parameter = "mu")[[1]])
+> plot(risk(model, parameter = "sigma")[[1]]) 
+> 
+> 
+> 
+> 
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> ### * <FOOTER>
+> ###
+> cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  245.27 0.6 246.533 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

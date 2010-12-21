@@ -6,12 +6,14 @@
 \alias{mboostLSS_fit}
 
 \title{
-  Fitting GAMLSS by boosting
+  Fitting GAMLSS by Boosting
 }
 \description{
-  Functions for fitting GAMLSS (generalized additive models for location, scale and shape) using
-  boosting techniques. The algorithm circles between the distribution parameters, updating one while using the 
-  current fits of the others as offsets (for details see Mayr et al., 2010). 
+  Functions for fitting GAMLSS (generalized additive models for
+  location, scale and shape) using boosting techniques. The algorithm
+  circles between the distribution parameters, updating one while using
+  the current fits of the others as offsets (for details see Mayr et
+  al., 2010).
 }
 \usage{
 mboostLSS(formula, data = list(), families = list(),
@@ -36,7 +38,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
     to one distribution parameter of the GAMLSS distribution. The names must be 
     the same as in the family (see example for details). }
   \item{data}{ a data frame containing the variables in the model.}
-  \item{families}{ an object of the \code{families} class. It can be either one of
+  \item{families}{ an object of class \code{families}. It can be either one of
     the pre-defined distributions that come along with the package or a new distribution
     specified by the user (see \code{\link{Families}} for details).} 
   \item{control}{ a list of parameters controlling the algorithm. For
@@ -58,19 +60,22 @@ mboostLSS_fit(formula, data = list(), families = list(),
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
   or the information provided at \url{http://gamlss.org}.
 
-  \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the distribution parameters
-  of an GAMLSS -- a linear boosting model is fitted for each parameter. 
+  \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
+  distribution parameters of a GAMLSS -- a linear boosting model is
+  fitted for each parameter.
  
   
-  \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the distribution parameters
-  of an GAMLSS  -- an additive boosting model with smooth effects is fitted for each parameter. 
+  \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the
+  distribution parameters of a GAMLSS -- an additive boosting model with
+  smooth effects is fitted for each parameter.
 
-  \code{mboostLSS} uses \code{\link[mboost]{mboost}} to fit the distribution parameters
-  of an GAMLSS model. The type of model (linear, tree-based or smooth) is specified
-  by \code{fun}.
+  \code{mboostLSS} uses \code{\link[mboost]{mboost}} to fit the
+  distribution parameters of a GAMLSS. The type of model (linear,
+  tree-based or smooth) is specified by \code{fun}.
 
-  \code{blackboostLSS} uses \code{\link[mboost]{blackboost}} to fit the distribution parameters
-  of an GAMLSS -- a tree-based boosting model is fitted for each parameter.
+  \code{blackboostLSS} uses \code{\link[mboost]{blackboost}} to fit the
+  distribution parameters of a GAMLSS -- a tree-based boosting model is
+  fitted for each parameter.
 
   \code{mboostLSS}, \code{glmboostLSS}, \code{gamboostLSS} and
   \code{blackboostLSS} all call \code{mboostLSS_fit} while \code{fun} is
@@ -80,15 +85,16 @@ mboostLSS_fit(formula, data = list(), families = list(),
 
   In all four fitting functions it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
-  \code{\link{boost_control}}. In the case of one value, this value is
-  used for all distribution parameters of the GAMLSS model. Alternatively, a named
-  list with seperate values for each component can be used to specify a
-  seperate value for each parameter of the GAMLSS model. The names of the
-  list must correspond to the names of the distribution parameters of the GAMLSS family.
-  
-  For one-dimensional stopping, the user therefore has to specify one \code{mstop} 
-  via \code{\link{boost_control}}. For more-dimensional stopping, one can specify 
-  i.e. \code{mstop = list(mu=100, sigma=200)} (see examples).  
+  \code{\link{boost_control}}. In the case of one single value, this
+  value is used for all distribution parameters of the GAMLSS model.
+  Alternatively, a named list with seperate values for each component
+  can be used to specify a seperate value for each parameter of the
+  GAMLSS model. The names of the list must correspond to the names of
+  the distribution parameters of the GAMLSS family. For one-dimensional
+  stopping, the user therefore can specify, e.g., \code{mstop = 100} via
+  \code{\link{boost_control}}. For more-dimensional stopping, one can
+  specify, e.g., \code{mstop = list(mu = 100, sigma = 200)} (see
+  examples).
   
 
 }
@@ -99,13 +105,14 @@ mboostLSS_fit(formula, data = list(), families = list(),
 \references{
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+for high-dimensional data -- a flexible approach based on boosting. 
+Department of Statistics: Technical Reports, Nr. 98. 
+\url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
 shape (with discussion). Applied Statistics 54, 507-554.
 
-Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization, 
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization, 
 prediction and model fitting. Statistical Science, 22(4), 477--505. 
 }
 
@@ -113,12 +120,13 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
   \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
   \code{\link{blackboost}} for the underlying boosting functions.
 
-  See for example \code{\link{risk}} or \code{\link{coef}} for methods that can be used to
-  extract information from \code{\link{mboostLSS}} objects.
+  See for example \code{\link{risk}} or \code{\link{coef}} for methods 
+  that can be used to extract information from \code{\link{mboostLSS}} objects.
 }
 \examples{
 
 ### Data generating process:
+set.seed(1907)
 x1 <- rnorm(1000)
 x2 <- rnorm(1000)
 x3 <- rnorm(1000)
@@ -169,8 +177,8 @@ log(mean(mu))
 log(mean(sigma))
 
 \dontrun{## (only as is takes some time)
-### use different mstop values (two-dimensional early stopping) for the
-### two distribution parameters
+### use different mstop values for the two distribution parameters
+### (two-dimensional early stopping) 
 ### the number of iterations is passed to boost_control via a named list
 model3 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                                     sigma = y ~ x3 + x4 + x5 + x6),
@@ -189,10 +197,11 @@ par(mfrow = c(1,2))
 plot(model2, xlim = c(0, max(mstop(model2))))
 ## all.equal(coef(model2), coef(model3)) # same!
 
-# WARNING: Subsetting via model[mstopnew] changes the model directly! 
-# For the original fit one has to subset again: model[mstop]
+### WARNING: Subsetting via model[mstopnew] changes the model directly! 
+### For the original fit one has to subset again: model[mstop]
 
 }
 
 \keyword{models}
+\keyword{nonlinear}
 \keyword{fitting}

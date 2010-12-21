@@ -38,7 +38,7 @@
 ## Constructor function for new GAMLSS distributions
 Families(...)
 
-##########  Pre-defined GAMLSS distributions  #############
+###  Pre-defined GAMLSS distributions  ###
 
 ## families Object for the negative binomial distribution 
 NBinomialLSS(mu = NULL, sigma = NULL)
@@ -55,19 +55,19 @@ StudentTDf(mu = NULL, sigma = NULL, df = NULL)
 
 ## families Object for log-normal accelerated failure time model
 LogNormalLSS(mu = NULL, sigma = NULL)
-## 'Sub-families':
+## 'Sub-families' for the two distribution parameters:
 LogNormalMu(mu = NULL, sigma = NULL)
 LogNormalSigma(mu = NULL, sigma = NULL)
 
 ## families Object for log-logistic accelerated failure time model
 LogLogLSS(mu = NULL, sigma = NULL)
-## 'Sub-families':
+## 'Sub-families' for the two distribution parameters:
 LogLogMu(mu = NULL, sigma = NULL)
 LogLogSigma(mu = NULL, sigma = NULL)
 
 ## families Object for accelerated failure time model with Weibull distribution
 WeibullLSS(mu = NULL, sigma = NULL)
-## 'Sub-families':
+## 'Sub-families' for the two distribution parameters:
 WeibullMu(mu = NULL, sigma = NULL)
 WeibullSigma(mu = NULL, sigma = NULL)
 }
@@ -80,34 +80,36 @@ WeibullSigma(mu = NULL, sigma = NULL)
 }
 \details{
   
-  \code{Families} implements a new GAMLSS distribution to be used for fitting 
-  by \code{\link{mboostLSS}}. The function builds a list of Sub-families, 
-  one for each distribution parameter. The Sub-families itself are objects of the 
-  class \code{\link{boost_family}}, and can be constructed via the function 
-  \code{\link{Family}} of the \code{mboost} Package. The \code{loss} for every distribution parameter
-  is the negative log-likelihood of the corresponding distribution. The \code{ngradient} is the negative 
-  partial derivative of the loss function with respect to the
-  distribution parameter. For a two-parameter distribution (e.g. mu and sigma), 
-  the user therefore has to specify two Sub-Families with \code{\link{Family}}. 
-  The \code{loss} is basically the same function for 
-  both paramters, only the \code{ngradient} differs. Both Sub-Families are passed to 
-  the \code{Families} constructor which results in a \code{families} object.
-  
-  
-  The arguments of the final object are the offsets for each distribution parameter. 
-  Offsets can be either scalar, a vector with length equal to the number
-  of observations or NULL (default). In the latter case, a scalar offset
-  for this component is computed by minimizing the risk function w.r.t.
-  the corresponding distribution parameter (keeping the other parameters fixed).
+  \code{Families} implements a new GAMLSS distribution to be used for
+  fitting by \code{\link{mboostLSS}}. The function builds a list of
+  Sub-families, one for each distribution parameter. The Sub-families
+  itself are objects of the class \code{boost_family}, and can be
+  constructed via the function \code{\link[mboost]{Family}} of the
+  \code{mboost} Package. The \code{loss} for every distribution
+  parameter is the negative log-likelihood of the corresponding
+  distribution. The \code{ngradient} is the negative partial derivative
+  of the loss function with respect to the distribution parameter. For a
+  two-parameter distribution (e.g. mu and sigma), the user therefore has
+  to specify two sub-families with \code{\link{Family}}. The \code{loss}
+  is basically the same function for both paramters, only the
+  \code{ngradient} differs. Both sub-families are passed to the
+  \code{Families} constructor, which returns in a \code{families}
+  object.
+    
+  The arguments of the final object are the offsets for each
+  distribution parameter. Offsets can be either scalar, a vector with
+  length equal to the number of observations or NULL (default). In the
+  latter case, a scalar offset for this component is computed by
+  minimizing the risk function w.r.t. the corresponding distribution
+  parameter (keeping the other parameters fixed).
 
-}
-\value{
-  An object of class \code{families}.
-}
+  Note that gamboostLSS is not restricted to the three components
+  \code{mu}, \code{sigma} and \code{df} but can handle an arbitrary
+  number of components. However, it is important that the names (for the
+  offsets, in the subfamilies etc.) are chosen \emph{consistently}. }
+  \value{ An object of class \code{families}. }
 
 \references{
-
-
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
 for high-dimensional data - a flexible approach based on boosting. 
 Department of Statistics: Technical Reports, Nr. 98. \url{http://epub.ub.uni-muenchen.de/11938/}
@@ -117,9 +119,10 @@ shape (with discussion). Applied Statistics 54, 507-554.
 }
 
 \seealso{
- The corresponding class \code{\link[mboost]{boost_family}} and constructor function 
- \code{\link[mboost]{Family}} in \code{\link[mboost]{mboost}}.  
- For the fitting of GAMLSS distributions see \code{\link{mboostLSS}}.
+ 
+ The corresponding constructor function \code{\link[mboost]{Family}} in
+ \code{\link[mboost]{mboost}}. For the fitting of GAMLSS distributions
+ see \code{\link{mboostLSS}}.
 }
 \examples{
 
@@ -185,8 +188,7 @@ newStudentT <- Families(mu= newStudentTMu(mu=mu, df=df),
 
 ### usage of the new Student's t distribution:
 library(gamlss)   ## required for rTF
-
-# data generating
+set.seed(1907)
 n <- 5000
 x1  <- runif(n)
 x2 <- runif(n)
@@ -218,5 +220,6 @@ coef(model3, off2int = TRUE)
 
 
 }
+\keyword{ models }
 \keyword{ distributions }
 
