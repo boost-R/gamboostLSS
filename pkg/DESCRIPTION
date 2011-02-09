@@ -1,6 +1,6 @@
 Package: gamboostLSS
 Type: Package
-Title: Boosting Methods for GAMLSS models
+Title: Boosting Methods for GAMLSS Models
 Version: 0.5-0
 Date: 2010-07-02
 Author: Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
