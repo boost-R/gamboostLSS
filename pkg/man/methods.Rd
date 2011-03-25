@@ -80,7 +80,7 @@
     added to the intercept (if there is any) or if the offset is
     neglected for plotting (default).}
   \item{merge}{ logical. Should the risk vectors of the single
-    components be merged to one risk vector? Per default (\code{merge =
+    components be merged to one risk vector for the model in total? Per default (\code{merge =
     FALSE}) a (named) list of risk vectors is returned. }
   \item{i}{ integer. Index specifying the model to extract. If \code{i}
     is smaller than the initial \code{mstop}, a subset is used.
@@ -107,7 +107,7 @@
   
   The function \code{coef} extracts the regression coefficients of
   linear predictors fitted using the \code{\link{glmboostLSS}} function or
-  additive predictors fitted using \code{\link{glmboostLSS}}. Per default,
+  additive predictors fitted using \code{\link{gamboostLSS}}. Per default,
   only coefficients of selected base-learners are returned for all
   distribution parameters. However, any desired coefficient can be
   extracted using the \code{which} argument. Furhtermore, one can
