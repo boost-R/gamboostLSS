@@ -81,26 +81,27 @@ WeibullSigma(mu = NULL, sigma = NULL)
 }
 \details{
   
-  \code{Families} implements a new GAMLSS distribution to be used for
-  fitting by \code{\link{mboostLSS}}. The function builds a list of
+  The \code{Families} function can be used to implements a new GAMLSS distribution 
+  which can be used for fitting by \code{\link{mboostLSS}}. Thereby, the function builds a list of
   Sub-families, one for each distribution parameter. The Sub-families
-  itself are objects of the class \code{boost_family}, and can be
+  themselves are objects of the class \code{boost_family}, and can be
   constructed via the function \code{\link[mboost]{Family}} of the
-  \code{mboost} Package. The \code{loss} for every distribution
+  \code{mboost} Package. 
+  
+  Arguments to be passed to \code{Family}: The \code{loss} for every distribution
   parameter (contained in objects of class \code{boost_family}) is the
   negative log-likelihood of the corresponding distribution. The
   \code{ngradient} is the negative partial derivative
   of the loss function with respect to the distribution parameter. For a
   two-parameter distribution (e.g. mu and sigma), the user therefore has
-  to specify two sub-families with \code{\link{Family}}. The \code{loss}
-  is basically the same function for both paramters, only the
-  \code{ngradient} differs. Both sub-families are passed to the
-  \code{Families} constructor, which returns in a \code{families}
-  object.
+  to specify two Sub-families with \code{\link{Family}}. The \code{loss}
+  is basically the same function for both paramters, only
+  \code{ngradient} differs. Both Sub-families are passed to the
+  \code{Families} constructor, which returns an object of the class \code{families}.
     
   The arguments of the final object are the offsets for each
   distribution parameter. Offsets can be either scalar, a vector with
-  length equal to the number of observations or NULL (default). In the
+  length equal to the number of observations or \code{NULL} (default). In the
   latter case, a scalar offset for this component is computed by
   minimizing the risk function w.r.t. the corresponding distribution
   parameter (keeping the other parameters fixed).
@@ -108,7 +109,7 @@ WeibullSigma(mu = NULL, sigma = NULL)
   Note that gamboostLSS is not restricted to the three components
   \code{mu}, \code{sigma} and \code{df} but can handle an arbitrary
   number of components (which, of course, depends on the GAMLSS distribution).
-  However, it is important that the names (for the offsets, in the subfamilies
+  However, it is important that the names (for the offsets, in the Sub-families
   etc.) are chosen \emph{consistently}. }
   \value{ An object of class \code{families}. }
 
@@ -132,7 +133,7 @@ shape (with discussion). Applied Statistics 54, 507-554.
 # Example to define a new distribution:
 # Students t-distribution with two parameters, df and mu:
 
-# Sub-Family for mu
+# Sub-Family for mu  -> generate object of the class family from the package mboost
 newStudentTMu  <- function(mu, df){
 
     # loss is negative log-Likelihood, f is the parameter to be fitted with 
