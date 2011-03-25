@@ -28,11 +28,12 @@
 }
 \description{
 
+ The package provides some pre-defined GAMLSS families, e.g. \code{NBionomialLSS}. By using the function \code{Families}, 
+ a new object of the class \code{families} can be generated. 
+ 
  Objects of the class \code{families} provide a convenient way to specify GAMLSS 
  distributions to be fitted by one of the boosting 
- algorithms implemented in this package. The package provides some pre-defined GAMLSS families, 
- but the user can also specify new distributions using the \code{Families} function. 
- 
+ algorithms implemented in this package. 
 }
 \usage{
 ## Constructor function for new GAMLSS distributions
@@ -76,7 +77,7 @@ WeibullSigma(mu = NULL, sigma = NULL)
   \item{mu}{ offset value for mu. }
   \item{sigma}{ offset value for sigma. }
   \item{df}{ offset value for df. }
-  \item{\dots}{ sub-families to be passed to constructor. }
+  \item{\dots}{ Sub-families to be passed to constructor. }
 }
 \details{
   
