@@ -11,7 +11,7 @@
 \description{
   Functions for fitting GAMLSS (generalized additive models for
   location, scale and shape) using boosting techniques. The algorithm
-  circles between the distribution parameters, updating one while using
+  iteratively rotates between the distribution parameters, updating one while using
   the current fits of the others as offsets (for details see Mayr et
   al., 2010).
 }
@@ -46,7 +46,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
   \item{weights}{ a numeric vector of weights (optional). }
   \item{fun}{ fit function. Either \code{\link{mboost}},
     \code{\link{glmboost}}, \code{\link{gamboost}} or
-    \code{\link{blackboost}}. Specified directly via the according LSS
+    \code{\link{blackboost}}. Specified directly via the corresponding LSS
     function. E.g. \code{gamboostLSS()} calls
     \code{mboostLSS_fit(..., fun = gamboost)}. }
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
@@ -66,8 +66,10 @@ mboostLSS_fit(formula, data = list(), families = list(),
  
   
   \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the
-  distribution parameters of a GAMLSS -- an additive boosting model with
-  smooth effects is fitted for each parameter.
+  distribution parameters of a GAMLSS -- an additive boosting model (by default with
+  smooth effects) is fitted for each parameter. With the \code{formula} argument, a wide range of different 
+  base-learners can be specified (see \code{\link[mboost]{baselearners}}). The base-learners inply the type of effect
+  each covariate has on the corresponding distribution parameter.
 
   \code{mboostLSS} uses \code{\link[mboost]{mboost}} to fit the
   distribution parameters of a GAMLSS. The type of model (linear,
@@ -87,7 +89,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one single value, this
   value is used for all distribution parameters of the GAMLSS model.
-  Alternatively, a named list with seperate values for each component
+  Alternatively, a named list with separate values for each component
   can be used to specify a seperate value for each parameter of the
   GAMLSS model. The names of the list must correspond to the names of
   the distribution parameters of the GAMLSS family. For one-dimensional
