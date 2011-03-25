@@ -36,9 +36,10 @@ can also specify new distributions with \code{\link{Families}}.
 
 
 A wide range of different base-learners is available for covariate
-effects (see \code{\link[mboost]{baselearners}}) including also random
+effects (see \code{\link[mboost]{baselearners}}) including linear (\code{bols}), non-linear (\code{bbs}), random
 (\code{brandom}) or spatial effects (\code{bspatial} or Markov random
-fields \code{bmrf}). The selection of base-learnes is crucial as it
+fields \code{bmrf}). Each bease-learner can be included seperately for each predictor. 
+The selection of base-learnes is crucial as it
 implies the kind of effect the covariate has on each distribution
 parameter in the final GAMLSS.
 
@@ -49,7 +50,7 @@ Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
 Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
 }
 \references{
-
+                                    
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
 for high-dimensional data - a flexible approach based on boosting. 
 Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
@@ -89,7 +90,7 @@ eta_sigma <-  -1  + 2*x2
 y <- numeric(100)
 for( i in 1:100)  y[i] <- rnbinom(1, size=exp(eta_sigma[i]), mu=exp(eta_mu[i]))
 
-# Model fitting, 300 boosting steps
+# Model fitting, 300 boosting steps, same formula for both distribution parameters
 mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(), 
         control=boost_control(mstop=300))
 
