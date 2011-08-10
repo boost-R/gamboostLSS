@@ -1,0 +1,39 @@
+
+     citHeader("To cite package 'gamboostLSS' in publications use:")
+
+     desc <- packageDescription("gamboostLSS")
+     year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
+     vers <- paste("R package version", desc$Version)
+
+     citEntry(entry="Manual",
+              title = "gamboostLSS: Boosting Methods for GAMLSS Models",
+              author = personList(as.person("Benjamin Hofner"),
+                                  as.person("Andreas Mayr"),
+                                  as.person("Nora Fenske"),
+                                  as.person("Matthias Schmid")),
+              year = year,
+              note = vers,
+              url = "http://CRAN.R-project.org/package=gamboostLSS",
+              textVersion =
+              paste("B. Hofner, A. Mayr, N. Fenske and M. Schmid (",
+                    year,
+                    "). gamboostLSS: Boosting Methods for GAMLSS Models, ",
+                    vers, ", http://CRAN.R-project.org/package=gamboostLSS", ".",
+                    sep=""))
+
+    citEntry(entry="Article",
+         title = "GAMLSS for high-dimensional data - a flexible approach based on boosting",
+         author =  personList(as.person("Andreas Mayr"),
+                              as.person("Nora Fenske"),
+			      as.person("Benjamin Hofner"),
+			      as.person("Thomas Kneib"),
+                              as.person("Matthias Schmid")),
+         journal      = "Journal of the Royal Statistical Society, Series C",
+         note         = "accepted",
+         year         = "2011",
+
+         textVersion =
+         paste("Mayr, A., N. Fenske, B. Hofner, T. Kneib and M. Schmid (2011).",
+               "GAMLSS for high-dimensional data - a flexible approach based on boosting.",
+               "Journal of the Royal Statistical Society, Series C, accepted."),
+   )

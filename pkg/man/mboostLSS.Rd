@@ -35,12 +35,12 @@ mboostLSS_fit(formula, data = list(), families = list(),
     \code{\link{mboost}} for details. If \code{formula} is a single formula,
     the same formula is used for all distribution parameters. \code{formula}
     can also be a (named) list, where each list element corresponds
-    to one distribution parameter of the GAMLSS distribution. The names must be 
+    to one distribution parameter of the GAMLSS distribution. The names must be
     the same as in the family (see example for details). }
   \item{data}{ a data frame containing the variables in the model.}
   \item{families}{ an object of class \code{families}. It can be either one of
     the pre-defined distributions that come along with the package or a new distribution
-    specified by the user (see \code{\link{Families}} for details).} 
+    specified by the user (see \code{\link{Families}} for details).}
   \item{control}{ a list of parameters controlling the algorithm. For
     more details see \code{\link{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }
@@ -63,8 +63,8 @@ mboostLSS_fit(formula, data = list(), families = list(),
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
   distribution parameters of a GAMLSS -- a linear boosting model is
   fitted for each parameter.
- 
-  
+
+
   \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the
   distribution parameters of a GAMLSS -- an additive boosting model (by default with
   smooth effects) is fitted for each parameter. With the \code{formula} argument, a wide range of different 
@@ -97,7 +97,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
   \code{\link{boost_control}}. For more-dimensional stopping, one can
   specify, e.g., \code{mstop = list(mu = 100, sigma = 200)} (see
   examples).
-  
+
 
 }
 \value{
@@ -106,16 +106,20 @@ mboostLSS_fit(formula, data = list(), families = list(),
 }
 \references{
 
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data -- a flexible approach based on boosting. 
-Department of Statistics: Technical Report 98. 
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
+for high-dimensional data - a flexible approach based on boosting.
+Journal of the Royal Statistical Society, Series C (Applied Statistics).
+Accepted.
+
+Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}
 
-Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
-shape (with discussion). Applied Statistics 54, 507-554.
+Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
+for location, scale and shape (with discussion). Applied Statistics 54,
+507-554.
 
-Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization, 
-prediction and model fitting. Statistical Science, 22(4), 477--505. 
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization,
+prediction and model fitting. Statistical Science, 22(4), 477--505.
 }
 
 \seealso{
@@ -123,7 +127,7 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
   \code{\link{blackboost}} for the underlying boosting functions
   contained in \code{\link{mboost}}.
 
-  See for example \code{\link{risk}} or \code{\link{coef}} for methods 
+  See for example \code{\link{risk}} or \code{\link{coef}} for methods
   that can be used to extract information from \code{\link{mboostLSS}} objects.
 }
 \examples{
@@ -181,7 +185,7 @@ log(mean(sigma))
 
 \dontrun{## (only as is takes some time)
 ### use different mstop values for the two distribution parameters
-### (two-dimensional early stopping) 
+### (two-dimensional early stopping)
 ### the number of iterations is passed to boost_control via a named list
 model3 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                                     sigma = y ~ x3 + x4 + x5 + x6),
@@ -200,7 +204,7 @@ par(mfrow = c(1,2))
 plot(model2, xlim = c(0, max(mstop(model2))))
 ## all.equal(coef(model2), coef(model3)) # same!
 
-### WARNING: Subsetting via model[mstopnew] changes the model directly! 
+### WARNING: Subsetting via model[mstopnew] changes the model directly!
 ### For the original fit one has to subset again: model[mstop]
 
 }

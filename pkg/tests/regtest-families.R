@@ -19,22 +19,22 @@ rm("y", "x1", "x2")
 
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5),
                      data = data,
-                     control = boost_control(mstop = 10))
+                     control = boost_control(mstop = 10), center = TRUE)
 coef(model)
 
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(sigma = 1),
                      data = data,
-                     control = boost_control(mstop = 10))
+                     control = boost_control(mstop = 10), center = TRUE)
 coef(model)
 
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(df = 4),
                      data = data,
-                     control = boost_control(mstop = 10))
+                     control = boost_control(mstop = 10), center = TRUE)
 coef(model)
 
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = 0.5, df = 1),
                      data = data,
-                     control = boost_control(mstop = 10))
+                     control = boost_control(mstop = 10), center = TRUE)
 coef(model)
 
 ### multivariate minimum for offset
@@ -53,7 +53,7 @@ res <- optim(fn = riski, par = c(0, 1, 1), y = data$y, w = rep(1, length(data$y)
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1], sigma =
                                   exp(res[2]), df = exp(res[3])),
                      data = data,
-                     control = boost_control(mstop = 10))
+                     control = boost_control(mstop = 10), center = TRUE)
 model[100]
 coef(model)
 
@@ -69,7 +69,7 @@ time <-  exp(3 + 1*x1 +2*x2  + exp(0.2 * x3) * w)
 status <- rep(1, 1000)
 (m1 <- survreg(Surv(time, status) ~ x1 + x2 + x3, dist="lognormal"))
 model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogNormalLSS(),
-                     control = boost_control(trace = TRUE))
+                     control = boost_control(trace = TRUE), center = TRUE)
 stopifnot(sum(abs(coef(model, off2int = TRUE)[[1]] - c(3, 1, 2, 0)))
           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0, 0, 0, 0.2))) < 0.25)
@@ -82,7 +82,7 @@ for (i in 1:1000)
 status <- rep(1, 1000)
 (m1 <- survreg(Surv(time, status) ~ x1 + x2 + x3, dist="loglogistic"))
 model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),
-                     control = boost_control(trace = TRUE))
+                     control = boost_control(trace = TRUE), center = TRUE)
 model[350]
 stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
@@ -98,7 +98,7 @@ for (i in 1:1000)
 (m1 <- survreg(Surv(time, status) ~ x1 + x2 + x3, dist="weibull"))
 model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3,
                      families = WeibullLSS(),
-                     control = boost_control(trace = TRUE))
+                     control = boost_control(trace = TRUE), center = TRUE)
 model[300]
 stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
           < sum(abs(coef(m1) - c(3, 1, 2, 0))))

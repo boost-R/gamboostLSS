@@ -2,7 +2,7 @@
 \alias{gamboostLSS-package}
 
 \docType{package}
-\title{ 
+\title{
   Boosting algorithms for GAMLSS
 }
 \description{
@@ -50,19 +50,26 @@ Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
 Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
 }
 \references{
-                                    
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
 
-Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
-shape (with discussion). Applied Statistics 54, 507-554.
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
+for high-dimensional data - a flexible approach based on boosting.
+Journal of the Royal Statistical Society, Series C (Applied Statistics).
+Accepted.
 
-Stasinopoulos, D. M. and R. A. Rigby (2007). Generalized additive models for location scale and
-shape (GAMLSS) in R. Journal of Statistical Software 23(7).
+Preliminary version: Department of Statistics, Technical Report 98.
+\url{http://epub.ub.uni-muenchen.de/11938/}
 
-Buehlmann, P. and Hothorn, T. (2007). Boosting algorithms: Regularization, 
-prediction and model fitting. Statistical Science, 22(4), 477--505. 
+
+Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
+for location, scale and shape (with discussion). Applied Statistics 54,
+507-554.
+
+Stasinopoulos, D. M. and R. A. Rigby (2007). Generalized additive models
+for location scale and shape (GAMLSS) in R. Journal of Statistical
+Software 23(7).
+
+Buehlmann, P. and Hothorn, T. (2007). Boosting algorithms: Regularization,
+prediction and model fitting. Statistical Science, 22(4), 477--505.
 
 Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2010a).
 Model-based boosting 2.0. Journal of Machine Learning Research 11(Aug),
@@ -74,8 +81,8 @@ mboost: Model-based boosting 2.0. R package version 2.0-9.
 
 }
 \keyword{ package }
-\seealso{ The \code{\link{mboost}} package for more on model-based boosting, or the 
-          \code{\link[gamlss]{gamlss}} package for the original GAMLSS algorithms 
+\seealso{ The \code{\link{mboost}} package for more on model-based boosting, or the
+          \code{\link[gamlss]{gamlss}} package for the original GAMLSS algorithms
           provided by Rigby and Stasinopoulos.
 }
 \examples{
@@ -91,8 +98,8 @@ y <- numeric(100)
 for( i in 1:100)  y[i] <- rnbinom(1, size=exp(eta_sigma[i]), mu=exp(eta_mu[i]))
 
 # Model fitting, 300 boosting steps, same formula for both distribution parameters
-mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(), 
-        control=boost_control(mstop=300))
+mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(),
+        control=boost_control(mstop=300), center = TRUE)
 
 # Shrinked effect estimates
 coef(mod1, off2int=TRUE)

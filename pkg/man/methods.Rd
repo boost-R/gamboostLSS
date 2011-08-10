@@ -11,6 +11,7 @@
 \alias{mstop.mboostLSS}
 \alias{mstop.oobag}
 
+\alias{selected}
 \alias{selected.mboostLSS}
 
 \alias{fitted.mboostLSS}
@@ -53,6 +54,7 @@
                             which = NULL,
                             aggregate = c("sum", "cumsum", "none"),
                             parameter = names(object), ...)
+
 }
 \arguments{
   \item{x}{ an object of the appropriate class (see usage). }
@@ -104,7 +106,7 @@
 \details{
   These functions can be used to extract details from fitted models.
   \code{print} shows a dense representation of the model fit.
-  
+
   The function \code{coef} extracts the regression coefficients of
   linear predictors fitted using the \code{\link{glmboostLSS}} function or
   additive predictors fitted using \code{\link{gamboostLSS}}. Per default,
@@ -113,7 +115,7 @@
   extracted using the \code{which} argument. Furhtermore, one can
   extract only coefficients for a single distribution parameter via the
   \code{parameter} argument (see examples for details).
- 
+
   Analogical, the function \code{plot} per default displays the
   coefficient paths for the complete GAMLSS but can be restricted to
   single distribution parameters or covariates (or subsets) using the
@@ -140,23 +142,28 @@
 
 \references{
 
-Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization, 
-prediction and model fitting. Statistical Science, 22(4), 477--505. 
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
+for high-dimensional data - a flexible approach based on boosting.
+Journal of the Royal Statistical Society, Series C (Applied Statistics).
+Accepted.
 
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+Preliminary version: Department of Statistics, Technical Report 98.
+\url{http://epub.ub.uni-muenchen.de/11938/}
 
-Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
-shape (with discussion). Applied Statistics 54, 507-554.
-}
+
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization,
+prediction and model fitting. Statistical Science, 22(4), 477--505.
+
+Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
+for location, scale and shape (with discussion). Applied Statistics 54,
+507-554. }
 
 \seealso{
  \code{\link{glmboostLSS}}, \code{\link{gamboostLSS}} and \code{\link{blackboostLSS}} for fitting
  of GAMLSS. See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods 
  for \code{\link[mboost]{mboost}} objects. 
 }
-\examples{
+ \examples{
 
 ### generate data
 set.seed(1907)
@@ -200,20 +207,19 @@ plot(model, which = "x3")
 par(mfrow = c(1, 1))
 plot(model, which = 1, parameter = 2)
 
-### subset model for mstop = 300 (one-dimensional) 
+### subset model for mstop = 300 (one-dimensional)
 model[300]
 
-# WARNING: Subsetting via model[mstopnew] changes the model directly! 
+# WARNING: Subsetting via model[mstopnew] changes the model directly!
 # For the original fit one has to subset again: model[mstop]
- 
+
 par(mfrow = c(2, 2))
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 ### get back to orignal fit
 model[400]
 plot(risk(model, parameter = "mu")[[1]])
-plot(risk(model, parameter = "sigma")[[1]]) 
+plot(risk(model, parameter = "sigma")[[1]])
 
 }
 \keyword{methods}
-      

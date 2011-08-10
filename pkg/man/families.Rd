@@ -31,8 +31,8 @@
  The package provides some pre-defined GAMLSS families, e.g. \code{NBionomialLSS}. By using the function \code{Families}, 
  a new object of the class \code{families} can be generated. 
  
- Objects of the class \code{families} provide a convenient way to specify GAMLSS 
- distributions to be fitted by one of the boosting 
+ Objects of the class \code{families} provide a convenient way to specify GAMLSS
+ distributions to be fitted by one of the boosting
  algorithms implemented in this package. 
 }
 \usage{
@@ -41,13 +41,13 @@ Families(...)
 
 ###  Pre-defined GAMLSS distributions  ###
 
-## families Object for the negative binomial distribution 
+## families Object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
 ## 'Sub-families' for the two distribution parameters:
 NBinomialMu(mu = NULL, sigma = NULL)
 NBinomialSigma(mu = NULL, sigma = NULL)
 
-## families Object for Student's t-distribution 
+## families Object for Student's t-distribution
 StudentTLSS(mu = NULL, sigma = NULL, df = NULL)
 ## 'Sub-families' for the three distribution parameters:
 StudentTMu(mu = NULL, sigma = NULL, df = NULL)
@@ -80,7 +80,7 @@ WeibullSigma(mu = NULL, sigma = NULL)
   \item{\dots}{ Sub-families to be passed to constructor. }
 }
 \details{
-  
+
   The \code{Families} function can be used to implements a new GAMLSS distribution 
   which can be used for fitting by \code{\link{mboostLSS}}. Thereby, the function builds a list of
   Sub-families, one for each distribution parameter. The Sub-families
@@ -98,7 +98,7 @@ WeibullSigma(mu = NULL, sigma = NULL)
   is basically the same function for both paramters, only
   \code{ngradient} differs. Both Sub-families are passed to the
   \code{Families} constructor, which returns an object of the class \code{families}.
-    
+
   The arguments of the final object are the offsets for each
   distribution parameter. Offsets can be either scalar, a vector with
   length equal to the number of observations or \code{NULL} (default). In the
@@ -114,16 +114,20 @@ WeibullSigma(mu = NULL, sigma = NULL)
   \value{ An object of class \code{families}. }
 
 \references{
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2010): GAMLSS 
-for high-dimensional data - a flexible approach based on boosting. 
-Department of Statistics: Technical Report 98. \url{http://epub.ub.uni-muenchen.de/11938/}
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
+for high-dimensional data - a flexible approach based on boosting.
+Journal of the Royal Statistical Society, Series C (Applied Statistics).
+Accepted.
 
-Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models for location, scale and
-shape (with discussion). Applied Statistics 54, 507-554.
-}
+Preliminary version: Department of Statistics, Technical Report 98.
+\url{http://epub.ub.uni-muenchen.de/11938/}
+
+Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
+for location, scale and shape (with discussion). Applied Statistics 54,
+507-554. }
 
 \seealso{
- 
+
  The corresponding constructor function \code{\link[mboost]{Family}} in
  \code{\link[mboost]{mboost}}. For the fitting of GAMLSS distributions
  see \code{\link{mboostLSS}}.
@@ -136,7 +140,7 @@ shape (with discussion). Applied Statistics 54, 507-554.
 # Sub-Family for mu  -> generate object of the class family from the package mboost
 newStudentTMu  <- function(mu, df){
 
-    # loss is negative log-Likelihood, f is the parameter to be fitted with 
+    # loss is negative log-Likelihood, f is the parameter to be fitted with
     # id link -> f = mu
     loss <- function(df,  y, f) {
         -1 * (lgamma((df + 1)/2)  - lgamma(1/2) -
@@ -154,7 +158,7 @@ newStudentTMu  <- function(mu, df){
 
     # use the Family constructor of mboost
     Family(ngradient = ngradient, risk = risk, loss = loss,
-        response = function(f) f,  
+        response = function(f) f,
         name = "new Student's t-distribution: mu (id link)")
 }
 
@@ -184,9 +188,9 @@ newStudentTDf <- function(mu, df){
         response = function(f) exp(f),
         name = "Student's t-distribution: df (log link)")
 }
-    
+
 # families object for new distribution
-newStudentT <- Families(mu= newStudentTMu(mu=mu, df=df), 
+newStudentT <- Families(mu= newStudentTMu(mu=mu, df=df),
                                     df=newStudentTDf(mu=mu, df=df))
 
 
@@ -204,7 +208,7 @@ y <- rTF(n = n, mu = mu, nu = df)
 model <- glmboostLSS(y ~ x1 + x2, families = newStudentT,
                      control = boost_control(mstop = 100),
                      center = TRUE)
-# shrinked effect estimates                     
+# shrinked effect estimates
 coef(model, off2int = TRUE)
 
 # compare to pre-defined three parametric t-distribution:

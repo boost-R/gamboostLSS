@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.13.1 (2011-07-08)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -23,6 +24,13 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: survival
 Loading required package: splines
+
+Attaching package: 'gamboostLSS'
+
+The following object(s) are masked from 'package:mboost':
+
+    selected
+
 > 
 > ## subset method was missing if initial mstop = 1
 > set.seed(1907)
@@ -41,9 +49,6 @@ Loading required package: splines
 > 
 > model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = 1))
-Warning message:
-In asMethod(object) :
-  as(.,"dsCMatrix") is deprecated; do use as(., "symmetricMatrix")
 > model[10]
 
 	 LSS Models fitted via Model-based Boosting

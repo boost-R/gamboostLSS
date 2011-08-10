@@ -1,7 +1,8 @@
 
-R version 2.11.1 (2010-05-31)
-Copyright (C) 2010 The R Foundation for Statistical Computing
+R version 2.13.1 (2011-07-08)
+Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -23,12 +24,21 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: survival
 Loading required package: splines
+
+Attaching package: 'gamboostLSS'
+
+The following object(s) are masked from 'package:mboost':
+
+    selected
+
 > require("gamlss")
 Loading required package: gamlss
 Loading required package: gamlss.dist
+Loading required package: MASS
 Loading required package: gamlss.data
- **********   GAMLSS Version 4.0-0 ********** 
-For more on GAMLSS look at http://www.gamlss.com/ 
+Loading required package: nlme
+ **********   GAMLSS Version 4.0-8 ********** 
+For more on GAMLSS look at http://www.gamlss.org/ 
 Type gamlssNews() to see new features/changes/bug fixes.
 
 Attaching package: 'gamlss'
@@ -153,7 +163,7 @@ Loss function: {
 Final risk: 13591.79 
 > model[20]
 [ 11] ........
-Final risk: 13219.00 
+Final risk: 13219 
 
 	 LSS Models fitted via Model-based Boosting
 
