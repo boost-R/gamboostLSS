@@ -114,9 +114,14 @@ Accepted.
 Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}
 
+
+M. Schmid, S. Potapov, A. Pfahlberg, and T. Hothorn. Estimation and
+regularization techniques for regression models with multidimensional
+prediction functions. Statistics and Computing, 20(2):139-150, 2010.
+
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
-for location, scale and shape (with discussion). Applied Statistics 54,
-507-554.
+for location, scale and shape (with discussion). Journal of the Royal
+Statistical Society, Series C (Applied Statistics), 54, 507-554.
 
 Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization,
 prediction and model fitting. Statistical Science, 22(4), 477--505.

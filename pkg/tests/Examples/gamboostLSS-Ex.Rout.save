@@ -54,7 +54,7 @@ The following object(s) are masked from 'package:mboost':
 > # Example to define a new distribution:
 > # Students t-distribution with two parameters, df and mu:
 > 
-> # Sub-Family for mu
+> # Sub-Family for mu  -> generate object of the class family from the package mboost
 > newStudentTMu  <- function(mu, df){
 + 
 +     # loss is negative log-Likelihood, f is the parameter to be fitted with
@@ -221,7 +221,7 @@ detaching ‘package:gamlss’, ‘package:nlme’, ‘package:gamlss.data’,
 > y <- numeric(100)
 > for( i in 1:100)  y[i] <- rnbinom(1, size=exp(eta_sigma[i]), mu=exp(eta_mu[i]))
 > 
-> # Model fitting, 300 boosting steps
+> # Model fitting, 300 boosting steps, same formula for both distribution parameters
 > mod1 <- glmboostLSS( y ~ x1 + x2, families=NBinomialLSS(),
 +         control=boost_control(mstop=300), center = TRUE)
 > 
@@ -649,7 +649,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > ### * <FOOTER>
 > ###
 > cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  149.69 0.34 150.278 0 0 
+Time elapsed:  150.3 0.19 150.715 0 0 
 > grDevices::dev.off()
 null device 
           1 

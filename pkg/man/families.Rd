@@ -81,23 +81,24 @@ WeibullSigma(mu = NULL, sigma = NULL)
 }
 \details{
 
-  The \code{Families} function can be used to implements a new GAMLSS distribution 
-  which can be used for fitting by \code{\link{mboostLSS}}. Thereby, the function builds a list of
-  Sub-families, one for each distribution parameter. The Sub-families
-  themselves are objects of the class \code{boost_family}, and can be
-  constructed via the function \code{\link[mboost]{Family}} of the
-  \code{mboost} Package. 
+  The \code{Families} function can be used to implements a new GAMLSS
+  distribution which can be used for fitting by \code{\link{mboostLSS}}.
+  Thereby, the function builds a list of Sub-families, one for each
+  distribution parameter. The Sub-families themselves are objects of the
+  class \code{boost_family}, and can be constructed via the function
+  \code{\link[mboost]{Family}} of the \code{mboost} Package.
   
-  Arguments to be passed to \code{Family}: The \code{loss} for every distribution
-  parameter (contained in objects of class \code{boost_family}) is the
-  negative log-likelihood of the corresponding distribution. The
-  \code{ngradient} is the negative partial derivative
-  of the loss function with respect to the distribution parameter. For a
-  two-parameter distribution (e.g. mu and sigma), the user therefore has
-  to specify two Sub-families with \code{\link{Family}}. The \code{loss}
-  is basically the same function for both paramters, only
-  \code{ngradient} differs. Both Sub-families are passed to the
-  \code{Families} constructor, which returns an object of the class \code{families}.
+  Arguments to be passed to \code{Family}: The \code{loss} for every
+  distribution parameter (contained in objects of class
+  \code{boost_family}) is the negative log-likelihood of the
+  corresponding distribution. The \code{ngradient} is the negative
+  partial derivative of the loss function with respect to the
+  distribution parameter. For a two-parameter distribution (e.g. mu and
+  sigma), the user therefore has to specify two Sub-families with
+  \code{\link{Family}}. The \code{loss} is basically the same function
+  for both paramters, only \code{ngradient} differs. Both Sub-families
+  are passed to the \code{Families} constructor, which returns an object
+  of the class \code{families}.
 
   The arguments of the final object are the offsets for each
   distribution parameter. Offsets can be either scalar, a vector with
@@ -123,8 +124,8 @@ Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
-for location, scale and shape (with discussion). Applied Statistics 54,
-507-554. }
+for location, scale and shape (with discussion). Journal of the Royal
+Statistical Society, Series C (Applied Statistics), 54, 507-554. }
 
 \seealso{
 
