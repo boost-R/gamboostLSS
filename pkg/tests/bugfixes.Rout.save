@@ -21,9 +21,9 @@ Type 'q()' to quit R.
 > 
 > require("gamboostLSS")
 Loading required package: gamboostLSS
-Loading required package: mboost
-Loading required package: survival
 Loading required package: splines
+Loading required package: survival
+Loading required package: mboost
 
 Attaching package: 'gamboostLSS'
 
@@ -72,4 +72,10 @@ Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *
 Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
      f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
  
+> 
+> 
+> ## selected() was broken (didn't call mboost-function)
+> stopifnot(all.equal(selected(model),
++                     list(mu = mboost::selected(model[[1]]),
++                          sigma = mboost::selected(model[[2]]))))
 > 
