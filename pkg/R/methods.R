@@ -77,7 +77,8 @@ mstop.oobag <- function(object, parameter = names(object), ...){
 selected.mboostLSS <- function(object, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    RET <- lapply(parameter, function(i, object)  selected(object[[i]]),
+    RET <- lapply(parameter, function(i, object)
+                               mboost::selected(object[[i]]),
                   object = object)
     names(RET) <- names(object)[parameter]
     if (length(RET) == 1)

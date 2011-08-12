@@ -21,3 +21,9 @@ dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 1))
 model[10]
+
+
+## selected() was broken (didn't call mboost-function)
+stopifnot(all.equal(selected(model),
+                    list(mu = mboost::selected(model[[1]]),
+                         sigma = mboost::selected(model[[2]]))))

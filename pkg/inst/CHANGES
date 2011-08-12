@@ -1,5 +1,12 @@
 		CHANGES in `gamboostLSS' VERSION 1.0 (2011-08-10)
 
+  o  fixed bug in selected()
+
+  o  updated dependencies
+
+
+		CHANGES in `gamboostLSS' VERSION 1.0 (2011-08-10)
+
   o  some changes to make gamboostLSS work with mboost 2.0.x series
 
   o  updated references
