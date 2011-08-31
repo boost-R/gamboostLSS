@@ -181,7 +181,12 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                     assign(names(fit)[k], fitted(fit[[k]], type = "response"),
                            environment(get("ngradient", environment(fit[[j]]$subset))))
                 ## update value of u, i.e. compute ngradient with new nuisance parameters
-                evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
+                ENV <- environment(fit[[j]]$subset)
+                ENV[["u"]] <- ENV[["ngradient"]](ENV[["y"]], ENV[["fit"]],
+                                                 ENV[["weights"]])
+                # same as:
+                # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
+
                 ## update j-th component to "m-th" boosting step
                 fit[[j]][mvals[[j]][i]]
             }

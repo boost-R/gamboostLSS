@@ -1,4 +1,10 @@
-		CHANGES in `gamboostLSS' VERSION 1.0 (2011-08-10)
+		CHANGES in `gamboostLSS' VERSION 1.0-2 (2011-08-31)
+
+  o  changed the way we use environments 
+     (to get rid of note: no visible binding)
+
+
+		CHANGES in `gamboostLSS' VERSION 1.0-1 (2011-08-10)
 
   o  fixed bug in selected()
 

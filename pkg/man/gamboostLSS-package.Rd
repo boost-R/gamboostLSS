@@ -28,20 +28,20 @@ model choice for potentially high-dimensional data settings.
 \code{\link{gamboostLSS}} (for smooth effects) depend on their analogous
 companions \code{\link[mboost]{glmboost}} and
 \code{\link[mboost]{gamboost}} for generalized additive models
-(contained in package \code{\link{mboost}}, see Hothorn et al.
-2010a, b) and are similar in their usage.
+(contained in package \code{\link{mboost}}, see Hothorn et al. 2010a, b)
+and are similar in their usage.
 
 The package includes some pre-defined GAMLSS distributions, but the user
 can also specify new distributions with \code{\link{Families}}.
 
 
 A wide range of different base-learners is available for covariate
-effects (see \code{\link[mboost]{baselearners}}) including linear (\code{bols}), non-linear (\code{bbs}), random
-(\code{brandom}) or spatial effects (\code{bspatial} or Markov random
-fields \code{bmrf}). Each bease-learner can be included seperately for each predictor. 
-The selection of base-learnes is crucial as it
-implies the kind of effect the covariate has on each distribution
-parameter in the final GAMLSS.
+effects (see \code{\link[mboost]{baselearners}}) including linear
+(\code{bols}), non-linear (\code{bbs}), random (\code{brandom}) or
+spatial effects (\code{bspatial} or Markov random fields \code{bmrf}).
+Each bease-learner can be included seperately for each predictor. The
+selection of base-learnes is crucial as it implies the kind of effect
+the covariate has on each distribution parameter in the final GAMLSS.
 
 }
 \author{
@@ -85,12 +85,13 @@ mboost: Model-based boosting 2.0. R package version 2.0-9.
 
 }
 \keyword{ package }
-\seealso{ The \code{\link{mboost}} package for more on model-based boosting, or the
-          \code{\link[gamlss]{gamlss}} package for the original GAMLSS algorithms
-          provided by Rigby and Stasinopoulos.
-}
-\examples{
 
+\seealso{
+The \code{\link{mboost}} package for more on model-based boosting, or
+the \code{\link[gamlss]{gamlss}} package for the original GAMLSS
+algorithms provided by Rigby and Stasinopoulos.
+} 
+\examples{
 # Generate covariates
 x1 <- runif(100)
 x2 <- runif(100)
