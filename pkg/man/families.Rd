@@ -1,6 +1,11 @@
 \name{Families}
 \alias{Families}
 
+
+\alias{GaussianLSS}
+\alias{GaussianMu}
+\alias{GaussianSigma}
+
 \alias{NBinomialLSS}
 \alias{NBinomialMu}
 \alias{NBinomialSigma}
@@ -40,6 +45,12 @@
 Families(...)
 
 ###  Pre-defined GAMLSS distributions  ###
+
+## families Object for the normal distribution
+GaussianLSS(mu = NULL, sigma = NULL)
+## 'Sub-families' for the two distribution parameters:
+GaussianMu(mu = NULL, sigma = NULL)
+GaussianSigma(mu = NULL, sigma = NULL)
 
 ## families Object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
@@ -119,7 +130,6 @@ Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
 for high-dimensional data - a flexible approach based on boosting.
 Journal of the Royal Statistical Society, Series C (Applied Statistics).
 Accepted.
-
 Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}
 
