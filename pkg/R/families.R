@@ -492,3 +492,59 @@ WeibullLSS <- function(mu = NULL, sigma = NULL){
     Families(mu = WeibullMu(mu = mu, sigma = sigma),
              sigma = WeibullSigma(mu = mu, sigma = sigma))
 }
+
+
+GaussianMu  <- function(mu, sigma){
+    loss <- function(sigma, y, f) -dnorm(x=y, mean=f, sd=sigma, log=TRUE)
+    risk <- function(y, f, w = 1) {
+        sum(w * loss(y = y, f = f, sigma = sigma))
+    }
+    ngradient <- function(y, f, w = 1) {
+        (1/sigma^2)*(y - f)
+    }
+
+     offset <- function(y, w){
+        if (!is.null(mu)){
+            RET <- mu
+        } else {
+            RET <- mean(y, na.rm=TRUE)
+        }
+        return(RET)
+    }
+
+   Family(ngradient = ngradient, risk = risk, loss = loss,
+        response = function(f) f, offset=offset,
+        name = "Normal distribution: mu(id link)")
+}
+
+GaussianSigma  <- function(mu, sigma){
+
+    loss <-  function(y, f, mu) - dnorm(x=y, mean=mu, sd=exp(f), log=TRUE)
+    risk <- function(y, f, w = 1) {
+        sum(w * loss(y = y, f = f, mu = mu))
+    }
+    ngradient <- function(y, f, w = 1) {
+       - 1 + exp(-2*f)*((y - mu)^2)
+    }
+   offset <- function(y, w){
+        if (!is.null(sigma)){
+            RET <- log(sigma)
+        } else {
+            RET <-  log(sd(y, na.rm=TRUE))
+        }
+        return(RET)
+     }
+
+   Family(ngradient = ngradient, risk = risk, loss = loss,
+        response = function(f) exp(f), offset=offset, 
+        name = "Normal distribution: sigma (log link)")
+}
+
+
+GaussianLSS <- function(mu = NULL, sigma = NULL){ 
+   if ((!is.null(sigma) && sigma <= 0))
+        stop(sQuote("sigma"), " must be greater than zero")
+        Families(mu = GaussianMu(mu=mu, sigma=sigma), 
+               sigma=GaussianSigma(mu=mu, sigma=sigma))
+}
+  
