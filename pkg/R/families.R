@@ -494,7 +494,7 @@ WeibullLSS <- function(mu = NULL, sigma = NULL){
 }
 
 
-GaussianMu  <- function(mu, sigma){
+GaussianMu  <- function(mu = NULL, sigma = NULL){
     loss <- function(sigma, y, f) -dnorm(x=y, mean=f, sd=sigma, log=TRUE)
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, sigma = sigma))
@@ -517,7 +517,7 @@ GaussianMu  <- function(mu, sigma){
         name = "Normal distribution: mu(id link)")
 }
 
-GaussianSigma  <- function(mu, sigma){
+GaussianSigma  <- function(mu = NULL, sigma = NULL){
 
     loss <-  function(y, f, mu) - dnorm(x=y, mean=mu, sd=exp(f), log=TRUE)
     risk <- function(y, f, w = 1) {
