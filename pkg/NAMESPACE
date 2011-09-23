@@ -8,12 +8,11 @@ export(glmboostLSS,
        mboostLSS_fit,
        risk,
        Families,
-       selected,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
        LogNormalLSS, LogNormalMu, LogNormalSigma,
        LogLogLSS, LogLogMu, LogLogSigma,
-	   GaussianLSS, GaussianMu, GaussianSigma,
+       GaussianLSS, GaussianMu, GaussianSigma,
        WeibullLSS, WeibullMu, WeibullSigma)
 
 S3method("[", mboostLSS)
