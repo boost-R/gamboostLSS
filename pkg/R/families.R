@@ -548,3 +548,89 @@ GaussianLSS <- function(mu = NULL, sigma = NULL){
                sigma=GaussianSigma(mu=mu, sigma=sigma))
 }
   
+GammaLSS <- function (mu = NULL, sigma = NULL) 
+{
+    if ((!is.null(sigma) && sigma <= 0)) 
+        stop(sQuote("sigma"), " must be greater than zero")
+    if ((!is.null(mu) && mu <= 0)) 
+        stop(sQuote("mu"), " must be greater than zero")
+ 
+    Families(mu = GammaMu(mu = mu, sigma = sigma), 
+             sigma = GammaSigma(mu = mu, sigma = sigma))
+}
+
+
+
+GammaMu <-function (mu = NULL, sigma = NULL) 
+{
+    loss <-  function(sigma, y, f) {
+        lgamma(sigma) + sigma * y * exp(-f) - sigma * log(y) - 
+            sigma * log(sigma) + sigma * f + log(y)
+    }
+    risk <- function(y, f, w = 1) {
+        sum(w * loss(y = y, f = f, sigma = sigma))
+    }
+    ngradient <- function(y, f, w = 1) {
+        sigma * y * exp(-f) - sigma
+    }
+    offset <- function(y, w) {
+        if (!is.null(mu)) {
+            RET <- log(mu)
+        }
+        else {
+            if (is.null(sigma)) 
+                sigma <<- mean(y)^2/(var(y))
+            RET <- optimize(risk, interval = c(0, max(y^2, na.rm = TRUE)), 
+            y = y, w = w)$minimum
+        }
+        return(RET)
+    }
+    check_y <- function(y) {
+        if (!is.numeric(y) || !is.null(dim(y))) 
+            stop("response is not a numeric vector but ", sQuote("GammaLSS()"))
+        if (any(y < 0)) 
+            stop("response is not positive but ", sQuote("GammaLSS()"))
+        y
+    }
+    Family(ngradient = ngradient, risk = risk, loss = loss, 
+           response = function(f) exp(f), offset = offset, check_y = check_y, 
+           name = "Gamma distribution: mu(log link)")
+}
+           
+GammaSigma <-function (mu = NULL, sigma = NULL) 
+{
+    loss <-  function(mu, y, f) {
+        lgamma(exp(f)) + (exp(f) * y )/mu - exp(f) * log(y) - 
+            f * exp(f) + exp(f) * log(mu) + log(y)
+    }
+    risk <- function(y, f, w = 1){
+        sum(w * loss(y = y, f = f, mu = mu))
+    }
+    ngradient <- function(y, f, w = 1) {
+        - digamma(exp(f))*exp(f) + (f+1)*exp(f) - log(mu)*exp(f) +
+         exp(f)*log(y) - (y*exp(f))/mu  
+    }
+    offset <- function(y, w) {
+        if (!is.null(sigma)) {
+            RET <- log(sigma)
+        }
+        else {
+            if (is.null(mu)) 
+                mu <<- mean(y)
+            RET <- optimize(risk, interval = c(0, max(y, na.rm = TRUE)), 
+            y = y, w = w)$minimum
+           }
+        return(RET)
+    }
+    check_y <- function(y) {
+        if (!is.numeric(y) || !is.null(dim(y))) 
+            stop("response is not a numeric vector but ", sQuote("GammaLSS()"))
+        if (any(y < 0)) 
+            stop("response is not positive but ", sQuote("GammaLSS()"))
+        y
+    }
+    Family(ngradient = ngradient, risk = risk, loss = loss, 
+           response = function(f) exp(f), offset = offset, check_y = check_y, 
+           name = "Gamma distribution: sigma(log link)")
+}
+
