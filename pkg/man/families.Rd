@@ -6,6 +6,10 @@
 \alias{GaussianMu}
 \alias{GaussianSigma}
 
+\alias{GammaLSS}
+\alias{GammaMu}
+\alias{GammaSigma}
+
 \alias{NBinomialLSS}
 \alias{NBinomialMu}
 \alias{NBinomialSigma}
