@@ -56,6 +56,13 @@ GaussianLSS(mu = NULL, sigma = NULL)
 GaussianMu(mu = NULL, sigma = NULL)
 GaussianSigma(mu = NULL, sigma = NULL)
 
+## families Object for the gamma distribution
+GammaLSS(mu = NULL, sigma = NULL)
+## 'Sub-families' for the two distribution parameters:
+GammaMu(mu = NULL, sigma = NULL)
+GammaSigma(mu = NULL, sigma = NULL)
+
+
 ## families Object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
 ## 'Sub-families' for the two distribution parameters:
