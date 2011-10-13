@@ -13,6 +13,7 @@ export(glmboostLSS,
        LogNormalLSS, LogNormalMu, LogNormalSigma,
        LogLogLSS, LogLogMu, LogLogSigma,
        GaussianLSS, GaussianMu, GaussianSigma,
+       GammaLSS, GammaMu, GammaSigma,
        WeibullLSS, WeibullMu, WeibullSigma)
 
 S3method("[", mboostLSS)
