@@ -1,5 +1,5 @@
 
-R version 2.13.1 (2011-07-08)
+R version 2.14.0 (2011-10-31)
 Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-pc-linux-gnu (64-bit)
@@ -21,25 +21,19 @@ Type 'q()' to quit R.
 > 
 > require("gamboostLSS")
 Loading required package: gamboostLSS
-Loading required package: mboost
-Loading required package: survival
 Loading required package: splines
-
-Attaching package: 'gamboostLSS'
-
-The following object(s) are masked from 'package:mboost':
-
-    selected
-
+Loading required package: survival
+Loading required package: mboost
 > require("gamlss")
 Loading required package: gamlss
 Loading required package: gamlss.dist
 Loading required package: MASS
 Loading required package: gamlss.data
 Loading required package: nlme
- **********   GAMLSS Version 4.0-8 ********** 
-For more on GAMLSS look at http://www.gamlss.org/ 
+ **********   GAMLSS Version 4.1-1  ********** 
+For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
+
 
 Attaching package: 'gamlss'
 
@@ -235,6 +229,29 @@ Final risk: 13810.72
 > stopifnot(all.equal(lapply(coef(model, which = ""), function(x) names(x)[-1]),
 +                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
 > 
+> ### check formula-interface with lists and different responses
+> ### (not really sensible with the current families)
+> y2 <- y + 1
+> model2 <- glmboostLSS(list(mu = y ~ x2,
++                            sigma = y ~ x1 + x2,
++                            df = y2 ~ x1),
++                       families = StudentTLSS(),
++                       control = boost_control(mstop = 10, trace =TRUE),
++                       center = TRUE)
+[  1] ........
+Final risk: 14135.24 
+Warning message:
+In mboostLSS_fit(formula = formula, data = data, families = families,  :
+  responses differ for the components
+> sapply(model, function(comps) comps$offset)
+      mu    sigma       df 
+1.160244 1.177889 0.765566 
+> sapply(model2, function(comps) comps$offset)
+       mu     sigma        df 
+1.1602444 1.1778894 0.8176417 
+> stopifnot(model2[[1]]$offset == model[[1]]$offset)
+> stopifnot(model2[[2]]$offset == model[[2]]$offset)
+> stopifnot(model2[[3]]$offset != model[[3]]$offset)
 > 
 > ### check weights interface
 > set.seed(1907)

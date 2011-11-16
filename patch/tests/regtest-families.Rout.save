@@ -1,5 +1,5 @@
 
-R version 2.13.1 (2011-07-08)
+R version 2.14.0 (2011-10-31)
 Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-pc-linux-gnu (64-bit)
@@ -21,25 +21,19 @@ Type 'q()' to quit R.
 > 
 > require("gamboostLSS")
 Loading required package: gamboostLSS
-Loading required package: mboost
-Loading required package: survival
 Loading required package: splines
-
-Attaching package: 'gamboostLSS'
-
-The following object(s) are masked from 'package:mboost':
-
-    selected
-
+Loading required package: survival
+Loading required package: mboost
 > require("gamlss")
 Loading required package: gamlss
 Loading required package: gamlss.dist
 Loading required package: MASS
 Loading required package: gamlss.data
 Loading required package: nlme
- **********   GAMLSS Version 4.0-8 ********** 
-For more on GAMLSS look at http://www.gamlss.org/ 
+ **********   GAMLSS Version 4.1-1  ********** 
+For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
+
 
 Attaching package: 'gamlss'
 

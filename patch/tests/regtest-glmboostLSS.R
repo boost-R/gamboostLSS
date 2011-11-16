@@ -70,6 +70,20 @@ model <- glmboostLSS(list(mu = y ~ x2,
 stopifnot(all.equal(lapply(coef(model, which = ""), function(x) names(x)[-1]),
                     list(mu = "x2", sigma = c("x1", "x2"), df = "x1")))
 
+### check formula-interface with lists and different responses
+### (not really sensible with the current families)
+y2 <- y + 1
+model2 <- glmboostLSS(list(mu = y ~ x2,
+                           sigma = y ~ x1 + x2,
+                           df = y2 ~ x1),
+                      families = StudentTLSS(),
+                      control = boost_control(mstop = 10, trace =TRUE),
+                      center = TRUE)
+sapply(model, function(comps) comps$offset)
+sapply(model2, function(comps) comps$offset)
+stopifnot(model2[[1]]$offset == model[[1]]$offset)
+stopifnot(model2[[2]]$offset == model[[2]]$offset)
+stopifnot(model2[[3]]$offset != model[[3]]$offset)
 
 ### check weights interface
 set.seed(1907)

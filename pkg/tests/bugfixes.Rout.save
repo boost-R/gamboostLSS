@@ -1,5 +1,5 @@
 
-R version 2.13.1 (2011-07-08)
+R version 2.14.0 (2011-10-31)
 Copyright (C) 2011 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 Platform: x86_64-pc-linux-gnu (64-bit)
@@ -24,13 +24,6 @@ Loading required package: gamboostLSS
 Loading required package: splines
 Loading required package: survival
 Loading required package: mboost
-
-Attaching package: 'gamboostLSS'
-
-The following object(s) are masked from 'package:mboost':
-
-    selected
-
 > 
 > ## subset method was missing if initial mstop = 1
 > set.seed(1907)

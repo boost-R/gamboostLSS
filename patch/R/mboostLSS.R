@@ -65,8 +65,14 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
             length(unique(names(formula))) != length(names(families)))
             stop(sQuote("formula"), " can be either a formula or a named list",
                  " of formulas with same names as ",  sQuote("families"), ".")
-        response <- eval(as.expression(formula[[1]][[2]]), envir = data,
-                         enclos = environment(formula[[1]]))
+        ynames <- sapply(formula, function(fm) as.character(fm[[2]]))
+        if (length(unique(ynames)) > 1)
+            warning("responses differ for the components")
+        response <- lapply(formula, function(fm)
+                           eval(as.expression(fm[[2]]), envir = data,
+                                enclos = environment(fm)))
+        #response <- eval(as.expression(formula[[1]][[2]]), envir = data,
+        #                 enclos = environment(formula[[1]]))
     } else {
         response <- eval(as.expression(formula[[2]]), envir = data,
                          enclos = environment(formula))
@@ -124,7 +130,13 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     control$trace <- FALSE
 
     w <- weights
-    if (is.null(weights)) weights <- rep.int(1, NROW(response))
+    if (is.null(weights)){
+        if (!is.list(response)) {
+            weights <- rep.int(1, NROW(response))
+        } else {
+            weights <- rep.int(1, NROW(response[[1]]))
+        }
+    }
     weights <- mboost:::rescale_weights(weights)
 
     fit <- vector("list", length = length(families))
@@ -135,7 +147,11 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     offset <- vector("list", length = length(mods))
     names(offset) <- names(families)
     for (j in mods){
-        offset[[j]] <- families[[j]]@offset(y = response, w = weights)
+        if (!is.list(response)) {
+            offset[[j]] <- families[[j]]@offset(y = response, w = weights)
+        } else {
+            offset[[j]] <- families[[j]]@offset(y = response[[j]], w = weights)
+        }
         for (k in mods){
             for (l in mods){
                 if (!is.null(offset[[l]]))
