@@ -1,0 +1,174 @@
+
+R version 2.13.1 (2011-07-08)
+Copyright (C) 2011 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ###
+> # check gamboostLSS()
+> 
+> require("gamboostLSS")
+Loading required package: gamboostLSS
+Loading required package: mboost
+Loading required package: survival
+Loading required package: splines
+
+Attaching package: 'gamboostLSS'
+
+The following object(s) are masked from 'package:mboost':
+
+    selected
+
+> 
+> set.seed(1907)
+> x1 <- rnorm(1000)
+> x2 <- rnorm(1000)
+> x3 <- rnorm(1000)
+> x4 <- rnorm(1000)
+> x5 <- rnorm(1000)
+> x6 <- rnorm(1000)
+> mu    <- exp(1.5 + x1^2 +0.5 * x2 - 3 * sin(x3) -1 * x4)
+> sigma <- exp(-0.2 * x4 +0.2 * x5 +0.4 * x6)
+> y <- numeric(1000)
+> for( i in 1:1000)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 200))
+> 
+> coef(model)
+$mu
+$mu$`bbs(x1, df = dfbase)`
+ [1]  2.5565432  1.5696717  0.6534894 -0.1306188 -0.7593118 -1.2709711
+ [7] -1.6646598 -1.9274669 -2.0787622 -2.1565112 -2.1951260 -2.2042124
+[13] -2.1622450 -2.0179446 -1.7045003 -1.1795613 -0.4167324  0.5913862
+[19]  1.8163911  3.2029242  4.6825293  6.1777973  7.6487058  9.1050740
+
+$mu$`bbs(x4, df = dfbase)`
+ [1]  0.90552050  0.74929877  0.59356067  0.43638173  0.27808093  0.12355247
+ [7] -0.02677529 -0.16531500 -0.27722356 -0.35721266 -0.40923368 -0.43390390
+[13] -0.43165446 -0.41074747 -0.38185296 -0.35120311 -0.32066319 -0.29116535
+[19] -0.26280275 -0.23515701 -0.20810411 -0.18156486 -0.15539277 -0.12936623
+
+attr(,"offset")
+[1] 8.987949
+
+$sigma
+$sigma$`bbs(x1, df = dfbase)`
+ [1]  1.09196427  0.96992123  0.83852109  0.69014546  0.52331889  0.34680480
+ [7]  0.17688604  0.03310816 -0.07180871 -0.12988952 -0.13627426 -0.08487987
+[13]  0.02775742  0.17900110  0.33647940  0.48358297  0.61113271  0.71035300
+[19]  0.77823514  0.81900390  0.84176770  0.85896147  0.87769281  0.89754968
+
+$sigma$`bbs(x2, df = dfbase)`
+ [1] -0.445651130 -0.413112289 -0.379737589 -0.344714961 -0.307518437
+ [6] -0.268436962 -0.230049118 -0.194891472 -0.163697898 -0.131342525
+[11] -0.092708345 -0.045677041  0.009391027  0.068606659  0.126789557
+[16]  0.177982164  0.220400979  0.263501432  0.310991635  0.361093772
+[21]  0.411557656  0.461557257  0.511047840  0.560457454
+
+$sigma$`bbs(x3, df = dfbase)`
+ [1]  0.21364304  0.39193671  0.57268625  0.75692624  0.93802049  1.09641018
+ [7]  1.20050428  1.22083562  1.14896942  0.98583442  0.74440044  0.44695424
+[13]  0.12841406 -0.16938815 -0.42262763 -0.61696666 -0.74467161 -0.79301679
+[19] -0.76271080 -0.67465681 -0.54799343 -0.40150614 -0.24548144 -0.08616529
+
+$sigma$`bbs(x4, df = dfbase)`
+ [1]  1.28262040  1.17507321  1.06880344  0.96519185  0.86633267  0.77581858
+ [7]  0.69867677  0.62942464  0.55832755  0.47632514  0.37989619  0.27017981
+[13]  0.15008667  0.02137374 -0.10486687 -0.22780642 -0.35689036 -0.49357917
+[19] -0.63835443 -0.78979611 -0.94634778 -1.10398558 -1.25936904 -1.41214162
+
+$sigma$`bbs(x5, df = dfbase)`
+ [1] -0.168259477 -0.159919526 -0.150691378 -0.139424086 -0.125221344
+ [6] -0.107755346 -0.087234827 -0.062711766 -0.033131037 -0.002504818
+[11]  0.021535075  0.038614763  0.053274274  0.066136188  0.078173665
+[16]  0.089777160  0.100307850  0.110195888  0.119452974  0.128415337
+[21]  0.137385349  0.146363997  0.154894462  0.162915344
+
+$sigma$`bbs(x6, df = dfbase)`
+ [1] -0.205895476 -0.154446873 -0.105638419 -0.062873995 -0.031647574
+ [6] -0.014896325 -0.010638984 -0.012157738 -0.010794112 -0.002248967
+[11]  0.013238313  0.034101073  0.056247070  0.075048016  0.085563810
+[16]  0.091091572  0.098111835  0.108877498  0.122866749  0.139138466
+[21]  0.156552675  0.174712863  0.193287564  0.212024081
+
+attr(,"offset")
+[1] -2.427222
+
+> 
+> par(mfrow = c(3,2))
+> plot(dat$x3, fitted(model$mu, which = "x3"), main = "mu")
+> lines(sort(dat$x3), - 3 * sin(dat$x3)[order(dat$x3)], col = "red")
+> plot(dat$x3, fitted(model$sigma, which = "x3"), main = "sigma")
+> lines(sort(dat$x3), - 3 * sin(dat$x3)[order(dat$x3)], col = "red")
+> 
+> model[400]
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 200))
+
+Number of boosting iterations: mstop = 400 400 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> plot(dat$x3, fitted(model$mu, which = "x3"), main = "mu")
+> lines(sort(dat$x3), - 3 * sin(dat$x3)[order(dat$x3)], col = "red")
+> plot(dat$x3, fitted(model$sigma, which = "x3"), main = "sigma")
+> lines(sort(dat$x3), - 3 * sin(dat$x3)[order(dat$x3)], col = "red")
+> 
+> model[600]
+
+	 LSS Models fitted via Model-based Boosting
+
+Call:
+gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 200))
+
+Number of boosting iterations: mstop = 600 600 
+Step size:  0.1 
+
+Families:
+
+	 Negative Negative-Binomial Likelihood: mu (log link) 
+
+Loss function: -(lgamma(y + sigma) - lgamma(sigma) - lgamma(y + 1) + sigma *  
+     log(sigma) + y * f - (y + sigma) * log(exp(f) + sigma)) 
+ 
+
+	 Negative Negative-Binomial Likelihood: sigma (log link) 
+
+Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *  
+     f + y * log(mu) - (y + exp(f)) * log(mu + exp(f))) 
+ 
+> plot(dat$x3, fitted(model$mu, which = "x3"), main = "mu")
+> lines(sort(dat$x3), - 3 * sin(dat$x3)[order(dat$x3)], col = "red")
+> plot(dat$x3, fitted(model$sigma, which = "x3"), main = "sigma")
+> lines(sort(dat$x3), - 3 * sin(dat$x3)[order(dat$x3)], col = "red")
+> 

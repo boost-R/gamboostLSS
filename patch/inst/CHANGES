@@ -1,0 +1,25 @@
+		CHANGES in `gamboostLSS' VERSION 1.0-2 (2011-08-31)
+
+  o  changed the way we use environments 
+     (to get rid of note: no visible binding)
+
+
+		CHANGES in `gamboostLSS' VERSION 1.0-1 (2011-08-10)
+
+  o  fixed bug in selected()
+
+  o  updated dependencies
+
+
+		CHANGES in `gamboostLSS' VERSION 1.0 (2011-08-10)
+
+  o  some changes to make gamboostLSS work with mboost 2.0.x series
+
+  o  updated references
+
+  o  moved gamboostLSS to CRAN
+
+
+		CHANGES in `gamboostLSS' VERSION 0.5 (2010-07-02)
+
+  o  initial development version of gamboostLSS on R-forge

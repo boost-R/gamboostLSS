@@ -1,0 +1,33 @@
+import(mboost)
+importFrom(survival, Surv)
+
+export(glmboostLSS,
+       gamboostLSS,
+       blackboostLSS,
+       mboostLSS,
+       mboostLSS_fit,
+       risk,
+       Families,
+       selected,
+       NBinomialLSS, NBinomialMu, NBinomialSigma,
+       StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
+       LogNormalLSS, LogNormalMu, LogNormalSigma,
+       LogLogLSS, LogLogMu, LogLogSigma,
+       WeibullLSS, WeibullMu, WeibullSigma)
+
+S3method("[", mboostLSS)
+S3method(print, mboostLSS)
+S3method(selected, mboostLSS)
+S3method(risk, mboostLSS)
+
+S3method(mstop, oobag)
+S3method(mstop, mboostLSS)
+
+S3method(coef, mboostLSS)
+S3method(coef, glmboostLSS)
+
+S3method(plot, glmboostLSS)
+S3method(plot, gamboostLSS)
+
+S3method(fitted, mboostLSS)
+S3method(predict, mboostLSS)
