@@ -1,3 +1,12 @@
+		CHANGES in `gamboostLSS' VERSION 1.0-3 (2011-11-16)
+
+  o  fixed bug in regtest-gamboostLSS.R
+
+  o  removed duplicated (and slightly altered) code from mboost
+     that was required to make gamboostLSS work with earlier versions of mboost;
+     gamboostLSS now requires mboost >= 2.0-12
+
+
 		CHANGES in `gamboostLSS' VERSION 1.0-2 (2011-08-31)
 
   o  changed the way we use environments 
