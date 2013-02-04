@@ -10,6 +10,11 @@
 \alias{GammaMu}
 \alias{GammaSigma}
 
+\alias{BetaLSS}
+\alias{BetaMu}
+\alias{BetaPhi}
+
+
 \alias{NBinomialLSS}
 \alias{NBinomialMu}
 \alias{NBinomialSigma}
