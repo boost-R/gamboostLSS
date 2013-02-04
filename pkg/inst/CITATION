@@ -23,17 +23,19 @@ citEntry(
 
 citEntry(
   entry="Article",
-  title = "GAMLSS for high-dimensional data - a flexible approach based on boosting",
+  title = "Generalized additive models for location, scale and shape for high-dimensional data - a flexible approach based on boosting",
   author   =  personList(as.person("Andreas Mayr"),
                          as.person("Nora Fenske"),
                          as.person("Benjamin Hofner"),
                          as.person("Thomas Kneib"),
                          as.person("Matthias Schmid")),
-  journal  = "Journal of the Royal Statistical Society, Series C",
-  note	   = "accepted",
-  year	   = "2011",
+  journal  = "Journal of the Royal Statistical Society, Series C - Applied Statistics",
+  year	   = "2012",
+  volume   =  "61",
+  number   =  "3",
+  pages	   =  "403--427", 	
   textVersion =
-    paste("Mayr, A., N. Fenske, B. Hofner, T. Kneib and M. Schmid (2011).",
-          "GAMLSS for high-dimensional data - a flexible approach based on boosting.",
-          "Journal of the Royal Statistical Society, Series C, accepted.")
+    paste("Mayr, A., N. Fenske, B. Hofner, T. Kneib and M. Schmid (2012).",
+          "Generalized additive models for location, scale and shape for high-dimensional data - a flexible approach based on boosting.",
+          "Journal of the Royal Statistical Society, Series C - Applied Statistics, 61(3): 403-427.")
 )
