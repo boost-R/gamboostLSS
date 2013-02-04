@@ -73,8 +73,6 @@ BetaLSS(mu = NULL, phi = NULL)
 BetaMu(mu = NULL, phi = NULL)
 BetaPhi(mu = NULL, phi = NULL)
 
-
-
 ## families Object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
 ## 'Sub-families' for the two distribution parameters:
@@ -152,8 +150,7 @@ WeibullSigma(mu = NULL, sigma = NULL)
 \references{
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
 for high-dimensional data - a flexible approach based on boosting.
-Journal of the Royal Statistical Society, Series C (Applied Statistics).
-Accepted.
+Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
 Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}
 
