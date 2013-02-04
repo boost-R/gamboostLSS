@@ -67,6 +67,13 @@ GammaLSS(mu = NULL, sigma = NULL)
 GammaMu(mu = NULL, sigma = NULL)
 GammaSigma(mu = NULL, sigma = NULL)
 
+## families Object for beta regression
+BetaLSS(mu = NULL, phi = NULL)
+## 'Sub-families' for the two distribution parameters:
+BetaMu(mu = NULL, phi = NULL)
+BetaPhi(mu = NULL, phi = NULL)
+
+
 
 ## families Object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
