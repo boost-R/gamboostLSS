@@ -110,6 +110,7 @@ WeibullSigma(mu = NULL, sigma = NULL)
 \arguments{
   \item{mu}{ offset value for mu. }
   \item{sigma}{ offset value for sigma. }
+  \item{phi}{ offset value for phi. }
   \item{df}{ offset value for df. }
   \item{\dots}{ Sub-families to be passed to constructor. }
 }
