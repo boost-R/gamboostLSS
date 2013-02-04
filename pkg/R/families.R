@@ -634,3 +634,91 @@ GammaSigma <-function (mu = NULL, sigma = NULL)
            name = "Gamma distribution: sigma(log link)")
 }
 
+
+BetaMu <- function(mu = NULL, phi = NULL){
+
+    # loss is negative log-Likelihood, f is the parameter to be fitted with
+    # logit link -> exp(f) = mu
+    loss <- function(phi, y, f) {
+        - 1 * (lgamma(phi) - lgamma(plogis(f) * phi) - 
+              lgamma((1 - plogis(f)) * phi) + (plogis(f) * phi - 1) * log(y) + 
+              ((1 - plogis(f)) * phi - 1) * log(1 - y))
+    }
+    # risk is sum of loss
+    risk <- function(y, f, w = 1) {
+        sum(w * loss(y = y, f = f, phi = phi))
+        #sqrt(mean(w * (y - plogis(f))^2))
+    }
+    # ngradient is the negative derivate w.r.t. mu
+    ngradient <- function(y, f, w = 1) {
+        +1 * exp(f)/(1 + exp(f))^2 * (phi * (qlogis(y) - (digamma(plogis(f) * phi) -
+              digamma((1 - plogis(f)) * phi)))) # Nachdifferenzieren? -> nein, da nach mu ableiten und nicht nach beta
+    }
+    offset <- function(y, w) {
+        if (!is.null(mu)) {
+            RET <- qlogis(mu)
+        }
+        else {
+            if (is.null(phi)) 
+               phi <<-  mean(y) * (1 - mean(y)) /var(y) - 1
+            ### look for starting value of f = qlogis(mu) in "interval"
+            ### i.e. mu ranges from 0.000001 to 0.999999
+            RET <- optimize(risk, interval = c(qlogis(0.000001), qlogis(0.999999)), y = y, 
+                w = w)$minimum
+        }
+        return(RET)
+    }
+    # use the Family constructor of mboost
+    Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
+        response = function(f) plogis(f),
+        name = "Beta-distribution: mu (logit link)")
+}
+
+# Sub-Family for phi
+BetaPhi <- function(mu = NULL, phi = NULL){
+
+     # loss is negative log-Likelihood, f is the parameter to be fitted with
+     # log-link: exp(f) = phi
+    loss <- function(mu, y, f) {
+        #y <- (y * (length(y) - 1) + 0.5)/length(y)
+        -1 * (lgamma(exp(f)) - lgamma(mu * exp(f)) -
+              lgamma((1 - mu) * exp(f)) + (mu * exp(f) - 1) * log(y) +
+              ((1 - mu) * exp(f) - 1) * log(1 - y))
+    }
+    # risk is sum of loss
+    risk <- function(y, f, w = 1) {
+        sum(w * loss(y = y, f = f, mu = mu))
+    }
+    # ngradient is the negative derivate w.r.t. phi
+    ngradient <- function(y, f, w = 1) {
+        #y <- (y * (length(y) - 1) + 0.5)/length(y)
+        +1 * exp(f) * (mu * (qlogis(y) - (digamma(mu * exp(f)) - digamma((1 - mu) * exp(f)))) +
+              digamma(exp(f)) - digamma((1 - mu) * exp(f)) + log(1 - y))
+    }
+    offset <- function(y, w) {
+        if (!is.null(phi)) {
+            RET <- log(phi)
+        }
+        else {
+            if (is.null(mu)) 
+                mu <<- mean(y)
+            ### look for starting value of f = log(phi) in "interval"
+            ### i.e. phi possibly ranges from 1e-10 to 1e10
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), 
+                y = y, w = w)$minimum
+        }
+        return(RET)
+    }
+    # use the Family constructor of mboost
+      Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
+        response = function(f) exp(f),
+        name = "Beta-distribution: phi (log link)")
+}
+
+# families object for new distribution
+BetaLSS <- function (mu = NULL, phi = NULL){
+  Families(mu = BetaMu(mu = mu, phi = phi),
+    phi = BetaPhi(mu = mu, phi = phi))
+}
+
+
