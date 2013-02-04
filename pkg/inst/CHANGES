@@ -1,5 +1,8 @@
 		CHANGES in `gamboostLSS' VERSION 1.1-0 (2011-XX-XX)
 
+
+  o  added new family BetaLSS
+
   o  added new family GammaLSS
 
   o  added new family GaussianLSS
