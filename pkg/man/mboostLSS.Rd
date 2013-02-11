@@ -13,7 +13,7 @@
   location, scale and shape) using boosting techniques. The algorithm
   iteratively rotates between the distribution parameters, updating one while using
   the current fits of the others as offsets (for details see Mayr et
-  al., 2010).
+  al., 2012).
 }
 \usage{
 mboostLSS(formula, data = list(), families = list(),
@@ -64,7 +64,6 @@ mboostLSS_fit(formula, data = list(), families = list(),
   distribution parameters of a GAMLSS -- a linear boosting model is
   fitted for each parameter.
 
-
   \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the
   distribution parameters of a GAMLSS -- an additive boosting model (by default with
   smooth effects) is fitted for each parameter. With the \code{formula} argument, a wide range of different 
@@ -108,8 +107,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
 for high-dimensional data - a flexible approach based on boosting.
-Journal of the Royal Statistical Society, Series C (Applied Statistics).
-Accepted.
+Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
 
 Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}

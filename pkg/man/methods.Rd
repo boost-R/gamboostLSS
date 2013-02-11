@@ -144,11 +144,7 @@
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
 for high-dimensional data - a flexible approach based on boosting.
-Journal of the Royal Statistical Society, Series C (Applied Statistics).
-Accepted.
-
-Preliminary version: Department of Statistics, Technical Report 98.
-\url{http://epub.ub.uni-muenchen.de/11938/}
+Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
 
 
 Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization,

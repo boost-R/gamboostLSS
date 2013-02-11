@@ -50,6 +50,7 @@
  algorithms implemented in this package. 
 }
 \usage{
+
 ## Constructor function for new GAMLSS distributions
 Families(...)
 
@@ -57,52 +58,27 @@ Families(...)
 
 ## families Object for the normal distribution
 GaussianLSS(mu = NULL, sigma = NULL)
-## 'Sub-families' for the two distribution parameters:
-GaussianMu(mu = NULL, sigma = NULL)
-GaussianSigma(mu = NULL, sigma = NULL)
 
 ## families Object for the gamma distribution
 GammaLSS(mu = NULL, sigma = NULL)
-## 'Sub-families' for the two distribution parameters:
-GammaMu(mu = NULL, sigma = NULL)
-GammaSigma(mu = NULL, sigma = NULL)
 
 ## families Object for beta regression
 BetaLSS(mu = NULL, phi = NULL)
-## 'Sub-families' for the two distribution parameters:
-BetaMu(mu = NULL, phi = NULL)
-BetaPhi(mu = NULL, phi = NULL)
 
 ## families Object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
-## 'Sub-families' for the two distribution parameters:
-NBinomialMu(mu = NULL, sigma = NULL)
-NBinomialSigma(mu = NULL, sigma = NULL)
 
 ## families Object for Student's t-distribution
 StudentTLSS(mu = NULL, sigma = NULL, df = NULL)
-## 'Sub-families' for the three distribution parameters:
-StudentTMu(mu = NULL, sigma = NULL, df = NULL)
-StudentTSigma(mu = NULL, sigma = NULL, df = NULL)
-StudentTDf(mu = NULL, sigma = NULL, df = NULL)
 
 ## families Object for log-normal accelerated failure time model
 LogNormalLSS(mu = NULL, sigma = NULL)
-## 'Sub-families' for the two distribution parameters:
-LogNormalMu(mu = NULL, sigma = NULL)
-LogNormalSigma(mu = NULL, sigma = NULL)
 
 ## families Object for log-logistic accelerated failure time model
 LogLogLSS(mu = NULL, sigma = NULL)
-## 'Sub-families' for the two distribution parameters:
-LogLogMu(mu = NULL, sigma = NULL)
-LogLogSigma(mu = NULL, sigma = NULL)
 
 ## families Object for accelerated failure time model with Weibull distribution
 WeibullLSS(mu = NULL, sigma = NULL)
-## 'Sub-families' for the two distribution parameters:
-WeibullMu(mu = NULL, sigma = NULL)
-WeibullSigma(mu = NULL, sigma = NULL)
 }
 
 \arguments{
@@ -144,7 +120,11 @@ WeibullSigma(mu = NULL, sigma = NULL)
   \code{mu}, \code{sigma} and \code{df} but can handle an arbitrary
   number of components (which, of course, depends on the GAMLSS distribution).
   However, it is important that the names (for the offsets, in the Sub-families
-  etc.) are chosen \emph{consistently}. }
+  etc.) are chosen \emph{consistently}. 
+  
+  BetaLSS for boosting beta regression was implmented by Florian Wickler. 
+
+}
   \value{ An object of class \code{families}. }
 
 \references{
