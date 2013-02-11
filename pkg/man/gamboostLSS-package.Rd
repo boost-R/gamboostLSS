@@ -51,7 +51,7 @@ Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
 }
 \references{
 
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2011): GAMLSS
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012): GAMLSS
 for high-dimensional data - a flexible approach based on boosting.
 Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
 
