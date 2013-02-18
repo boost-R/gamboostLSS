@@ -157,7 +157,8 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554.
 
 \seealso{
  \code{\link{glmboostLSS}}, \code{\link{gamboostLSS}} and \code{\link{blackboostLSS}} for fitting
- of GAMLSS. See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods 
+ of GAMLSS. Available distributions (families) are documented here: \code{\link{Families}}.   
+ See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods 
  for \code{\link[mboost]{mboost}} objects. 
 }
  \examples{

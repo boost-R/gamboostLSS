@@ -126,9 +126,10 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
 }
 
 \seealso{
-  \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
-  \code{\link{blackboost}} for the underlying boosting functions
-  contained in \code{\link{mboost}}.
+  \code{\link{Families}} for a documentation of available GAMLSS distributions.
+  
+  The underlying boosting functions \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
+  \code{\link{blackboost}} are contained in the \code{\link{mboost}} package.
 
   See for example \code{\link{risk}} or \code{\link{coef}} for methods
   that can be used to extract information from \code{\link{mboostLSS}} objects.

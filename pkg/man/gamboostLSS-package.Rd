@@ -83,7 +83,10 @@ mboost: Model-based boosting 2.0. R package version 2.0-9.
 \keyword{ package }
 
 \seealso{
-The \code{\link{mboost}} package for more on model-based boosting, or
+
+\code{\link{gamboostLSS}} and \code{\link{glmboostLSS}} for model fitting. Available distributions (families) are documented here: \code{\link{Families}}.    
+
+See also the \code{\link{mboost}} package for more on model-based boosting, or
 the \code{\link[gamlss]{gamlss}} package for the original GAMLSS
 algorithms provided by Rigby and Stasinopoulos.
 } 

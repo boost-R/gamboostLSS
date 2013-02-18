@@ -138,11 +138,13 @@ Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
 for location, scale and shape (with discussion). Journal of the Royal
 Statistical Society, Series C (Applied Statistics), 54, 507-554. }
 
+
 \seealso{
 
- The corresponding constructor function \code{\link[mboost]{Family}} in
- \code{\link[mboost]{mboost}}. For the fitting of GAMLSS distributions
- see \code{\link{mboostLSS}}.
+\code{\link{gamboostLSS}} and \code{\link{glmboostLSS}} for model fitting.
+
+See also the corresponding constructor function \code{\link[mboost]{Family}} in
+ \code{\link[mboost]{mboost}}. 
 }
 \examples{
 
