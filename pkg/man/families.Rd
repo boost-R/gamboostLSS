@@ -86,14 +86,14 @@ WeibullLSS(mu = NULL, sigma = NULL)
   \item{sigma}{ offset value for sigma. }
   \item{phi}{ offset value for phi. }
   \item{df}{ offset value for df. }
-  \item{\dots}{ Sub-families to be passed to constructor. }
+  \item{\dots}{ sub-families to be passed to constructor. }
 }
 \details{
 
   The \code{Families} function can be used to implements a new GAMLSS
   distribution which can be used for fitting by \code{\link{mboostLSS}}.
-  Thereby, the function builds a list of Sub-families, one for each
-  distribution parameter. The Sub-families themselves are objects of the
+  Thereby, the function builds a list of sub-families, one for each
+  distribution parameter. The sub-families themselves are objects of the
   class \code{boost_family}, and can be constructed via the function
   \code{\link[mboost]{Family}} of the \code{mboost} Package.
   
@@ -103,9 +103,9 @@ WeibullLSS(mu = NULL, sigma = NULL)
   corresponding distribution. The \code{ngradient} is the negative
   partial derivative of the loss function with respect to the
   distribution parameter. For a two-parameter distribution (e.g. mu and
-  sigma), the user therefore has to specify two Sub-families with
+  sigma), the user therefore has to specify two sub-families with
   \code{\link{Family}}. The \code{loss} is basically the same function
-  for both paramters, only \code{ngradient} differs. Both Sub-families
+  for both paramters, only \code{ngradient} differs. Both sub-families
   are passed to the \code{Families} constructor, which returns an object
   of the class \code{families}.
 
@@ -119,7 +119,7 @@ WeibullLSS(mu = NULL, sigma = NULL)
   Note that gamboostLSS is not restricted to the three components
   \code{mu}, \code{sigma} and \code{df} but can handle an arbitrary
   number of components (which, of course, depends on the GAMLSS distribution).
-  However, it is important that the names (for the offsets, in the Sub-families
+  However, it is important that the names (for the offsets, in the sub-families
   etc.) are chosen \emph{consistently}. 
   
   BetaLSS for boosting beta regression was implmented by Florian Wickler. 
@@ -140,8 +140,9 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554. }
 
 
 \seealso{
+\code{\link{gamlss.Families}} for applying GAMLSS distributions provided in the framework of the \code{gamlss} package. 
 
-\code{\link{gamboostLSS}} and \code{\link{glmboostLSS}} for model fitting.
+The functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}} can be used for model fitting.
 
 See also the corresponding constructor function \code{\link[mboost]{Family}} in
  \code{\link[mboost]{mboost}}. 
@@ -151,7 +152,7 @@ See also the corresponding constructor function \code{\link[mboost]{Family}} in
 # Example to define a new distribution:
 # Students t-distribution with two parameters, df and mu:
 
-# Sub-Family for mu  -> generate object of the class family from the package mboost
+# sub-Family for mu  -> generate object of the class family from the package mboost
 newStudentTMu  <- function(mu, df){
 
     # loss is negative log-Likelihood, f is the parameter to be fitted with
@@ -176,7 +177,7 @@ newStudentTMu  <- function(mu, df){
         name = "new Student's t-distribution: mu (id link)")
 }
 
-# Sub-Family for df
+# sub-Family for df
 newStudentTDf <- function(mu, df){
 
      # loss is negative log-Likelihood, f is the parameter to be fitted with
@@ -244,4 +245,5 @@ coef(model3, off2int = TRUE)
 }
 \keyword{ models }
 \keyword{ distributions }
+
 
