@@ -38,3 +38,5 @@ S3method(plot, gamboostLSS)
 
 S3method(fitted, mboostLSS)
 S3method(predict, mboostLSS)
+
+S3method(update, mboostLSS)

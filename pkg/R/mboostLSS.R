@@ -8,8 +8,7 @@ mboostLSS <- function(formula, data = list(), families = list(),
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = mboost)
-    attr(fit, "call") <- cl
+                         fun = mboost, funchar = "mboost", call = cl)
     return(fit)
 }
 
@@ -18,8 +17,7 @@ glmboostLSS <- function(formula, data = list(), families = list(),
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = glmboost)
-    attr(fit, "call") <- cl
+                         fun = glmboost, funchar = "glmboost", call = cl)
     return(fit)
 }
 
@@ -28,8 +26,7 @@ gamboostLSS <- function(formula, data = list(), families = list(),
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = gamboost)
-    attr(fit, "call") <- cl
+                         fun = gamboost, funchar = "gamboost", call = cl)
     return(fit)
 }
 
@@ -38,8 +35,7 @@ blackboostLSS <- function(formula, data = list(), families = list(),
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = blackboost)
-    attr(fit, "call") <- cl
+                         fun = blackboost, funchar = "blackboost", call = cl)
     return(fit)
 }
 
@@ -48,9 +44,7 @@ blackboostLSS <- function(formula, data = list(), families = list(),
 # allow to specify a list of formulas (in formula)
 mboostLSS_fit <- function(formula, data = list(), families = list(),
                           control = boost_control(), weights = NULL,
-                          fun = mboost, ...){
-
-    cl <- match.call()
+                          fun = mboost, funchar = "mboost", call = NULL, ...){
 
     if (length(families) == 0)
         stop(sQuote("families"), " not specified")
@@ -58,7 +52,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     if ("offset" %in% names(list(...)))
         stop("Do not use argument ", sQuote("offset"),
              ". Please specify offsets via families")
-    ### Use mu in family to specify offset in mu-family etc.
+    ### Use mu in "families" to specify offset in mu-family etc.
 
     if (is.list(formula)){
         if (!all(names(formula) %in% names(families)) ||
@@ -83,7 +77,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         formula <- tmp
     }
 
-    mstop <- control$mstop
+    mstop <- mstoparg <- control$mstop
     control$mstop <- 1
 
     if (is.list(mstop)) {
@@ -219,11 +213,6 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         return(TRUE)
     }
 
-    #if (all(mstop == 1)){
-    #    class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
-    #    return(fit)
-    #}
-
     if (any(mstop > 1)){
         ## actually go for initial mstop iterations!
         firstRun <- TRUE
@@ -231,7 +220,8 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     }
 
     firstRun <- FALSE
-    class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
+
+    class(fit) <- c(paste(funchar, "LSS", sep=""), "mboostLSS")
 
     ### update to a new number of boosting iterations mstop
     ### i <= mstop means less iterations than current
@@ -286,5 +276,26 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
 
         mstop <<- i
     }
+
+    attr(fit, "(weights)") <- weights  ## attach weights used for fitting
+
+    ## update to new weights; just a fresh start
+    attr(fit, "update") <- function(weights = NULL, oobweights = NULL,
+                                    risk = "oobag") {
+        control$mstop <- mstoparg
+        control$risk <- risk
+        ## re-use user specified offset only
+        ## (since it depends on weights otherwise)
+#        if (!is.null(offsetarg))
+#            offsetarg <- offset
+        warning("We currently drop user-specified offsets?")
+        mboostLSS_fit(formula = formula, data = data,
+                      families = families, weights = weights,
+                      control = control, fun = fun, funchar = funchar,
+                      call = call,
+                      ### what about
+                      oobweights = oobweights)
+    }
+    attr(fit, "call") <- call
     return(fit)
 }

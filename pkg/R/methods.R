@@ -144,19 +144,27 @@ predict.mboostLSS <- function(object, newdata = NULL,
            mod = object, ...)
 }
 
+update.mboostLSS <- function(object, weights, oobweights = NULL,
+                             risk = "oobag", ...) {
+    object$update(weights = weights, oobweights = oobweights,
+                  risk = risk)
+}
 
 
 
 
 
-
+################################################################################
 ### helpers
+
+## print trace
 do_trace <- function(current, mstart, mstop, risk,
                      linebreak = options("width")$width/2)
     mboost:::do_trace(m = current, mstop = mstart, risk = risk,
                       step = linebreak, width = mstop)
 
 
+## extract parameter index from mboostLSS object x
 extract_parameter <- function(x, parameter) {
     idx <- sapply(parameter, function(w) {
         wi <- grep(w, names(x), fixed = TRUE)

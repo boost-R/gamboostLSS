@@ -20,6 +20,8 @@
 \alias{plot.glmboostLSS}
 \alias{plot.gamboostLSS}
 
+\alias{update.mboostLSS}
+
 \title{
   Methods for mboostLSS
 }
@@ -55,6 +57,8 @@
                             aggregate = c("sum", "cumsum", "none"),
                             parameter = names(object), ...)
 
+\method{update}{mboostLSS}(object, weights, oobweights = NULL,
+                           risk = "oobag", ...)
 }
 \arguments{
   \item{x}{ an object of the appropriate class (see usage). }
@@ -82,8 +86,9 @@
     added to the intercept (if there is any) or if the offset is
     neglected for plotting (default).}
   \item{merge}{ logical. Should the risk vectors of the single
-    components be merged to one risk vector for the model in total? Per default (\code{merge =
-    FALSE}) a (named) list of risk vectors is returned. }
+    components be merged to one risk vector for the model in total? Per
+    default (\code{merge = FALSE}) a (named) list of risk vectors is
+    returned.}
   \item{i}{ integer. Index specifying the model to extract. If \code{i}
     is smaller than the initial \code{mstop}, a subset is used.
     If \code{i} is larger than the initial \code{mstop},
@@ -101,6 +106,16 @@
     (probabilities on logit scale) and \code{type = "response"} gives
     the predicted probabilities.  The \code{"class"} option returns
     predicted classes.}
+  \item{weights}{ a numeric vector of weights for the model}
+  \item{oobweights}{
+    an additional vector of out-of-bag weights (used internally
+    by \code{\link[gamboostLSS]{cvrisk}}. For details see there.).
+  }
+  \item{risk}{ a character indicating how the empirical risk should be
+    computed for each boosting iteration. Per default \code{risk} is set
+    to \code{"oobag"} for the use within \code{\link[gamboostLSS]{cvrisk}}.
+    For details and alternatives see \code{\link{boost_control}}.
+  }
   \item{\dots}{ Further arguments to the functions. }
 }
 \details{
@@ -132,7 +147,9 @@
   \code{response} (i.e. h(X * beta), where h is the response function)
   or the \code{class} (in case of classification).
 
-
+  The function \code{update} updates models fit with \pkg{gamboostLSS}
+  and is primarily used within \code{\link[gamboostLSS]{cvrisk}}. It
+  updates the weights and refits the model to the altered data.
 }
 
 \section{Warning}{
@@ -157,9 +174,9 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554.
 
 \seealso{
  \code{\link{glmboostLSS}}, \code{\link{gamboostLSS}} and \code{\link{blackboostLSS}} for fitting
- of GAMLSS. Available distributions (families) are documented here: \code{\link{Families}}.   
- See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods 
- for \code{\link[mboost]{mboost}} objects. 
+ of GAMLSS. Available distributions (families) are documented here: \code{\link{Families}}.
+ See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods
+ for \code{\link[mboost]{mboost}} objects.
 }
  \examples{
 

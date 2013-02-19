@@ -27,7 +27,8 @@ blackboostLSS(formula, data = list(), families = list(),
 
 ## fit function:
 mboostLSS_fit(formula, data = list(), families = list(),
-              control = boost_control(), weights = NULL, fun = mboost, ...)
+              control = boost_control(), weights = NULL,
+              fun = mboost, funchar = "mboost", call = NULL, ...)
 }
 
 \arguments{
@@ -49,6 +50,12 @@ mboostLSS_fit(formula, data = list(), families = list(),
     \code{\link{blackboost}}. Specified directly via the corresponding LSS
     function. E.g. \code{gamboostLSS()} calls
     \code{mboostLSS_fit(..., fun = gamboost)}. }
+  \item{funchar}{ character representation of fit function. Either \code{"mboost"},
+    \code{"glmboost"}, \code{"gamboost"} or \code{"blackboost"}.
+    Specified directly via the corresponding LSS function.}
+  \item{call}{ used to forward the call from \code{mboostLSS},
+    \code{glmboostLSS}, \code{gamboostLSS} and \code{blackboostLSS}.
+    This argument should not be directly specified by users!}    
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
     passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
@@ -66,7 +73,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
 
   \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the
   distribution parameters of a GAMLSS -- an additive boosting model (by default with
-  smooth effects) is fitted for each parameter. With the \code{formula} argument, a wide range of different 
+  smooth effects) is fitted for each parameter. With the \code{formula} argument, a wide range of different
   base-learners can be specified (see \code{\link[mboost]{baselearners}}). The base-learners inply the type of effect
   each covariate has on the corresponding distribution parameter.
 

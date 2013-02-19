@@ -1,5 +1,7 @@
 		CHANGES in `gamboostLSS' VERSION 1.1-0 (2011-XX-XX)
 
+  o  added new function cvrisk for generic cross-validation
+
   o  added new function gamlss.Families to include gamlss families in gamboostLSS
 
   o  added new family BetaLSS
