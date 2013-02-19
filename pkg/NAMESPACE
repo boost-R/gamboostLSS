@@ -15,7 +15,12 @@ export(glmboostLSS,
        GaussianLSS, GaussianMu, GaussianSigma,
        GammaLSS, GammaMu, GammaSigma,
        BetaLSS, BetaMu, BetaPhi,
-       WeibullLSS, WeibullMu, WeibullSigma)
+       WeibullLSS, WeibullMu, WeibullSigma, 
+       gamlss.Families, gamlss1parMu, 
+       gamlss2parMu, gamlss2parSigma, 
+       gamlss3parMu, gamlss3parSigma, gamlss3parNu, 
+       gamlss4parMu, gamlss4parSigma, gamlss4parNu, gamlss4parTau
+)
 
 S3method("[", mboostLSS)
 S3method(print, mboostLSS)
