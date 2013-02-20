@@ -2,7 +2,7 @@
 
   o  added new function cvrisk for generic cross-validation
 
-  o  added new function gamlss.Families to include gamlss families in gamboostLSS
+  o  added new function Families.gamlss to include gamlss families in gamboostLSS
 
   o  added new family BetaLSS
 
