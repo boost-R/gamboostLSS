@@ -422,7 +422,7 @@ gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,  fname
 
 
 #------------- constructor
-gamlss.Families <-function(fname = "NO",  mu = NULL, sigma = NULL, nu = NULL, tau = NULL)
+Families.gamlss <-function(fname = "NO",  mu = NULL, sigma = NULL, nu = NULL, tau = NULL)
   {
    # - require gamlss.dist
    if(! "gamlss.dist"  %in% library()$result) stop("Please install package 'gamlss.dist' for using gamlss families.")
