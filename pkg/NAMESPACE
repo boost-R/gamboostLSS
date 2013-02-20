@@ -16,7 +16,7 @@ export(glmboostLSS,
        GammaLSS, GammaMu, GammaSigma,
        BetaLSS, BetaMu, BetaPhi,
        WeibullLSS, WeibullMu, WeibullSigma, 
-       gamlss.Families, gamlss1parMu, 
+       Families.gamlss, gamlss1parMu, 
        gamlss2parMu, gamlss2parSigma, 
        gamlss3parMu, gamlss3parSigma, gamlss3parNu, 
        gamlss4parMu, gamlss4parSigma, gamlss4parNu, gamlss4parTau
