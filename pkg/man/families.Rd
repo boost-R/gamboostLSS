@@ -128,7 +128,7 @@ WeibullLSS(mu = NULL, sigma = NULL)
   \value{ An object of class \code{families}. }
 
 \references{
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012): GAMLSS
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012): Generalized additive models for location, scale and shape
 for high-dimensional data - a flexible approach based on boosting.
 Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
 Preliminary version: Department of Statistics, Technical Report 98.
