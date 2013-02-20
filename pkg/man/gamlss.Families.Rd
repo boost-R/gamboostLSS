@@ -1,6 +1,6 @@
-\name{gamlss.Families}
+\name{Families.gamlss}
 
-\alias{gamlss.Families}
+\alias{Families.gamlss}
 \alias{gamlss1parMu}
 
 \alias{gamlss2parMu}
@@ -22,7 +22,7 @@
 }
 
 \description{
-The function \code{gamlss.Families()} provides an interface to apply the available distributions (families) of the \code{gamlss} package for boosting GAMLSS via \code{gamboostLSS}. 
+The function \code{Families.gamlss()} provides an interface to apply the available distributions (families) of the \code{gamlss} package for boosting GAMLSS via \code{gamboostLSS}. 
 
 The function automatically builds sub-families for every distribution parameter and uses the constructor function \code{\link{Families}} to build a \code{families} object, which can be then included in the fitting functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}}.
     
@@ -30,7 +30,7 @@ The function automatically builds sub-families for every distribution parameter 
 
 }
 \usage{
-gamlss.Families( fname = "NO", mu = NULL, sigma = NULL, 
+Families.gamlss( fname = "NO", mu = NULL, sigma = NULL, 
 		 nu = NULL, tau = NULL )  
 
 }
@@ -57,7 +57,7 @@ The help of Mikis Stasinpoulos during the work on this function is gratefully ac
 
 }  
 
-\value{ An object of class \code{families}. }
+\value{ An object of class \code{families}. If the user specifies a one-parametric distribution, an object of class \code{family} is returned. }
 
 \references{
 
@@ -89,7 +89,7 @@ The help of Mikis Stasinpoulos during the work on this function is gratefully ac
             n    = 1000)
 
 # boosting
- glmss <- glmboostLSS(formula = y ~ x, families = gamlss.Families(fname = "NO")) 
+ glmss <- glmboostLSS(formula = y ~ x, families = Families.gamlss(fname = "NO")) 
 
  coef(glmss, off2int = TRUE)
 

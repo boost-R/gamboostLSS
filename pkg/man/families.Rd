@@ -140,7 +140,7 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554. }
 
 
 \seealso{
-\code{\link{gamlss.Families}} for applying GAMLSS distributions provided in the framework of the \code{gamlss} package. 
+\code{\link{Families.gamlss}} for applying GAMLSS distributions provided in the framework of the \code{gamlss} package. 
 
 The functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}} can be used for model fitting.
 
