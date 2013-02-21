@@ -286,11 +286,9 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         control$risk <- risk
         ## re-use user specified offset only
         ## (since it depends on weights otherwise)
-#        if (!is.null(offsetarg))
-#            offsetarg <- offset
-        warning("We currently drop user-specified offsets?")
+        ## this is achieved via a re-evaluation of the families argument
         mboostLSS_fit(formula = formula, data = data,
-                      families = families, weights = weights,
+                      families = eval(call[["families"]]), weights = weights,
                       control = control, fun = fun, funchar = funchar,
                       call = call,
                       ### what about

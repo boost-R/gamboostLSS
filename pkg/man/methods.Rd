@@ -22,6 +22,10 @@
 
 \alias{update.mboostLSS}
 
+\alias{model.weights}
+\alias{model.weights.default}
+\alias{model.weights.mboostLSS}
+
 \title{
   Methods for mboostLSS
 }
@@ -59,6 +63,9 @@
 
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
                            risk = "oobag", ...)
+
+\method{model.weights}{mboostLSS}(x, ...)
+
 }
 \arguments{
   \item{x}{ an object of the appropriate class (see usage). }
@@ -150,6 +157,10 @@
   The function \code{update} updates models fit with \pkg{gamboostLSS}
   and is primarily used within \code{\link[gamboostLSS]{cvrisk}}. It
   updates the weights and refits the model to the altered data.
+
+  The function \code{model.weights} is a generic version of the same
+  function provided by package \pkg{stats}, which is required to make
+  \code{model.weights} work with \code{mboostLSS} models.
 }
 
 \section{Warning}{

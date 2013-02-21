@@ -1,7 +1,7 @@
 ###
 # Constructor Function
 
-Families <- function(...){
+Families <- function(...) {
     RET <- list(...)
     class(RET) <- "families"
     ## check if response function is not specified
@@ -13,7 +13,6 @@ Families <- function(...){
     if (any(check))
         stop("response function not specified in families for:\n\t",
              paste(names(RET)[check], collapse =", "))
-
     return(RET)
 }
 
@@ -503,18 +502,18 @@ GaussianMu  <- function(mu = NULL, sigma = NULL){
         (1/sigma^2)*(y - f)
     }
 
-     offset <- function(y, w){
+    offset <- function(y, w){
         if (!is.null(mu)){
             RET <- mu
         } else {
-            RET <- mean(y, na.rm=TRUE)
+            RET <- weighted.mean(y, w = w, na.rm=TRUE)
         }
         return(RET)
     }
 
-   Family(ngradient = ngradient, risk = risk, loss = loss,
-        response = function(f) f, offset=offset,
-        name = "Normal distribution: mu(id link)")
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) f, offset=offset,
+           name = "Normal distribution: mu(id link)")
 }
 
 GaussianSigma  <- function(mu = NULL, sigma = NULL){
@@ -524,47 +523,47 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL){
         sum(w * loss(y = y, f = f, mu = mu))
     }
     ngradient <- function(y, f, w = 1) {
-       - 1 + exp(-2*f)*((y - mu)^2)
+        - 1 + exp(-2*f)*((y - mu)^2)
     }
-   offset <- function(y, w){
+    offset <- function(y, w){
         if (!is.null(sigma)){
             RET <- log(sigma)
         } else {
-            RET <-  log(sd(y, na.rm=TRUE))
+            RET <-  log(weighted.sd(y, w = w, na.rm=TRUE))
         }
         return(RET)
-     }
+    }
 
-   Family(ngradient = ngradient, risk = risk, loss = loss,
-        response = function(f) exp(f), offset=offset, 
-        name = "Normal distribution: sigma (log link)")
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) exp(f), offset=offset,
+           name = "Normal distribution: sigma (log link)")
 }
 
 
-GaussianLSS <- function(mu = NULL, sigma = NULL){ 
-   if ((!is.null(sigma) && sigma <= 0))
+GaussianLSS <- function(mu = NULL, sigma = NULL){
+    if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
-        Families(mu = GaussianMu(mu=mu, sigma=sigma), 
-               sigma=GaussianSigma(mu=mu, sigma=sigma))
+    fam <- Families(mu = GaussianMu(mu=mu, sigma=sigma),
+                    sigma=GaussianSigma(mu=mu, sigma=sigma))
+    fam
 }
-  
-GammaLSS <- function (mu = NULL, sigma = NULL) 
-{
-    if ((!is.null(sigma) && sigma <= 0)) 
+
+GammaLSS <- function (mu = NULL, sigma = NULL) {
+    if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
-    if ((!is.null(mu) && mu <= 0)) 
+    if ((!is.null(mu) && mu <= 0))
         stop(sQuote("mu"), " must be greater than zero")
- 
-    Families(mu = GammaMu(mu = mu, sigma = sigma), 
+
+    Families(mu = GammaMu(mu = mu, sigma = sigma),
              sigma = GammaSigma(mu = mu, sigma = sigma))
 }
 
 
 
-GammaMu <-function (mu = NULL, sigma = NULL) 
+GammaMu <-function (mu = NULL, sigma = NULL)
 {
     loss <-  function(sigma, y, f) {
-        lgamma(sigma) + sigma * y * exp(-f) - sigma * log(y) - 
+        lgamma(sigma) + sigma * y * exp(-f) - sigma * log(y) -
             sigma * log(sigma) + sigma * f + log(y)
     }
     risk <- function(y, f, w = 1) {
@@ -578,29 +577,28 @@ GammaMu <-function (mu = NULL, sigma = NULL)
             RET <- log(mu)
         }
         else {
-            if (is.null(sigma)) 
+            if (is.null(sigma))
                 sigma <<- mean(y)^2/(var(y))
-            RET <- optimize(risk, interval = c(0, max(y^2, na.rm = TRUE)), 
+            RET <- optimize(risk, interval = c(0, max(y^2, na.rm = TRUE)),
             y = y, w = w)$minimum
         }
         return(RET)
     }
     check_y <- function(y) {
-        if (!is.numeric(y) || !is.null(dim(y))) 
+        if (!is.numeric(y) || !is.null(dim(y)))
             stop("response is not a numeric vector but ", sQuote("GammaLSS()"))
-        if (any(y < 0)) 
+        if (any(y < 0))
             stop("response is not positive but ", sQuote("GammaLSS()"))
         y
     }
-    Family(ngradient = ngradient, risk = risk, loss = loss, 
-           response = function(f) exp(f), offset = offset, check_y = check_y, 
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) exp(f), offset = offset, check_y = check_y,
            name = "Gamma distribution: mu(log link)")
 }
-           
-GammaSigma <-function (mu = NULL, sigma = NULL) 
-{
+
+GammaSigma <- function(mu = NULL, sigma = NULL) {
     loss <-  function(mu, y, f) {
-        lgamma(exp(f)) + (exp(f) * y )/mu - exp(f) * log(y) - 
+        lgamma(exp(f)) + (exp(f) * y )/mu - exp(f) * log(y) -
             f * exp(f) + exp(f) * log(mu) + log(y)
     }
     risk <- function(y, f, w = 1){
@@ -608,29 +606,29 @@ GammaSigma <-function (mu = NULL, sigma = NULL)
     }
     ngradient <- function(y, f, w = 1) {
         - digamma(exp(f))*exp(f) + (f+1)*exp(f) - log(mu)*exp(f) +
-         exp(f)*log(y) - (y*exp(f))/mu  
+            exp(f)*log(y) - (y*exp(f))/mu
     }
     offset <- function(y, w) {
         if (!is.null(sigma)) {
             RET <- log(sigma)
         }
         else {
-            if (is.null(mu)) 
+            if (is.null(mu))
                 mu <<- mean(y)
-            RET <- optimize(risk, interval = c(0, max(y, na.rm = TRUE)), 
+            RET <- optimize(risk, interval = c(0, max(y, na.rm = TRUE)),
             y = y, w = w)$minimum
-           }
+        }
         return(RET)
     }
     check_y <- function(y) {
-        if (!is.numeric(y) || !is.null(dim(y))) 
+        if (!is.numeric(y) || !is.null(dim(y)))
             stop("response is not a numeric vector but ", sQuote("GammaLSS()"))
-        if (any(y < 0)) 
+        if (any(y < 0))
             stop("response is not positive but ", sQuote("GammaLSS()"))
         y
     }
-    Family(ngradient = ngradient, risk = risk, loss = loss, 
-           response = function(f) exp(f), offset = offset, check_y = check_y, 
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) exp(f), offset = offset, check_y = check_y,
            name = "Gamma distribution: sigma(log link)")
 }
 
@@ -640,8 +638,8 @@ BetaMu <- function(mu = NULL, phi = NULL){
     # loss is negative log-Likelihood, f is the parameter to be fitted with
     # logit link -> exp(f) = mu
     loss <- function(phi, y, f) {
-        - 1 * (lgamma(phi) - lgamma(plogis(f) * phi) - 
-              lgamma((1 - plogis(f)) * phi) + (plogis(f) * phi - 1) * log(y) + 
+        - 1 * (lgamma(phi) - lgamma(plogis(f) * phi) -
+              lgamma((1 - plogis(f)) * phi) + (plogis(f) * phi - 1) * log(y) +
               ((1 - plogis(f)) * phi - 1) * log(1 - y))
     }
     # risk is sum of loss
@@ -659,26 +657,26 @@ BetaMu <- function(mu = NULL, phi = NULL){
             RET <- qlogis(mu)
         }
         else {
-            if (is.null(phi)) 
+            if (is.null(phi))
                phi <<-  mean(y) * (1 - mean(y)) /var(y) - 1
             ### look for starting value of f = qlogis(mu) in "interval"
             ### i.e. mu ranges from 0.000001 to 0.999999
-            RET <- optimize(risk, interval = c(qlogis(0.000001), qlogis(0.999999)), y = y, 
+            RET <- optimize(risk, interval = c(qlogis(0.000001), qlogis(0.999999)), y = y,
                 w = w)$minimum
         }
         return(RET)
     }
     # use the Family constructor of mboost
     Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
-        response = function(f) plogis(f),
-        name = "Beta-distribution: mu (logit link)")
+           response = function(f) plogis(f),
+           name = "Beta-distribution: mu (logit link)")
 }
 
 # Sub-Family for phi
 BetaPhi <- function(mu = NULL, phi = NULL){
 
-     # loss is negative log-Likelihood, f is the parameter to be fitted with
-     # log-link: exp(f) = phi
+    # loss is negative log-Likelihood, f is the parameter to be fitted with
+    # log-link: exp(f) = phi
     loss <- function(mu, y, f) {
         #y <- (y * (length(y) - 1) + 0.5)/length(y)
         -1 * (lgamma(exp(f)) - lgamma(mu * exp(f)) -
@@ -700,25 +698,23 @@ BetaPhi <- function(mu = NULL, phi = NULL){
             RET <- log(phi)
         }
         else {
-            if (is.null(mu)) 
+            if (is.null(mu))
                 mu <<- mean(y)
             ### look for starting value of f = log(phi) in "interval"
             ### i.e. phi possibly ranges from 1e-10 to 1e10
-            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), 
+            RET <- optimize(risk, interval = c(log(1e-10), log(1e10)),
                 y = y, w = w)$minimum
         }
         return(RET)
     }
     # use the Family constructor of mboost
-      Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
-        response = function(f) exp(f),
-        name = "Beta-distribution: phi (log link)")
+    Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
+           response = function(f) exp(f),
+           name = "Beta-distribution: phi (log link)")
 }
 
 # families object for new distribution
 BetaLSS <- function (mu = NULL, phi = NULL){
-  Families(mu = BetaMu(mu = mu, phi = phi),
-    phi = BetaPhi(mu = mu, phi = phi))
+    Families(mu = BetaMu(mu = mu, phi = phi),
+             phi = BetaPhi(mu = mu, phi = phi))
 }
-
-

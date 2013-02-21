@@ -146,8 +146,8 @@ predict.mboostLSS <- function(object, newdata = NULL,
 
 update.mboostLSS <- function(object, weights, oobweights = NULL,
                              risk = "oobag", ...) {
-    object$update(weights = weights, oobweights = oobweights,
-                  risk = risk)
+    attr(object, "update")(weights = weights, oobweights = oobweights,
+                           risk = risk)
 }
 
 
@@ -174,4 +174,13 @@ extract_parameter <- function(x, parameter) {
     if (any(is.na(idx)))
         warning(paste(parameter[is.na(idx)], collapse = ","), " not found")
     parameter <- idx
+}
+
+## function for weighted sd
+weighted.sd <- function(x, w, ...) {
+    if (missing(w))
+        w <- rep(1, length(x))
+    m <- weighted.mean(x, w, ...)
+    var <- weighted.mean((x - m)^2, w, ...) * sum(w) / (sum(w) - 1)
+    return(sqrt(var))
 }

@@ -7,6 +7,7 @@ export(glmboostLSS,
        mboostLSS,
        mboostLSS_fit,
        risk,
+       model.weights,
        Families,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
@@ -29,6 +30,11 @@ S3method(risk, mboostLSS)
 
 S3method(mstop, oobag)
 S3method(mstop, mboostLSS)
+
+S3method(model.weights, default)
+S3method(model.weights, mboostLSS)
+
+S3method(cvrisk, mboostLSS)
 
 S3method(coef, mboostLSS)
 S3method(coef, glmboostLSS)
