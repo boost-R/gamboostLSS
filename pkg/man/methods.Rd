@@ -10,6 +10,7 @@
 
 \alias{mstop.mboostLSS}
 \alias{mstop.oobag}
+\alias{mstop.cvriskLSS}
 
 \alias{selected}
 \alias{selected.mboostLSS}
@@ -44,6 +45,7 @@
 
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
+\method{mstop}{cvriskLSS}(object, parameter = NULL, ...)
 
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
@@ -62,7 +64,7 @@
                             parameter = names(object), ...)
 
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
-                           risk = "oobag", ...)
+                           risk = NULL, mstop = NULL, ...)
 
 \method{model.weights}{mboostLSS}(x, ...)
 
@@ -119,9 +121,12 @@
     by \code{\link[gamboostLSS]{cvrisk}}. For details see there.).
   }
   \item{risk}{ a character indicating how the empirical risk should be
-    computed for each boosting iteration. Per default \code{risk} is set
-    to \code{"oobag"} for the use within \code{\link[gamboostLSS]{cvrisk}}.
-    For details and alternatives see \code{\link{boost_control}}.
+    computed for each boosting iteration. For details and alternatives
+    see \code{\link{boost_control}}.
+  }
+  \item{mstop}{
+    specify a different number of boosting iterations here. For details
+    on possible values of \code{mstop} see \code{\link{mboostLSS}}.
   }
   \item{\dots}{ Further arguments to the functions. }
 }
@@ -157,6 +162,8 @@
   The function \code{update} updates models fit with \pkg{gamboostLSS}
   and is primarily used within \code{\link[gamboostLSS]{cvrisk}}. It
   updates the weights and refits the model to the altered data.
+  Furthermore, the type of \code{risk} and the number of boosting
+  iterations \code{mstop} can be modified.
 
   The function \code{model.weights} is a generic version of the same
   function provided by package \pkg{stats}, which is required to make
