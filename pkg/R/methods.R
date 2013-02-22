@@ -1,4 +1,4 @@
-### Methods
+## Methods
 
 "[.mboostLSS" <- function(x, i, return = TRUE, ...) {
     stopifnot((length(i) == 1 | length(i) == length(x)) && i > 0)
@@ -37,15 +37,25 @@ risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...
         parameter <- extract_parameter(object, parameter)
 
     lo <- length(unique(mstop(object)))
-    if (merge && lo == 1){
-        RES <- sapply(parameter, function(i, object)  object[[i]]$risk(),
+    if (merge) {
+        get_rsk <- function(i, object) {
+            mmo <- max(mstop(object))
+            rsk <- object[[i]]$risk()
+            if (length(rsk) != mmo) {
+                rsk <- c(rsk, rep(NA, mmo - length(rsk)))
+            }
+            rsk
+        }
+        RES <- sapply(parameter, get_rsk,
                       object = object)
         RES <- as.vector(t(RES))
+        names(RES) <- rep(names(parameter), mstop(object)[1])
+        ## drop unwanted NAs
+        if (lo != 1)
+            RES <- RES[!is.na(RES)]
         class(RES) <- object[[1]]$control$risk
         return(RES)
     }
-    if (merge && lo != 1)
-        warning(sQuote("merge = TRUE"), " not possible for multiple mstops")
     RES <- lapply(parameter, function(i, object)  object[[i]]$risk(),
                   object = object)
     class(RES) <- object[[1]]$control$risk
@@ -145,13 +155,20 @@ predict.mboostLSS <- function(object, newdata = NULL,
 }
 
 update.mboostLSS <- function(object, weights, oobweights = NULL,
-                             risk = "oobag", ...) {
+                             risk = NULL, mstop = NULL, ...) {
     attr(object, "update")(weights = weights, oobweights = oobweights,
-                           risk = risk)
+                           risk = risk, mstop = mstop, ...)
 }
 
+## generic version of model.weights (see stats::model.weights)
+model.weights <- function(x, ...)
+    UseMethod("model.weights")
 
+model.weights.default <- function(x, ...)
+    stats::model.weights(x)
 
+model.weights.mboostLSS <- function(x, ...)
+    attr(x, "(weights)")
 
 
 ################################################################################

@@ -39,9 +39,8 @@ blackboostLSS <- function(formula, data = list(), families = list(),
     return(fit)
 }
 
-###
-# Todo:
-# allow to specify a list of formulas (in formula)
+
+### work horse for fitting (glm/gam/m/black)boostLSS models
 mboostLSS_fit <- function(formula, data = list(), families = list(),
                           control = boost_control(), weights = NULL,
                           fun = mboost, funchar = "mboost", call = NULL, ...){
@@ -229,12 +228,21 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     ### updates take place in THIS ENVIRONMENT,
     ### some models are CHANGED!
     attr(fit, "subset") <- function(i) {
+
+        # make i a vector (if not already)
+        i <- unlist(i)
+
         if (length(i) == 1)
             i <- rep(i, length(fit))
 
         msf <- mstop(fit)
         niter <- i - msf
-        minStart <- min(msf[niter != 0], i[niter != 0])
+        if (all(niter == 0)) {
+            ## make nothing happen with the model
+            minStart <- max(msf)
+        } else {
+            minStart <- min(msf[niter != 0], i[niter != 0])
+        }
 
         ## check if minStart bigger than mstop of parameters that are not touched
         #if (length(msf[niter == 0]) > 0 && minStart < min(msf[niter == 0]))
@@ -281,18 +289,22 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
 
     ## update to new weights; just a fresh start
     attr(fit, "update") <- function(weights = NULL, oobweights = NULL,
-                                    risk = "oobag") {
-        control$mstop <- mstoparg
-        control$risk <- risk
+                                    risk = NULL, mstop = NULL) {
+        if (is.null(mstop)) {
+            control$mstop <- mstoparg
+        } else {
+            control$mstop <- mstop
+        }
+        if (!is.null(risk))
+            control$risk <- risk
+        control$trace <- trace
         ## re-use user specified offset only
         ## (since it depends on weights otherwise)
         ## this is achieved via a re-evaluation of the families argument
         mboostLSS_fit(formula = formula, data = data,
                       families = eval(call[["families"]]), weights = weights,
                       control = control, fun = fun, funchar = funchar,
-                      call = call,
-                      ### what about
-                      oobweights = oobweights)
+                      call = call, oobweights = oobweights)
     }
     attr(fit, "call") <- call
     return(fit)
