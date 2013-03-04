@@ -36,6 +36,13 @@
 \alias{LogLogMu}
 \alias{LogLogSigma}
 
+\alias{LogLogLSS}
+\alias{LogLogMu}
+\alias{LogLogSigma}
+
+\alias{ZIPoLSS}
+\alias{ZINBLSS}
+
 
 \title{
   Families for GAMLSS models
@@ -79,6 +86,13 @@ LogLogLSS(mu = NULL, sigma = NULL)
 
 ## families Object for accelerated failure time model with Weibull distribution
 WeibullLSS(mu = NULL, sigma = NULL)
+
+## families Object for zero-inflated Poisson model
+ZIPoLSS(mu = NULL, sigma = NULL)
+
+## families Object for zero-inflated negative binomial model
+ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
+
 }
 
 \arguments{
@@ -123,6 +137,16 @@ WeibullLSS(mu = NULL, sigma = NULL)
   etc.) are chosen \emph{consistently}. 
   
   BetaLSS for boosting beta regression was implmented by Florian Wickler. 
+  
+  The \code{ZIPoLSS} families can be used to fit zero-inflated Poisson models.
+  Here, \code{mu} and \code{sigma} refer to the location parameter of the
+  Poisson component (with log link) and the mean of the zero-generating
+  process (with logit link), respectively.
+  Similarly, \code{ZINB} can be used to fit zero-inflated negative binomial
+  models. Here, \code{mu} and \code{sigma} refer to the location and scale
+  parameters (with log link) of the negative binomial component of the
+  model. The zero-generating process (with logit link) is represented by
+  \code{nu}.
 
 }
   \value{ An object of class \code{families}. }
