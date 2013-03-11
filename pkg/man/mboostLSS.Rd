@@ -55,7 +55,7 @@ mboostLSS_fit(formula, data = list(), families = list(),
     Specified directly via the corresponding LSS function.}
   \item{call}{ used to forward the call from \code{mboostLSS},
     \code{glmboostLSS}, \code{gamboostLSS} and \code{blackboostLSS}.
-    This argument should not be directly specified by users!}    
+    This argument should not be directly specified by users!}
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
     passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
@@ -134,7 +134,7 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
 
 \seealso{
   \code{\link{Families}} for a documentation of available GAMLSS distributions.
-  
+
   The underlying boosting functions \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
   \code{\link{blackboost}} are contained in the \code{\link{mboost}} package.
 
@@ -157,8 +157,6 @@ y <- numeric(1000)
 for( i in 1:1000)
     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
 dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
-
-
 
 ### linear model with y ~ . for both components: 400 boosting iterations
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,

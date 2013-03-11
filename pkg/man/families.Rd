@@ -100,6 +100,7 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
   \item{sigma}{ offset value for sigma. }
   \item{phi}{ offset value for phi. }
   \item{df}{ offset value for df. }
+  \item{nu}{ offset value for nu. }
   \item{\dots}{ sub-families to be passed to constructor. }
 }
 \details{
@@ -142,7 +143,7 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
   Here, \code{mu} and \code{sigma} refer to the location parameter of the
   Poisson component (with log link) and the mean of the zero-generating
   process (with logit link), respectively.
-  Similarly, \code{ZINB} can be used to fit zero-inflated negative binomial
+  Similarly, \code{ZINBLSS} can be used to fit zero-inflated negative binomial
   models. Here, \code{mu} and \code{sigma} refer to the location and scale
   parameters (with log link) of the negative binomial component of the
   model. The zero-generating process (with logit link) is represented by

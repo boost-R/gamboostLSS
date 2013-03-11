@@ -23,6 +23,9 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE) {
         max <- log(max)
     }
 
+    if (any(sapply(1:length(max), function(i) min[i] >= max[i])))
+        stop("All min values must be smaller than the respectiv max value.")
+
     if (length(max) == 1) {
         RET <- seq(from = min, to = max, length.out = length.out)
         if (log == TRUE)

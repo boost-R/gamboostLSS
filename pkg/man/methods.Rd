@@ -115,20 +115,25 @@
     (probabilities on logit scale) and \code{type = "response"} gives
     the predicted probabilities.  The \code{"class"} option returns
     predicted classes.}
-  \item{weights}{ a numeric vector of weights for the model}
+  \item{weights}{
+    a numeric vector of weights for the model
+  }
   \item{oobweights}{
     an additional vector of out-of-bag weights (used internally
     by \code{\link[gamboostLSS]{cvrisk}}. For details see there.).
   }
-  \item{risk}{ a character indicating how the empirical risk should be
-    computed for each boosting iteration. For details and alternatives
-    see \code{\link{boost_control}}.
+  \item{risk}{
+    a character indicating how the empirical risk should be
+    computed for each boosting iteration. Per default \code{risk} is set
+    to the risk type specified for model fitting via
+    \code{\link{boost_control}}. For details and alternatives see there.
   }
   \item{mstop}{
-    specify a different number of boosting iterations here. For details
-    on possible values of \code{mstop} see \code{\link{mboostLSS}}.
+    number of boosting iterations.
   }
-  \item{\dots}{ Further arguments to the functions. }
+  \item{\dots}{
+    Further arguments to the functions.
+  }
 }
 \details{
   These functions can be used to extract details from fitted models.
