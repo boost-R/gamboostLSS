@@ -1,6 +1,7 @@
-		CHANGES in `gamboostLSS' VERSION 1.1-0 (2011-XX-XX)
+		CHANGES in `gamboostLSS' VERSION 1.1-0 (2013-XX-XX)
 
-  o  added new function cvrisk for generic cross-validation
+  o  added new function cvrisk for generic cross-validation (gamboostLSS now
+     requires mboost >= 2.2-3 for the generic function definition)
 
   o  added new function Families.gamlss to include gamlss families in gamboostLSS
 
@@ -13,7 +14,7 @@
 
 		CHANGES in `gamboostLSS' VERSION 1.0-3 (2011-11-16, r49)
 
-  o  fixed potential problem that might occur if users specify different 
+  o  fixed potential problem that might occur if users specify different
      outcomes for different components
 
   o  fixed bug in regtest-gamboostLSS.R
