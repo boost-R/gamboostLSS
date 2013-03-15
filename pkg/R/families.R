@@ -494,12 +494,14 @@ WeibullLSS <- function(mu = NULL, sigma = NULL){
 
 
 GaussianMu  <- function(mu = NULL, sigma = NULL){
+
+    ngrad_fac <- 1
     loss <- function(sigma, y, f) -dnorm(x=y, mean=f, sd=sigma, log=TRUE)
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, sigma = sigma))
     }
     ngradient <- function(y, f, w = 1) {
-        (1/sigma^2)*(y - f)
+        ngrad_fac * (1/sigma^2)*(y - f)
     }
 
     offset <- function(y, w){
@@ -507,6 +509,14 @@ GaussianMu  <- function(mu = NULL, sigma = NULL){
             RET <- mu
         } else {
             RET <- weighted.mean(y, w = w, na.rm=TRUE)
+        }
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            ## what happens to the weights here???
+            ng <- as.vector(ngradient(y = y, f = RET, w = 1))
+            # browser()
+            if (length(ng) != 0)
+                ngrad_fac <<- 1 / sd(ng) * ngrad_fac
+            cat("ngrad_fac (mu): ", ngrad_fac, "\n")
         }
         return(RET)
     }
@@ -518,18 +528,26 @@ GaussianMu  <- function(mu = NULL, sigma = NULL){
 
 GaussianSigma  <- function(mu = NULL, sigma = NULL){
 
+    ngrad_fac <- 1
     loss <-  function(y, f, mu) - dnorm(x=y, mean=mu, sd=exp(f), log=TRUE)
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu))
     }
     ngradient <- function(y, f, w = 1) {
-        - 1 + exp(-2*f)*((y - mu)^2)
+        ngrad_fac * (- 1 + exp(-2*f)*((y - mu)^2))
     }
     offset <- function(y, w){
         if (!is.null(sigma)){
             RET <- log(sigma)
         } else {
             RET <-  log(weighted.sd(y, w = w, na.rm=TRUE))
+        }
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            ## what happens to the weights here???
+            ng <- as.vector(ngradient(y = y, f = RET, w = 1))
+            if (length(ng) != 0)
+                ngrad_fac <<- 1 / sd(ng) * ngrad_fac
+            cat("ngrad_fac (sigma): ", ngrad_fac, "\n")
         }
         return(RET)
     }
@@ -724,10 +742,10 @@ BetaLSS <- function (mu = NULL, phi = NULL){
 ZIPoLSS <- function(mu = NULL, sigma = NULL)
 {
   fam <- Families.gamlss(fname = "ZIP", mu = mu, sigma = sigma)
-  
+
   fam$mu@name <- "Zero-inflated Poisson model, count data component"
   fam$sigma@name <- "Zero-inflated Poisson model, zero component"
-  
+
   fam
 }
 
@@ -736,10 +754,10 @@ ZIPoLSS <- function(mu = NULL, sigma = NULL)
 ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL)
 {
   fam <- Families.gamlss(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu)
-                         
+
   fam$mu@name <- "Zero-inflated negative binomial model, location parameter for count data component"
   fam$sigma@name <- "Zero-inflated negative binomial model, scale parameter for count data component"
   fam$nu@name <- "Zero-inflated negative binomial model, zero component"
-  
+
   fam
 }
