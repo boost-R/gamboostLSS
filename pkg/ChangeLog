@@ -1,0 +1,360 @@
+------------------------------------------------------------------------
+r83 | hofner | 2013-03-15 13:45:22 +0100 (Fr, 15. Mär 2013) | 2 Zeilen
+
+experimental: added a new global option options("gamboostLSS_stab_ngrad") to stabilize estimation
+
+------------------------------------------------------------------------
+r82 | hofner | 2013-03-12 19:16:23 +0100 (Di, 12. Mär 2013) | 2 Zeilen
+
+require mboost >= 2.2-3 to make cvrisk happy
+
+------------------------------------------------------------------------
+r81 | hofner | 2013-03-11 19:11:59 +0100 (Mo, 11. Mär 2013) | 4 Zeilen
+
+added manual for cvrisk
+bug fixes in cvrisk (and related functions)
+minor fixes in manuals
+
+------------------------------------------------------------------------
+r80 | schmidm | 2013-03-04 17:58:50 +0100 (Mo, 04. Mär 2013) | 1 Zeile
+
+added wrapper functions for zero-inflated models
+------------------------------------------------------------------------
+r79 | hofner | 2013-02-25 10:47:43 +0100 (Mo, 25. Feb 2013) | 2 Zeilen
+
+added cvrisk functions
+
+------------------------------------------------------------------------
+r78 | hofner | 2013-02-22 17:49:25 +0100 (Fr, 22. Feb 2013) | 3 Zeilen
+
+added manual for cvrisk and related methods
+minor changes in code
+
+------------------------------------------------------------------------
+r77 | hofner | 2013-02-22 13:38:20 +0100 (Fr, 22. Feb 2013) | 3 Zeilen
+
+added first version of cvrisk function for mboostLSS models
+documentation etc. still needs to be fixed
+
+------------------------------------------------------------------------
+r76 | hofner | 2013-02-21 13:05:17 +0100 (Do, 21. Feb 2013) | 3 Zeilen
+
+make update function work correctly (w.r.t. offset handling)
+make GausianLSS work with weighted offsets
+
+------------------------------------------------------------------------
+r75 | amayr | 2013-02-20 18:23:27 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+changed name of gamlss.Families to Families.gamlss
+------------------------------------------------------------------------
+r74 | amayr | 2013-02-20 18:22:55 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+changed name of gamlss.Families to Families.gamlss
+------------------------------------------------------------------------
+r73 | amayr | 2013-02-20 15:20:32 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+changed name of gamlss.Families to Families.gamlss
+------------------------------------------------------------------------
+r72 | amayr | 2013-02-20 15:17:54 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+changed name of gamlss.Families to Families.gamlss
+------------------------------------------------------------------------
+r71 | amayr | 2013-02-20 15:17:17 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+changed name of gamlss.Families to Families.gamlss
+------------------------------------------------------------------------
+r70 | amayr | 2013-02-20 15:16:59 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+changed name of gamlss.Families to Families.gamlss
+------------------------------------------------------------------------
+r69 | amayr | 2013-02-20 09:59:49 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+
+fixed citation
+------------------------------------------------------------------------
+r68 | hofner | 2013-02-19 16:16:15 +0100 (Di, 19. Feb 2013) | 3 Zeilen
+
+changed interface
+preparations for cvrisk function
+
+------------------------------------------------------------------------
+r67 | amayr | 2013-02-19 13:47:11 +0100 (Di, 19. Feb 2013) | 1 Zeile
+
+adding gamlss.Families
+------------------------------------------------------------------------
+r66 | amayr | 2013-02-19 13:46:30 +0100 (Di, 19. Feb 2013) | 1 Zeile
+
+adding gamlss.Families
+------------------------------------------------------------------------
+r65 | amayr | 2013-02-19 13:45:22 +0100 (Di, 19. Feb 2013) | 1 Zeile
+
+adding gamlss.Families
+------------------------------------------------------------------------
+r64 | amayr | 2013-02-19 13:44:36 +0100 (Di, 19. Feb 2013) | 1 Zeile
+
+adding gamlss.Families
+------------------------------------------------------------------------
+r63 | amayr | 2013-02-19 13:43:49 +0100 (Di, 19. Feb 2013) | 1 Zeile
+
+adding gamlss.dist to suggested + cosmetics
+------------------------------------------------------------------------
+r62 | amayr | 2013-02-18 17:12:46 +0100 (Mo, 18. Feb 2013) | 1 Zeile
+
+cosmetics
+------------------------------------------------------------------------
+r61 | amayr | 2013-02-11 16:58:26 +0100 (Mo, 11. Feb 2013) | 1 Zeile
+
+cleanup + cosmetics
+------------------------------------------------------------------------
+r60 | amayr | 2013-02-11 16:25:46 +0100 (Mo, 11. Feb 2013) | 1 Zeile
+
+cleanup + cosmetics
+------------------------------------------------------------------------
+r59 | amayr | 2013-02-04 15:03:41 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+updating citation of Applied Statistics article
+------------------------------------------------------------------------
+r58 | amayr | 2013-02-04 14:50:44 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+updating citation of Applied Statistics article
+------------------------------------------------------------------------
+r57 | amayr | 2013-02-04 14:45:19 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+adding BetaLSS
+------------------------------------------------------------------------
+r56 | amayr | 2013-02-04 14:42:28 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+adding BetaLSS
+------------------------------------------------------------------------
+r55 | amayr | 2013-02-04 14:37:37 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+adding BetaLSS
+------------------------------------------------------------------------
+r54 | amayr | 2013-02-04 14:35:53 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+adding BetaLSS
+------------------------------------------------------------------------
+r53 | amayr | 2013-02-04 14:32:55 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+adding BetaLSS
+------------------------------------------------------------------------
+r52 | amayr | 2013-02-04 14:30:44 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+
+adding BetaLSS
+------------------------------------------------------------------------
+r51 | hofner | 2013-01-09 18:13:18 +0100 (Mi, 09. Jan 2013) | 2 Zeilen
+
+ping
+
+------------------------------------------------------------------------
+r50 | hofner | 2011-11-23 14:42:08 +0100 (Mi, 23. Nov 2011) | 1 Zeile
+
+fixed links to CHANGES
+------------------------------------------------------------------------
+r49 | hofner | 2011-11-16 20:44:03 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
+
+gamboostLSS 1.0-3
+- fixed potential problem that might occur if users specify different outcomes for different components
+- updated tests
+------------------------------------------------------------------------
+r46 | hofner | 2011-10-13 18:23:43 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+start 1.1-0
+------------------------------------------------------------------------
+r45 | amayr | 2011-10-13 10:35:29 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+updating NAMESPACE for GammaLSS
+------------------------------------------------------------------------
+r44 | amayr | 2011-10-13 10:20:55 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+Updating CHANGES due to GammaLSS
+------------------------------------------------------------------------
+r43 | amayr | 2011-10-13 10:13:49 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+Updating manual for GammaLSS
+------------------------------------------------------------------------
+r42 | amayr | 2011-10-13 10:12:01 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+updating NAMESPACE for GammaLSS
+------------------------------------------------------------------------
+r41 | amayr | 2011-10-13 10:10:52 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+Updating manual for GammaLSS
+------------------------------------------------------------------------
+r40 | amayr | 2011-10-13 10:09:12 +0200 (Do, 13. Okt 2011) | 1 Zeile
+
+Adding new GammaLSS family 
+------------------------------------------------------------------------
+r39 | hofner | 2011-09-23 13:13:59 +0200 (Fr, 23. Sep 2011) | 1 Zeile
+
+make mboost happy again
+------------------------------------------------------------------------
+r38 | amayr | 2011-09-20 11:01:30 +0200 (Di, 20. Sep 2011) | 1 Zeile
+
+new family added to NAMESPACE + minor fixes
+------------------------------------------------------------------------
+r37 | amayr | 2011-09-19 17:28:20 +0200 (Mo, 19. Sep 2011) | 2 Zeilen
+
+update manual due to GaussianLSS
+
+------------------------------------------------------------------------
+r36 | amayr | 2011-09-19 17:24:19 +0200 (Mo, 19. Sep 2011) | 1 Zeile
+
+Implement GaussianLSS to fit mu and sigma in a Gaussian setting
+------------------------------------------------------------------------
+r35 | hofner | 2011-08-31 10:07:36 +0200 (Mi, 31. Aug 2011) | 1 Zeile
+
+changed the way we use environments (to get rid of note: no visible binding)
+------------------------------------------------------------------------
+r34 | hofner | 2011-08-12 15:02:07 +0200 (Fr, 12. Aug 2011) | 1 Zeile
+
+version 1.0-1
+------------------------------------------------------------------------
+r33 | hofner | 2011-08-12 14:47:26 +0200 (Fr, 12. Aug 2011) | 1 Zeile
+
+version 1.0-1
+------------------------------------------------------------------------
+r32 | hofner | 2011-08-10 17:39:19 +0200 (Mi, 10. Aug 2011) | 1 Zeile
+
+version 1.0-0
+------------------------------------------------------------------------
+r31 | hofner | 2011-08-10 16:09:39 +0200 (Mi, 10. Aug 2011) | 1 Zeile
+
+version 1.0-0
+------------------------------------------------------------------------
+r30 | amayr | 2011-03-25 17:29:30 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+
+minor changes by NF
+------------------------------------------------------------------------
+r29 | amayr | 2011-03-25 17:25:18 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+
+minor changes by NF
+------------------------------------------------------------------------
+r28 | amayr | 2011-03-25 17:18:16 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+
+minor changes by NF
+------------------------------------------------------------------------
+r27 | amayr | 2011-03-25 17:13:40 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+
+minor changes by NF
+------------------------------------------------------------------------
+r26 | amayr | 2011-03-25 17:00:17 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+
+
+------------------------------------------------------------------------
+r25 | hofner | 2011-02-09 17:35:46 +0100 (Mi, 09. Feb 2011) | 1 Zeile
+
+typo
+------------------------------------------------------------------------
+r24 | schmidm | 2010-12-21 15:30:12 +0100 (Di, 21. Dez 2010) | 1 Zeile
+
+minor changes to documentation files
+------------------------------------------------------------------------
+r23 | hofner | 2010-12-21 10:52:15 +0100 (Di, 21. Dez 2010) | 1 Zeile
+
+
+------------------------------------------------------------------------
+r22 | amayr | 2010-12-20 18:18:15 +0100 (Mo, 20. Dez 2010) | 1 Zeile
+
+delete obsolete help-file
+------------------------------------------------------------------------
+r21 | amayr | 2010-12-20 18:13:52 +0100 (Mo, 20. Dez 2010) | 1 Zeile
+
+Major changes to the help files 
+------------------------------------------------------------------------
+r20 | hofner | 2010-12-16 16:31:09 +0100 (Do, 16. Dez 2010) | 1 Zeile
+
+renamed makeFamilies() to Families()
+------------------------------------------------------------------------
+r19 | amayr | 2010-12-16 11:41:21 +0100 (Do, 16. Dez 2010) | 1 Zeile
+
+small changes
+------------------------------------------------------------------------
+r18 | hofner | 2010-12-14 16:56:56 +0100 (Di, 14. Dez 2010) | 1 Zeile
+
+AM: some changes in manuals
+------------------------------------------------------------------------
+r17 | hofner | 2010-08-24 11:24:07 +0200 (Di, 24. Aug 2010) | 2 Zeilen
+
+bugfix: no subset method available if initial mstop = 1
+changed generic function selected
+------------------------------------------------------------------------
+r16 | hofner | 2010-07-29 15:06:25 +0200 (Do, 29. Jul 2010) | 2 Zeilen
+
+improved manual
+added some tests
+------------------------------------------------------------------------
+r15 | hofner | 2010-07-28 19:12:22 +0200 (Mi, 28. Jul 2010) | 2 Zeilen
+
+changed behavior of subset method (now smarter)
+added new tests
+------------------------------------------------------------------------
+r14 | hofner | 2010-07-28 17:11:38 +0200 (Mi, 28. Jul 2010) | 2 Zeilen
+
+changes in callies (now specify arguments explicitly instead of using "...")
+added predict function
+------------------------------------------------------------------------
+r13 | hofner | 2010-07-28 10:49:09 +0200 (Mi, 28. Jul 2010) | 2 Zeilen
+
+added support for mulitple nu values
+bugfix in subset method
+------------------------------------------------------------------------
+r12 | hofner | 2010-07-28 09:40:14 +0200 (Mi, 28. Jul 2010) | 4 Zeilen
+
+added support for multiple mstops
+added function fitted() to extract fitted values
+changed behaviour of mstop (now returns a named vector)
+added new checks
+------------------------------------------------------------------------
+r11 | hofner | 2010-07-20 17:33:00 +0200 (Di, 20. Jul 2010) | 3 Zeilen
+
+fixed problem with internal call of glmboost()
+added and improved plot methods for glmboostLSS und gamboostLSS models
+added print method
+------------------------------------------------------------------------
+r10 | hofner | 2010-07-14 17:29:28 +0200 (Mi, 14. Jul 2010) | 1 Zeile
+
+fixed: ngradient of StudentTSigma family
+------------------------------------------------------------------------
+r9 | hofner | 2010-07-14 15:47:06 +0200 (Mi, 14. Jul 2010) | 1 Zeile
+
+fixed: now some (or all) parameters of a family can be initiated with an offset
+------------------------------------------------------------------------
+r8 | hofner | 2010-07-13 17:18:08 +0200 (Di, 13. Jul 2010) | 4 Zeilen
+
+corrected AFT families
+included manuals for AFT families
+renamed crtl --> control in mboostLSS_fit()
+other minor changes
+------------------------------------------------------------------------
+r7 | hofner | 2010-07-09 17:33:56 +0200 (Fr, 09. Jul 2010) | 1 Zeile
+
+added families to fit AFT models
+------------------------------------------------------------------------
+r6 | hofner | 2010-07-08 18:01:37 +0200 (Do, 08. Jul 2010) | 2 Zeilen
+
+offset per default computed by minimizing the risk function per component
+plot.glmboostLSS enhanced
+------------------------------------------------------------------------
+r5 | hofner | 2010-07-06 17:59:23 +0200 (Di, 06. Jul 2010) | 2 Zeilen
+
+familes changed (defaults, usage of offset values, ...)
+documentation added
+------------------------------------------------------------------------
+r4 | hofner | 2010-07-05 17:51:08 +0200 (Mo, 05. Jul 2010) | 1 Zeile
+
+tests added
+------------------------------------------------------------------------
+r3 | hofner | 2010-07-05 17:38:34 +0200 (Mo, 05. Jul 2010) | 3 Zeilen
+
+formula can now be a (named) list
+subset now also able to increase mstop
+some helpers added
+------------------------------------------------------------------------
+r2 | hofner | 2010-07-02 17:24:23 +0200 (Fr, 02. Jul 2010) | 1 Zeile
+
+initial version
+------------------------------------------------------------------------
+r1 | stefan7th | 2009-05-28 14:17:51 +0200 (Do, 28. Mai 2009) | 1 Zeile
+
+R-Forge: updated repository structure
+------------------------------------------------------------------------

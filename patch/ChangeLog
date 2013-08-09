@@ -1,0 +1,21 @@
+------------------------------------------------------------------------
+r50 | hofner | 2011-11-23 14:42:08 +0100 (Mi, 23. Nov 2011) | 1 Zeile
+
+fixed links to CHANGES
+------------------------------------------------------------------------
+r49 | hofner | 2011-11-16 20:44:03 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
+
+gamboostLSS 1.0-3
+- fixed potential problem that might occur if users specify different outcomes for different components
+- updated tests
+------------------------------------------------------------------------
+r48 | hofner | 2011-11-16 18:58:43 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
+
+- fixed bug in regtest-gamboostLSS.R
+- removed duplicated (and slightly altered) code from mboost 
+  (gamboostLSS now requires mboost >= 2.0-12)
+------------------------------------------------------------------------
+r47 | hofner | 2011-11-16 18:27:50 +0100 (Mi, 16. Nov 2011) | 1 Zeile
+
+added v. 1.0-2 to folder patch for patch updates (pkg contains minor / major updates)
+------------------------------------------------------------------------
