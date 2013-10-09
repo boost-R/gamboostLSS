@@ -35,8 +35,10 @@ NBinomialMu <- function(mu = NULL, sigma = NULL) {
         if (!is.null(mu)){
             RET <- log(mu)
         } else {
-            if (is.null(sigma))
-                sigma <<- mean(y)^2 / (sd(y) - mean(y))
+            if (is.null(sigma)) {
+                sigma <<- mean(y)^2 / (var(y) - mean(y))
+                sigma <<- ifelse(sigma < 0, 1e-10, sigma)
+            }
             ### look for starting value of f = log(mu) in "interval"
             ### i.e. mu possibly ranges from 1e-10 to 1e10
             RET <- optimize(risk, interval = c(log(1e-10), log(1e10)), y = y, w = w)$minimum
