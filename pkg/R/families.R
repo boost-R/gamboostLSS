@@ -740,26 +740,24 @@ BetaLSS <- function (mu = NULL, phi = NULL){
 }
 
 # Zero-inflated Poisson model
-
 ZIPoLSS <- function(mu = NULL, sigma = NULL)
 {
   fam <- Families.gamlss(fname = "ZIP", mu = mu, sigma = sigma)
 
-  fam$mu@name <- "Zero-inflated Poisson model, count data component"
-  fam$sigma@name <- "Zero-inflated Poisson model, zero component"
+  fam$mu@name <- "Zero-inflated Poisson model: count data component"
+  fam$sigma@name <- "Zero-inflated Poisson model: zero component"
 
   fam
 }
 
 # Zero-inflated negative binomial model
-
 ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL)
 {
   fam <- Families.gamlss(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu)
 
-  fam$mu@name <- "Zero-inflated negative binomial model, location parameter for count data component"
-  fam$sigma@name <- "Zero-inflated negative binomial model, scale parameter for count data component"
-  fam$nu@name <- "Zero-inflated negative binomial model, zero component"
+  fam$mu@name <- "Zero-inflated negative binomial model: location parameter for count data component"
+  fam$sigma@name <- "Zero-inflated negative binomial model: scale parameter for count data component"
+  fam$nu@name <- "Zero-inflated negative binomial model: zero component"
 
   fam
 }

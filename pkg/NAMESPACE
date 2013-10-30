@@ -1,5 +1,4 @@
 import(mboost)
-importFrom(survival, Surv)
 
 export(glmboostLSS,
        gamboostLSS,
@@ -18,7 +17,7 @@ export(glmboostLSS,
        GammaLSS, GammaMu, GammaSigma,
        BetaLSS, BetaMu, BetaPhi,
        WeibullLSS, WeibullMu, WeibullSigma,
-	   ZIPoLSS, ZINBLSS,
+       ZIPoLSS, ZINBLSS,
        Families.gamlss, gamlss1parMu,
        gamlss2parMu, gamlss2parSigma,
        gamlss3parMu, gamlss3parSigma, gamlss3parNu,

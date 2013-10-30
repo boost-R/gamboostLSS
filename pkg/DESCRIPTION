@@ -8,7 +8,7 @@ Maintainer: Benjamin Hofner <benjamin.hofner@fau.de>
 Description: Boosting models for fitting generalized additive models for
   location, shape and scale (GAMLSS) to potentially high dimensional
   data.
-Depends: R (>= 2.10.0), splines, survival, methods, mboostDevel (>= 2.2-3)
+Depends: R (>= 2.10.0), mboost (>= 2.2-3)
 Suggests: gamlss, gamlss.dist
 LazyLoad: yes
 License: GPL-2
