@@ -183,16 +183,18 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                 mvals[[j]][1:niter[j]] <- (start[j] + 1):(start[j] + niter[j])
         }
 
+        ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
         for (i in 1:max(niter)){
             for (j in mods){
                 ## update value of nuisance parameters
+                ## use response(fitted()) as this is much quicker than fitted(, type = response)
                 for (k in mods[-j])
-                    assign(names(fit)[k], fitted(fit[[k]], type = "response"),
+                    assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
                            environment(get("ngradient", environment(fit[[j]]$subset))))
                 ## update value of u, i.e. compute ngradient with new nuisance parameters
-                ENV <- environment(fit[[j]]$subset)
-                ENV[["u"]] <- ENV[["ngradient"]](ENV[["y"]], ENV[["fit"]],
-                                                 ENV[["weights"]])
+
+                ENV[[j]][["u"]] <- ENV[[j]][["ngradient"]](ENV[[j]][["y"]], ENV[[j]][["fit"]],
+                                                           ENV[[j]][["weights"]])
                 # same as:
                 # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
 
