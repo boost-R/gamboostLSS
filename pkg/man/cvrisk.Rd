@@ -26,10 +26,10 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE)
     bootstrap samples.
   }
   \item{grid}{
-    a list of vectors of stopping parameters the empirical risk is to be
-    evaluated for. The number of vectors in the list must be equal to
-    the number of parameters of the GAMLSS family. Per default,
-    \code{make.grid(mstop(object))} is used.
+    a matrix of stopping parameters the empirical risk is to be
+    evaluated for. Each row represents a parameter combination. The
+    number of columns must be equal to the number of parameters of the
+    GAMLSS family. Per default, \code{make.grid(mstop(object))} is used.
   }
   \item{papply}{
     (parallel) apply function, defaults to  \code{\link[parallel]{mclapply}}.
