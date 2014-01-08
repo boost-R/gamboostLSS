@@ -10,6 +10,7 @@
 
 ################################################################################
 ## constructor
+
 Families.gamlss <- function(fname = "NO", mu = NULL, sigma = NULL, nu = NULL,
                             tau = NULL) {
     ## require gamlss.dist
@@ -77,9 +78,9 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
         return(RET)
     }
 
- Family(ngradient = ngradient, risk = risk, loss = loss,
-                   response = function(f) FAM$mu.linkinv(f), offset = offset,
-                   name = paste(FAM$family[2], "mboost family"))
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) FAM$mu.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "mboost family"))
 }
 
 
@@ -106,13 +107,13 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, fname = "NO") {
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-       ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
+        ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-          teil <- quantile(abs(ngr), probs=0.75)
-          teil <- ifelse(teil < 0.001, 0.001, teil)
-          ngr <- ngr/teil
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
         }
-       ngr
+        ngr
     }
 
     ## get the offset -> we take the starting values of gamlss
@@ -125,9 +126,9 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, fname = "NO") {
         }
         return(RET)
     }
-  Family(ngradient = ngradient, risk = risk, loss = loss,
-                  response = function(f) FAM$mu.linkinv(f), offset = offset,
-                  name = paste(FAM$family[2], "1st parameter (mu)"))
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) FAM$mu.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "1st parameter (mu)"))
 }
 
 
@@ -151,9 +152,9 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL, fname = "NO") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-          teil <- quantile(abs(ngr), probs=0.75)
-          teil <- ifelse(teil < 0.001, 0.001, teil)
-          ngr <- ngr/teil
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
         }
         ngr
     }
@@ -167,9 +168,9 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL, fname = "NO") {
         }
         return(RET)
     }
-   Family(ngradient = ngradient, risk = risk, loss = loss,
-                   response = function(f) FAM$sigma.linkinv(f), offset = offset,
-                   name = paste(FAM$family[2], "2nd parameter (sigma)"))
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) FAM$sigma.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "2nd parameter (sigma)"))
 }
 
 ## Build the Families object
@@ -202,14 +203,14 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)
-    if (getOption("gamboostLSS_stab_ngrad")) {
-      teil <- quantile(abs(ngr), probs=0.75)
-      teil <- ifelse(teil < 0.001, 0.001, teil)
-      ngr <- ngr/teil
-      }
-     ngr
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
+        }
+        ngr
     }
-    
+
     ## get the offset -> we take the starting values of gamlss
     offset <- function(y, w = 1) {
         if (!is.null(mu)) {
@@ -221,8 +222,8 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
         return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
-                    response = function(f) FAM$mu.linkinv(f), offset = offset,
-                    name = paste(FAM$family[2], "1st parameter (mu)"))
+           response = function(f) FAM$mu.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "1st parameter (mu)"))
 }
 
 
@@ -246,9 +247,9 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu) * FAM$sigma.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-          teil <- quantile(abs(ngr), probs=0.75)
-          teil <- ifelse(teil < 0.001, 0.001, teil)
-          ngr <- ngr/teil
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
         }
         ngr
     }
@@ -263,8 +264,8 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
         return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
-                    response = function(f) FAM$sigma.linkinv(f), offset = offset,
-                    name = paste(FAM$family[2], "2nd parameter (sigma)"))
+           response = function(f) FAM$sigma.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "2nd parameter (sigma)"))
 }
 
 gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
@@ -287,9 +288,9 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-          teil <- quantile(abs(ngr), probs=0.75)
-          teil <- ifelse(teil < 0.001, 0.001, teil)
-          ngr <- ngr/teil
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
         }
         ngr
     }
@@ -303,8 +304,9 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
         }
         return(RET)
     }
-    Family(ngradient = ngradient, risk = risk, loss = loss, response = function(f) FAM$nu.linkinv(f),
-        offset = offset, name = paste(FAM$family[2], "3rd parameter (nu)"))
+    Family(ngradient = ngradient, risk = risk, loss = loss,
+           response = function(f) FAM$nu.linkinv(f),
+           offset = offset, name = paste(FAM$family[2], "3rd parameter (nu)"))
 }
 
 ## Build the Families object
@@ -318,7 +320,8 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 ################################################################################
 ## 4 parameters
 
-gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, fname = "BCP") {
+gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
+                         fname = "BCP") {
 
     FAM <- as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
@@ -339,9 +342,9 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, fname =
         ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau) *
             FAM$mu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-          teil <- quantile(abs(ngr), probs=0.75)
-          teil <- ifelse(teil < 0.001, 0.001, teil)
-          ngr <- ngr/teil
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
         }
         ngr
     }
@@ -356,8 +359,8 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, fname =
         return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
-                    response = function(f) FAM$mu.linkinv(f), offset = offset,
-                    name = paste(FAM$family[2], "1st parameter (mu)"))
+           response = function(f) FAM$mu.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "1st parameter (mu)"))
 }
 
 
@@ -381,14 +384,14 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-       ngr <-  FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu,
-                        tau = tau) * FAM$sigma.dr(eta = f)
-       if (getOption("gamboostLSS_stab_ngrad")) {
-         teil <- quantile(abs(ngr), probs=0.75)
-         teil <- ifelse(teil < 0.001, 0.001, teil)
-         ngr <- ngr/teil
-       }
-       ngr
+        ngr <-  FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu,
+                         tau = tau) * FAM$sigma.dr(eta = f)
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
+        }
+        ngr
     }
     ## get the offset
     offset <- function(y, w = 1) {
@@ -401,8 +404,8 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
-                    response = function(f) FAM$sigma.linkinv(f), offset = offset,
-                    name = paste(FAM$family[2], "2nd parameter (sigma)"))
+           response = function(f) FAM$sigma.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "2nd parameter (sigma)"))
 }
 
 gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
@@ -428,9 +431,9 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f),
                         tau = tau) * FAM$nu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-          teil <- quantile(abs(ngr), probs=0.75)
-          teil <- ifelse(teil < 0.001, 0.001, teil)
-          ngr <- ngr/teil
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
         }
         ngr
     }
@@ -445,8 +448,8 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
-                    response = function(f) FAM$nu.linkinv(f), offset = offset,
-                    name = paste(FAM$family[2], "3rd parameter (nu)"))
+           response = function(f) FAM$nu.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "3rd parameter (nu)"))
 }
 
 
@@ -470,14 +473,14 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     }
     ## get the ngradient
     ngradient <- function(y, f, w = 1) {
-      ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
-                      nu = nu) * FAM$tau.dr(eta = f)
-      if (getOption("gamboostLSS_stab_ngrad")) {
-        teil <- quantile(abs(ngr), probs=0.75)
-        teil <- ifelse(teil < 0.001, 0.001, teil)
-        ngr <- ngr/teil
-      }
-      ngr
+        ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
+                        nu = nu) * FAM$tau.dr(eta = f)
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- quantile(abs(ngr), probs = 0.75)
+            div <- ifelse(div < 0.001, 0.001, div)
+            ngr <- ngr / div
+        }
+        ngr
     }
     ## get the offset
     offset <- function(y, w = 1) {
@@ -490,8 +493,8 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
-                    response = function(f) FAM$tau.linkinv(f), offset = offset,
-                    name = paste(FAM$family[2], "4th parameter (tau)"))
+           response = function(f) FAM$tau.linkinv(f), offset = offset,
+           name = paste(FAM$family[2], "4th parameter (tau)"))
 }
 
 ## Build the Families object

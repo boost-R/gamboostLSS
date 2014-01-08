@@ -95,14 +95,16 @@ mboostLSS_fit(formula, data = list(), families = list(),
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one single value, this
   value is used for all distribution parameters of the GAMLSS model.
-  Alternatively, a named list with separate values for each component
-  can be used to specify a seperate value for each parameter of the
-  GAMLSS model. The names of the list must correspond to the names of
-  the distribution parameters of the GAMLSS family. For one-dimensional
-  stopping, the user therefore can specify, e.g., \code{mstop = 100} via
-  \code{\link{boost_control}}. For more-dimensional stopping, one can
-  specify, e.g., \code{mstop = list(mu = 100, sigma = 200)} (see
-  examples).
+  Alternatively, a (named) vector or a (named) list with separate values
+  for each component can be used to specify a seperate value for each
+  parameter of the GAMLSS model. The names of the list must correspond
+  to the names of the distribution parameters of the GAMLSS family. If
+  no names are given, the order of the \code{mstop} or \code{nu} values
+  is assumed to be the same as the order of the components in the
+  \code{families}. For one-dimensional stopping, the user therefore can
+  specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
+  more-dimensional stopping, one can specify, e.g., \code{mstop =
+  list(mu = 100, sigma = 200)} (see examples).
 
 
 }

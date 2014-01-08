@@ -11,7 +11,7 @@
 \usage{
 \method{cvrisk}{mboostLSS}(object, folds = cv(model.weights(object)),
        grid = make.grid(mstop(object)), papply = mclapply, fun = NULL, ...)
-make.grid(max, length.out = 10, min = NULL, log = TRUE)
+make.grid(max, length.out = 10, min = NULL, log = TRUE, dense_mu_grid = TRUE)
 }
 
 \arguments{
@@ -65,6 +65,13 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE)
   \item{log}{
     should the grid be on a logarithmic scale? Default: TRUE.
   }
+  \item{dense_mu_grid}{
+    should the grid in the \code{mu} component be extended for all
+    values of the \code{mstop} values corresponding to \code{mu} that
+    are greater or equal to all other parameters in this combination.
+    These values can be computed without or with very little additional
+    computational costs. For details see examples.
+  }
 }
 \details{
   The number of boosting iterations is a hyper-parameter of the
@@ -105,14 +112,14 @@ for( i in 1:1000)
     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
 dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 
-## linear model with y ~ . for both components: 400 boosting iterations
+## linear model with y ~ . for both components: 100 boosting iterations
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 100),
                      center = TRUE)
 
 ## set up a grid
-grid <-  make.grid(mstop(model), length.out = 5)
-grid
+grid <-  make.grid(mstop(model), length.out = 5, dense_mu_grid = FALSE)
+plot(grid)
 ## a tiny toy example (5-fold bootsrap with maximum stopping value 100)
 cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5),
               grid = grid)
@@ -123,17 +130,51 @@ mstop(cvr)
 ## a more realistic example
 \dontrun{  ## (automatically) as this really (!) takes a while
   ## set up a grid with maximum 400 for both components
-  grid <- make.grid(c(mu = 400, sigma = 400))
-  grid
+  grid <- make.grid(c(mu = 400, sigma = 400), dense_mu_grid = FALSE)
+  plot(grid)
   cvr <- cvrisk(model, grid = grid)
   mstop(cvr)
   ## reset model to mstop values:
   model[mstop(cvr)]
 }
 ## Other grids:
-make.grid(mstop(model), length.out = 3)
-make.grid(c(mu = 400, sigma = 400), log = FALSE)
-make.grid(c(mu = 400, sigma = 400), length.out = 4, min = 100, log = FALSE)
+plot(make.grid(mstop(model), length.out = 3, dense_mu_grid = FALSE))
+plot(make.grid(c(mu = 400, sigma = 400), log = FALSE, dense_mu_grid = FALSE))
+plot(make.grid(c(mu = 400, sigma = 400), length.out = 4,
+               min = 100, log = FALSE, dense_mu_grid = FALSE))
+
+
+### Now use dense mu grids
+
+# standard grid
+plot(make.grid(c(mu = 100, sigma = 100), dense = FALSE),
+     pch = 20, col = "red")
+# dense grid for all mstop_mu values greater than mstop_sigma
+grid <- make.grid(c(mu = 100, sigma = 100))
+points(grid, pch = 20, cex = 0.2)
+abline(0,1)
+
+# now with three parameters
+grid <- make.grid(c(mu = 100, sigma = 100, df = 30),
+                  length.out = c(5, 5, 2), dense = FALSE)
+densegrid <- make.grid(c(mu = 100, sigma = 100, df = 30),
+                       length.out = c(5, 5, 2))
+par(mfrow = c(1,2))
+# first for df = 1
+plot(grid[grid$df == 1, 1:2], main = "df = 1", pch = 20, col = "red")
+abline(0,1)
+abline(v = 1)
+# now expand grid for all mu values greater the corresponding sigma
+# value (i.e. below the bisecting line) and above df (i.e. 1)
+points(densegrid[densegrid$df == 1, 1:2], pch = 20, cex = 0.2)
+
+# now for df = 30
+plot(grid[grid$df == 30, 1:2], main = "df = 30", pch = 20, col = "red")
+abline(0,1)
+abline(v = 30)
+# now expand grid for all mu values greater the corresponding sigma
+# value (i.e. below the bisecting line) and above df (i.e. 30)
+points(densegrid[densegrid$df == 30, 1:2], pch = 20, cex = 0.2)
 }
 \keyword{models}
 \keyword{regression}

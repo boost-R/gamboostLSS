@@ -78,42 +78,10 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
 
     mstop <- mstoparg <- control$mstop
     control$mstop <- 1
-
-    if (is.list(mstop)) {
-        if (!all(names(mstop) %in% names(families)) ||
-            length(unique(names(mstop))) != length(names(families)))
-            stop(sQuote("mstop"), " can be either a scalar or a named list",
-                 " of mstop values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        mstop <- mstop[names(families)] ## sort in order of families
-        mstop <- unlist(mstop)
-    } else {
-        if(length(mstop) != 1)
-            stop(sQuote("mstop"), " can be either a scalar or a named list",
-                 " of mstop values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        mstop <- rep(mstop, length(families))
-        names(mstop) <- names(families)
-    }
+    mstop <- check(mstop, "mstop", names(families))
 
     nu <- control$nu
-
-    if (is.list(nu)) {
-        if (!all(names(nu) %in% names(families)) ||
-            length(unique(names(nu))) != length(names(families)))
-            stop(sQuote("nu"), " can be either a scalar or a named list",
-                 " of nu values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        nu <- nu[names(families)] ## sort in order of families
-        nu <- unlist(nu)
-    } else {
-        if(length(nu) != 1)
-            stop(sQuote("nu"), " can be either a scalar or a named list",
-                 " of nu values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        nu <- rep(nu, length(families))
-        names(nu) <- names(families)
-    }
+    nu <- check(nu, "nu", names(families))
 
     if (is.list(control$risk) || is.list(control$center) || is.list(control$trace))
         stop(sQuote("risk"),", ", sQuote("center"), " and ", sQuote("trace") ,

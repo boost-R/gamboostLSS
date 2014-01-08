@@ -102,7 +102,9 @@
     is smaller than the initial \code{mstop}, a subset is used.
     If \code{i} is larger than the initial \code{mstop},
     additional boosting steps are performed until step \code{i}
-    is reached. See details for more information. }
+    is reached. One can specify a scalar, a (possibly named) vector or a
+    (possibly named) list with separate values  for each component. See
+    the details section of \code{\link{mboostLSS}} for more information.}
   \item{return}{ a logical indicating whether the changed object is
     returned. }
   \item{main}{ a title for the plots.}
@@ -256,6 +258,18 @@ plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 ### get back to orignal fit
 model[400]
+plot(risk(model, parameter = "mu")[[1]])
+plot(risk(model, parameter = "sigma")[[1]])
+
+### use different mstop values for the components
+model[c(100, 200)]
+## same as
+  model[c(mu = 100, sigma = 200)]
+## or
+  model[list(mu = 100, sigma = 200)]
+## or
+  model[list(100, 200)]
+
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 

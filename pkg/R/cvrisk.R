@@ -2,7 +2,9 @@
 ## cross-validation (bootstrap, k-fold cv etc.) of empirical risk
 ## for boosting algorithms for gamLSS models
 
-make.grid <- function(max, length.out = 10, min = NULL, log = TRUE) {
+make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
+                      dense_mu_grid = TRUE) {
+
     if (is.null(min))
         min <- rep(1, length(max))
     if (length(min) == 1)
@@ -26,6 +28,7 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE) {
     if (any(sapply(1:length(max), function(i) min[i] >= max[i])))
         stop("All min values must be smaller than the respectiv max value.")
 
+    ## single paramter family
     if (length(max) == 1) {
         RET <- seq(from = min, to = max, length.out = length.out)
         if (log == TRUE)
@@ -39,19 +42,53 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE) {
         return(RET)
     }
 
+    ## ELSE: multiple parameter family
+
+    if (is.null(names(max)))
+        stop(sQuote("max"), " must be a named vector")
+
     RET <- lapply(1:length(max), function(i)
-                  seq(from = min[i], to = max[i], length.out = length.out[i]))
+                  seq(from = min[i], to = max[i],
+                      length.out = length.out[i]))
     if (log == TRUE)
         RET <- lapply(RET, exp)
     ## round to get integer values
     RET <- lapply(RET, round)
-    if (any(sapply(RET, duplicated))) {
+
+    if (any(sapply(RET, function(x) any(duplicated(x))))) {
         warning("Duplicates produced; Only unique values are returned")
         RET <- lapply(RET, unique)
     }
-
+    ## make grid
+    RET <- expand.grid(RET)
     if (!is.null(names(max)))
-        names(RET) <- names(max)
+        colnames(RET) <- names(max)
+
+    ## no way to produce dense grid
+    if (dense_mu_grid && max(RET[,1]) <= min(RET[, -1]))
+        dense_mu_grid <- FALSE
+
+    ## if dense grid for mu is requested:
+    if (dense_mu_grid) {
+        ## find all grid points where at least one mu grid point is greater than
+        ## all other parameters
+        tmp <- RET[RET[, 1] > apply(RET[, -1, drop = FALSE], 1, max), ]
+        tmp <- unique(tmp[, -1, drop = FALSE])
+        ## for these values produce a dense grid
+        stop <- max(RET[, 1])
+        for (i in 1:nrow(tmp)) {
+            start <- max(tmp[i, ])
+            res <- suppressWarnings(cbind(seq(start, to = stop, by = 1), tmp[i, ]))
+            colnames(res) <- colnames(RET)
+            RET <- rbind(RET, res)
+        }
+        RET <- unique(RET)
+        ## SORT THE GRID AND THEN CONTINUE IN cvrisk BY checking if
+        ##   grid[, 1] >= grid[, -1] && ???
+        RET <- RET[do.call(order, RET[, rev(colnames(RET))]), ]
+        # RET <- RET[order(RET[,2], RET[,1]), ]
+        rownames(RET) <- NULL
+    }
     return(RET)
 }
 
@@ -71,12 +108,11 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     } else {
         stopifnot(is.matrix(folds) && nrow(folds) == length(weights))
     }
-    if (length(object) != length(grid))
+    if (length(object) != ncol(grid))
         stop(sQuote("grid"),
-             " must be a list of the same length as parameters in",
-             sQuote("object"))
+             " must be a matrix with the same number of columns",
+             " as parameters in", sQuote("object"))
 
-    oobrisk <- matrix(0, nrow = ncol(folds), ncol = length(grid))
     if (!is.null(fun))
         stopifnot(is.function(fun))
 
@@ -84,31 +120,49 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     ## fam_name <- object$family@name
     call <- deparse(attr(object, "call"))
 
+    oobrisk <- matrix(0, nrow = ncol(folds), ncol = ncol(grid))
+
     if (is.null(fun)) {
         dummyfct <- function(weights, oobweights) {
             ## make model with new weights and minimal mstop
             mod <- update(object, weights = weights, oobweights = oobweights,
-                          risk = "oobag", mstop = lapply(grid, min))
+                          risk = "oobag", mstop = apply(grid, 2, min))
+
             ## now we need to increase mstop (stupid or clever)
-            x_grid <- expand.grid(grid)
-            risks <- vector("numeric", nrow(x_grid))
-            for (i in 1:nrow(x_grid)) {
-                mod[x_grid[i, ]]
+            risks <- vector("numeric", nrow(grid))
+            for (i in 1:nrow(grid)) {
+                mod[grid[i, ]]
                 rsk <- risk(mod, merge = TRUE)
                 risks[i] <- rsk[length(rsk)]
             }
+
+            # risks <- vector("list", nrow(grid))
+            # for (i in 1:nrow(grid)) {
+            #     mod[grid[i, ]]
+            #     rsk <- risk(mod, merge = TRUE)
+            #     if (grid[i, 1] > max(grid[i, -1])) {
+            #         risks[i] <- tail(rsk, grid[i, 1] - max(grid[i, -1]) + 1)
+            #     } else {
+            #         risks[i] <- rsk[length(rsk)]
+            #     }
+            # }
             return(risks)
         }
     }
     else {
         stop("currently not implemented")
         dummyfct <- function(weights, oobweights) {
+            ## make model with new weights and minimal mstop
             mod <- update(object, weights = weights, oobweights = oobweights,
-                          risk = "oobag", mstop = lapply(grid, min))
-            mod[max(grid)]
-            ### make sure dispatch works correctly
-            class(mod) <- class(object)
-            fun(mod)
+                          risk = "oobag", mstop = apply(grid, 2, min))
+
+            res <- vector("list", nrow(grid))
+            for (i in 1:nrow(grid)) {
+                mod[grid[i, ]]
+                class(mod) <- class(object)
+                res[i] <- fun(mod)
+            }
+            return(res)
         }
     }
 
@@ -124,7 +178,7 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
         return(oobrisk)
     oobrisk <- t(as.data.frame(oobrisk))
     oobrisk <- oobrisk / colSums(OOBweights)
-    colnames(oobrisk) <- apply(expand.grid(grid), 1,
+    colnames(oobrisk) <- apply(grid, 1,
                                function(x) paste(x, collapse = ","))
     rownames(oobrisk) <- 1:nrow(oobrisk)
     ## attr(oobrisk, "risk") <- fam_name
@@ -167,11 +221,77 @@ plot.cvriskLSS <- function(x, ylab = attr(x, "risk"),
 }
 
 mstop.cvriskLSS <- function(object, parameter = NULL, ...) {
-    res <- unlist(expand.grid(attr(object, "mstop"))[which.min(colSums(object)),])
+    res <- unlist(attr(object, "mstop")[which.min(colSums(object)),])
     if (!is.null(parameter)) {
         if(is.character(parameter))
             parameter <- extract_parameter(object, parameter)
         res <- res[parameter]
     }
     return(res)
+}
+
+if (FALSE) {
+    library(gamboostLSS)
+
+    ## check cvrisk
+    set.seed(1907)
+    x1 <- rnorm(1000)
+    x2 <- rnorm(1000)
+    x3 <- rnorm(1000)
+    x4 <- rnorm(1000)
+    x5 <- rnorm(1000)
+    x6 <- rnorm(1000)
+    mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+    sigma <- exp(-0.2 * x3)
+    y <- numeric(1000)
+    for( i in 1:1000)
+        y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+    dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+    model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                         control = boost_control(mstop = 400),
+                         center = TRUE)
+    grid <- make.grid(c(mu = 1000, sigma = 1000), length.out = 5)
+    plot(grid)
+    abline(0,1)
+    cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5), grid = grid,
+                  papply = lapply)
+
+    ### check timings:
+
+    ### Data generating process:
+    set.seed(1907)
+    x1 <- rnorm(1000)
+    x2 <- rnorm(1000)
+    x3 <- rnorm(1000)
+    x4 <- rnorm(1000)
+    x5 <- rnorm(1000)
+    x6 <- rnorm(1000)
+    mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+    sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+    y <- numeric(1000)
+    for( i in 1:1000)
+        y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+    dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+
+    system.time({
+        ## linear model with y ~ . for both components: 1 boosting iterations
+        model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                             control = boost_control(mstop = 1),
+                             center = TRUE)
+        for (i in 10:1000) {
+            model[c(i, 10)]
+        }
+    })
+    ## langsamer als:
+    system.time({
+        ## linear model with y ~ . for both components: 1 boosting iterations
+        model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                             control = boost_control(mstop = 1),
+                             center = TRUE)
+        model[c(1000, 10)]
+
+    })
+
+
+    ## what about the warnings in 3d?
 }
