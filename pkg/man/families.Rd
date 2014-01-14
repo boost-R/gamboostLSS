@@ -1,6 +1,6 @@
 \name{Families}
 \alias{Families}
-
+\alias{families}
 
 \alias{GaussianLSS}
 \alias{GaussianMu}
@@ -48,12 +48,12 @@
   Families for GAMLSS models
 }
 \description{
+ The package provides some pre-defined GAMLSS families, e.g.
+ \code{NBionomialLSS}. By using the function \code{Families}, a new
+ object of the class \code{families} can be generated.
 
- The package provides some pre-defined GAMLSS families, e.g. \code{NBionomialLSS}. By using the function \code{Families},
- a new object of the class \code{families} can be generated.
-
- Objects of the class \code{families} provide a convenient way to specify GAMLSS
- distributions to be fitted by one of the boosting
+ Objects of the class \code{families} provide a convenient way to
+ specify GAMLSS distributions to be fitted by one of the boosting
  algorithms implemented in this package.
 }
 \usage{
@@ -63,34 +63,34 @@ Families(...)
 
 ###  Pre-defined GAMLSS distributions  ###
 
-## families Object for the normal distribution
+## families object for the normal distribution
 GaussianLSS(mu = NULL, sigma = NULL)
 
-## families Object for the gamma distribution
+## families object for the gamma distribution
 GammaLSS(mu = NULL, sigma = NULL)
 
-## families Object for beta regression
+## families object for beta regression
 BetaLSS(mu = NULL, phi = NULL)
 
-## families Object for the negative binomial distribution
+## families object for the negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL)
 
-## families Object for Student's t-distribution
+## families object for Student's t-distribution
 StudentTLSS(mu = NULL, sigma = NULL, df = NULL)
 
-## families Object for log-normal accelerated failure time model
+## families object for log-normal accelerated failure time model
 LogNormalLSS(mu = NULL, sigma = NULL)
 
-## families Object for log-logistic accelerated failure time model
+## families object for log-logistic accelerated failure time model
 LogLogLSS(mu = NULL, sigma = NULL)
 
-## families Object for accelerated failure time model with Weibull distribution
+## families object for accelerated failure time model with Weibull distribution
 WeibullLSS(mu = NULL, sigma = NULL)
 
-## families Object for zero-inflated Poisson model
+## families object for zero-inflated Poisson model
 ZIPoLSS(mu = NULL, sigma = NULL)
 
-## families Object for zero-inflated negative binomial model
+## families object for zero-inflated negative binomial model
 ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
 
 }
@@ -131,11 +131,11 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
   minimizing the risk function w.r.t. the corresponding distribution
   parameter (keeping the other parameters fixed).
 
-  Note that gamboostLSS is not restricted to the three components
-  \code{mu}, \code{sigma} and \code{df} but can handle an arbitrary
-  number of components (which, of course, depends on the GAMLSS distribution).
-  However, it is important that the names (for the offsets, in the sub-families
-  etc.) are chosen \emph{consistently}.
+  Note that gamboostLSS is not restricted to three components
+  but can handle an arbitrary number of components (which, of course,
+  depends on the GAMLSS distribution). However, it is important that the
+  names (for the offsets, in the sub-families etc.) are chosen
+  \emph{consistently}.
 
   The \code{ZIPoLSS} families can be used to fit zero-inflated Poisson models.
   Here, \code{mu} and \code{sigma} refer to the location parameter of the
@@ -157,25 +157,31 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
 }
 
 \references{
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012): Generalized additive models for location, scale and shape
-for high-dimensional data - a flexible approach based on boosting.
-Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
-Preliminary version: Department of Statistics, Technical Report 98.
-\url{http://epub.ub.uni-muenchen.de/11938/}
 
-Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
-for location, scale and shape (with discussion). Journal of the Royal
-Statistical Society, Series C (Applied Statistics), 54, 507-554. }
+  Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
+  Generalized additive models for location, scale and shape for
+  high-dimensional data - a flexible approach based on boosting. Journal
+  of the Royal Statistical Society, Series C (Applied Statistics) 61(3):
+  403-427.
+
+  Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive
+  models for location, scale and shape (with discussion). Journal of the
+  Royal Statistical Society, Series C (Applied Statistics), 54, 507-554.
+
+}
 
 
 \seealso{
-\code{\link{Families.gamlss}} for applying GAMLSS distributions provided in the framework of the \code{gamlss} package.
+  \code{\link{Families.gamlss}} for applying GAMLSS distributions provided
+  in the framework of the \code{gamlss} package.
 
-The functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}} can be used for model fitting.
+  The functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}}
+  can be used for model fitting.
 
-See also the corresponding constructor function \code{\link[mboost]{Family}} in
- \code{\link[mboost]{mboost}}.
+  See also the corresponding constructor function
+  \code{\link[mboost]{Family}} in \code{\link[mboost]{mboost}}.
 }
+
 \examples{
 ## Example to define a new distribution:
 ## Students t-distribution with two parameters, df and mu:

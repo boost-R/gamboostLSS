@@ -202,22 +202,41 @@ print.cvriskLSS <- function(x, ...) {
 
 plot.cvriskLSS <- function(x, ylab = attr(x, "risk"),
                            xlab = "Number of boosting iterations",
-                           ylim = range(x), main = attr(x, "type"), ...) {
-
-    warning("This function is preliminary only")
-    cm <- colMeans(x)
-    plot(1:ncol(x), cm, ylab = ylab, ylim = ylim,
-         type = "n", lwd = 2, xlab = xlab,
-         main = main, axes = FALSE, ...)
-    out <- apply(x, 1, function(y) lines(1:ncol(x),y, col = "lightgrey"))
-    rm(out)
-    ms <- which.min(cm)
-    lines(c(ms, ms), c(min(c(0, ylim[1] * ifelse(ylim[1] < 0, 2, 0.5))), cm[ms]),
-          lty = 2)
-    lines(1:ncol(x), cm, type = "l")
-    axis(1, at = 1:ncol(x), labels = colnames(x))
-    axis(2)
-    box()
+                           ylim = range(x), main = attr(x, "type"),
+                           type = c("lines", "heatmap"), ...) {
+    if (type == "lines") {
+        cm <- colMeans(x)
+        plot(1:ncol(x), cm, ylab = ylab, ylim = ylim,
+             type = "n", lwd = 2, xlab = xlab,
+             main = main, axes = FALSE, ...)
+        out <- apply(x, 1, function(y) lines(1:ncol(x),y, col = "lightgrey"))
+        rm(out)
+        ms <- which.min(cm)
+        lines(c(ms, ms), c(min(c(0, ylim[1] * ifelse(ylim[1] < 0, 2, 0.5))), cm[ms]),
+              lty = 2)
+        lines(1:ncol(x), cm, type = "l")
+        axis(1, at = 1:ncol(x), labels = colnames(x))
+        axis(2)
+        box()
+    } else {
+        cm <- colMeans(x)
+        grid <- attr(x, "mstop")
+        if (ncol(grid) > 2)
+            stop("currently only implemented for 2D grids")
+        mstop <- mstop(x)
+        #cm <- exp(cm)
+        standardized_cm <- 1 - (cm - min(cm))/(max(cm) - min(cm))
+        col <- grey(standardized_cm)
+        # col <- heat.colors(length(unique(cm)))
+        # col <- colorRampPalette(c("blue", "white", "red"))(length(cm))
+        # plot(grid, col = col[order(cm)], pch = 15)
+        # plot(grid, col = col, pch = 15)
+        plot(grid, col = col, xlab = xlab, ylab = ylab, main = main,
+             pch = 15, ...)
+        points(mstop[1], mstop[2], col = "red", pch = 22)
+        lines(c(0, mstop[1]), c(mstop[2], mstop[2]), col = "red", lty = "dashed")
+        lines(c(mstop[1], mstop[1]), c(0, mstop[2]), col = "red", lty = "dashed")
+    }
 }
 
 mstop.cvriskLSS <- function(object, parameter = NULL, ...) {

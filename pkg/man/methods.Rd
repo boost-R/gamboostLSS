@@ -184,24 +184,33 @@
 
 \references{
 
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012): Generalized additive models for location, scale and shape
-for high-dimensional data - a flexible approach based on boosting.
-Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
+Generalized additive models for location, scale and shape for
+high-dimensional data - a flexible approach based on boosting. Journal
+of the Royal Statistical Society, Series C (Applied Statistics) 61(3):
+403-427.
 
-
-Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: regularization,
-prediction and model fitting. Statistical Science, 22(4), 477--505.
+Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms:
+regularization, prediction and model fitting. Statistical Science,
+22(4), 477--505.
 
 Rigby, R. A. and D. M. Stasinopoulos (2005). Generalized additive models
 for location, scale and shape (with discussion). Journal of the Royal
 Statistical Society, Series C (Applied Statistics), 54, 507-554.
+
 }
 
 \seealso{
- \code{\link{glmboostLSS}}, \code{\link{gamboostLSS}} and \code{\link{blackboostLSS}} for fitting
- of GAMLSS. Available distributions (families) are documented here: \code{\link{Families}}.
- See \code{\link[mboost]{methods}} in the \code{mboost} package for the corresponding methods
- for \code{\link[mboost]{mboost}} objects.
+
+ \code{\link{glmboostLSS}}, \code{\link{gamboostLSS}} and
+ \code{\link{blackboostLSS}} for fitting of GAMLSS.
+
+ Available distributions (families) are documented here:
+ \code{\link{Families}}.
+
+ See \code{\link[mboost]{methods}} in the \code{mboost} package for the
+ corresponding methods for \code{\link[mboost]{mboost}} objects.
+
 }
  \examples{
 
