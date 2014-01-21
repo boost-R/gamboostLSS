@@ -239,9 +239,9 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                })
 
             class(fit) <- cf
-
-            cat("Model first reduced to mstop = ", minStart, ".\n",
-                "Now continue ...\n", sep ="")
+            if (trace)
+                cat("Model first reduced to mstop = ", minStart, ".\n",
+                    "Now continue ...\n", sep ="")
         }
 
         ## now increase models (when necessary)
@@ -259,7 +259,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
 
     ## update to new weights; just a fresh start
     attr(fit, "update") <- function(weights = NULL, oobweights = NULL,
-                                    risk = NULL, mstop = NULL) {
+                                    risk = NULL, trace = NULL, mstop = NULL) {
         if (is.null(mstop)) {
             control$mstop <- mstoparg
         } else {
@@ -267,7 +267,8 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         }
         if (!is.null(risk))
             control$risk <- risk
-        control$trace <- trace
+        if (!is.null(trace))
+            control$trace <- trace
         ## re-use user specified offset only
         ## (since it depends on weights otherwise)
         ## this is achieved via a re-evaluation of the families argument
@@ -276,6 +277,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                       control = control, fun = fun, funchar = funchar,
                       call = call, oobweights = oobweights)
     }
+    attr(fit, "control") <- control
     attr(fit, "call") <- call
     return(fit)
 }

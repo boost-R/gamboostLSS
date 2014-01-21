@@ -34,14 +34,16 @@
   Methods for GAMLSS models fitted by boosting algorithms.
 }
 \usage{
-\method{coef}{mboostLSS}(object, which = NULL,
-                         aggregate = c("sum", "cumsum", "none"),
-                         parameter = names(object), ...)
 \method{coef}{glmboostLSS}(object, which = NULL,
-                           aggregate = c("sum", "cumsum", "none"),
-                           off2int = FALSE, parameter = names(object), ...)
+     aggregate = c("sum", "cumsum", "none"),
+     off2int = FALSE, parameter = names(object), ...)
+\method{coef}{mboostLSS}(object, which = NULL,
+     aggregate = c("sum", "cumsum", "none"),
+     parameter = names(object), ...)
 
-\method{risk}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
+\method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x),
+     off2int = FALSE, ...)
+\method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x), ...)
 
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
@@ -49,14 +51,12 @@
 
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
+\method{risk}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
+
 \method{selected}{mboostLSS}(object, parameter = names(object), ...)
 
-\method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x),
-                           off2int = FALSE, ...)
-\method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x),
-...)
-
 \method{fitted}{mboostLSS}(object, parameter = names(object), ...)
+
 \method{predict}{mboostLSS}(object, newdata = NULL,
                             type = c("link", "response", "class"),
                             which = NULL,

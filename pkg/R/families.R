@@ -504,8 +504,8 @@ GaussianMu  <- function(mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         ngr <- (1/sigma^2)*(y - f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         return(ngr)
@@ -534,8 +534,8 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         ngr <- (- 1 + exp(-2*f)*((y - mu)^2))
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         return(ngr)

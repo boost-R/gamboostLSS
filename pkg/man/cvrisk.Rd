@@ -2,6 +2,7 @@
 \alias{cvrisk}
 \alias{cvrisk.mboostLSS}
 \alias{make.grid}
+\alias{plot.cvriskLSS}
 
 \title{ Cross-Validation }
 \description{
@@ -10,13 +11,20 @@
 }
 \usage{
 \method{cvrisk}{mboostLSS}(object, folds = cv(model.weights(object)),
-       grid = make.grid(mstop(object)), papply = mclapply, fun = NULL, ...)
-make.grid(max, length.out = 10, min = NULL, log = TRUE, dense_mu_grid = TRUE)
+       grid = make.grid(mstop(object)), papply = mclapply,
+       trace = TRUE, fun = NULL, ...)
+
+make.grid(max, length.out = 10, min = NULL, log = TRUE,
+          dense_mu_grid = TRUE)
+
+\method{plot}{cvriskLSS}(x, type = c("heatmap", "lines"),
+     xlab = NULL, ylab = NULL, ylim = range(x),
+     main = attr(x, "type"), ...)
 }
 
 \arguments{
   \item{object}{
-    an object of class \code{mboostLSS}, i.e. a boosted GAMLSS model.
+    an object of class \code{mboostLSS}, i.e., a boosted GAMLSS model.
   }
   \item{folds}{
     a weight matrix with number of rows equal to the number of
@@ -38,13 +46,18 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE, dense_mu_grid = TRUE)
     details). To run \code{cvrisk} sequentially (i.e. not in parallel),
     one can use \code{\link{lapply}}.
   }
+  \item{trace}{
+    should status information beein printed during cross-validation?
+    Default: \code{TRUE}.
+  }
   \item{fun}{
     if \code{fun} is NULL, the out-of-sample risk is returned. \code{fun},
     as a function of \code{object}, may extract any other characteristic
     of the cross-validated models. These are returned as is.
   }
   \item{\dots}{
-    additional arguments passed to \code{\link[parallel]{mclapply}}.
+    additional arguments passed to \code{\link[parallel]{mclapply}} or
+    the \code{plot} function depending on the context.
   }
   \item{max}{
     a named vector of length equal to the number of parameters of the GAMLSS
@@ -63,7 +76,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE, dense_mu_grid = TRUE)
     scalar (which is then used as \code{min} for all grids).
   }
   \item{log}{
-    should the grid be on a logarithmic scale? Default: TRUE.
+    should the grid be on a logarithmic scale? Default: \code{TRUE}.
   }
   \item{dense_mu_grid}{
     should the grid in the \code{mu} component be extended for all
@@ -71,6 +84,24 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE, dense_mu_grid = TRUE)
     are greater or equal to all other parameters in this combination.
     These values can be computed without or with very little additional
     computational costs. For details see examples.
+  }
+  \item{x}{
+    an object of class \code{cvriskLSS}, which results from running
+    \code{cvrisk}.
+  }
+  \item{type}{
+    should \code{"lines"} or a \code{"heatmap"} (default) be plotted?
+    See details.
+  }
+  \item{xlab, ylab}{
+    user-specified labels for the x-axis and y-axis of the plot (which
+    are usually not needed). The defaults depend on the plot \code{type}.
+  }
+  \item{ylim}{
+    limits of the y-axis. Only applicable for the line plot.
+  }
+  \item{main}{
+    a title for the plots.
   }
 }
 \details{
@@ -85,6 +116,11 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE, dense_mu_grid = TRUE)
   \code{make.grid} eases the creation of an equidistand, integer-valued
   grids, which can be used with \code{cvrisk}. Per default, the grid is
   equidistant on a logarithmic scale.
+
+  The line plot depicts the avarage risk for each grid point and
+  additionally shows information on the variability of the risk from
+  fold to fold. The heatmap shows only the average risk but in a nicer
+  fashion.
 }
 \value{
   An object of class \code{cvriskLSS} (when \code{fun} wasn't
@@ -124,11 +160,17 @@ plot(grid)
 cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5),
               grid = grid)
 cvr
+
+## plot the results
+par(mfrow = c(1, 2))
 plot(cvr)
+plot(cvr, type = "lines")
+
+## extract optimal mstop (here: grid to small)
 mstop(cvr)
 
 ## a more realistic example
-\dontrun{  ## (automatically) as this really (!) takes a while
+\dontrun{## (automatically) as this really (!) takes a while
   ## set up a grid with maximum 400 for both components
   grid <- make.grid(c(mu = 400, sigma = 400), dense_mu_grid = FALSE)
   plot(grid)

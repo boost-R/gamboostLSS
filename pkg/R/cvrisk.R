@@ -89,15 +89,15 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
         # RET <- RET[order(RET[,2], RET[,1]), ]
         rownames(RET) <- NULL
     }
+    attr(RET, "dense_mu_grid") <- dense_mu_grid
     return(RET)
 }
-
 
 ###
 # cvrisk, adapted version from mboost (2.2-2)
 cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
                              grid = make.grid(mstop(object)),
-                             papply = mclapply,
+                             papply = mclapply, trace = TRUE,
                              fun = NULL, ...) {
 
     weights <- model.weights(object)
@@ -119,42 +119,61 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     ### WHAT ABOUT:
     ## fam_name <- object$family@name
     call <- deparse(attr(object, "call"))
-
     oobrisk <- matrix(0, nrow = ncol(folds), ncol = ncol(grid))
-
+    dense_mu_grid <- attr(grid, "dense_mu_grid")
+    if (trace)
+        cat("Starting cross-validation...\n",
+            "[fold]\t[current mstop]\n", sep = "")
     if (is.null(fun)) {
-        dummyfct <- function(weights, oobweights) {
+        dummyfct <- function(i, weights, oobweights) {
             ## make model with new weights and minimal mstop
             mod <- update(object, weights = weights, oobweights = oobweights,
-                          risk = "oobag", mstop = apply(grid, 2, min))
+                          risk = "oobag", trace = FALSE,
+                          mstop = apply(grid, 2, min))
 
             ## now we need to increase mstop (stupid or clever)
             risks <- vector("numeric", nrow(grid))
-            for (i in 1:nrow(grid)) {
-                mod[grid[i, ]]
-                rsk <- risk(mod, merge = TRUE)
-                risks[i] <- rsk[length(rsk)]
-            }
 
-            # risks <- vector("list", nrow(grid))
-            # for (i in 1:nrow(grid)) {
-            #     mod[grid[i, ]]
-            #     rsk <- risk(mod, merge = TRUE)
-            #     if (grid[i, 1] > max(grid[i, -1])) {
-            #         risks[i] <- tail(rsk, grid[i, 1] - max(grid[i, -1]) + 1)
-            #     } else {
-            #         risks[i] <- rsk[length(rsk)]
-            #     }
-            # }
+            ## fitting loop
+            j <- 1
+            while (j <= nrow(grid)) {
+                j_start <- j
+                ## check for dense grid
+                if (dense_mu_grid &&
+                    (grid[j, 1] >= max(grid[j, -1])) &&
+                    j < nrow(grid) && ## needed for the next line (i.e., grid[j+1,])
+                    (grid[j, 1] == grid[j + 1, 1] - 1)) {
+                    ## now check how long the dense grid continues
+                    # usual length:
+                    j_tmp <- j + max(grid[, 1]) - grid[j, 1]
+                    # now check if this is correct:
+                    if (all(grid[j:j_tmp, -1] == grid[j, -1, drop = TRUE])) {
+                        ## increase j
+                        j <- j_tmp
+                    }
+                    ## else continue step by step...
+                }
+                mod[grid[j, ]]
+                rsk <- risk(mod, merge = TRUE)
+                risks[j_start:j] <- rsk[(length(rsk) - j + j_start):length(rsk)]
+                if (trace) {
+                    txt <- paste0(" [", i, "]\t",
+                                  paste0("[", paste(mstop(mod), collapse = ","),
+                                         "]"), "\n")
+                    cat(txt)
+                }
+                j <- j + 1
+            } ## end while
             return(risks)
         }
     }
     else {
         stop("currently not implemented")
-        dummyfct <- function(weights, oobweights) {
+        dummyfct <- function(i, weights, oobweights) {
             ## make model with new weights and minimal mstop
             mod <- update(object, weights = weights, oobweights = oobweights,
-                          risk = "oobag", mstop = apply(grid, 2, min))
+                          risk = "oobag", trace = FALSE,
+                          mstop = apply(grid, 2, min))
 
             res <- vector("list", nrow(grid))
             for (i in 1:nrow(grid)) {
@@ -169,7 +188,7 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     OOBweights <- matrix(rep(weights, ncol(folds)), ncol = ncol(folds))
     OOBweights[folds > 0] <- 0
     oobrisk <- papply(1:ncol(folds),
-        function(i) dummyfct(weights = folds[, i],
+        function(i) dummyfct(i, weights = folds[, i],
                              oobweights = OOBweights[, i]), ...)
     ## get errors if mclapply is used
     if (any(idx <- sapply(oobrisk, is.character)))
@@ -200,14 +219,32 @@ print.cvriskLSS <- function(x, ...) {
     return(invisible(x))
 }
 
-plot.cvriskLSS <- function(x, ylab = attr(x, "risk"),
-                           xlab = "Number of boosting iterations",
-                           ylim = range(x), main = attr(x, "type"),
-                           type = c("lines", "heatmap"), ...) {
+plot.cvriskLSS <- function(x, type = c("heatmap", "lines"),
+                           xlab = NULL, ylab = NULL,
+                           ylim = range(x),
+                           main = attr(x, "type"),
+                            ...) {
+
+    type <- match.arg(type)
+
+    nms <- names(attr(x, "mstop"))
+    if (type == "lines") {
+        if (is.null(xlab))
+            xlab <- paste0("Number of boosting iterations (",
+                           paste0(nms, collapse = ","), ")")
+        if (is.null(ylab))
+            ylab <- "Out-of-bag risk"
+    } else {
+        if (is.null(xlab))
+            xlab <- paste0("Number of boosting iterations (", nms[1], ")")
+        if (is.null(ylab))
+            ylab <- paste0("Number of boosting iterations (", nms[2], ")")
+    }
+
     if (type == "lines") {
         cm <- colMeans(x)
-        plot(1:ncol(x), cm, ylab = ylab, ylim = ylim,
-             type = "n", lwd = 2, xlab = xlab,
+        plot(1:ncol(x), cm, xlab = xlab, ylab = ylab,
+             ylim = ylim, type = "n", lwd = 2,
              main = main, axes = FALSE, ...)
         out <- apply(x, 1, function(y) lines(1:ncol(x),y, col = "lightgrey"))
         rm(out)
@@ -221,8 +258,8 @@ plot.cvriskLSS <- function(x, ylab = attr(x, "risk"),
     } else {
         cm <- colMeans(x)
         grid <- attr(x, "mstop")
-        if (ncol(grid) > 2)
-            stop("currently only implemented for 2D grids")
+        if (!(ncol(grid) %in% c(2,3)))
+            stop("currently only implemented for 2 and 3 dimensional grids")
         mstop <- mstop(x)
         #cm <- exp(cm)
         standardized_cm <- 1 - (cm - min(cm))/(max(cm) - min(cm))
@@ -231,11 +268,23 @@ plot.cvriskLSS <- function(x, ylab = attr(x, "risk"),
         # col <- colorRampPalette(c("blue", "white", "red"))(length(cm))
         # plot(grid, col = col[order(cm)], pch = 15)
         # plot(grid, col = col, pch = 15)
-        plot(grid, col = col, xlab = xlab, ylab = ylab, main = main,
-             pch = 15, ...)
-        points(mstop[1], mstop[2], col = "red", pch = 22)
-        lines(c(0, mstop[1]), c(mstop[2], mstop[2]), col = "red", lty = "dashed")
-        lines(c(mstop[1], mstop[1]), c(0, mstop[2]), col = "red", lty = "dashed")
+        make_plot <- function(grid, col, idx, main, k) {
+            plot(grid[idx, ], col = col[idx], xlab = xlab, ylab = ylab,
+                 main = main, pch = 15, ...)
+            if (is.null(k) || k == mstop[3]) {
+                points(mstop[1], mstop[2], col = "red", pch = 22)
+                lines(c(0, mstop[1]), c(mstop[2], mstop[2]), col = "red", lty = "dashed")
+                lines(c(mstop[1], mstop[1]), c(0, mstop[2]), col = "red", lty = "dashed")
+            }
+        }
+        if (ncol(grid) == 2) {
+            make_plot(grid, col = col, idx = 1:nrow(grid), main = main, k = NULL)
+        } else {
+            for (k in unique(grid[, 3]))
+                make_plot(grid[, -3], col = col, idx = (grid[, 3] == k),
+                          main = paste0(main, "\n(", nms[3], "=", k, ")"),
+                          k = k)
+        }
     }
 }
 
