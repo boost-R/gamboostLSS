@@ -28,8 +28,13 @@ NBinomialMu <- function(mu = NULL, sigma = NULL) {
         return(RET)
     }
     ngradient <- function(y, f, w = 1) {
-        RET <- y - (y + sigma)/(exp(f) + sigma) * exp(f)
-        return(RET)
+        ngr <- y - (y + sigma)/(exp(f) + sigma) * exp(f)
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(mu)){
@@ -65,9 +70,14 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL) {
         return(RET)
     }
     ngradient <- function(y, f, w = 1) {       # f is sigma !
-        RET <- exp(f)*(digamma(y +exp(f)) - digamma(exp(f)) + log(exp(f)) + 1 -
+        ngr <- exp(f)*(digamma(y +exp(f)) - digamma(exp(f)) + log(exp(f)) + 1 -
                        log(mu +exp(f)) - (exp(f) + y)/(mu +exp(f)))
-        return(RET)
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y,w){
         if (!is.null(sigma)){
@@ -114,7 +124,13 @@ StudentTMu <- function(mu = NULL, sigma = NULL, df = NULL) {
         sum(w * loss(y = y, f = f, df = df, sigma = sigma))
     }
     ngradient <- function(y, f, w = 1) {
-        (df+1)*(y-f)/(df*sigma^2 +(y-f)^2)
+        ngr <- (df+1)*(y-f)/(df*sigma^2 +(y-f)^2)
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
      }
 
     offset <- function(y, w){
@@ -149,7 +165,13 @@ StudentTSigma <- function(mu = NULL, sigma = NULL, df = NULL) {
         sum(w * loss(y = y, f = f, df = df, mu = mu))
     }
     ngradient <- function(y, f, w = 1) {
-        (-1 + (df+1)/(df*exp(2*f)/(y-mu)^2 + 1))
+        ngr <- (-1 + (df+1)/(df*exp(2*f)/(y-mu)^2 + 1))
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(sigma)){
@@ -185,9 +207,15 @@ StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL) {
         sum(w * loss(y = y, f = f, sigma = sigma, mu = mu))
     }
     ngradient <- function(y, f, w = 1) {
-        exp(f)/2 * (digamma((exp(f)+1)/2)-digamma(exp(f)/2)) - 0.5 -
+        ngr <- exp(f)/2 * (digamma((exp(f)+1)/2)-digamma(exp(f)/2)) - 0.5 -
             (exp(f)/2 * log(1+ (y-mu)^2/(exp(f)*sigma^2)) -
              (y-mu)^2/(sigma^2 + (y-mu)^2/exp(f)) * (exp(-f) +1)/2 )
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(df)){
@@ -243,7 +271,13 @@ LogNormalMu <- function (mu = NULL, sigma = NULL){
         sum(w * loss(y = y, f = f, sigma = sigma))
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - f)/sigma
-        (y[,2] * eta + (1 - y[,2]) * dnorm(eta)/(1 - pnorm(eta)))/sigma
+        ngr <- (y[,2] * eta + (1 - y[,2]) * dnorm(eta)/(1 - pnorm(eta)))/sigma
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(mu)){
@@ -280,7 +314,13 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL){
         sum(w * loss(y = y, f = f, mu = mu))
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - mu)/exp(f)
-        -(y[,2] - y[,2]*eta^2 + (y[,2]-1)*eta*dnorm(eta)/(1-pnorm(eta)))
+        ngr <- -(y[,2] - y[,2]*eta^2 + (y[,2]-1)*eta*dnorm(eta)/(1-pnorm(eta)))
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(sigma)){
@@ -335,7 +375,13 @@ LogLogMu <- function (mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - f)/sigma
         nom <- (exp(-eta) + 1)
-        (y[,2] * (2/nom - 1) + (1 - y[,2])/nom)/sigma
+        ngr <- (y[,2] * (2/nom - 1) + (1 - y[,2])/nom)/sigma
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(mu)){
@@ -375,7 +421,13 @@ LogLogSigma <- function (mu = NULL, sigma = NULL){
         sum(w * loss(y = y, f = f, mu = mu))
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - mu)/exp(f)
-        -(y[,2] + y[,2]*eta -(y[,2]+1)*eta/(1+exp(-eta)))
+        ngr <- -(y[,2] + y[,2]*eta -(y[,2]+1)*eta/(1+exp(-eta)))
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(sigma)){
@@ -423,7 +475,13 @@ WeibullMu <- function (mu = NULL, sigma = NULL){
         sum(w * loss(y = y, f = f, sigma = sigma))
     ngradient <- function(y, f, w = 1){
         eta <- (log(y[,1]) - f)/sigma
-        (y[,2] * (exp(eta) - 1) + (1 - y[,2]) * exp(eta))/sigma
+        ngr <- (y[,2] * (exp(eta) - 1) + (1 - y[,2]) * exp(eta))/sigma
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(mu)){
@@ -461,7 +519,13 @@ WeibullSigma <- function (mu = NULL, sigma = NULL){
         sum(w * loss(y = y, f = f, mu = mu))
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - mu)/exp(f)
-        -(y[,2] * (eta + 1) - eta * exp(eta))
+        ngr <- -(y[,2] * (eta + 1) - eta * exp(eta))
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w){
         if (!is.null(sigma)){
@@ -585,7 +649,13 @@ GammaMu <-function (mu = NULL, sigma = NULL)
         sum(w * loss(y = y, f = f, sigma = sigma))
     }
     ngradient <- function(y, f, w = 1) {
-        sigma * y * exp(-f) - sigma
+        ngr <- sigma * y * exp(-f) - sigma
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w) {
         if (!is.null(mu)) {
@@ -620,8 +690,14 @@ GammaSigma <- function(mu = NULL, sigma = NULL) {
         sum(w * loss(y = y, f = f, mu = mu))
     }
     ngradient <- function(y, f, w = 1) {
-        - digamma(exp(f))*exp(f) + (f+1)*exp(f) - log(mu)*exp(f) +
+        ngr <- - digamma(exp(f))*exp(f) + (f+1)*exp(f) - log(mu)*exp(f) +
             exp(f)*log(y) - (y*exp(f))/mu
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w) {
         if (!is.null(sigma)) {
@@ -664,8 +740,14 @@ BetaMu <- function(mu = NULL, phi = NULL){
     }
     # ngradient is the negative derivate w.r.t. mu
     ngradient <- function(y, f, w = 1) {
-        +1 * exp(f)/(1 + exp(f))^2 * (phi * (qlogis(y) - (digamma(plogis(f) * phi) -
+        ngr <- +1 * exp(f)/(1 + exp(f))^2 * (phi * (qlogis(y) - (digamma(plogis(f) * phi) -
               digamma((1 - plogis(f)) * phi)))) # Nachdifferenzieren? -> nein, da nach mu ableiten und nicht nach beta
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w) {
         if (!is.null(mu)) {
@@ -705,8 +787,14 @@ BetaPhi <- function(mu = NULL, phi = NULL){
     # ngradient is the negative derivate w.r.t. phi
     ngradient <- function(y, f, w = 1) {
         #y <- (y * (length(y) - 1) + 0.5)/length(y)
-        +1 * exp(f) * (mu * (qlogis(y) - (digamma(mu * exp(f)) - digamma((1 - mu) * exp(f)))) +
+        ngr <- +1 * exp(f) * (mu * (qlogis(y) - (digamma(mu * exp(f)) - digamma((1 - mu) * exp(f)))) +
               digamma(exp(f)) - digamma((1 - mu) * exp(f)) + log(1 - y))
+        if (getOption("gamboostLSS_stab_ngrad")) {
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
+            ngr <- ngr / div
+        }
+        return(ngr)
     }
     offset <- function(y, w) {
         if (!is.null(phi)) {
@@ -737,7 +825,7 @@ BetaLSS <- function (mu = NULL, phi = NULL){
 # Zero-inflated Poisson model
 ZIPoLSS <- function(mu = NULL, sigma = NULL)
 {
-  fam <- Families.gamlss(fname = "ZIP", mu = mu, sigma = sigma)
+  fam <- as.families(fname = "ZIP", mu = mu, sigma = sigma)
 
   fam$mu@name <- "Zero-inflated Poisson model: count data component"
   fam$sigma@name <- "Zero-inflated Poisson model: zero component"
@@ -748,7 +836,7 @@ ZIPoLSS <- function(mu = NULL, sigma = NULL)
 # Zero-inflated negative binomial model
 ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL)
 {
-  fam <- Families.gamlss(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu)
+  fam <- as.families(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu)
 
   fam$mu@name <- "Zero-inflated negative binomial model: location parameter for count data component"
   fam$sigma@name <- "Zero-inflated negative binomial model: scale parameter for count data component"

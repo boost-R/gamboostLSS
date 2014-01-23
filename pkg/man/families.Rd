@@ -43,6 +43,7 @@
 \alias{ZIPoLSS}
 \alias{ZINBLSS}
 
+\alias{options}
 
 \title{
   Families for GAMLSS models
@@ -60,6 +61,10 @@
 
 ## Constructor function for new GAMLSS distributions
 Families(...)
+
+#### Turn the stability correction on or off:
+## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
+## or  options(gamboostLSS_stab_ngrad = FALSE) ## off
 
 ###  Pre-defined GAMLSS distributions  ###
 
@@ -172,7 +177,7 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
 
 
 \seealso{
-  \code{\link{Families.gamlss}} for applying GAMLSS distributions provided
+  \code{\link{as.families}} for applying GAMLSS distributions provided
   in the framework of the \code{gamlss} package.
 
   The functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}}

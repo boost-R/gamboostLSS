@@ -1,6 +1,7 @@
-\name{Families.gamlss}
+\name{as.families}
+\alias{as.families}
 
-\alias{Families.gamlss}
+\alias{gamlss.Families}
 \alias{gamlss1parMu}
 
 \alias{gamlss2parMu}
@@ -15,15 +16,13 @@
 \alias{gamlss4parNu}
 \alias{gamlss4parTau}
 
-
-
 \title{
   Include \code{gamlss} families in the boosting framework of \code{gamboostLSS}
 }
 
 \description{
-  The function \code{Families.gamlss()} provides an interface to apply
-  the available distributions (families) of the \code{gamlss} package
+  The function \code{as.families()} provides an interface to apply
+  the available distributions (families) of the \code{gamlss.dist} package
   for boosting GAMLSS via \code{gamboostLSS}.
 
   The function automatically builds sub-families for every distribution
@@ -33,9 +32,15 @@
   \code{\link{glmboostLSS}}.
 }
 \usage{
-Families.gamlss(fname = "NO", mu = NULL, sigma = NULL,
-		nu = NULL, tau = NULL)
+as.families(fname = "NO", mu = NULL, sigma = NULL,
+            nu = NULL, tau = NULL)
 
+## a wrapper to as.families:
+gamlss.Families(...)
+
+#### Turn the stability correction on or off:
+## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
+## or  options(gamboostLSS_stab_ngrad = FALSE) ## off
 }
 
 \arguments{
@@ -48,12 +53,13 @@ Families.gamlss(fname = "NO", mu = NULL, sigma = NULL,
   \item{sigma}{possible offset value for parameter \code{sigma}.}
   \item{nu}{possible offset value for parameter \code{nu}.}
   \item{tau}{possible offset value for parameter \code{tau}.}
+  \item{\ldots}{same arguments as above.}
 }
 \details{
 
   The function aims at providing an interface to include all available
   GAMLSS distributions which are implemented with the original
-  \code{gamlss} package in the model-based boosting framework. The user
+  \code{gamlss.dist} package in the model-based boosting framework. The user
   specifies the name of the family (as it is called in
   \code{gamlss.dist}), and the function automatically builds the
   corresponding \code{mboost}-like sub-families and the final
@@ -122,7 +128,7 @@ y <- rnorm(mean = 2 + 3 * x,        # effect on mu
            n    = 1000)
 
 ## boosting
-glmss <- glmboostLSS(formula = y ~ x, families = Families.gamlss(fname = "NO"))
+glmss <- glmboostLSS(formula = y ~ x, families = as.families(fname = "NO"))
 
 coef(glmss, off2int = TRUE)
 

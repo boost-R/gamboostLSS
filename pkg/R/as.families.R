@@ -11,8 +11,13 @@
 ################################################################################
 ## constructor
 
-Families.gamlss <- function(fname = "NO", mu = NULL, sigma = NULL, nu = NULL,
-                            tau = NULL) {
+## a wrapper to as.families (for compatibility reasons
+gamlss.Families <- function(...)
+    as.families(...)
+
+as.families <- function(fname = "NO",
+                        mu = NULL, sigma = NULL, nu = NULL, tau = NULL) {
+
     ## require gamlss.dist
     if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
         stop("Please install package 'gamlss.dist' for using gamlss families.")
@@ -109,8 +114,8 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, fname = "NO") {
     ngradient <- function(y, f, w = 1) {
         ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -152,8 +157,8 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL, fname = "NO") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -204,8 +209,8 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -247,8 +252,8 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu) * FAM$sigma.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -288,8 +293,8 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -342,8 +347,8 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau) *
             FAM$mu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -387,8 +392,8 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         ngr <-  FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu,
                          tau = tau) * FAM$sigma.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -431,8 +436,8 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f),
                         tau = tau) * FAM$nu.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr
@@ -476,8 +481,8 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
         ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
                         nu = nu) * FAM$tau.dr(eta = f)
         if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- quantile(abs(ngr), probs = 0.75)
-            div <- ifelse(div < 0.001, 0.001, div)
+            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
+            div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
         }
         ngr

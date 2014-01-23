@@ -34,8 +34,10 @@ data(india.bnd)
     \item{\code{cage}}{Age of the child in months.}
     \item{\code{mbmi}}{BMI of the mother.}
     \item{\code{mage}}{Age of the mother in years.}
-    \item{\code{distH}}{The district in India, where the child lives.
-      Encoded to match the map \code{\link{india.bnd}}.}
+    \item{\code{mcdist}}{The district in India, where mother and child live.
+      A factor encoded to match the map \code{\link{india.bnd}}.}
+    \item{\code{mcdist_lab}}{The district in India, where mother and child live.
+      A factor with actual district names.}
   }
 }
 
@@ -56,7 +58,7 @@ data(india.bnd)
 \examples{
 if (require("BayesX")) {
   ## plot distribution of stunting in India
-  drawmap(india, map = india.bnd, regionvar = 6, plotvar = 1)
+  drawmap(india, map = india.bnd, regionvar = "mcdist", plotvar = "stunting")
 }
 }
 \keyword{datasets}
