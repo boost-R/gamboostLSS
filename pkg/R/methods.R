@@ -117,6 +117,61 @@ plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
     invisible(x)
 }
 
+plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
+                    main = "Marginal Prediction Intervals",
+                    xlab = NULL, ylab = NULL, ...) {
+
+    if (length(which) != 1 || !is.character(which))
+        stop("Please specify the variable name of the variable to be plotted")
+
+    pred_vars <- lapply(mod, extract, what = "variable.names")
+    pred_vars <- unique(unlist(pred_vars))
+
+    if (is.null(newdata)) {
+        tmp <- get_data(x)[, pred_vars]
+        which <- grepl(which, names(tmp))
+        if (sum(which) != 1)
+            stop(sQuote("which"), "is misspecified")
+        newdata <- data.frame(x1 = seq(min(tmp[, which]),
+                                       max(tmp[, which]), length = 150))
+        colnames(newdata) <- names(tmp)[which]
+        newdata[, names(tmp)[!which]] <- lapply(tmp[, !which], mean_mod)
+    } else {
+        which <- grepl(which, names(newdata))
+        if (sum(which) != 1)
+            stop(sQuote("which"), "is misspecified")
+        ## check if data is ok, else give a warning
+        if (nrow(unique(newdata[, !which])) != 1)
+            warning("All variables but", sQuote("which"), "should be constant")
+    }
+
+    newdata[, names(x)] <- predict(x, newdata = newdata, type = "response")
+
+    plot(get_data(x)[, which], x[[1]]$response, pch = 20,
+         col = rgb(0.5, 0.5, 0.5, 0.5),
+         xlab = xlab, ylab = ylab)
+
+    ## was ist denn bei anderen Verteilungen als der GaussianLSS?
+
+    lines(mean ~ cbmi, data = newdata)
+    lines(I(mean + qnorm(0.95) * sd) ~ cbmi,
+          data = newdata, lty = "dotted")
+    lines(I(mean + qnorm(0.05) * sd) ~ cbmi,
+          data = newdata, lty = "dotted")
+}
+
+get_data <- function(x) {
+    attr(x, "data")
+}
+
+mean_mod <- function(x) {
+    if (is.numeric(x))
+        return(mean(x, na.rm = TRUE))
+    ## else compute and return modus
+    if (is.character(x) || is.factor(x))
+        return(names(which.max(table(x))))
+    stop("not implemented for data type ", class(x))
+}
 
 print.mboostLSS <- function(x, ...){
     cl <- match.call()

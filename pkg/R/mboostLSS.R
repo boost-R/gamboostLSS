@@ -199,11 +199,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     ### some models are CHANGED!
     attr(fit, "subset") <- function(i) {
 
-        # make i a vector (if not already)
-        i <- unlist(i)
-
-        if (length(i) == 1)
-            i <- rep(i, length(fit))
+        i <- check(i, "mstop", names(families))
 
         msf <- mstop(fit)
         niter <- i - msf
@@ -279,5 +275,6 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     }
     attr(fit, "control") <- control
     attr(fit, "call") <- call
+    attr(fit, "data") <- data
     return(fit)
 }
