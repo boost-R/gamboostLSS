@@ -1,7 +1,7 @@
 ###
 # Constructor Function
 
-Families <- function(...) {
+Families <- function(..., name = NULL) {
     RET <- list(...)
     class(RET) <- "families"
     ## check if response function is not specified
@@ -13,6 +13,7 @@ Families <- function(...) {
     if (any(check))
         stop("response function not specified in families for:\n\t",
              paste(names(RET)[check], collapse =", "))
+    attr(RET, "name") <- name
     return(RET)
 }
 
@@ -107,7 +108,8 @@ NBinomialLSS <- function(mu = NULL, sigma = NULL){
         stop(sQuote("sigma"), " and ", sQuote("mu"),
              " must be greater than zero")
     Families(mu = NBinomialMu(mu = mu, sigma = sigma),
-             sigma = NBinomialSigma(mu = mu, sigma = sigma))
+             sigma = NBinomialSigma(mu = mu, sigma = sigma),
+             name = "Negative Binomial")
 }
 
 
@@ -250,7 +252,8 @@ StudentTLSS <- function(mu = NULL, sigma = NULL, df = NULL){
              " must be greater than zero")
     Families(mu = StudentTMu(mu = mu, sigma = sigma, df = df),
              sigma = StudentTSigma(mu = mu, sigma = sigma, df = df),
-             df = StudentTDf(mu = mu, sigma = sigma, df = df))
+             df = StudentTDf(mu = mu, sigma = sigma, df = df),
+             name = "Student T")
 }
 
 
@@ -350,7 +353,8 @@ LogNormalLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = LogNormalMu(mu = mu, sigma = sigma),
-             sigma = LogNormalSigma(mu = mu, sigma = sigma))
+             sigma = LogNormalSigma(mu = mu, sigma = sigma),
+             name = "Log-Normal")
 }
 
 
@@ -456,7 +460,8 @@ LogLogLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = LogLogMu(mu = mu, sigma = sigma),
-             sigma = LogLogSigma(mu = mu, sigma = sigma))
+             sigma = LogLogSigma(mu = mu, sigma = sigma),
+             name = "Log-Log")
 }
 
 
@@ -555,7 +560,8 @@ WeibullLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = WeibullMu(mu = mu, sigma = sigma),
-             sigma = WeibullSigma(mu = mu, sigma = sigma))
+             sigma = WeibullSigma(mu = mu, sigma = sigma),
+             name = "Weibull")
 }
 
 
@@ -622,9 +628,9 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL){
 GaussianLSS <- function(mu = NULL, sigma = NULL){
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
-    fam <- Families(mu = GaussianMu(mu=mu, sigma=sigma),
-                    sigma=GaussianSigma(mu=mu, sigma=sigma))
-    fam
+    Families(mu = GaussianMu(mu=mu, sigma=sigma),
+             sigma=GaussianSigma(mu=mu, sigma=sigma),
+             name = "Gaussian")
 }
 
 GammaLSS <- function (mu = NULL, sigma = NULL) {
@@ -634,7 +640,8 @@ GammaLSS <- function (mu = NULL, sigma = NULL) {
         stop(sQuote("mu"), " must be greater than zero")
 
     Families(mu = GammaMu(mu = mu, sigma = sigma),
-             sigma = GammaSigma(mu = mu, sigma = sigma))
+             sigma = GammaSigma(mu = mu, sigma = sigma),
+             name = "Gamma")
 }
 
 
@@ -819,7 +826,8 @@ BetaPhi <- function(mu = NULL, phi = NULL){
 # families object for new distribution
 BetaLSS <- function (mu = NULL, phi = NULL){
     Families(mu = BetaMu(mu = mu, phi = phi),
-             phi = BetaPhi(mu = mu, phi = phi))
+             phi = BetaPhi(mu = mu, phi = phi),
+             name = "Beta")
 }
 
 # Zero-inflated Poisson model

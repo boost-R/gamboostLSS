@@ -121,47 +121,66 @@ plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
                     main = "Marginal Prediction Intervals",
                     xlab = NULL, ylab = NULL, ...) {
 
+    ## use check for families: currently only working for GaussianLSS
+    avail <- c("Gaussian")
+    if (is.null(get_families_name(x)) ||
+        !(get_families_name(x) %in% avail))
+        stop("currently only implemented for the following families:\n",
+             paste(avail, collapse = ", "))
+
     if (length(which) != 1 || !is.character(which))
         stop("Please specify the variable name of the variable to be plotted")
 
-    pred_vars <- lapply(mod, extract, what = "variable.names")
+    pred_vars <- lapply(x, extract, what = "variable.names")
     pred_vars <- unique(unlist(pred_vars))
 
     if (is.null(newdata)) {
         tmp <- get_data(x)[, pred_vars]
-        which <- grepl(which, names(tmp))
-        if (sum(which) != 1)
-            stop(sQuote("which"), "is misspecified")
-        newdata <- data.frame(x1 = seq(min(tmp[, which]),
-                                       max(tmp[, which]), length = 150))
-        colnames(newdata) <- names(tmp)[which]
-        newdata[, names(tmp)[!which]] <- lapply(tmp[, !which], mean_mod)
+        i <- grepl(which, names(tmp))
+        if (sum(i) != 1)
+            stop(sQuote("which"), " is misspecified")
+        newdata <- data.frame(x1 = seq(min(tmp[, i]),
+                                       max(tmp[, i]), length = 150))
+        colnames(newdata) <- names(tmp)[i]
+        newdata[, names(tmp)[!i]] <- lapply(tmp[, !i], mean_mod)
     } else {
-        which <- grepl(which, names(newdata))
-        if (sum(which) != 1)
+        i <- grepl(which, names(newdata))
+        if (sum(i) != 1)
             stop(sQuote("which"), "is misspecified")
         ## check if data is ok, else give a warning
-        if (nrow(unique(newdata[, !which])) != 1)
+        if (nrow(unique(newdata[, !i])) != 1)
             warning("All variables but", sQuote("which"), "should be constant")
     }
 
     newdata[, names(x)] <- predict(x, newdata = newdata, type = "response")
 
+    if (is.null(xlab))
+        xlab <- which
+    if (is.null(ylab))
+        ylab <- "prediction"
+
     plot(get_data(x)[, which], x[[1]]$response, pch = 20,
          col = rgb(0.5, 0.5, 0.5, 0.5),
-         xlab = xlab, ylab = ylab)
+         xlab = xlab, ylab = ylab, main = main)
 
     ## was ist denn bei anderen Verteilungen als der GaussianLSS?
+    fm1 <- as.formula(paste(names(x)[1], " ~ ", which))
+    fm2 <- as.formula(paste(names(x)[1], " + qnorm(1 - (1 - pi)/2) * ",
+                            names(x)[2], " ~ ", which))
+    fm3 <- as.formula(paste(names(x)[1], " + qnorm((1 - pi)/2) * ",
+                            names(x)[2], " ~ ", which))
 
-    lines(mean ~ cbmi, data = newdata)
-    lines(I(mean + qnorm(0.95) * sd) ~ cbmi,
-          data = newdata, lty = "dotted")
-    lines(I(mean + qnorm(0.05) * sd) ~ cbmi,
-          data = newdata, lty = "dotted")
+    lines(fm1, data = newdata)
+    lines(fm2, data = newdata, lty = "dotted")
+    lines(fm3, data = newdata, lty = "dotted")
 }
 
 get_data <- function(x) {
     attr(x, "data")
+}
+
+get_families_name <- function(x) {
+    attr(attr(x, "families"), "name")
 }
 
 mean_mod <- function(x) {

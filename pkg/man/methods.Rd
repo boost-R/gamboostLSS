@@ -20,6 +20,7 @@
 
 \alias{plot.glmboostLSS}
 \alias{plot.gamboostLSS}
+\alias{plot_PI}
 
 \alias{update.mboostLSS}
 
@@ -45,6 +46,10 @@
      off2int = FALSE, ...)
 \method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x), ...)
 
+plot_PI(x, which, pi = 0.9, newdata = NULL,
+        main = "Marginal Prediction Intervals",
+        xlab = NULL, ylab = NULL, ...)
+
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
 \method{mstop}{cvriskLSS}(object, parameter = NULL, ...)
@@ -58,13 +63,12 @@
 \method{fitted}{mboostLSS}(object, parameter = names(object), ...)
 
 \method{predict}{mboostLSS}(object, newdata = NULL,
-                            type = c("link", "response", "class"),
-                            which = NULL,
-                            aggregate = c("sum", "cumsum", "none"),
-                            parameter = names(object), ...)
+        type = c("link", "response", "class"), which = NULL,
+        aggregate = c("sum", "cumsum", "none"),
+        parameter = names(object), ...)
 
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
-                           risk = NULL, mstop = NULL, ...)
+       risk = NULL, mstop = NULL, ...)
 
 \method{model.weights}{mboostLSS}(x, ...)
 
@@ -75,7 +79,9 @@
   \item{which}{ a subset of base-learners to take into account when computing
      predictions or coefficients. If \code{which} is given
      (as an integer vector or characters corresponding
-     to base-learners), a list or matrix is returned.}
+     to base-learners), a list or matrix is returned. In \code{plot_PI}
+     the argument \code{which} must be specified and it must be given as
+     a character string containing the name of the variable.}
    \item{aggregate}{ a character specifying how to aggregate predictions
      or coefficients of single base-learners. The default
      returns the prediction or coefficient for the final number of
@@ -108,8 +114,11 @@
   \item{return}{ a logical indicating whether the changed object is
     returned. }
   \item{main}{ a title for the plots.}
-   \item{newdata}{ optionally; A data frame in which to look for variables with
-    which to predict.}
+  \item{xlab, ylab}{ x- and y axis labels for the plots.}
+  \item{pi}{ the level of the prediction interval; Per default a 90\%
+    prediction interval is used.}
+  \item{newdata}{ optional; A data frame in which to look for variables with
+    which to predict or with which to plot the marginal prediction intervals.}
   \item{type}{ the type of prediction required.  The default is on the scale
     of the predictors; the alternative \code{"response"} is on
     the scale of the response variable.  Thus for a
@@ -175,6 +184,9 @@
   The function \code{model.weights} is a generic version of the same
   function provided by package \pkg{stats}, which is required to make
   \code{model.weights} work with \code{mboostLSS} models.
+
+  The function \code{plot_PI} produces a marginal prediction interval
+  plot. Note that this function is not implemented for all families.
 }
 
 \section{Warning}{

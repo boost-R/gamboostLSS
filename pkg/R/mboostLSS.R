@@ -276,5 +276,6 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     attr(fit, "control") <- control
     attr(fit, "call") <- call
     attr(fit, "data") <- data
+    attr(fit, "families") <- families
     return(fit)
 }
