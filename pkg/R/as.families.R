@@ -22,11 +22,20 @@ as.families <- function(fname = "NO",
     if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
         stop("Please install package 'gamlss.dist' for using gamlss families.")
 
-    family <- fname
-    if (mode(family) != "character" && mode(family) != "name")
-        fname <- as.character(substitute(family))
+    if (is.function(fname))
+        fname <- fname()
 
-    npar <- eval(call(family))$nopar
+    if (inherits(fname, "gamlss.family"))
+        fname <- fname$family[1]
+
+    if (mode(fname) != "character" && mode(fname) != "name")
+        fname <- as.character(substitute(fname))
+
+    gamlss.fam <- try(gamlss.family(fname), silent = TRUE)
+    if (inherits(gamlss.fam, "try-error"))
+        stop(sQuote("fname"), " specifies no valid gamlss family")
+
+    npar <- gamlss.fam$nopar
     switch(npar, {
         ## 1 parameter
         fun <- gamlss1parMu(mu = mu, fname = fname)
@@ -85,7 +94,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
 
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) FAM$mu.linkinv(f), offset = offset,
-           name = paste(FAM$family[2], "mboost family"))
+           name = paste(FAM$family[2], "(mboost family)"))
 }
 
 
@@ -181,7 +190,9 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL, fname = "NO") {
 ## Build the Families object
 gamlss2parFam <- function(mu = NULL, sigma = NULL, fname = "NO") {
     Families(mu = gamlss2parMu(mu = mu, sigma = sigma, fname = fname),
-             sigma = gamlss2parSigma(mu = mu, sigma = sigma, fname = fname))
+             sigma = gamlss2parSigma(mu = mu, sigma = sigma, fname = fname),
+             qfun = eval(parse(text=paste0("q", fname))),
+             name = fname)
 }
 
 ################################################################################
@@ -318,7 +329,9 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     Families(mu = gamlss3parMu(mu = mu, sigma = sigma, nu = nu, fname = fname),
              sigma = gamlss3parSigma(mu = mu, sigma = sigma, nu = nu, fname = fname),
-             nu = gamlss3parNu(mu = mu, sigma = sigma, nu = nu, fname = fname))
+             nu = gamlss3parNu(mu = mu, sigma = sigma, nu = nu, fname = fname),
+             qfun = eval(parse(text=paste0("q", fname))),
+             name = fname)
 }
 
 
@@ -326,7 +339,7 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 ## 4 parameters
 
 gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                         fname = "BCP") {
+                         fname = "BCT") {
 
     FAM <- as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
@@ -507,5 +520,7 @@ gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, fname 
     Families(mu = gamlss4parMu(mu = mu, sigma = sigma, nu = nu, tau = tau, fname = fname),
              sigma = gamlss4parSigma(mu = mu, sigma = sigma, nu = nu, tau = tau, fname = fname),
              nu = gamlss4parNu(mu = mu, sigma = sigma, nu = nu, tau = tau, fname = fname),
-             tau = gamlss4parTau(mu = mu, sigma = sigma, nu = nu, tau = tau, fname = fname))
+             tau = gamlss4parTau(mu = mu, sigma = sigma, nu = nu, tau = tau, fname = fname),
+             qfun = eval(parse(text=paste0("q", fname))),
+             name = fname)
 }

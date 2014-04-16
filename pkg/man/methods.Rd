@@ -48,7 +48,7 @@
 
 plot_PI(x, which, pi = 0.9, newdata = NULL,
         main = "Marginal Prediction Intervals",
-        xlab = NULL, ylab = NULL, ...)
+        xlab = NULL, ylab = NULL, lty = c("solid", "dashed"), ...)
 
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
@@ -115,8 +115,14 @@ plot_PI(x, which, pi = 0.9, newdata = NULL,
     returned. }
   \item{main}{ a title for the plots.}
   \item{xlab, ylab}{ x- and y axis labels for the plots.}
-  \item{pi}{ the level of the prediction interval; Per default a 90\%
-    prediction interval is used.}
+  \item{pi}{ the level(s) of the prediction interval(s); Per default a
+    90\% prediction interval is used.}
+  \item{lty}{ (vector) of line types to be used for plotting the
+    prediction intervals. The vector should contain \code{length(pi) +
+    1} elements. If less elements are specified, the last element is
+    recycled. The first value \code{lty[1]} is used for the marginal
+    median, the second value \code{lty[2]} is used for the \code{pi[1]}
+    prediction interval, etc.}
   \item{newdata}{ optional; A data frame in which to look for variables with
     which to predict or with which to plot the marginal prediction intervals.}
   \item{type}{ the type of prediction required.  The default is on the scale

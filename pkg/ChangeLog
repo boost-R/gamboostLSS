@@ -1,4 +1,93 @@
 ------------------------------------------------------------------------
+r95 | hofner | 2014-01-28 11:25:43 +0100 (Di, 28. Jan 2014) | 3 Zeilen
+
+- added experimental version of marginal prediction plot
+  (plot_PI; currently only implemented for GaussianLSS models)
+
+------------------------------------------------------------------------
+r94 | hofner | 2014-01-27 15:04:30 +0100 (Mo, 27. Jan 2014) | 3 Zeilen
+
+- fixed problem with subset method (mstop-names were ignored)
+- started experimental version for marginal prediction interval plots
+
+------------------------------------------------------------------------
+r93 | hofner | 2014-01-23 20:08:04 +0100 (Do, 23. Jan 2014) | 12 Zeilen
+
+- renamed Families.gamlss to as.families 
+  (an kept gamlss.Families for compatibility with PhD thesis of A. Mayr)
+- stabilization factor:
+  * changed stabilization factor to median absolute deviation for all families
+    (and added the factor to the families where it was missing)
+  * introduced a minimal documentation of the options command needed to swith
+    stabilization on or off to all family manuals
+- data(india): 
+  * renamed distH to mcdist
+  * added variable (mcdist_lab) containing the district names
+- (renamed files gamlss.Families.Rd and gamlss.Families.R)
+
+------------------------------------------------------------------------
+r92 | hofner | 2014-01-21 18:29:06 +0100 (Di, 21. Jan 2014) | 9 Zeilen
+
+- cross-validation:
+  *  improved speed when dense_mu_grid = TRUE is used 
+     (now there is really no increased run time with this arument)
+  *  improved plot function for cvriskLSS objects
+  *  added documentation for plot function
+- stabilization: changed factor to median absolute deviation
+  (currently only in GaussianLSS())
+- additional minor changes in manuals
+
+------------------------------------------------------------------------
+r91 | hofner | 2014-01-14 21:08:56 +0100 (Di, 14. Jan 2014) | 4 Zeilen
+
+- included stability correction for GaussianLSS()
+- added new (experimental) plot for results from cvrisk
+- layout improvements and minor corrections in the manual
+
+------------------------------------------------------------------------
+r90 | hofner | 2014-01-08 20:17:35 +0100 (Mi, 08. Jan 2014) | 6 Zeilen
+
+- added option dense_mu_grid to make.grid
+- mstop values can now also be specified as vectors 
+  (with and without names)
+- improved manuals
+- some improvements in code layout and (internal) variable names
+
+------------------------------------------------------------------------
+r89 | hofner | 2013-12-19 17:34:10 +0100 (Do, 19. Dez 2013) | 2 Zeilen
+
+- added india data set
+
+------------------------------------------------------------------------
+r88 | amayr | 2013-11-04 16:17:34 +0100 (Mo, 04. Nov 2013) | 1 Zeile
+
+included stability correction for Families.gamlss
+------------------------------------------------------------------------
+r87 | hofner | 2013-10-30 19:24:34 +0100 (Mi, 30. Okt 2013) | 3 Zeilen
+
+- removed unneeded dependencies 
+- some code cleaning
+
+------------------------------------------------------------------------
+r86 | hofner | 2013-10-30 19:01:31 +0100 (Mi, 30. Okt 2013) | 5 Zeilen
+
+- fix: speed of model fitting was dependent on iteration, 
+    i.e. the algorithm got slower for larger mstop values
+    (to really fix speed problem mboost >= revision 754 needed)
+- changed email address
+
+------------------------------------------------------------------------
+r85 | hofner | 2013-10-09 13:01:26 +0200 (Mi, 09. Okt 2013) | 3 Zeilen
+
+- fixed offset in NBinomialMu wrt the computation of sigma 
+  (divide by var(y) and introduce lower positive limit if sigma gets negative)
+
+------------------------------------------------------------------------
+r84 | hofner | 2013-08-09 10:20:06 +0200 (Fr, 09. Aug 2013) | 2 Zeilen
+
+added ChangeLogs
+
+------------------------------------------------------------------------
 r83 | hofner | 2013-03-15 13:45:22 +0100 (Fr, 15. Mär 2013) | 2 Zeilen
 
 experimental: added a new global option options("gamboostLSS_stab_ngrad") to stabilize estimation
@@ -155,6 +244,16 @@ r49 | hofner | 2011-11-16 20:44:03 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
 gamboostLSS 1.0-3
 - fixed potential problem that might occur if users specify different outcomes for different components
 - updated tests
+------------------------------------------------------------------------
+r48 | hofner | 2011-11-16 18:58:43 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
+
+- fixed bug in regtest-gamboostLSS.R
+- removed duplicated (and slightly altered) code from mboost 
+  (gamboostLSS now requires mboost >= 2.0-12)
+------------------------------------------------------------------------
+r47 | hofner | 2011-11-16 18:27:50 +0100 (Mi, 16. Nov 2011) | 1 Zeile
+
+added v. 1.0-2 to folder patch for patch updates (pkg contains minor / major updates)
 ------------------------------------------------------------------------
 r46 | hofner | 2011-10-13 18:23:43 +0200 (Do, 13. Okt 2011) | 1 Zeile
 
@@ -353,8 +452,4 @@ some helpers added
 r2 | hofner | 2010-07-02 17:24:23 +0200 (Fr, 02. Jul 2010) | 1 Zeile
 
 initial version
-------------------------------------------------------------------------
-r1 | stefan7th | 2009-05-28 14:17:51 +0200 (Do, 28. Mai 2009) | 1 Zeile
-
-R-Forge: updated repository structure
 ------------------------------------------------------------------------

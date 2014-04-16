@@ -48,6 +48,8 @@ gamlss.Families(...)
     name of the distribution in the \code{gamlss} framework,
     as specified in the \code{gamlss.dist} package (e.g., \code{"NO"} for a
     normal distribution with parameters \code{mu} and \code{sigma}).
+    Alternatively, one can directly specify the function (i.e.,
+    \code{NO}) or the evaluated function \code{NO()}.
   }
   \item{mu}{possible offset value for parameter \code{mu}.}
   \item{sigma}{possible offset value for parameter \code{sigma}.}
@@ -128,7 +130,10 @@ y <- rnorm(mean = 2 + 3 * x,        # effect on mu
            n    = 1000)
 
 ## boosting
-glmss <- glmboostLSS(formula = y ~ x, families = as.families(fname = "NO"))
+glmss <- glmboostLSS(y ~ x, families = as.families(fname = "NO"))
+## the same:
+glmss <- glmboostLSS(y ~ x, families = as.families(fname = NO))
+glmss <- glmboostLSS(y ~ x, families = as.families(fname = NO()))
 
 coef(glmss, off2int = TRUE)
 
@@ -137,6 +142,7 @@ library(gamlss)
 glmss2 <- gamlss(y ~ x, sigma.formula = ~x, family = "NO")
 coef(glmss2)
 glmss2$sigma.coef
+
 }
 
 \keyword{models}

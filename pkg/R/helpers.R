@@ -32,3 +32,40 @@ check <- function(what, what_char, names) {
     return(what)
 }
 
+## extract data from a gamboostLSS model (used in plot_PI)
+get_data <- function(x, which = NULL) {
+    data <- attr(x, "data")
+    if (length(data) != 0) {
+        data <- data[, which, drop = FALSE]
+    } else {
+        data <- try(sapply(which, get, env = parent.frame(2)),
+                    silent = TRUE)
+        if (inherits(data, "try-error"))
+                stop("No data set found.")
+        data <- as.data.frame(data)
+    }
+    return(data)
+}
+
+## extract family name from a gamboostLSS model (used in plot_PI)
+get_families_name <- function(x) {
+    attr(attr(x, "families"), "name")
+}
+
+## extract family name from a gamboostLSS model (used in plot_PI)
+get_qfun <- function(x) {
+    qfun <- attr(attr(x, "families"), "qfun")
+    if (is.null(qfun))
+        stop("Currently not implemented for this family")
+    return(qfun)
+}
+
+## return mean or (first) modus of a vector depending on its class
+mean_mod <- function(x) {
+    if (is.numeric(x))
+        return(mean(x, na.rm = TRUE))
+    ## else compute and return modus
+    if (is.character(x) || is.factor(x))
+        return(names(which.max(table(x)))[1])
+    stop("not implemented for data type ", class(x))
+}

@@ -119,23 +119,23 @@ plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
 
 plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
                     main = "Marginal Prediction Intervals",
-                    xlab = NULL, ylab = NULL, ...) {
+                    xlab = NULL, ylab = NULL,
+                    lty = c("solid", "dashed"), ...) {
 
-    ## use check for families: currently only working for GaussianLSS
-    avail <- c("Gaussian")
-    if (is.null(get_families_name(x)) ||
-        !(get_families_name(x) %in% avail))
-        stop("currently only implemented for the following families:\n",
-             paste(avail, collapse = ", "))
+    qfun <- get_qfun(x)
+    if (length(lty) != length(pi) + 1)
+        lty <- c(lty, rep(tail(lty, 1), (length(pi) + 1) - length(lty)))
 
     if (length(which) != 1 || !is.character(which))
         stop("Please specify the variable name of the variable to be plotted")
 
     pred_vars <- lapply(x, extract, what = "variable.names")
     pred_vars <- unique(unlist(pred_vars))
+    if ("(Intercept)" %in% pred_vars)
+        pred_vars <- pred_vars[pred_vars != "(Intercept)"]
 
     if (is.null(newdata)) {
-        tmp <- get_data(x)[, pred_vars]
+        tmp <- get_data(x, which = pred_vars)
         i <- grepl(which, names(tmp))
         if (sum(i) != 1)
             stop(sQuote("which"), " is misspecified")
@@ -159,37 +159,26 @@ plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
     if (is.null(ylab))
         ylab <- "prediction"
 
-    plot(get_data(x)[, which], x[[1]]$response, pch = 20,
+    plot(get_data(x, which = pred_vars)[, which], x[[1]]$response, pch = 20,
          col = rgb(0.5, 0.5, 0.5, 0.5),
-         xlab = xlab, ylab = ylab, main = main)
+         xlab = xlab, ylab = ylab, main = main, ...)
 
-    ## was ist denn bei anderen Verteilungen als der GaussianLSS?
-    fm1 <- as.formula(paste(names(x)[1], " ~ ", which))
-    fm2 <- as.formula(paste(names(x)[1], " + qnorm(1 - (1 - pi)/2) * ",
-                            names(x)[2], " ~ ", which))
-    fm3 <- as.formula(paste(names(x)[1], " + qnorm((1 - pi)/2) * ",
-                            names(x)[2], " ~ ", which))
+    lines(newdata[, which],
+          do.call(qfun, args = c(p = 0.5, newdata[, names(x)])),
+          lty = lty[1],
+          ...)
 
-    lines(fm1, data = newdata)
-    lines(fm2, data = newdata, lty = "dotted")
-    lines(fm3, data = newdata, lty = "dotted")
-}
-
-get_data <- function(x) {
-    attr(x, "data")
-}
-
-get_families_name <- function(x) {
-    attr(attr(x, "families"), "name")
-}
-
-mean_mod <- function(x) {
-    if (is.numeric(x))
-        return(mean(x, na.rm = TRUE))
-    ## else compute and return modus
-    if (is.character(x) || is.factor(x))
-        return(names(which.max(table(x))))
-    stop("not implemented for data type ", class(x))
+    for (i in seq_along(pi)) {
+        lines(newdata[, which],
+              do.call(qfun,
+                      args = c(p = 1 - (1 - pi[i])/2, newdata[, names(x)])),
+              lty = lty[i + 1],
+              ...)
+        lines(newdata[, which],
+              do.call(qfun, args = c(p = (1 - pi[i])/2, newdata[, names(x)])),
+              lty = lty[i + 1],
+              ...)
+    }
 }
 
 print.mboostLSS <- function(x, ...){

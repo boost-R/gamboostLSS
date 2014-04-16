@@ -1,15 +1,24 @@
-		CHANGES in `gamboostLSS' VERSION 1.1-0 (2013-XX-XX)
+		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-XX-XX)
 
   o  added new function cvrisk for generic cross-validation (gamboostLSS now
      requires mboost >= 2.2-3 for the generic function definition)
+  o  added a function to obtain cross-validation grids (make_grid)
 
-  o  added new function Families.gamlss to include gamlss families in gamboostLSS
+  o  added new function as.families to include gamlss families in gamboostLSS
+  o  added new families BetaLSS, GammaLSS, GaussianLSS, ZIPoLSS, ZINBLSS
 
-  o  added new family BetaLSS
+  o  added new function plot_PI for plotting of marginal prediction intervals
 
-  o  added new family GammaLSS
+  o  added stabilization factor to negative gradients (MAD)
+  
+  o  added new data sets india and india.bnd
 
-  o  added new family GaussianLSS
+  o  BugFix: Speed of model fitting was dependent on iteration, 
+     i.e. the algorithm got slower for larger mstop values
+
+  o  Lots of minor improvements in the interface and methods
+
+  o  Improved manuals in various places
 
 
 		CHANGES in `gamboostLSS' VERSION 1.0-3 (2011-11-16, r49)

@@ -60,7 +60,7 @@
 \usage{
 
 ## Constructor function for new GAMLSS distributions
-Families(...)
+Families(..., qfun = NULL, name = NULL)
 
 #### Turn the stability correction on or off:
 ## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
@@ -101,12 +101,16 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
 }
 
 \arguments{
+  \item{\dots}{ sub-families to be passed to constructor. }
+  \item{qfun}{ quantile function. This function can for example be used
+    to compute (marginal) prediction intervals. See
+    \code{\link{plot_PI}}.}
+  \item{name}{ name of the families. }
   \item{mu}{ offset value for mu. }
   \item{sigma}{ offset value for sigma. }
   \item{phi}{ offset value for phi. }
   \item{df}{ offset value for df. }
   \item{nu}{ offset value for nu. }
-  \item{\dots}{ sub-families to be passed to constructor. }
 }
 \details{
 
