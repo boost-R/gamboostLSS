@@ -3,7 +3,7 @@
 
 ### (glm/gam/m/black)boostLSS functions
 
-mboostLSS <- function(formula, data = list(), families = list(),
+mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                       control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -12,7 +12,7 @@ mboostLSS <- function(formula, data = list(), families = list(),
     return(fit)
 }
 
-glmboostLSS <- function(formula, data = list(), families = list(),
+glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -21,7 +21,7 @@ glmboostLSS <- function(formula, data = list(), families = list(),
     return(fit)
 }
 
-gamboostLSS <- function(formula, data = list(), families = list(),
+gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -30,7 +30,7 @@ gamboostLSS <- function(formula, data = list(), families = list(),
     return(fit)
 }
 
-blackboostLSS <- function(formula, data = list(), families = list(),
+blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -41,7 +41,7 @@ blackboostLSS <- function(formula, data = list(), families = list(),
 
 
 ### work horse for fitting (glm/gam/m/black)boostLSS models
-mboostLSS_fit <- function(formula, data = list(), families = list(),
+mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL,
                           fun = mboost, funchar = "mboost", call = NULL, ...){
 

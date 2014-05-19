@@ -653,14 +653,14 @@ GaussianLSS <- function(mu = NULL, sigma = NULL) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = GaussianMu(mu=mu, sigma=sigma),
-             sigma=GaussianSigma(mu=mu, sigma=sigma),
+             sigma = GaussianSigma(mu=mu, sigma=sigma),
              qfun = qNormal,
              name = "Gaussian")
 }
 
 
 qNormal <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
-    qNO(p = p, mean = mu, sigma = sigma, lower.tail = lower.tail, log.p = log.p)
+    qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, log.p = log.p)
 }
 
 GammaMu <-function (mu = NULL, sigma = NULL) {

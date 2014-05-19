@@ -8,7 +8,7 @@
 }
 
 \description{
-  Data sample from the Standard Demographic and Health Survey, 1998-99
+  Data sample from the Standard Demographic and Health Survey, 1998-99,
   on malnutrition of children in India. The data set contains
   approximately 12\% of the observations in the original data set and
   only a (very small) subset  of variables. Additionally, a boundary
@@ -41,14 +41,14 @@ data(india.bnd)
   }
 }
 
-\source{
-  The complete data set can be obtained for research purposes (after
+\source{ The complete data set is provided by the Monitoring and
+  Evaluation to Assess and Use Results Demographic and Health Surveys
+  (MEASURE DHS) which is funded by the U.S. Agency of International
+  Development (USAID). It can be obtained for research purposes (after
   registration) from
   \url{http://www.measuredhs.com/what-we-do/survey/survey-display-156.cfm}
-  (Data set for All-India, Children's Recode: iakr42dt.zip)
-}
-\references{
-  For details on the data set see also:
+  (Data set for All-India, Children's Recode: iakr42dt.zip) }
+  \references{ For details on the data set see also:
 
   Fahrmeir L and Kneib T (2011),
   \emph{Bayesian smoothing and regression for longitudinal, spatial and

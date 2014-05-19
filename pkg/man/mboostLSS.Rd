@@ -16,17 +16,17 @@
   al., 2012).
 }
 \usage{
-mboostLSS(formula, data = list(), families = list(),
+mboostLSS(formula, data = list(), families = GaussianLSS(),
           control = boost_control(), weights = NULL, ...)
-glmboostLSS(formula, data = list(), families = list(),
+glmboostLSS(formula, data = list(), families = GaussianLSS(),
             control = boost_control(), weights = NULL, ...)
-gamboostLSS(formula, data = list(), families = list(),
+gamboostLSS(formula, data = list(), families = GaussianLSS(),
             control = boost_control(), weights = NULL, ...)
-blackboostLSS(formula, data = list(), families = list(),
+blackboostLSS(formula, data = list(), families = GaussianLSS(),
               control = boost_control(), weights = NULL, ...)
 
 ## fit function:
-mboostLSS_fit(formula, data = list(), families = list(),
+mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
               control = boost_control(), weights = NULL,
               fun = mboost, funchar = "mboost", call = NULL, ...)
 }
@@ -41,7 +41,8 @@ mboostLSS_fit(formula, data = list(), families = list(),
   \item{data}{ a data frame containing the variables in the model.}
   \item{families}{ an object of class \code{families}. It can be either one of
     the pre-defined distributions that come along with the package or a new distribution
-    specified by the user (see \code{\link{Families}} for details).}
+    specified by the user (see \code{\link{Families}} for details). Per
+    default, we use the two-parametric \code{\link{GaussianLSS}} family.}
   \item{control}{ a list of parameters controlling the algorithm. For
     more details see \code{\link{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }

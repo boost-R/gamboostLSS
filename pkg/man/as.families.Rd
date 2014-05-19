@@ -130,10 +130,10 @@ y <- rnorm(mean = 2 + 3 * x,        # effect on mu
            n    = 1000)
 
 ## boosting
-glmss <- glmboostLSS(y ~ x, families = as.families(fname = "NO"))
+glmss <- glmboostLSS(y ~ x, families = as.families("NO"))
 ## the same:
-glmss <- glmboostLSS(y ~ x, families = as.families(fname = NO))
-glmss <- glmboostLSS(y ~ x, families = as.families(fname = NO()))
+glmss <- glmboostLSS(y ~ x, families = as.families(NO))
+glmss <- glmboostLSS(y ~ x, families = as.families(NO()))
 
 coef(glmss, off2int = TRUE)
 
