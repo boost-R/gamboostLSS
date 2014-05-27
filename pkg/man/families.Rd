@@ -43,8 +43,6 @@
 \alias{ZIPoLSS}
 \alias{ZINBLSS}
 
-\alias{options}
-
 \title{
   Families for GAMLSS models
 }
@@ -113,7 +111,7 @@ Families(..., qfun = NULL, name = NULL)
   \item{\dots}{ sub-families to be passed to constructor. }
   \item{qfun}{ quantile function. This function can for example be used
     to compute (marginal) prediction intervals. See
-    \code{\link{plot_PI}}.}
+    \code{\link{predint}}.}
   \item{name}{ name of the families. }
   \item{mu}{ offset value for mu. }
   \item{sigma}{ offset value for sigma. }

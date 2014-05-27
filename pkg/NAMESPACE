@@ -7,7 +7,7 @@ export(glmboostLSS,
        mboostLSS_fit,
        risk,
        model.weights,
-       plot_PI,
+       PI, predint, plot.predint,
        make.grid, cvrisk.mboostLSS,
        Families,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
@@ -46,6 +46,8 @@ S3method(coef, glmboostLSS)
 
 S3method(plot, glmboostLSS)
 S3method(plot, gamboostLSS)
+
+S3method(plot, predint)
 
 S3method(fitted, mboostLSS)
 S3method(predict, mboostLSS)

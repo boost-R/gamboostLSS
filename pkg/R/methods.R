@@ -121,17 +121,46 @@ plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
     }
 }
 
-plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
-                    main = "Marginal Prediction Intervals",
-                    xlab = NULL, ylab = NULL,
-                    lty = c("solid", "dashed"), ...) {
+plot.predint <- function(x, main = "Marginal Prediction Interval(s)",
+                         xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
+                         lcol = c("black", "grey"), log = "", ...) {
 
-    qfun <- get_qfun(x)
+    pi <- attr(x, "pi")
+    which <- attr(x, "which")
+    rawdata <- attr(x, "rawdata")
+
     if (length(lty) != length(pi) + 1)
         lty <- c(lty, rep(tail(lty, 1), (length(pi) + 1) - length(lty)))
+    if (length(lcol) != length(pi) + 1)
+        lcol <- c(lcol, rep(tail(lcol, 1), (length(pi) + 1) - length(lcol)))
+
+    if (is.null(xlab))
+        xlab <- which
+    if (is.null(ylab))
+        ylab <- "prediction"
+
+    plot(rawdata$x, rawdata$y, pch = 20,
+         col = rgb(0.5, 0.5, 0.5, 0.5),
+         xlab = xlab, ylab = ylab, main = main,
+         log = log, ...)
+
+    lines(x[, which], x$"Prediction (Median)",
+          lty = lty[1], col = lcol[1], ...)
+
+    for (i in seq_along(pi)) {
+        lines(x[, which], x[, paste0(pi[i] * 100, "% PI (lower)")],
+              lty = lty[i + 1], col = lcol[i + 1], ...)
+        lines(x[, which], x[, paste0(pi[i] * 100, "% PI (upper)")],
+              lty = lty[i + 1], col = lcol[i + 1], ...)
+    }
+}
+
+
+PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
+    qfun <- get_qfun(x)
 
     if (length(which) != 1 || !is.character(which))
-        stop("Please specify the variable name of the variable to be plotted")
+        stop("Please specify the variable for the marginal prediction interval.")
 
     pred_vars <- lapply(x, extract, what = "variable.names")
     pred_vars <- unique(unlist(pred_vars))
@@ -157,33 +186,26 @@ plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
     }
 
     newdata[, names(x)] <- predict(x, newdata = newdata, type = "response")
-
-    if (is.null(xlab))
-        xlab <- which
-    if (is.null(ylab))
-        ylab <- "prediction"
-
-    plot(get_data(x, which = pred_vars)[, which], x[[1]]$response, pch = 20,
-         col = rgb(0.5, 0.5, 0.5, 0.5),
-         xlab = xlab, ylab = ylab, main = main, ...)
-
-    lines(newdata[, which],
-          do.call(qfun, args = c(p = 0.5, newdata[, names(x)])),
-          lty = lty[1],
-          ...)
+    newdata$"Prediction (Median)" <- do.call(qfun, args = c(p = 0.5,
+        newdata[, names(x)]))
 
     for (i in seq_along(pi)) {
-        lines(newdata[, which],
-              do.call(qfun,
-                      args = c(p = 1 - (1 - pi[i])/2, newdata[, names(x)])),
-              lty = lty[i + 1],
-              ...)
-        lines(newdata[, which],
-              do.call(qfun, args = c(p = (1 - pi[i])/2, newdata[, names(x)])),
-              lty = lty[i + 1],
-              ...)
+        newdata[, paste0(pi[i] * 100, "% PI (lower)")] <- do.call(qfun,
+            args = c(p = (1 - pi[i])/2, newdata[, names(x)]))
+        newdata[, paste0(pi[i] * 100, "% PI (upper)")] <- do.call(qfun,
+            args = c(p = 1 - (1 - pi[i])/2, newdata[, names(x)]))
     }
+    # drop predictions of parameters
+    newdata <- newdata[, !names(newdata) %in% names(x)]
+
+    class(newdata) <- c("predint", "data.frame")
+    attr(newdata, "pi") <- pi
+    attr(newdata, "which") <- which
+    attr(newdata, "rawdata") <- data.frame(x = get_data(x, which = pred_vars)[, which],
+                                           y = x[[1]]$response)
+    return(newdata)
 }
+
 
 print.mboostLSS <- function(x, ...){
     cl <- match.call()

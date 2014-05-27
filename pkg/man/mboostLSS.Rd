@@ -5,6 +5,12 @@
 \alias{gamboostLSS}
 \alias{mboostLSS_fit}
 
+\alias{options}
+\alias{gamboostLSS_stab_ngrad}
+\alias{stab_ngrad}
+\alias{stabilize_ngrad}
+\alias{stabilize_ngradient}
+
 \title{
   Fitting GAMLSS by Boosting
 }

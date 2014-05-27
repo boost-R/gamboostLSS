@@ -18,9 +18,12 @@
 \alias{fitted.mboostLSS}
 \alias{predict.mboostLSS}
 
+\alias{predint}
+\alias{PI}
+
 \alias{plot.glmboostLSS}
 \alias{plot.gamboostLSS}
-\alias{plot_PI}
+\alias{plot.predint}
 
 \alias{update.mboostLSS}
 
@@ -35,6 +38,7 @@
   Methods for GAMLSS models fitted by boosting algorithms.
 }
 \usage{
+## extract coefficients
 \method{coef}{glmboostLSS}(object, which = NULL,
      aggregate = c("sum", "cumsum", "none"),
      off2int = FALSE, parameter = names(object), ...)
@@ -42,34 +46,46 @@
      aggregate = c("sum", "cumsum", "none"),
      parameter = names(object), ...)
 
+## plot partial effects
 \method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x),
      off2int = FALSE, ...)
 \method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x), ...)
 
-plot_PI(x, which, pi = 0.9, newdata = NULL,
-        main = "Marginal Prediction Intervals",
-        xlab = NULL, ylab = NULL, lty = c("solid", "dashed"), ...)
+## extract and plot marginal prediction intervals
+predint(x, which, pi = 0.9, newdata = NULL, ...)
+PI(x, which, pi = 0.9, newdata = NULL, ...)
+\method{plot}{predint}(x, main = "Marginal Prediction Interval(s)",
+     xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
+     lcol = c("black", "grey"), log = "", ...)
 
+## extract mstop
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
 \method{mstop}{cvriskLSS}(object, parameter = NULL, ...)
 
+## set mstop
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
+## extract risk
 \method{risk}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
 
+## extract selected base-learners
 \method{selected}{mboostLSS}(object, parameter = names(object), ...)
 
+## extract fitted values
 \method{fitted}{mboostLSS}(object, parameter = names(object), ...)
 
+## make predictions
 \method{predict}{mboostLSS}(object, newdata = NULL,
         type = c("link", "response", "class"), which = NULL,
         aggregate = c("sum", "cumsum", "none"),
         parameter = names(object), ...)
 
+## update weights of the fitted model
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
        risk = NULL, mstop = NULL, ...)
 
+## extract model weights
 \method{model.weights}{mboostLSS}(x, ...)
 
 }
@@ -123,6 +139,14 @@ plot_PI(x, which, pi = 0.9, newdata = NULL,
     recycled. The first value \code{lty[1]} is used for the marginal
     median, the second value \code{lty[2]} is used for the \code{pi[1]}
     prediction interval, etc.}
+  \item{lcol}{ (vector) of (line) colors to be used for plotting the
+    prediction intervals. The vector should contain \code{length(pi) +
+    1} elements. If less elements are specified, the last element is
+    recycled. The first value \code{lcol[1]} is used for the marginal
+    median, the second value \code{lcol[2]} is used for the \code{pi[1]}
+    prediction interval, etc.}
+  \item{log}{ a character string which determines if and if so which
+    axis should be logarithmic. See \code{\link{plot.default}} for details.}
   \item{newdata}{ optional; A data frame in which to look for variables with
     which to predict or with which to plot the marginal prediction intervals.}
   \item{type}{ the type of prediction required.  The default is on the scale
@@ -170,6 +194,12 @@ plot_PI(x, which, pi = 0.9, newdata = NULL,
   single distribution parameters or covariates (or subsets) using the
   \code{parameter} or \code{which} arguments, respectively.
 
+  The function \code{predint} (or \code{PI} which is just an alias)
+  computes marginal prediction intervals and returns a data frame with
+  the predictors used for the marginal prediction interval, the computed
+  median prediction and the marginal prediction intervals. A plot
+  function (\code{plot.predint}) for the resulting object exists.
+
   The \code{predict} function can be used for predictions for the
   distribution parameters depending on new observations whereas
   \code{fitted} extracts the regression fits for the observations in the
@@ -191,8 +221,6 @@ plot_PI(x, which, pi = 0.9, newdata = NULL,
   function provided by package \pkg{stats}, which is required to make
   \code{model.weights} work with \code{mboostLSS} models.
 
-  The function \code{plot_PI} produces a marginal prediction interval
-  plot. Note that this function is not implemented for all families.
 }
 
 \section{Warning}{
@@ -273,6 +301,13 @@ plot(model, which = "x3")
 ### first component second parameter (sigma)
 par(mfrow = c(1, 1))
 plot(model, which = 1, parameter = 2)
+
+### plot marginal prediction interval
+pi <- predint(model, pi = 0.9, which = "x1")
+pi <- predint(model, pi = c(0.8, 0.9), which = "x1")
+plot(pi, log = "y")  # warning as some y values are below 0
+## here it would be better to plot x1 against
+## sqrt(y) and sqrt(PI)
 
 ### subset model for mstop = 300 (one-dimensional)
 model[300]
