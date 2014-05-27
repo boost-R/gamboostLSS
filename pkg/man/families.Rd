@@ -50,54 +50,63 @@
 }
 \description{
  The package provides some pre-defined GAMLSS families, e.g.
- \code{NBionomialLSS}. By using the function \code{Families}, a new
- object of the class \code{families} can be generated.
-
- Objects of the class \code{families} provide a convenient way to
- specify GAMLSS distributions to be fitted by one of the boosting
- algorithms implemented in this package.
+ \code{NBionomialLSS}. Objects of the class \code{families} provide a
+ convenient way to specify GAMLSS distributions to be fitted by one of
+ the boosting algorithms implemented in this package. By using the
+ function \code{Families}, a new object of the class \code{families}
+ can be generated.
 }
+
 \usage{
+############################################################
+# Families for continuous response
 
-## Constructor function for new GAMLSS distributions
-Families(..., qfun = NULL, name = NULL)
-
-#### Turn the stability correction on or off:
-## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
-## or  options(gamboostLSS_stab_ngrad = FALSE) ## off
-
-###  Pre-defined GAMLSS distributions  ###
-
-## families object for the normal distribution
+# Gaussian distribution
 GaussianLSS(mu = NULL, sigma = NULL)
 
-## families object for the gamma distribution
-GammaLSS(mu = NULL, sigma = NULL)
-
-## families object for beta regression
-BetaLSS(mu = NULL, phi = NULL)
-
-## families object for the negative binomial distribution
-NBinomialLSS(mu = NULL, sigma = NULL)
-
-## families object for Student's t-distribution
+# Student's t-distribution
 StudentTLSS(mu = NULL, sigma = NULL, df = NULL)
 
-## families object for log-normal accelerated failure time model
-LogNormalLSS(mu = NULL, sigma = NULL)
+############################################################
+# Families for continuous non-negative response
 
-## families object for log-logistic accelerated failure time model
-LogLogLSS(mu = NULL, sigma = NULL)
+# Gamma distribution
+GammaLSS(mu = NULL, sigma = NULL)
 
-## families object for accelerated failure time model with Weibull distribution
-WeibullLSS(mu = NULL, sigma = NULL)
+############################################################
+# Families for fractions and bounded continuous response
 
-## families object for zero-inflated Poisson model
+# Beta distribution
+BetaLSS(mu = NULL, phi = NULL)
+
+############################################################
+# Families for count data
+
+# Negative binomial distribution
+NBinomialLSS(mu = NULL, sigma = NULL)
+
+# Zero-inflated Poisson distribution
 ZIPoLSS(mu = NULL, sigma = NULL)
 
-## families object for zero-inflated negative binomial model
+# Zero-inflated negative binomial distribution
 ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
 
+############################################################
+# Families for survival models (accelerated failure time
+# models) for data with right censoring
+
+# Log-normal distribution
+LogNormalLSS(mu = NULL, sigma = NULL)
+
+# Log-logistic distribution
+LogLogLSS(mu = NULL, sigma = NULL)
+
+# Weibull distribution
+WeibullLSS(mu = NULL, sigma = NULL)
+
+############################################################
+# Constructor function for new GAMLSS distributions
+Families(..., qfun = NULL, name = NULL)
 }
 
 \arguments{
@@ -113,6 +122,30 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
   \item{nu}{ offset value for nu. }
 }
 \details{
+
+  The arguments of the families are the offsets for each distribution
+  parameter. Offsets can be either scalar, a vector with length equal to
+  the number of observations or \code{NULL} (default). In the latter
+  case, a scalar offset for this component is computed by minimizing the
+  risk function w.r.t. the corresponding distribution parameter (keeping
+  the other parameters fixed).
+
+  Note that \code{gamboostLSS} is not restricted to three components but
+  can handle an arbitrary number of components (which, of course,
+  depends on the GAMLSS distribution). However, it is important that the
+  names (for the offsets, in the sub-families etc.) are chosen
+  \emph{consistently}.
+
+  The \code{ZIPoLSS} families can be used to fit zero-inflated Poisson
+  models. Here, \code{mu} and \code{sigma} refer to the location
+  parameter of the Poisson component (with log link) and the mean of the
+  zero-generating process (with logit link), respectively.
+
+  Similarly, \code{ZINBLSS} can be used to fit zero-inflated negative
+  binomial models. Here, \code{mu} and \code{sigma} refer to the
+  location and scale parameters (with log link) of the negative binomial
+  component of the model. The zero-generating process (with logit link)
+  is represented by \code{nu}.
 
   The \code{Families} function can be used to implements a new GAMLSS
   distribution which can be used for fitting by \code{\link{mboostLSS}}.
@@ -132,29 +165,6 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
   for both paramters, only \code{ngradient} differs. Both sub-families
   are passed to the \code{Families} constructor, which returns an object
   of the class \code{families}.
-
-  The arguments of the final object are the offsets for each
-  distribution parameter. Offsets can be either scalar, a vector with
-  length equal to the number of observations or \code{NULL} (default). In the
-  latter case, a scalar offset for this component is computed by
-  minimizing the risk function w.r.t. the corresponding distribution
-  parameter (keeping the other parameters fixed).
-
-  Note that gamboostLSS is not restricted to three components
-  but can handle an arbitrary number of components (which, of course,
-  depends on the GAMLSS distribution). However, it is important that the
-  names (for the offsets, in the sub-families etc.) are chosen
-  \emph{consistently}.
-
-  The \code{ZIPoLSS} families can be used to fit zero-inflated Poisson models.
-  Here, \code{mu} and \code{sigma} refer to the location parameter of the
-  Poisson component (with log link) and the mean of the zero-generating
-  process (with logit link), respectively.
-  Similarly, \code{ZINBLSS} can be used to fit zero-inflated negative binomial
-  models. Here, \code{mu} and \code{sigma} refer to the location and scale
-  parameters (with log link) of the negative binomial component of the
-  model. The zero-generating process (with logit link) is represented by
-  \code{nu}.
 }
 \value{
   An object of class \code{families}.
@@ -166,7 +176,6 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL)
 }
 
 \references{
-
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for
   high-dimensional data - a flexible approach based on boosting. Journal

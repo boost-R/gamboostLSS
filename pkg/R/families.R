@@ -56,8 +56,10 @@ NBinomialMu <- function(mu = NULL, sigma = NULL) {
     Family(ngradient = ngradient, offset = offset, risk = risk, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
-               stopifnot(all.equal(unique(y - floor(y)), 0))
-               ## <FIXME> Does not check if y >= 0
+               if (!all.equal(unique(y - floor(y)), 0))
+                   stop("response must be an integer")
+               if (any(y < 0))
+                   stop("response must be >= 0")
                y
            }, name = "Negative Negative-Binomial Likelihood: mu (log link)")
 }
@@ -97,8 +99,10 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL) {
     Family(ngradient = ngradient, offset = offset, risk = risk, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
-               stopifnot(all.equal(unique(y - floor(y)), 0))
-               ## <FIXME> Does not check if y >= 0
+               if (!all.equal(unique(y - floor(y)), 0))
+                   stop("response must be an integer")
+               if (any(y < 0))
+                   stop("response must be >= 0")
                y
            }, name = "Negative Negative-Binomial Likelihood: sigma (log link)")
 }
@@ -754,9 +758,19 @@ GammaLSS <- function (mu = NULL, sigma = NULL) {
 
     Families(mu = GammaMu(mu = mu, sigma = sigma),
              sigma = GammaSigma(mu = mu, sigma = sigma),
-#             qfun = qGA,
+             qfun = qGamma,
              name = "Gamma")
 }
+
+## we use almost the same parameterization as GA but with sigma = sqrt(1/sigma)
+qGamma <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
+    ## require gamlss.dist
+    if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
+        stop("Please install package 'gamlss.dist' for using qGamma.")
+    qGA(p = p, mu = mu, sigma = sqrt(1/sigma), lower.tail = lower.tail, log.p = log.p)
+}
+
+
 
 BetaMu <- function(mu = NULL, phi = NULL){
 
@@ -800,6 +814,13 @@ BetaMu <- function(mu = NULL, phi = NULL){
     # use the Family constructor of mboost
     Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
            response = function(f) plogis(f),
+           check_y <- function(y) {
+               if (!is.numeric(y) || !is.null(dim(y)))
+                   stop("response must be a numeric vector")
+               if (any(y <= 0) | any(y >= 1))
+                   stop("response must be >0 and <1")
+               y
+           },
            name = "Beta-distribution: mu (logit link)")
 }
 
@@ -847,6 +868,13 @@ BetaPhi <- function(mu = NULL, phi = NULL){
     # use the Family constructor of mboost
     Family(ngradient = ngradient, risk = risk, loss = loss, offset = offset,
            response = function(f) exp(f),
+           check_y <- function(y) {
+               if (!is.numeric(y) || !is.null(dim(y)))
+                   stop("response must be a numeric vector")
+               if (any(y <= 0) | any(y >= 1))
+                   stop("response must be >0 and <1")
+               y
+           },
            name = "Beta-distribution: phi (log link)")
 }
 
@@ -854,10 +882,17 @@ BetaPhi <- function(mu = NULL, phi = NULL){
 BetaLSS <- function (mu = NULL, phi = NULL){
     Families(mu = BetaMu(mu = mu, phi = phi),
              phi = BetaPhi(mu = mu, phi = phi),
-#             qfun = qBE,
+             qfun = qBeta,
              name = "Beta")
 }
 
+## we use almost the same parameterization as BE but with sigma = 1/sqrt(phi + 1)
+qBeta <- function(p, mu = 0, phi = 1, lower.tail = TRUE, log.p = FALSE) {
+    ## require gamlss.dist
+    if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
+        stop("Please install package 'gamlss.dist' for using qBeta.")
+    qBE(p = p, mu = mu, sigma = 1/sqrt(phi + 1), lower.tail = lower.tail, log.p = log.p)
+}
 
 # Zero-inflated Poisson model
 ZIPoLSS <- function(mu = NULL, sigma = NULL)

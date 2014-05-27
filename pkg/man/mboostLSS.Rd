@@ -29,6 +29,11 @@ blackboostLSS(formula, data = list(), families = GaussianLSS(),
 mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
               control = boost_control(), weights = NULL,
               fun = mboost, funchar = "mboost", call = NULL, ...)
+
+############################################################
+# Turn the stability correction on or off:
+## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
+## or  options(gamboostLSS_stab_ngrad = FALSE) ## off
 }
 
 \arguments{
@@ -73,10 +78,12 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   fitted for each parameter.
 
   \code{gamboostLSS} uses \code{\link[mboost]{gamboost}} to fit the
-  distribution parameters of a GAMLSS -- an additive boosting model (by default with
-  smooth effects) is fitted for each parameter. With the \code{formula} argument, a wide range of different
-  base-learners can be specified (see \code{\link[mboost]{baselearners}}). The base-learners inply the type of effect
-  each covariate has on the corresponding distribution parameter.
+  distribution parameters of a GAMLSS -- an additive boosting model (by
+  default with smooth effects) is fitted for each parameter. With the
+  \code{formula} argument, a wide range of different base-learners can
+  be specified (see \code{\link[mboost]{baselearners}}). The
+  base-learners inply the type of effect each covariate has on the
+  corresponding distribution parameter.
 
   \code{mboostLSS} uses \code{\link[mboost]{mboost}} to fit the
   distribution parameters of a GAMLSS. The type of model (linear,
@@ -105,8 +112,14 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   \code{families}. For one-dimensional stopping, the user therefore can
   specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
   more-dimensional stopping, one can specify, e.g., \code{mstop =
-  list(mu = 100, sigma = 200)} (see examples).
+    list(mu = 100, sigma = 200)} (see examples).
 
+  To (potentially) stabilize the model estimation one can use
+  \code{options(gamboostLSS_stab_ngrad = TRUE)} in order to standardize
+  the negative gradients. In each step the negative gradient is
+  divided by its median absolute deviation
+  \deqn{median_i (|u_{k,i} - median_j(u_{k,j})|).}
+  To turn the stabilization off, use \code{options(gamboostLSS_stab_ngrad = FALSE)}.
 
 }
 \value{
@@ -115,9 +128,11 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 }
 \references{
 
-Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012): Generalized additive models for location, scale and shape
-for high-dimensional data - a flexible approach based on boosting.
-Journal of the Royal Statistical Society, Series C (Applied Statistics) 61(3): 403-427.
+Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
+Generalized additive models for location, scale and shape for
+high-dimensional data - a flexible approach based on boosting. Journal
+of the Royal Statistical Society, Series C (Applied Statistics) 61(3):
+403-427.
 
 Preliminary version: Department of Statistics, Technical Report 98.
 \url{http://epub.ub.uni-muenchen.de/11938/}

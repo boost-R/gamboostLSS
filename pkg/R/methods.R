@@ -111,10 +111,14 @@ plot.glmboostLSS <- function(x, main = names(x), parameter = names(x),
 plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(x, parameter)
-    lapply(parameter, function(i, x, main, ...)
-                    plot(x[[i]], main = main[[i]], ...),
-           x = x, main = main, ...)
-    invisible(x)
+    RET <- lapply(parameter, function(i, x, main, ...)
+                      plot(x[[i]], main = main[[i]], ...),
+                  x = x, main = main, ...)
+    if (any(sapply(RET, class) == "trellis")) {
+        return(RET)
+    } else {
+        invisible(RET)
+    }
 }
 
 plot_PI <- function(x, which, pi = 0.9, newdata = NULL,
