@@ -379,8 +379,13 @@ LogNormalLSS <- function(mu = NULL, sigma = NULL){
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = LogNormalMu(mu = mu, sigma = sigma),
              sigma = LogNormalSigma(mu = mu, sigma = sigma),
-#             qfun = eval(parse(text=paste0("q", fname))),
+             qfun = qLogNormal,
              name = "Log-Normal")
+}
+
+qLogNormal <- function(p, mu = 1, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
+    qlnorm(p = p, meanlog = log(mu), sdlog = log(sigma), lower.tail = lower.tail,
+           log.p = log.p)
 }
 
 
@@ -487,9 +492,16 @@ LogLogLSS <- function(mu = NULL, sigma = NULL){
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = LogLogMu(mu = mu, sigma = sigma),
              sigma = LogLogSigma(mu = mu, sigma = sigma),
-#             qfun = eval(parse(text=paste0("q", fname))),
+#             qfun = qLogLog,
              name = "Log-Log")
 }
+
+# nach: qllog (package FAdist)
+#qLogLog <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
+#    exp(qlogis(p = p, location = mu, scale = sigma,
+#               lower.tail = lower.tail, log.p = log.p))
+#}
+# andere Ergebnisse als qllogis (package actuar)
 
 
 ###
@@ -588,8 +600,13 @@ WeibullLSS <- function(mu = NULL, sigma = NULL){
         stop(sQuote("sigma"), " must be greater than zero")
     Families(mu = WeibullMu(mu = mu, sigma = sigma),
              sigma = WeibullSigma(mu = mu, sigma = sigma),
-#             qfun = eval(parse(text=paste0("q", fname))),
+             qfun = qWeibull,
              name = "Weibull")
+}
+
+qWeibull <- function(p, mu = 1, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
+    qweibull(p, scale = mu, shape = sigma,
+             lower.tail = lower.tail, log.p = log.p)
 }
 
 

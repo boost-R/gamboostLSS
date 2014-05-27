@@ -198,7 +198,14 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
   computes marginal prediction intervals and returns a data frame with
   the predictors used for the marginal prediction interval, the computed
   median prediction and the marginal prediction intervals. A plot
-  function (\code{plot.predint}) for the resulting object exists.
+  function (\code{plot.predint}) for the resulting object exists. Note
+  that marginal predictions from AFT models (i.e., families
+  \code{\link{LogLogLSS}}, \code{\link{LogNormalLSS}}, and
+  \code{\link{WeibullLSS}}) represent the predicted \dQuote{true}
+  survival time and not the observed survival time which is possible
+  subject to censoring. Hence, comparing observed survival times with
+  the marginal prediction interval is only sensible for uncensored
+  observations.
 
   The \code{predict} function can be used for predictions for the
   distribution parameters depending on new observations whereas
