@@ -1,4 +1,52 @@
 ------------------------------------------------------------------------
+r101 | hofner | 2014-06-11 10:56:37 +0200 (Mi, 11. Jun 2014) | 2 Zeilen
+
+- changed default color of marginal prediction intervals to black
+
+------------------------------------------------------------------------
+r100 | hofner | 2014-05-27 17:02:43 +0200 (Di, 27. Mai 2014) | 2 Zeilen
+
+- added qXXX functions for AFT models
+
+------------------------------------------------------------------------
+r99 | hofner | 2014-05-27 15:54:01 +0200 (Di, 27. Mai 2014) | 5 Zeilen
+
+- marginal prediction intervals:
+  *  added function to compute marginal PIs (predint)
+  *  replaced plot_PI with plot(predint())
+- improved manual for methods
+
+------------------------------------------------------------------------
+r98 | hofner | 2014-05-27 09:03:34 +0200 (Di, 27. Mai 2014) | 10 Zeilen
+
+- families: 
+  *  included some more quantile functions (needed for plot_PI)
+  *  improved checks for outcome variable
+- plot:
+  *  fixed lattice plot (for bivariate effects)
+- manuals:
+  *  restructured families in groups
+  *  improved documentation of gamboostLSS_stab_ngrad,
+     which can be used to stabilize the negative gradient 
+
+------------------------------------------------------------------------
+r97 | hofner | 2014-05-19 18:06:15 +0200 (Mo, 19. Mai 2014) | 3 Zeilen
+
+- made GaussianLSS the default family
+- bugfix in internal qNormal function
+
+------------------------------------------------------------------------
+r96 | hofner | 2014-04-16 10:18:53 +0200 (Mi, 16. Apr 2014) | 8 Zeilen
+
+- improved as.families: User can now also specify 
+  fname as function or evaluated function
+- plot_PI now potentially works for all families
+- added qfun to (most of the) families which 
+  is required for plot_PI
+- moved some helper functions to helpers.R
+- improvements in manuals
+
+------------------------------------------------------------------------
 r95 | hofner | 2014-01-28 11:25:43 +0100 (Di, 28. Jan 2014) | 3 Zeilen
 
 - added experimental version of marginal prediction plot

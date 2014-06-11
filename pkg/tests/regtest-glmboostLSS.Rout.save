@@ -1,7 +1,6 @@
 
-R version 2.14.0 (2011-10-31)
-Copyright (C) 2011 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -21,23 +20,42 @@ Type 'q()' to quit R.
 > 
 > require("gamboostLSS")
 Loading required package: gamboostLSS
-Loading required package: splines
-Loading required package: survival
 Loading required package: mboost
+Loading required package: parallel
+Loading required package: survival
+Loading required package: splines
+This is mboost 2.2-4. See 'package?mboost' and the NEWS file
+for a complete list of changes.
+Note: The default for the computation of the degrees of freedom has changed.
+      For details see section 'Global Options' of '?bols'.
+
+Attaching package: 'gamboostLSS'
+
+The following object is masked from 'package:stats':
+
+    model.weights
+
 > require("gamlss")
 Loading required package: gamlss
+Loading required package: gamlss.data
 Loading required package: gamlss.dist
 Loading required package: MASS
-Loading required package: gamlss.data
+
+Attaching package: 'gamlss.dist'
+
+The following object is masked from 'package:mboost':
+
+    Family
+
 Loading required package: nlme
- **********   GAMLSS Version 4.1-1  ********** 
+ **********   GAMLSS Version 4.2-8  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
 
 Attaching package: 'gamlss'
 
-The following object(s) are masked from 'package:survival':
+The following object is masked from 'package:survival':
 
     ridge
 
@@ -105,8 +123,6 @@ Loss function: {
 +                      control = boost_control(mstop = 10),
 +                      center = TRUE)
 > model2[10]
-Model first reduced to mstop = 10.
-Now continue ...
 
 	 LSS Models fitted via Model-based Boosting
 
@@ -253,6 +269,29 @@ In mboostLSS_fit(formula = formula, data = data, families = families,  :
 > stopifnot(model2[[2]]$offset == model[[2]]$offset)
 > stopifnot(model2[[3]]$offset != model[[3]]$offset)
 > 
+> ### even better check for offset-issue when different responses are used
+> set.seed(0804)
+> x1 <- runif(1000)
+> x2 <- runif(1000)
+> x3 <- runif(1000)
+> x4 <- runif(1000)
+> mu    <- 1.5 +1 * x1 +4 * x2
+> sigma <- exp(1 - 0.2 * x3 -0.4 * x4)
+> y <- rnorm(mean=mu, sd=1, n=length(mu))
+> y2 <- rnorm(mean=0, sd=sigma, n=length(sigma))
+> dat <- data.frame(x1, x2, x3, x4, y, y2)
+> model <- glmboostLSS(formula=list(mu=y~x1+x2, sigma=y2~x3+x4),
++                      families=GaussianLSS(), data=dat)
+Warning message:
+In mboostLSS_fit(formula = formula, data = data, families = families,  :
+  responses differ for the components
+> ## offset for mu must be equal to the mean of y per default
+> stopifnot(model$mu$offset == mean(y))
+> ## offset for sigma must be equal to the log of the standard deviation of y2 per
+> ## default
+> stopifnot(model$sigma$offset == log(sd(y2)))
+> 
+> 
 > ### check weights interface
 > set.seed(1907)
 > n <- 2500
@@ -286,3 +325,6 @@ Final risk: 13810.99
 > 
 > stopifnot(all.equal(coef(model),coef(model2)))
 > 
+> proc.time()
+   user  system elapsed 
+  6.080   0.160   6.389 
