@@ -123,7 +123,7 @@ plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
 
 plot.predint <- function(x, main = "Marginal Prediction Interval(s)",
                          xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
-                         lcol = c("black", "grey"), log = "", ...) {
+                         lcol = c("black", "black"), log = "", ...) {
 
     pi <- attr(x, "pi")
     which <- attr(x, "which")

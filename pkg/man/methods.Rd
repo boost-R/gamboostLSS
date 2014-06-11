@@ -56,7 +56,7 @@ predint(x, which, pi = 0.9, newdata = NULL, ...)
 PI(x, which, pi = 0.9, newdata = NULL, ...)
 \method{plot}{predint}(x, main = "Marginal Prediction Interval(s)",
      xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
-     lcol = c("black", "grey"), log = "", ...)
+     lcol = c("black", "black"), log = "", ...)
 
 ## extract mstop
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)

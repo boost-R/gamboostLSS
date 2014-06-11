@@ -20,11 +20,11 @@
 
   UnTar and install according to guide in INSTALL (source directory).
 
-  Go to mboost directory and call
+  Go to gamboostLSS directory and call
     ../relative/path/to/R-devel/bin/R
 
   Run
-    install.packages(c("car", "nlme", "lme4", "survival", "gmodels"))
+    install.packages(c("gamlss", "BayesX", "gamlss.dist", "mboost"))
 
   Quit R and run
    ../relative/path/to/R-devel/bin/R CMD check --as-cran gamboostLSS_XXX.tar.gz
