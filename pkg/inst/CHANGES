@@ -1,4 +1,4 @@
-		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-06-11, r102)
+		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-06-12, r103)
 
   o  added new function cvrisk for generic cross-validation (gamboostLSS now
      requires mboost >= 2.2-3 for the generic function definition)

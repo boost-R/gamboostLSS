@@ -42,9 +42,8 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   \item{papply}{
     (parallel) apply function, defaults to  \code{\link[parallel]{mclapply}}.
     Alternatively, \code{\link[parallel]{parLapply}} can be used. In the
-    latter case, usually more setup is needed (see example for some
-    details). To run \code{cvrisk} sequentially (i.e. not in parallel),
-    one can use \code{\link{lapply}}.
+    latter case, usually more setup is needed. To run \code{cvrisk}
+    sequentially (i.e. not in parallel), one can use \code{\link{lapply}}.
   }
   \item{trace}{
     should status information beein printed during cross-validation?
@@ -157,8 +156,11 @@ model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 grid <-  make.grid(mstop(model), length.out = 5, dense_mu_grid = FALSE)
 plot(grid)
 ## a tiny toy example (5-fold bootsrap with maximum stopping value 100)
+##   (to run it on multiple cores of a Linux or Mac OS computer remove
+##    set papply = mclapply (default) and set mc.nodes to the
+##    appropriate number of nodes)
 cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5),
-              grid = grid)
+              papply = lapply, grid = grid)
 cvr
 
 ## plot the results

@@ -1,4 +1,9 @@
 ------------------------------------------------------------------------
+r102 | hofner | 2014-06-11 17:00:23 +0200 (Mi, 11. Jun 2014) | 2 Zeilen
+
+RELEASE VERSION gamboostLSS 1.1-0
+
+------------------------------------------------------------------------
 r101 | hofner | 2014-06-11 10:56:37 +0200 (Mi, 11. Jun 2014) | 2 Zeilen
 
 - changed default color of marginal prediction intervals to black

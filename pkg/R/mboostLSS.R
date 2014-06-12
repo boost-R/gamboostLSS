@@ -98,7 +98,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             weights <- rep.int(1, NROW(response[[1]]))
         }
     }
-    weights <- mboost:::rescale_weights(weights)
+    weights <- rescale_weights(weights)
 
     fit <- vector("list", length = length(families))
     names(fit) <- names(families)

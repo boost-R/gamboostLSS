@@ -24,7 +24,7 @@ Loading required package: mboost
 Loading required package: parallel
 Loading required package: survival
 Loading required package: splines
-This is mboost 2.2-4. See 'package?mboost' and the NEWS file
+This is mboost 2.2-3. See 'package?mboost' and the NEWS file
 for a complete list of changes.
 Note: The default for the computation of the degrees of freedom has changed.
       For details see section 'Global Options' of '?bols'.
@@ -48,7 +48,7 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 4.2-8  ********** 
+ **********   GAMLSS Version 4.3-0  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -171,16 +171,18 @@ Loss function: {
 +                      center = TRUE)
 [  1] ........
 Final risk: 13591.79 
-> model[20]
-[ 11] ........
-Final risk: 13219 
+> model[100]
+[ 11] ...................................... -- risk: 12681.81 
+[ 51] ...................................... -- risk: 12508.02 
+[ 91] ........
+Final risk: 12491.57 
 
 	 LSS Models fitted via Model-based Boosting
 
 Call:
 glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 10, trace = TRUE), center = TRUE)
 
-Number of boosting iterations: mstop = 20 20 20 
+Number of boosting iterations: mstop = 100 100 100 
 Step size:  0.1 
 
 Families:
@@ -327,4 +329,4 @@ Final risk: 13810.99
 > 
 > proc.time()
    user  system elapsed 
-  6.080   0.160   6.389 
+  9.452   0.160   9.774 

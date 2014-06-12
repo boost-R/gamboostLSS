@@ -39,7 +39,7 @@ stopifnot(length(coef(model2, aggregate = "none")[[1]][[1]]) == 10)
 model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
                      control = boost_control(mstop = 10, trace =TRUE),
                      center = TRUE)
-model[20]
+model[100]
 
 ### check formula-interface with lists
 set.seed(1907)

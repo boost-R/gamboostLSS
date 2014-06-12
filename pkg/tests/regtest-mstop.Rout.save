@@ -25,7 +25,7 @@ Loading required package: mboost
 Loading required package: parallel
 Loading required package: survival
 Loading required package: splines
-This is mboost 2.2-4. See 'package?mboost' and the NEWS file
+This is mboost 2.2-3. See 'package?mboost' and the NEWS file
 for a complete list of changes.
 Note: The default for the computation of the degrees of freedom has changed.
       For details see section 'Global Options' of '?bols'.
@@ -401,4 +401,4 @@ Final risk: 3261.092
 > 
 > proc.time()
    user  system elapsed 
-  4.904   0.076   5.162 
+  5.364   0.116   5.670 

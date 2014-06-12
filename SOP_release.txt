@@ -50,17 +50,18 @@
 	or
 	    meld regtest-XXX.Rout.save regtest-XXX.Rout &
 
-       - If ok, copy new .Rout files to .Rout.save:
+       - If ok, copy new .Rout files to .Rout.save [1,2]:
 
        	    Rscript copy_Rout_to_Routsave.R "vignettes=FALSE"
 
-       - Update vignette .Rout.save files if necessary
+       - Update vignette .Rout.save files if necessary [1,2]:
 
             Rscript copy_Rout_to_Routsave.R "vignettes=TRUE"
 
-	 For details see
-         http://r.789695.n4.nabble.com/Generate-Rout-save-files-for-vignettes-td4652752.html
-
+	 [1] For details see
+             http://r.789695.n4.nabble.com/Generate-Rout-save-files-for-vignettes-td4652752.html
+         [2] NOTE: Reference output should be produced without having the --timings option set. 
+ 
     Run checks on WinBuilder:
        upload package to http://win-builder.r-project.org/
 
@@ -70,7 +71,8 @@
 
     Add latest svn LATEST version to NEWS
 
-    To build package without test folder to be submitted to CRAN (only if CRAN complains about timings)
+    Now  build package without test folder to be submitted to CRAN
        R CMD buildCRAN --resave-data --compact-vignettes pkg && R CMD check --as-cran gamboostLSS_XXX.tar.gz
+    To use the script copy it to R RHOME (< enter this in the console) /bin and make it executable.
 
     Ftp source package to CRAN or use web form at http://xmpalantir.wu.ac.at/cransubmit/.

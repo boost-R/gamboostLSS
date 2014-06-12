@@ -24,7 +24,7 @@ Loading required package: mboost
 Loading required package: parallel
 Loading required package: survival
 Loading required package: splines
-This is mboost 2.2-4. See 'package?mboost' and the NEWS file
+This is mboost 2.2-3. See 'package?mboost' and the NEWS file
 for a complete list of changes.
 Note: The default for the computation of the degrees of freedom has changed.
       For details see section 'Global Options' of '?bols'.
@@ -48,7 +48,7 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 4.2-8  ********** 
+ **********   GAMLSS Version 4.3-0  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -442,4 +442,4 @@ Error in Families(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSi
 > 
 > proc.time()
    user  system elapsed 
-  9.128   0.192   9.628 
+ 13.408   0.156  13.869 
