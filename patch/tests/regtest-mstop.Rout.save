@@ -1,7 +1,6 @@
 
-R version 2.14.0 (2011-10-31)
-Copyright (C) 2011 The R Foundation for Statistical Computing
-ISBN 3-900051-07-0
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -22,9 +21,21 @@ Type 'q()' to quit R.
 > #detach("package:gamboostLSS", unload = TRUE)
 > require(gamboostLSS)
 Loading required package: gamboostLSS
-Loading required package: splines
-Loading required package: survival
 Loading required package: mboost
+Loading required package: parallel
+Loading required package: survival
+Loading required package: splines
+This is mboost 2.2-3. See 'package?mboost' and the NEWS file
+for a complete list of changes.
+Note: The default for the computation of the degrees of freedom has changed.
+      For details see section 'Global Options' of '?bols'.
+
+Attaching package: 'gamboostLSS'
+
+The following object is masked from 'package:stats':
+
+    model.weights
+
 > 
 > ### create some data first
 > set.seed(1907)
@@ -388,3 +399,6 @@ Final risk: 3261.092
 > stopifnot(all(coef(model)[[1]] == 0))
 > stopifnot(any(coef(model)[[2]] != 0))
 > 
+> proc.time()
+   user  system elapsed 
+  5.248   0.108   5.572 

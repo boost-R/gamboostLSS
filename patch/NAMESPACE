@@ -1,5 +1,4 @@
 import(mboost)
-importFrom(survival, Surv)
 
 export(glmboostLSS,
        gamboostLSS,
@@ -7,12 +6,24 @@ export(glmboostLSS,
        mboostLSS,
        mboostLSS_fit,
        risk,
+       model.weights,
+       PI, predint, plot.predint,
+       make.grid, cvrisk.mboostLSS,
        Families,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
        LogNormalLSS, LogNormalMu, LogNormalSigma,
        LogLogLSS, LogLogMu, LogLogSigma,
-       WeibullLSS, WeibullMu, WeibullSigma)
+       GaussianLSS, GaussianMu, GaussianSigma,
+       GammaLSS, GammaMu, GammaSigma,
+       BetaLSS, BetaMu, BetaPhi,
+       WeibullLSS, WeibullMu, WeibullSigma,
+       ZIPoLSS, ZINBLSS,
+       gamlss.Families, as.families,
+       gamlss1parMu,
+       gamlss2parMu, gamlss2parSigma,
+       gamlss3parMu, gamlss3parSigma, gamlss3parNu,
+       gamlss4parMu, gamlss4parSigma, gamlss4parNu, gamlss4parTau)
 
 S3method("[", mboostLSS)
 S3method(print, mboostLSS)
@@ -22,11 +33,23 @@ S3method(risk, mboostLSS)
 S3method(mstop, oobag)
 S3method(mstop, mboostLSS)
 
+S3method(model.weights, default)
+S3method(model.weights, mboostLSS)
+
+S3method(cvrisk, mboostLSS)
+S3method(print, cvriskLSS)
+S3method(plot, cvriskLSS)
+S3method(mstop, cvriskLSS)
+
 S3method(coef, mboostLSS)
 S3method(coef, glmboostLSS)
 
 S3method(plot, glmboostLSS)
 S3method(plot, gamboostLSS)
 
+S3method(plot, predint)
+
 S3method(fitted, mboostLSS)
 S3method(predict, mboostLSS)
+
+S3method(update, mboostLSS)

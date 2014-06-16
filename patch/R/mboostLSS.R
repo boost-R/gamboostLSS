@@ -3,54 +3,47 @@
 
 ### (glm/gam/m/black)boostLSS functions
 
-mboostLSS <- function(formula, data = list(), families = list(),
+mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                       control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = mboost)
-    attr(fit, "call") <- cl
+                         fun = mboost, funchar = "mboost", call = cl)
     return(fit)
 }
 
-glmboostLSS <- function(formula, data = list(), families = list(),
+glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = glmboost)
-    attr(fit, "call") <- cl
+                         fun = glmboost, funchar = "glmboost", call = cl)
     return(fit)
 }
 
-gamboostLSS <- function(formula, data = list(), families = list(),
+gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = gamboost)
-    attr(fit, "call") <- cl
+                         fun = gamboost, funchar = "gamboost", call = cl)
     return(fit)
 }
 
-blackboostLSS <- function(formula, data = list(), families = list(),
+blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL, ...){
     cl <- match.call()
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
-                         fun = blackboost)
-    attr(fit, "call") <- cl
+                         fun = blackboost, funchar = "blackboost", call = cl)
     return(fit)
 }
 
-###
-# Todo:
-# allow to specify a list of formulas (in formula)
-mboostLSS_fit <- function(formula, data = list(), families = list(),
-                          control = boost_control(), weights = NULL,
-                          fun = mboost, ...){
 
-    cl <- match.call()
+### work horse for fitting (glm/gam/m/black)boostLSS models
+mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
+                          control = boost_control(), weights = NULL,
+                          fun = mboost, funchar = "mboost", call = NULL, ...){
 
     if (length(families) == 0)
         stop(sQuote("families"), " not specified")
@@ -58,7 +51,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     if ("offset" %in% names(list(...)))
         stop("Do not use argument ", sQuote("offset"),
              ". Please specify offsets via families")
-    ### Use mu in family to specify offset in mu-family etc.
+    ### Use mu in "families" to specify offset in mu-family etc.
 
     if (is.list(formula)){
         if (!all(names(formula) %in% names(families)) ||
@@ -83,44 +76,12 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         formula <- tmp
     }
 
-    mstop <- control$mstop
+    mstop <- mstoparg <- control$mstop
     control$mstop <- 1
-
-    if (is.list(mstop)) {
-        if (!all(names(mstop) %in% names(families)) ||
-            length(unique(names(mstop))) != length(names(families)))
-            stop(sQuote("mstop"), " can be either a scalar or a named list",
-                 " of mstop values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        mstop <- mstop[names(families)] ## sort in order of families
-        mstop <- unlist(mstop)
-    } else {
-        if(length(mstop) != 1)
-            stop(sQuote("mstop"), " can be either a scalar or a named list",
-                 " of mstop values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        mstop <- rep(mstop, length(families))
-        names(mstop) <- names(families)
-    }
+    mstop <- check(mstop, "mstop", names(families))
 
     nu <- control$nu
-
-    if (is.list(nu)) {
-        if (!all(names(nu) %in% names(families)) ||
-            length(unique(names(nu))) != length(names(families)))
-            stop(sQuote("nu"), " can be either a scalar or a named list",
-                 " of nu values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        nu <- nu[names(families)] ## sort in order of families
-        nu <- unlist(nu)
-    } else {
-        if(length(nu) != 1)
-            stop(sQuote("nu"), " can be either a scalar or a named list",
-                 " of nu values with same names as ",  sQuote("families"), "in ",
-                 sQuote("boost_control"))
-        nu <- rep(nu, length(families))
-        names(nu) <- names(families)
-    }
+    nu <- check(nu, "nu", names(families))
 
     if (is.list(control$risk) || is.list(control$center) || is.list(control$trace))
         stop(sQuote("risk"),", ", sQuote("center"), " and ", sQuote("trace") ,
@@ -137,7 +98,7 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
             weights <- rep.int(1, NROW(response[[1]]))
         }
     }
-    weights <- mboost:::rescale_weights(weights)
+    weights <- rescale_weights(weights)
 
     fit <- vector("list", length = length(families))
     names(fit) <- names(families)
@@ -190,16 +151,18 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                 mvals[[j]][1:niter[j]] <- (start[j] + 1):(start[j] + niter[j])
         }
 
+        ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
         for (i in 1:max(niter)){
             for (j in mods){
                 ## update value of nuisance parameters
+                ## use response(fitted()) as this is much quicker than fitted(, type = response)
                 for (k in mods[-j])
-                    assign(names(fit)[k], fitted(fit[[k]], type = "response"),
+                    assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
                            environment(get("ngradient", environment(fit[[j]]$subset))))
                 ## update value of u, i.e. compute ngradient with new nuisance parameters
-                ENV <- environment(fit[[j]]$subset)
-                ENV[["u"]] <- ENV[["ngradient"]](ENV[["y"]], ENV[["fit"]],
-                                                 ENV[["weights"]])
+
+                ENV[[j]][["u"]] <- ENV[[j]][["ngradient"]](ENV[[j]][["y"]], ENV[[j]][["fit"]],
+                                                           ENV[[j]][["weights"]])
                 # same as:
                 # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
 
@@ -219,11 +182,6 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
         return(TRUE)
     }
 
-    #if (all(mstop == 1)){
-    #    class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
-    #    return(fit)
-    #}
-
     if (any(mstop > 1)){
         ## actually go for initial mstop iterations!
         firstRun <- TRUE
@@ -231,7 +189,8 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     }
 
     firstRun <- FALSE
-    class(fit) <- c(paste(cl$fun, "LSS", sep=""), "mboostLSS")
+
+    class(fit) <- c(paste(funchar, "LSS", sep=""), "mboostLSS")
 
     ### update to a new number of boosting iterations mstop
     ### i <= mstop means less iterations than current
@@ -239,12 +198,17 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
     ### updates take place in THIS ENVIRONMENT,
     ### some models are CHANGED!
     attr(fit, "subset") <- function(i) {
-        if (length(i) == 1)
-            i <- rep(i, length(fit))
+
+        i <- check(i, "mstop", names(families))
 
         msf <- mstop(fit)
         niter <- i - msf
-        minStart <- min(msf[niter != 0], i[niter != 0])
+        if (all(niter == 0)) {
+            ## make nothing happen with the model
+            minStart <- max(msf)
+        } else {
+            minStart <- min(msf[niter != 0], i[niter != 0])
+        }
 
         ## check if minStart bigger than mstop of parameters that are not touched
         #if (length(msf[niter == 0]) > 0 && minStart < min(msf[niter == 0]))
@@ -271,9 +235,9 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
                })
 
             class(fit) <- cf
-
-            cat("Model first reduced to mstop = ", minStart, ".\n",
-                "Now continue ...\n", sep ="")
+            if (trace)
+                cat("Model first reduced to mstop = ", minStart, ".\n",
+                    "Now continue ...\n", sep ="")
         }
 
         ## now increase models (when necessary)
@@ -286,5 +250,32 @@ mboostLSS_fit <- function(formula, data = list(), families = list(),
 
         mstop <<- i
     }
+
+    attr(fit, "(weights)") <- weights  ## attach weights used for fitting
+
+    ## update to new weights; just a fresh start
+    attr(fit, "update") <- function(weights = NULL, oobweights = NULL,
+                                    risk = NULL, trace = NULL, mstop = NULL) {
+        if (is.null(mstop)) {
+            control$mstop <- mstoparg
+        } else {
+            control$mstop <- mstop
+        }
+        if (!is.null(risk))
+            control$risk <- risk
+        if (!is.null(trace))
+            control$trace <- trace
+        ## re-use user specified offset only
+        ## (since it depends on weights otherwise)
+        ## this is achieved via a re-evaluation of the families argument
+        mboostLSS_fit(formula = formula, data = data,
+                      families = eval(call[["families"]]), weights = weights,
+                      control = control, fun = fun, funchar = funchar,
+                      call = call, oobweights = oobweights)
+    }
+    attr(fit, "control") <- control
+    attr(fit, "call") <- call
+    attr(fit, "data") <- data
+    attr(fit, "families") <- families
     return(fit)
 }

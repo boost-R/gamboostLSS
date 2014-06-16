@@ -1,6 +1,39 @@
+		CHANGES in `gamboostLSS' VERSION 1.1-1 (2014-06-16, r104)
+
+  o  re-added tests
+  o  changed \dontrun to \donttest in examples
+
+
+		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-06-12, r103)
+
+  o  added new function cvrisk for generic cross-validation (gamboostLSS now
+     requires mboost >= 2.2-3 for the generic function definition)
+  o  added a function to obtain cross-validation grids (make_grid)
+
+  o  added new function as.families to include gamlss families in gamboostLSS
+  o  added new families BetaLSS, GammaLSS, GaussianLSS, ZIPoLSS, ZINBLSS
+  o  GaussianLSS is now the default family
+
+  o  added new functions predint() and plot(predint()) to obtain and plot
+     marginal prediction intervals
+
+  o  added stabilization factor for negative gradients (MAD): 
+     turn on the stabilization by using
+     > options(gamboostLSS_stab_ngrad = TRUE)
+  
+  o  added new data sets india and india.bnd
+
+  o  bugfix: Speed of model fitting was dependent on iteration, 
+     i.e. the algorithm got slower for larger mstop values
+
+  o  lots of minor improvements in the interface and methods
+
+  o  improved manuals in various places
+
+
 		CHANGES in `gamboostLSS' VERSION 1.0-3 (2011-11-16, r49)
 
-  o  fixed potential problem that might occur if users specify different 
+  o  fixed potential problem that might occur if users specify different
      outcomes for different components
 
   o  fixed bug in regtest-gamboostLSS.R
@@ -12,7 +45,7 @@
 
 		CHANGES in `gamboostLSS' VERSION 1.0-2 (2011-08-31)
 
-  o  changed the way we use environments 
+  o  changed the way we use environments
      (to get rid of note: no visible binding)
 
 

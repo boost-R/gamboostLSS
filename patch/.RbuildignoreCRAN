@@ -1,3 +1,4 @@
-tests
+tests/.*\.Rout\.save$
+tests/Examples
 ^\..*
 vignettes/.*\.Rout\.save$

@@ -1,4 +1,4 @@
-		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-06-16, r104)
+		CHANGES in `gamboostLSS' VERSION 1.1-1 (2014-06-16, r104)
 
   o  re-added tests
   o  changed \dontrun to \donttest in examples

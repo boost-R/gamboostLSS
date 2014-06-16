@@ -1,4 +1,11 @@
 ------------------------------------------------------------------------
+r104 | hofner | 2014-06-16 15:05:18 +0200 (Mo, 16. Jun 2014) | 4 Zeilen
+
+RELEASE VERSION gamboostLSS 1.1-1
+- re-added tests
+- changed \dontrun to \donttest in examples
+
+------------------------------------------------------------------------
 r103 | hofner | 2014-06-12 11:29:48 +0200 (Do, 12. Jun 2014) | 6 Zeilen
 
 SECOND TRY: RELEASE VERSION gamboostLSS 1.1-0
