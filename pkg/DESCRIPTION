@@ -1,8 +1,8 @@
 Package: gamboostLSS
 Type: Package
 Title: Boosting Methods for GAMLSS
-Version: 1.1-0
-Date: 2014-06-12
+Version: 1.1-1
+Date: 2014-06-16
 Author: Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
 Maintainer: Benjamin Hofner <benjamin.hofner@fau.de>
 Description: Boosting models for fitting generalized additive models for
@@ -13,4 +13,4 @@ Suggests: gamlss, BayesX, gamlss.dist
 LazyLoad: yes
 LazyData: yes
 License: GPL-2
-URL: http://r-forge.r-project.org/projects/gamboostlss/
+URL: For development versions and source code see http://r-forge.r-project.org/projects/gamboostlss/

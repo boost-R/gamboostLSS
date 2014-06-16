@@ -258,8 +258,7 @@ newStudentTDf <- function(mu, df){
 newStudentT <- Families(mu= newStudentTMu(mu=mu, df=df),
                         df=newStudentTDf(mu=mu, df=df))
 
-
-### usage of the new Student's t distribution:
+\donttest{### usage of the new Student's t distribution:
 library(gamlss)   ## required for rTF
 set.seed(1907)
 n <- 5000
@@ -268,20 +267,20 @@ x2 <- runif(n)
 mu <- 2 -1*x1 - 3*x2
 df <- exp(1 + 0.5*x1 )
 y <- rTF(n = n, mu = mu, nu = df)
-
+ 
 ## model fitting
 model <- glmboostLSS(y ~ x1 + x2, families = newStudentT,
                      control = boost_control(mstop = 100),
                      center = TRUE)
 ## shrinked effect estimates
 coef(model, off2int = TRUE)
-
+ 
 ## compare to pre-defined three parametric t-distribution:
 model2 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
                       control = boost_control(mstop = 100),
                       center = TRUE)
 coef(model2, off2int = TRUE)
-
+ 
 ## with effect on sigma:
 sigma <- 3+ 1*x2
 y <- rTF(n = n, mu = mu, nu = df, sigma=sigma)
@@ -289,6 +288,7 @@ model3 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
                       control = boost_control(mstop = 100),
                       center = TRUE)
 coef(model3, off2int = TRUE)
+}
 
 }
 \keyword{ models }

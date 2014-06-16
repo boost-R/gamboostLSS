@@ -231,4 +231,4 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > 
 > proc.time()
    user  system elapsed 
- 22.421   0.116  22.652 
+ 23.305   0.184  23.625 

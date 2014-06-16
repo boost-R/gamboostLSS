@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------
+r103 | hofner | 2014-06-12 11:29:48 +0200 (Do, 12. Jun 2014) | 6 Zeilen
+
+SECOND TRY: RELEASE VERSION gamboostLSS 1.1-0
+
+- updated release SOPs and added several helper tools
+- updated tests
+- added to helper functions to package in order to avoid note on using ':::'
+
+------------------------------------------------------------------------
 r102 | hofner | 2014-06-11 17:00:23 +0200 (Mi, 11. Jun 2014) | 2 Zeilen
 
 RELEASE VERSION gamboostLSS 1.1-0

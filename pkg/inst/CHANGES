@@ -1,3 +1,9 @@
+		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-06-16, r104)
+
+  o  re-added tests
+  o  changed \dontrun to \donttest in examples
+
+
 		CHANGES in `gamboostLSS' VERSION 1.1-0 (2014-06-12, r103)
 
   o  added new function cvrisk for generic cross-validation (gamboostLSS now

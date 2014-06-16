@@ -442,4 +442,4 @@ Error in Families(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSi
 > 
 > proc.time()
    user  system elapsed 
- 13.408   0.156  13.869 
+ 13.920   0.152  14.391 

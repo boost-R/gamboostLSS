@@ -27,7 +27,7 @@
     install.packages(c("gamlss", "BayesX", "gamlss.dist", "mboost"))
 
   Quit R and run
-   ../relative/path/to/R-devel/bin/R CMD check --as-cran gamboostLSS_XXX.tar.gz
+   ../relative/path/to/R-devel/bin/R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
 
 
   Making a release
@@ -38,7 +38,7 @@
     Update NEWS
     Update ChangeLog (see above)
 
-    R CMD build --resave-data --compact-vignettes pkg && R CMD check --as-cran gamboostLSS_XXX.tar.gz
+    R CMD build --resave-data --compact-vignettes pkg && R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
 
     Run check with R-devel
        (see section "Checking the package with latest development version of R")
