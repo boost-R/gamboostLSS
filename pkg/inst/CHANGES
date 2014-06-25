@@ -1,3 +1,14 @@
+		CHANGES in `gamboostLSS' VERSION 1.1-2 (2014-06-25, r106)
+
+  o  added survival to suggests and load it in tests to reflect recent changes
+     in mboost
+
+  o  removed the generic function risk() as this function is now defined in mboost
+
+  o  bugfix: check if response is correct for the family before the offset is
+     computed
+
+
 		CHANGES in `gamboostLSS' VERSION 1.1-1 (2014-06-16, r104)
 
   o  re-added tests
@@ -17,13 +28,13 @@
   o  added new functions predint() and plot(predint()) to obtain and plot
      marginal prediction intervals
 
-  o  added stabilization factor for negative gradients (MAD): 
+  o  added stabilization factor for negative gradients (MAD):
      turn on the stabilization by using
      > options(gamboostLSS_stab_ngrad = TRUE)
-  
+
   o  added new data sets india and india.bnd
 
-  o  bugfix: Speed of model fitting was dependent on iteration, 
+  o  bugfix: Speed of model fitting was dependent on iteration,
      i.e. the algorithm got slower for larger mstop values
 
   o  lots of minor improvements in the interface and methods

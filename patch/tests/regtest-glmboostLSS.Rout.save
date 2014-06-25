@@ -22,12 +22,9 @@ Type 'q()' to quit R.
 Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
-Loading required package: survival
-Loading required package: splines
-This is mboost 2.2-3. See 'package?mboost' and the NEWS file
+This is mboost 2.3-0. See 'package?mboost' and the NEWS file
 for a complete list of changes.
-Note: The default for the computation of the degrees of freedom has changed.
-      For details see section 'Global Options' of '?bols'.
+
 
 Attaching package: 'gamboostLSS'
 
@@ -37,6 +34,7 @@ The following object is masked from 'package:stats':
 
 > require("gamlss")
 Loading required package: gamlss
+Loading required package: splines
 Loading required package: gamlss.data
 Loading required package: gamlss.dist
 Loading required package: MASS
@@ -51,13 +49,6 @@ Loading required package: nlme
  **********   GAMLSS Version 4.3-0  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
-
-
-Attaching package: 'gamlss'
-
-The following object is masked from 'package:survival':
-
-    ridge
 
 > 
 > set.seed(1907)
@@ -267,8 +258,8 @@ In mboostLSS_fit(formula = formula, data = data, families = families,  :
 > sapply(model2, function(comps) comps$offset)
        mu     sigma        df 
 1.1602444 1.1778894 0.8176417 
-> stopifnot(model2[[1]]$offset == model[[1]]$offset)
-> stopifnot(model2[[2]]$offset == model[[2]]$offset)
+> stopifnot((model2[[1]]$offset - model[[1]]$offset) < sqrt(.Machine$double.eps))
+> stopifnot((model2[[2]]$offset - model[[2]]$offset) < sqrt(.Machine$double.eps))
 > stopifnot(model2[[3]]$offset != model[[3]]$offset)
 > 
 > ### even better check for offset-issue when different responses are used
@@ -288,10 +279,10 @@ Warning message:
 In mboostLSS_fit(formula = formula, data = data, families = families,  :
   responses differ for the components
 > ## offset for mu must be equal to the mean of y per default
-> stopifnot(model$mu$offset == mean(y))
+> stopifnot((model$mu$offset - mean(y)) < sqrt(.Machine$double.eps))
 > ## offset for sigma must be equal to the log of the standard deviation of y2 per
 > ## default
-> stopifnot(model$sigma$offset == log(sd(y2)))
+> stopifnot((model$sigma$offset - log(sd(y2))) < sqrt(.Machine$double.eps))
 > 
 > 
 > ### check weights interface
@@ -325,8 +316,8 @@ Final risk: 13810.99
 [  1] ........
 Final risk: 13810.99 
 > 
-> stopifnot(all.equal(coef(model),coef(model2)))
+> stopifnot(all.equal(coef(model), coef(model2)))
 > 
 > proc.time()
    user  system elapsed 
-  9.812   0.180  10.196 
+  8.080   0.196   8.478 

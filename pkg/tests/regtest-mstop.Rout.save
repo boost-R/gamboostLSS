@@ -23,12 +23,9 @@ Type 'q()' to quit R.
 Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
-Loading required package: survival
-Loading required package: splines
-This is mboost 2.2-3. See 'package?mboost' and the NEWS file
+This is mboost 2.3-0. See 'package?mboost' and the NEWS file
 for a complete list of changes.
-Note: The default for the computation of the degrees of freedom has changed.
-      For details see section 'Global Options' of '?bols'.
+
 
 Attaching package: 'gamboostLSS'
 
@@ -401,4 +398,4 @@ Final risk: 3261.092
 > 
 > proc.time()
    user  system elapsed 
-  5.248   0.108   5.572 
+  4.708   0.108   5.659 

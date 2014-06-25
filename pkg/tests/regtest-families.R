@@ -59,7 +59,6 @@ coef(model)
 
 ### check survival families
 
-# LogNormalLSS()
 x1 <- runif(1000)
 x2 <- runif(1000)
 x3 <- runif(1000)
@@ -67,6 +66,20 @@ w <- rnorm(1000)
 
 time <-  exp(3 + 1*x1 +2*x2  + exp(0.2 * x3) * w)
 status <- rep(1, 1000)
+
+## check if error messages are correct
+try(glmboost(time ~ x1 + x2 + x3, family = Lognormal(),
+             control = boost_control(trace = TRUE), center = TRUE))
+try(glmboostLSS(time ~ x1 + x2 + x3, families = LogNormalLSS(),
+                control = boost_control(trace = TRUE), center = TRUE))
+require("survival")
+try(glmboostLSS(list(mu = Surv(time, status) ~ x1 + x2 + x3,
+                     sigma = time ~ x1 + x2 + x3), families = LogNormalLSS(),
+                control = boost_control(trace = TRUE), center = TRUE))
+
+## check results
+
+# LogNormalLSS()
 (m1 <- survreg(Surv(time, status) ~ x1 + x2 + x3, dist="lognormal"))
 model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogNormalLSS(),
                      control = boost_control(trace = TRUE), center = TRUE)

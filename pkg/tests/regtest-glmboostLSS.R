@@ -81,8 +81,8 @@ model2 <- glmboostLSS(list(mu = y ~ x2,
                       center = TRUE)
 sapply(model, function(comps) comps$offset)
 sapply(model2, function(comps) comps$offset)
-stopifnot(model2[[1]]$offset == model[[1]]$offset)
-stopifnot(model2[[2]]$offset == model[[2]]$offset)
+stopifnot((model2[[1]]$offset - model[[1]]$offset) < sqrt(.Machine$double.eps))
+stopifnot((model2[[2]]$offset - model[[2]]$offset) < sqrt(.Machine$double.eps))
 stopifnot(model2[[3]]$offset != model[[3]]$offset)
 
 ### even better check for offset-issue when different responses are used
@@ -99,10 +99,10 @@ dat <- data.frame(x1, x2, x3, x4, y, y2)
 model <- glmboostLSS(formula=list(mu=y~x1+x2, sigma=y2~x3+x4),
                      families=GaussianLSS(), data=dat)
 ## offset for mu must be equal to the mean of y per default
-stopifnot(model$mu$offset == mean(y))
+stopifnot((model$mu$offset - mean(y)) < sqrt(.Machine$double.eps))
 ## offset for sigma must be equal to the log of the standard deviation of y2 per
 ## default
-stopifnot(model$sigma$offset == log(sd(y2)))
+stopifnot((model$sigma$offset - log(sd(y2))) < sqrt(.Machine$double.eps))
 
 
 ### check weights interface
@@ -132,4 +132,4 @@ model2 <- glmboostLSS(list(mu = y ~ x2,
                       control = boost_control(mstop = 10, trace =TRUE),
                       center = TRUE)
 
-stopifnot(all.equal(coef(model),coef(model2)))
+stopifnot(all.equal(coef(model), coef(model2)))

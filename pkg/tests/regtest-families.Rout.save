@@ -22,12 +22,9 @@ Type 'q()' to quit R.
 Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
-Loading required package: survival
-Loading required package: splines
-This is mboost 2.2-3. See 'package?mboost' and the NEWS file
+This is mboost 2.3-0. See 'package?mboost' and the NEWS file
 for a complete list of changes.
-Note: The default for the computation of the degrees of freedom has changed.
-      For details see section 'Global Options' of '?bols'.
+
 
 Attaching package: 'gamboostLSS'
 
@@ -37,6 +34,7 @@ The following object is masked from 'package:stats':
 
 > require("gamlss")
 Loading required package: gamlss
+Loading required package: splines
 Loading required package: gamlss.data
 Loading required package: gamlss.dist
 Loading required package: MASS
@@ -51,13 +49,6 @@ Loading required package: nlme
  **********   GAMLSS Version 4.3-0  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
-
-
-Attaching package: 'gamlss'
-
-The following object is masked from 'package:survival':
-
-    ridge
 
 > 
 > 
@@ -242,7 +233,6 @@ attr(,"offset")
 > 
 > ### check survival families
 > 
-> # LogNormalLSS()
 > x1 <- runif(1000)
 > x2 <- runif(1000)
 > x3 <- runif(1000)
@@ -250,6 +240,37 @@ attr(,"offset")
 > 
 > time <-  exp(3 + 1*x1 +2*x2  + exp(0.2 * x3) * w)
 > status <- rep(1, 1000)
+> 
+> ## check if error messages are correct
+> try(glmboost(time ~ x1 + x2 + x3, family = Lognormal(),
++              control = boost_control(trace = TRUE), center = TRUE))
+Error in family@check_y(y) : 
+  response is not an object of class 'Surv' but 'family = Lognormal()'
+> try(glmboostLSS(time ~ x1 + x2 + x3, families = LogNormalLSS(),
++                 control = boost_control(trace = TRUE), center = TRUE))
+Error in family@check_y(y) : 
+  response is not an object of class 'Surv' but 'families = LogNormalLSS()'
+> require("survival")
+Loading required package: survival
+
+Attaching package: 'survival'
+
+The following object is masked from 'package:gamlss':
+
+    ridge
+
+> try(glmboostLSS(list(mu = Surv(time, status) ~ x1 + x2 + x3,
++                      sigma = time ~ x1 + x2 + x3), families = LogNormalLSS(),
++                 control = boost_control(trace = TRUE), center = TRUE))
+Error in family@check_y(y) : 
+  response is not an object of class 'Surv' but 'family = LogNormalLSS()'
+In addition: Warning message:
+In mboostLSS_fit(formula = formula, data = data, families = families,  :
+  responses differ for the components
+> 
+> ## check results
+> 
+> # LogNormalLSS()
 > (m1 <- survreg(Surv(time, status) ~ x1 + x2 + x3, dist="lognormal"))
 Call:
 survreg(formula = Surv(time, status) ~ x1 + x2 + x3, dist = "lognormal")
@@ -442,4 +463,4 @@ Error in Families(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSi
 > 
 > proc.time()
    user  system elapsed 
- 13.920   0.152  14.391 
+  9.236   0.108   9.672 

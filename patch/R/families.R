@@ -324,7 +324,7 @@ LogNormalMu <- function (mu = NULL, sigma = NULL){
            check_y = function(y) {
                if (!inherits(y, "Surv"))
                    stop("response is not an object of class ", sQuote("Surv"),
-                        " but ", sQuote("family = Lognormal()"))
+                        " but ", sQuote("families = LogNormalLSS()"))
                y
            }, name = "Log-Normal AFT Model: mu (id link)")
 }
@@ -369,7 +369,7 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL){
            check_y = function(y) {
                if (!inherits(y, "Surv"))
                    stop("response is not an object of class ", sQuote("Surv"),
-                        " but ", sQuote("family = Lognormal()"))
+                        " but ", sQuote("family = LogNormalLSS()"))
                y
            }, name = "Log-Normal AFT Model: sigma (log link)")
 }
@@ -436,7 +436,7 @@ LogLogMu <- function (mu = NULL, sigma = NULL){
            check_y = function(y) {
                if (!inherits(y, "Surv"))
                    stop("response is not an object of class ", sQuote("Surv"),
-                        " but ", sQuote("family = Loglog()"))
+                        " but ", sQuote("families = LogLogLSS()"))
                y
            }, name = "Log-Logistic AFT Model: mu (id link)")
 }
@@ -482,7 +482,7 @@ LogLogSigma <- function (mu = NULL, sigma = NULL){
            check_y = function(y) {
                if (!inherits(y, "Surv"))
                    stop("response is not an object of class ", sQuote("Surv"),
-                        " but ", sQuote("family = Loglog()"))
+                        " but ", sQuote("families = LogLogLSS()"))
                y
            },  name = "Log-Logistic AFT Model: sigma (log link)")
 }
@@ -544,7 +544,7 @@ WeibullMu <- function (mu = NULL, sigma = NULL){
            check_y = function(y) {
                if (!inherits(y, "Surv"))
                    stop("response is not an object of class ", sQuote("Surv"),
-                        " but ", sQuote("family = Weibull()"))
+                        " but ", sQuote("families = WeibullLSS()"))
                y
            }, name = "Weibull AFT Model: mu (id link)")
 }
@@ -590,7 +590,7 @@ WeibullSigma <- function (mu = NULL, sigma = NULL){
            check_y = function(y) {
                if (!inherits(y, "Surv"))
                    stop("response is not an object of class ", sQuote("Surv"),
-                        " but ", sQuote("family = Weibull()"))
+                        " but ", sQuote("families = WeibullLSS()"))
                y
            }, name = "Weibull AFT Model: sigma (log link)")
 }

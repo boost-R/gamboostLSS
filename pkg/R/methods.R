@@ -28,10 +28,6 @@ coef.glmboostLSS <- function(object, which = NULL,
                    parameter = parameter, off2int = off2int, ...)
 }
 
-
-risk <- function(object, ...)
-    UseMethod("risk", object)
-
 risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)

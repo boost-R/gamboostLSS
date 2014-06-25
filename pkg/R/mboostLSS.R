@@ -109,8 +109,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     names(offset) <- names(families)
     for (j in mods){
         if (!is.list(response)) {
+            response <- check_y_family(response, families[[j]])
             offset[[j]] <- families[[j]]@offset(y = response, w = weights)
         } else {
+            response[[j]] <- check_y_family(response[[j]], families[[j]])
             offset[[j]] <- families[[j]]@offset(y = response[[j]], w = weights)
         }
         for (k in mods){

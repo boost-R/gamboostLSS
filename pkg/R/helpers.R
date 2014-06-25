@@ -98,3 +98,8 @@ do_trace <- function(current, mstart, risk,
         cat("\nFinal risk:", risk[current + mstart], "\n")
     }
 }
+
+## helper function copied from mboost_2.2-3
+### check measurement scale of response for some losses
+check_y_family <- function(y, family)
+    family@check_y(y)
