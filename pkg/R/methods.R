@@ -158,6 +158,11 @@ PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
     if (length(which) != 1 || !is.character(which))
         stop("Please specify the variable for the marginal prediction interval.")
 
+    var <- get_data(x, which = which)
+    if (ncol(var) > 1 || is.factor(var))
+        stop("Prediction intervals are currently only implemented for ",
+             "base-learners of one numeric variable")
+
     pred_vars <- lapply(x, extract, what = "variable.names")
     pred_vars <- unique(unlist(pred_vars))
     if ("(Intercept)" %in% pred_vars)

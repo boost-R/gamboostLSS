@@ -65,8 +65,12 @@ mean_mod <- function(x) {
     if (is.numeric(x))
         return(mean(x, na.rm = TRUE))
     ## else compute and return modus
-    if (is.character(x) || is.factor(x))
-        return(names(which.max(table(x)))[1])
+    if (is.character(x) || is.factor(x)) {
+        ret <- names(which.max(table(x)))[1]
+        if (is.factor(x))
+            ret <- factor(ret, levels = levels(x))
+        return(ret)
+    }
     stop("not implemented for data type ", class(x))
 }
 

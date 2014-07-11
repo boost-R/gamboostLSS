@@ -1,4 +1,18 @@
 ------------------------------------------------------------------------
+r106 | hofner | 2014-06-25 11:25:01 +0200 (Mi, 25. Jun 2014) | 6 Zeilen
+
+RELEASE VERSION gamboostLSS 1.1-2
+- make mboost 2.3-0 happy (by adding Suggests: survival)
+- make tests platform independent
+- removed generic risk function (which is available in mboost >= 2.3-0)
+- improved checking of responses
+
+------------------------------------------------------------------------
+r105 | hofner | 2014-06-16 15:14:51 +0200 (Mo, 16. Jun 2014) | 2 Zeilen
+
+updated patch version (now synced with pkg)
+
+------------------------------------------------------------------------
 r104 | hofner | 2014-06-16 15:05:18 +0200 (Mo, 16. Jun 2014) | 4 Zeilen
 
 RELEASE VERSION gamboostLSS 1.1-1
