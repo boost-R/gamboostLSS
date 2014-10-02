@@ -226,7 +226,7 @@ print.mboostLSS <- function(x, ...){
 fitted.mboostLSS <- function(object, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    sapply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
+    myApply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
            mod = object, ...)
 }
 
@@ -238,16 +238,16 @@ predict.mboostLSS <- function(object, newdata = NULL,
                               parameter = names(object), ...) {
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    sapply(parameter, function(i, mod, ...)
-             predict(mod[[i]], newdata = newdata, type = type, which = which,
-                     aggregate = aggregate, ...),
-           mod = object, ...)
+    myApply(parameter, function(i, mod, ...)
+            predict(mod[[i]], newdata = newdata, type = type, which = which,
+                    aggregate = aggregate, ...),
+            mod = object, ...)
 }
 
 update.mboostLSS <- function(object, weights, oobweights = NULL,
-                             risk = NULL, mstop = NULL, ...) {
+                             risk = NULL, trace = NULL, mstop = NULL, ...) {
     attr(object, "update")(weights = weights, oobweights = oobweights,
-                           risk = risk, mstop = mstop, ...)
+                           risk = risk, trace = trace, mstop = mstop, ...)
 }
 
 ## generic version of model.weights (see stats::model.weights)

@@ -107,3 +107,14 @@ do_trace <- function(current, mstart, risk,
 ### check measurement scale of response for some losses
 check_y_family <- function(y, family)
     family@check_y(y)
+
+################################################################################
+# sapply function that differentiates between data.frames and (numeric) vectors
+myApply <- function(X, FUN, ...) {
+    ret <- lapply(X, FUN, ...)
+    if (length(ret) == 1)
+        ret <- ret[[1]]
+    return(ret)
+}
+
+
