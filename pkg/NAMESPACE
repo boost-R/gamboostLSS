@@ -1,4 +1,5 @@
 import(mboost)
+import(stabs)
 
 export(glmboostLSS,
        gamboostLSS,
@@ -8,6 +9,7 @@ export(glmboostLSS,
        model.weights,
        PI, predint, plot.predint,
        make.grid, cvrisk.mboostLSS,
+       stabsel.mboostLSS,
        Families,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
@@ -39,6 +41,8 @@ S3method(cvrisk, mboostLSS)
 S3method(print, cvriskLSS)
 S3method(plot, cvriskLSS)
 S3method(mstop, cvriskLSS)
+
+S3method(stabsel, mboostLSS)
 
 S3method(coef, mboostLSS)
 S3method(coef, glmboostLSS)

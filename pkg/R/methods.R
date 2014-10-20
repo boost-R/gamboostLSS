@@ -261,6 +261,145 @@ model.weights.mboostLSS <- function(x, ...)
     attr(x, "(weights)")
 
 
+stabsel.mboostLSS <- function(x, cutoff, q, PFER,
+                              mstop = NULL,
+                    folds = subsample(model.weights(x), B = B),
+                    B = ifelse(sampling.type == "MB", 100, 50),
+                    assumption = c("unimodal", "r-concave", "none"),
+                    sampling.type = c("SS", "MB"),
+                    papply = mclapply, verbose = TRUE, FWER, eval = TRUE, ...) {
+
+    cll <- match.call()
+    p <- sum(sapply(x, function(obj) length(variable.names(obj))))
+    n <- nrow(attr(x, "data"))
+
+    ## extract names of base-learners (and add paramter name)
+    nms <- lapply(x, function(obj) variable.names(obj))
+    nms <- lapply(1:length(nms), function(i)
+        paste(nms[[i]], names(nms)[i], sep = "."))
+
+    sampling.type <- match.arg(sampling.type)
+    if (sampling.type == "MB")
+        assumption <- "none"
+    else
+        assumption <- match.arg(assumption)
+
+    ## check mstop
+    if (is.null(mstop))
+        mstop <- mstop(x)
+    mstop <- check(mstop, "mstop", names(x))
+    if (length(unique(mstop)) != 1)
+        warning("Usually one should use the same ", sQuote("mstop"),
+                " value for all components for stability selection.")
+
+    ## define the fitting function (args.fitfun is not used but needed for
+    ## compatibility with run_stabsel
+    fit_model <- function(i, folds, q, args.fitfun) {
+        ## start by fitting 1 step in each component
+        mod <- update(x, weights = folds[, i], mstop = 1)
+        ## make sure dispatch works correctly
+        class(mod) <- class(x)
+        xs <- selected(mod)
+        nsel <- length(mod)
+        ## now update model until we obtain q different base-learners altogether
+        for (m in 1:max(mstop)) {
+            if (nsel >= q)
+                break
+            for (j in 1:length(mod)) {
+                if (m < mstop[j]) {
+                    tmp <- mstop(mod)
+                    tmp[j] <- tmp[j] + 1
+                    mstop(mod) <- tmp
+                    xs <- selected(mod)
+                    nsel <- sum(sapply(xs, function(selection)
+                        length(unique(selection))))
+                }
+                if (nsel >= q)
+                    break
+            }
+        }
+        ## complete paths
+        if (any(sapply(xs, length) < mstop)) {
+            for (j in 1:length(xs)) {
+                start <- length(xs[[j]]) + 1
+                xs[[j]][start:mstop[j]] <- xs[[j]][1]
+            }
+        }
+
+        selected <- lapply(xs, unique)
+        ret <- lapply(1:length(selected), function(i) {
+            res <- logical(length(nms[[i]]))
+            names(res) <- nms[[i]]
+            res[selected[[i]]] <- TRUE
+            res
+        })
+        ret <- unlist(ret)
+        ## compute selection paths
+        sequences <- lapply(1:length(xs), function(i) {
+            res <- matrix(FALSE, nrow = length(nms[[i]]), ncol = mstop[[i]])
+            rownames(res) <- nms[[i]]
+            for (j in 1:mstop[[i]])
+                res[xs[[i]][j], j:mstop[[i]]] <- TRUE
+            res
+        })
+        if (any(mstop < max(mstop)))
+            stop("simply add the last column to the smaller matrices")
+        ## now merge sequences
+        for (i in 1:ncol(sequences[[1]])) {
+            for (j in 1:length(sequences)) {
+                if (i == 1) {
+                    if (j == 1) {
+                        other_params <- rep(FALSE, sum(sapply(sequences, nrow)[-1]))
+                        sequence <- matrix(c(sequences[[i]][, j],
+                                             other_params))
+                    } else {
+                        tmp <- unlist(lapply(sequences[1:j], function(x) x[,
+                                                                           i]))
+                        other_params <- rep(FALSE, sum(sapply(sequences,
+                                                              nrow)[-(1:j)]))
+                        tmp <- c(tmp, other_params)
+                        sequence <- cbind(sequence, tmp)
+                    }
+                } else {
+                    if (j < length(sequences)) {
+                        tmp <- unlist(c(lapply(sequences[1:j], function(x) x[, i]),
+                                        lapply(sequences[(j+1):length(sequences)],
+                                               function(x) x[, i - 1])))
+                    } else {
+                        tmp <- unlist(lapply(sequences[1:j], function(x) x[,
+                                                                           i]))
+                    }
+                    sequence <- cbind(sequence, tmp)
+                }
+            }
+        }
+        colnames(sequence) <- 1:ncol(sequence)
+        return(list(selected = ret, path = sequence))
+    }
+
+    ret <- run_stabsel(fitter = fit_model, args.fitter = list(),
+                 n = n, p = p, cutoff = cutoff, q = q,
+                 PFER = PFER, folds = folds, B = B, assumption = assumption,
+                 sampling.type = sampling.type, papply = papply,
+                 verbose = verbose, FWER = FWER, eval = eval,
+                 names = unlist(nms), ...)
+    #if (verbose){
+    #    qq <- sapply(ss, function(x) length(unique(x)))
+    #    sum_of_violations <- sum(qq < q)
+    #    if (sum_of_violations > 0)
+    #        warning(sQuote("mstop"), " too small in ",
+    #                sum_of_violations, " of the ", ncol(folds),
+    #                " subsampling replicates to select ", sQuote("q"),
+    #                " base-learners; Increase ", sQuote("mstop"),
+    #                " bevor applying ", sQuote("stabsel"))
+    #}
+
+    ret$call <- cll
+    ret$call[[1]] <- as.name("stabsel")
+    class(ret) <- c("stabsel", "stabsel_mboostLSS")
+    ret
+}
+
 ################################################################################
 ### helpers
 
