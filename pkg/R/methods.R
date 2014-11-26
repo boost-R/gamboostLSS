@@ -92,6 +92,25 @@ selected.mboostLSS <- function(object, parameter = names(object), ...){
     return(RET)
 }
 
+selected.stabsel_mboostLSS <- function(object, parameter = NULL, ...) {
+    ## extract parameters
+    param_count <- table(gsub(".*\\.", "", rownames(object$phat)))
+    ## set up a named list for the results
+    res <- vector("list", length(param_count))
+    names(res) <- names(param_count)
+    ## subtract the number of base-learners of the first components
+    param_count <- c(0, cumsum(param_count))
+    for (i in 1:length(res)) {
+        idx <- gsub(".*\\.", "", names(object$selected)) == names(res)[[i]]
+        res[[i]] <- object$selected[idx] - param_count[i]
+    }
+    if (!is.null(parameter))
+        res <- res[parameter]
+    if (length(res) == 1)
+        res <- res[[1]]
+    return(res)
+}
+
 
 plot.glmboostLSS <- function(x, main = names(x), parameter = names(x),
                              off2int = FALSE, ...){
@@ -396,7 +415,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
 
     ret$call <- cll
     ret$call[[1]] <- as.name("stabsel")
-    class(ret) <- c("stabsel", "stabsel_mboostLSS")
+    class(ret) <- c("stabsel_mboostLSS", "stabsel")
     ret
 }
 

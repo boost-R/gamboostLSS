@@ -43,6 +43,7 @@ S3method(plot, cvriskLSS)
 S3method(mstop, cvriskLSS)
 
 S3method(stabsel, mboostLSS)
+S3method(selected, stabsel_mboostLSS)
 
 S3method(coef, mboostLSS)
 S3method(coef, glmboostLSS)
