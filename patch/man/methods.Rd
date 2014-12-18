@@ -83,7 +83,7 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 
 ## update weights of the fitted model
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
-       risk = NULL, mstop = NULL, ...)
+       risk = NULL, trace = NULL, mstop = NULL, ...)
 
 ## extract model weights
 \method{model.weights}{mboostLSS}(x, ...)
@@ -169,6 +169,10 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
     to the risk type specified for model fitting via
     \code{\link{boost_control}}. For details and alternatives see there.
   }
+  \item{trace}{
+    a logical triggering printout of status information during the
+    fitting process.
+  }
   \item{mstop}{
     number of boosting iterations.
   }
@@ -221,8 +225,8 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
   The function \code{update} updates models fit with \pkg{gamboostLSS}
   and is primarily used within \code{\link[gamboostLSS]{cvrisk}}. It
   updates the weights and refits the model to the altered data.
-  Furthermore, the type of \code{risk} and the number of boosting
-  iterations \code{mstop} can be modified.
+  Furthermore, the type of \code{risk}, the \code{trace} and the number
+  of boosting iterations \code{mstop} can be modified.
 
   The function \code{model.weights} is a generic version of the same
   function provided by package \pkg{stats}, which is required to make

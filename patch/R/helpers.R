@@ -2,7 +2,7 @@
 
 check <- function(what, what_char, names) {
 
-    errormsg <- paste(sQuote(what_char), " can be either a scalar, a (named) vector or a (named) list",
+    errormsg <- paste0(sQuote(what_char), " can be either a scalar, a (named) vector or a (named) list",
                       " of ", what_char, " values with same names as ",  sQuote("families"), "in ",
                       sQuote("boost_control"))
 
@@ -65,8 +65,12 @@ mean_mod <- function(x) {
     if (is.numeric(x))
         return(mean(x, na.rm = TRUE))
     ## else compute and return modus
-    if (is.character(x) || is.factor(x))
-        return(names(which.max(table(x)))[1])
+    if (is.character(x) || is.factor(x)) {
+        ret <- names(which.max(table(x)))[1]
+        if (is.factor(x))
+            ret <- factor(ret, levels = levels(x))
+        return(ret)
+    }
     stop("not implemented for data type ", class(x))
 }
 
@@ -103,3 +107,14 @@ do_trace <- function(current, mstart, risk,
 ### check measurement scale of response for some losses
 check_y_family <- function(y, family)
     family@check_y(y)
+
+################################################################################
+# sapply function that differentiates between data.frames and (numeric) vectors
+myApply <- function(X, FUN, ...) {
+    ret <- lapply(X, FUN, ...)
+    if (length(ret) == 1)
+        ret <- ret[[1]]
+    return(ret)
+}
+
+

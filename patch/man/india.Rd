@@ -27,9 +27,10 @@ data(india.bnd)
 \format{
   A data frame with 4000 observations on the following 6 variables:
   \describe{
-    \item{\code{stunting}}{A numeric score for malnutrition which ranges
-      from -600 to 600, where negative values represent malnourished
-      children.}
+    \item{\code{stunting}}{A numeric z-score for malnutrition, stunted
+      growth to be more precise, which ranges from -6 to 6, where
+      negative values represent malnourished children. Children with
+      values below -2 are considered stunted (height-for-age).}
     \item{\code{cbmi}}{BMI of the child.}
     \item{\code{cage}}{Age of the child in months.}
     \item{\code{mbmi}}{BMI of the mother.}

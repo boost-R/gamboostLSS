@@ -123,7 +123,7 @@ qNBinomial <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
     ## require gamlss.dist
     if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
         stop("Please install package 'gamlss.dist' for using qNBinomial.")
-    qNBI(p = p, mu = mu, sigma = 1/sigma, lower.tail = lower.tail, log.p = log.p)
+    gamlss.dist::qNBI(p = p, mu = mu, sigma = 1/sigma, lower.tail = lower.tail, log.p = log.p)
 }
 
 
@@ -784,7 +784,7 @@ qGamma <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
     ## require gamlss.dist
     if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
         stop("Please install package 'gamlss.dist' for using qGamma.")
-    qGA(p = p, mu = mu, sigma = sqrt(1/sigma), lower.tail = lower.tail, log.p = log.p)
+    gamlss.dist::qGA(p = p, mu = mu, sigma = sqrt(1/sigma), lower.tail = lower.tail, log.p = log.p)
 }
 
 
@@ -908,7 +908,7 @@ qBeta <- function(p, mu = 0, phi = 1, lower.tail = TRUE, log.p = FALSE) {
     ## require gamlss.dist
     if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
         stop("Please install package 'gamlss.dist' for using qBeta.")
-    qBE(p = p, mu = mu, sigma = 1/sqrt(phi + 1), lower.tail = lower.tail, log.p = log.p)
+    gamlss.dist::qBE(p = p, mu = mu, sigma = 1/sqrt(phi + 1), lower.tail = lower.tail, log.p = log.p)
 }
 
 # Zero-inflated Poisson model

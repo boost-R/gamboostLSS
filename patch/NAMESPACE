@@ -1,4 +1,5 @@
 import(mboost)
+import(parallel)
 
 export(glmboostLSS,
        gamboostLSS,

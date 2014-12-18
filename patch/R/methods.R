@@ -84,7 +84,7 @@ selected.mboostLSS <- function(object, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
     RET <- lapply(parameter, function(i, object)
-                               mboost::selected(object[[i]]),
+                                 selected(object[[i]]),
                   object = object)
     names(RET) <- names(object)[parameter]
     if (length(RET) == 1)
@@ -158,6 +158,11 @@ PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
     if (length(which) != 1 || !is.character(which))
         stop("Please specify the variable for the marginal prediction interval.")
 
+    var <- get_data(x, which = which)
+    if (ncol(var) > 1 || is.factor(var))
+        stop("Prediction intervals are currently only implemented for ",
+             "base-learners of one numeric variable")
+
     pred_vars <- lapply(x, extract, what = "variable.names")
     pred_vars <- unique(unlist(pred_vars))
     if ("(Intercept)" %in% pred_vars)
@@ -221,7 +226,7 @@ print.mboostLSS <- function(x, ...){
 fitted.mboostLSS <- function(object, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    sapply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
+    myApply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
            mod = object, ...)
 }
 
@@ -233,16 +238,16 @@ predict.mboostLSS <- function(object, newdata = NULL,
                               parameter = names(object), ...) {
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    sapply(parameter, function(i, mod, ...)
-             predict(mod[[i]], newdata = newdata, type = type, which = which,
-                     aggregate = aggregate, ...),
-           mod = object, ...)
+    myApply(parameter, function(i, mod, ...)
+            predict(mod[[i]], newdata = newdata, type = type, which = which,
+                    aggregate = aggregate, ...),
+            mod = object, ...)
 }
 
 update.mboostLSS <- function(object, weights, oobweights = NULL,
-                             risk = NULL, mstop = NULL, ...) {
+                             risk = NULL, trace = NULL, mstop = NULL, ...) {
     attr(object, "update")(weights = weights, oobweights = oobweights,
-                           risk = risk, mstop = mstop, ...)
+                           risk = risk, trace = trace, mstop = mstop, ...)
 }
 
 ## generic version of model.weights (see stats::model.weights)
