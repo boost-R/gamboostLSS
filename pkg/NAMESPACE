@@ -1,5 +1,6 @@
 import(stabs)
 import(mboost)
+import(parallel)
 
 export(glmboostLSS,
        gamboostLSS,

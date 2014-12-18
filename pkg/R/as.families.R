@@ -31,7 +31,7 @@ as.families <- function(fname = "NO",
     if (mode(fname) != "character" && mode(fname) != "name")
         fname <- as.character(substitute(fname))
 
-    gamlss.fam <- try(gamlss.family(fname), silent = TRUE)
+    gamlss.fam <- try(gamlss.dist::gamlss.family(fname), silent = TRUE)
     if (inherits(gamlss.fam, "try-error"))
         stop(sQuote("fname"), " specifies no valid gamlss family")
 
@@ -61,7 +61,7 @@ as.families <- function(fname = "NO",
 
 gamlss1parMu <- function(mu = NULL, fname = "EXP") {
 
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -103,7 +103,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
 
 gamlss2parMu <- function(mu = NULL, sigma = NULL, fname = "NO") {
 
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -147,7 +147,7 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, fname = "NO") {
 
 
 gamlss2parSigma <- function(mu = NULL, sigma = NULL, fname = "NO") {
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -201,7 +201,7 @@ gamlss2parFam <- function(mu = NULL, sigma = NULL, fname = "NO") {
 ## sub-family for Mu
 gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -244,7 +244,7 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 
 
 gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -285,7 +285,7 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 }
 
 gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -341,7 +341,7 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
 gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                          fname = "BCT") {
 
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -384,7 +384,7 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 
 gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                             fname = "BCPE") {
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -428,7 +428,7 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 
 gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                          fname = "BCPE") {
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -474,7 +474,7 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 
 gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                           fname = "BCPE") {
-    FAM <- as.gamlss.family(fname)
+    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
