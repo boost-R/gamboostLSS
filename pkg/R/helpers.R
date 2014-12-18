@@ -3,7 +3,8 @@
 check <- function(what, what_char, names) {
 
     errormsg <- paste0(sQuote(what_char), " can be either a scalar, a (named) vector or a (named) list",
-                      " of ", what_char, " values with same names as ",  sQuote("families"))
+                      " of ", what_char, " values with same names as ",  sQuote("families"), "in ",
+                      sQuote("boost_control"))
 
     if (is.list(what)) {
         if (is.null(names(what)) && length(what) == length(names))
