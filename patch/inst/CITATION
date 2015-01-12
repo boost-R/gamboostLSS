@@ -1,8 +1,7 @@
 citHeader("To cite package 'gamboostLSS' in publications use:")
 
-desc <- packageDescription("gamboostLSS")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
-vers <- paste("R package version", desc$Version)
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers <- paste("R package version", meta$Version)
 
 citEntry(
   entry="Manual",
@@ -33,7 +32,7 @@ citEntry(
   year	   = "2012",
   volume   =  "61",
   number   =  "3",
-  pages	   =  "403--427", 	
+  pages	   =  "403--427",
   textVersion =
     paste("Mayr, A., N. Fenske, B. Hofner, T. Kneib and M. Schmid (2012).",
           "Generalized additive models for location, scale and shape for high-dimensional data - a flexible approach based on boosting.",
