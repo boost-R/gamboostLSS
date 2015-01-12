@@ -121,7 +121,7 @@ NBinomialLSS <- function(mu = NULL, sigma = NULL){
 ## we use almost the same parameterization as NBI but with theta = 1/sigma
 qNBinomial <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
     ## require gamlss.dist
-    if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
+    if (!requireNamespace("gamlss.dist", quietly = TRUE))
         stop("Please install package 'gamlss.dist' for using qNBinomial.")
     gamlss.dist::qNBI(p = p, mu = mu, sigma = 1/sigma, lower.tail = lower.tail, log.p = log.p)
 }
@@ -782,7 +782,7 @@ GammaLSS <- function (mu = NULL, sigma = NULL) {
 ## we use almost the same parameterization as GA but with sigma = sqrt(1/sigma)
 qGamma <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
     ## require gamlss.dist
-    if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
+    if (!requireNamespace("gamlss.dist", quietly = TRUE))
         stop("Please install package 'gamlss.dist' for using qGamma.")
     gamlss.dist::qGA(p = p, mu = mu, sigma = sqrt(1/sigma), lower.tail = lower.tail, log.p = log.p)
 }
@@ -906,7 +906,7 @@ BetaLSS <- function (mu = NULL, phi = NULL){
 ## we use almost the same parameterization as BE but with sigma = 1/sqrt(phi + 1)
 qBeta <- function(p, mu = 0, phi = 1, lower.tail = TRUE, log.p = FALSE) {
     ## require gamlss.dist
-    if (!require("gamlss.dist", quietly = TRUE, warn.conflicts = FALSE))
+    if (!requireNamespace("gamlss.dist", quietly = TRUE))
         stop("Please install package 'gamlss.dist' for using qBeta.")
     gamlss.dist::qBE(p = p, mu = mu, sigma = 1/sqrt(phi + 1), lower.tail = lower.tail, log.p = log.p)
 }
