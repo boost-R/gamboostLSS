@@ -1,538 +1,672 @@
-------------------------------------------------------------------------
-r106 | hofner | 2014-06-25 11:25:01 +0200 (Mi, 25. Jun 2014) | 6 Zeilen
+commit 0275d0edc94ccfbaa04922d0acdc6fdfb20d3dac
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
 
-RELEASE VERSION gamboostLSS 1.1-2
-- make mboost 2.3-0 happy (by adding Suggests: survival)
-- make tests platform independent
-- removed generic risk function (which is available in mboost >= 2.3-0)
-- improved checking of responses
+    Updated NEWS.Rd and DESCRIPTION
 
-------------------------------------------------------------------------
-r105 | hofner | 2014-06-16 15:14:51 +0200 (Mo, 16. Jun 2014) | 2 Zeilen
+commit 21f2c5a7ca1375c33f7b60c13856b7eae600509f
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-updated patch version (now synced with pkg)
+    changed plain text NEWS to inst/NEWS.Rd
 
-------------------------------------------------------------------------
-r104 | hofner | 2014-06-16 15:05:18 +0200 (Mo, 16. Jun 2014) | 4 Zeilen
+commit 84afb294825675542d6ebd97179f641ee60cd5df
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-RELEASE VERSION gamboostLSS 1.1-1
-- re-added tests
-- changed \dontrun to \donttest in examples
+    changed reuqire to requireNamespace
+    and added gamlss.dist:: where necessary
 
-------------------------------------------------------------------------
-r103 | hofner | 2014-06-12 11:29:48 +0200 (Do, 12. Jun 2014) | 6 Zeilen
+commit 60c8c3431782308485b0271276b8d15ef1bd1c12
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-SECOND TRY: RELEASE VERSION gamboostLSS 1.1-0
+    fixed package citation to make CRAN happy
 
-- updated release SOPs and added several helper tools
-- updated tests
-- added to helper functions to package in order to avoid note on using ':::'
+commit decaddbf64ce1f9c9af399eb9030e4452c23db3b
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r102 | hofner | 2014-06-11 17:00:23 +0200 (Mi, 11. Jun 2014) | 2 Zeilen
+    merged changes from pkg/ to patch/
+    (excluding stabsel)
 
-RELEASE VERSION gamboostLSS 1.1-0
+commit cc02dd40db24bf6853d5c3ca7eed2abc92cfab20
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r101 | hofner | 2014-06-11 10:56:37 +0200 (Mi, 11. Jun 2014) | 2 Zeilen
-
-- changed default color of marginal prediction intervals to black
+    Corrected india data set:
+    stunting ranged from -600 to 600 but should range from -6 to 6
 
-------------------------------------------------------------------------
-r100 | hofner | 2014-05-27 17:02:43 +0200 (Di, 27. Mai 2014) | 2 Zeilen
+commit 95cd54f416d8b244e41ce59824664b07cf52821d
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- added qXXX functions for AFT models
+    Fixed unstated dependencies
 
-------------------------------------------------------------------------
-r99 | hofner | 2014-05-27 15:54:01 +0200 (Di, 27. Mai 2014) | 5 Zeilen
+commit ec25906d1f76e921db30c007f01945fcb6f91987
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- marginal prediction intervals:
-  *  added function to compute marginal PIs (predint)
-  *  replaced plot_PI with plot(predint())
-- improved manual for methods
+    fixed bug in selected.mboostLSS
+    mboost does no longer export stabsel (only stabsel.mboost is exported),
+    hence mboost::selected() does not exist
 
-------------------------------------------------------------------------
-r98 | hofner | 2014-05-27 09:03:34 +0200 (Di, 27. Mai 2014) | 10 Zeilen
+commit 38ee36db34b413aa2d45fc0c839a3ee38d97d2a2
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- families: 
-  *  included some more quantile functions (needed for plot_PI)
-  *  improved checks for outcome variable
-- plot:
-  *  fixed lattice plot (for bivariate effects)
-- manuals:
-  *  restructured families in groups
-  *  improved documentation of gamboostLSS_stab_ngrad,
-     which can be used to stabilize the negative gradient 
+    - added a specialized selected() function for stability selection objects
+    - fixed classes of a stability selection object for gamboostLSS models
 
-------------------------------------------------------------------------
-r97 | hofner | 2014-05-19 18:06:15 +0200 (Mo, 19. Mai 2014) | 3 Zeilen
+commit 553da3525e8d7a0c1d71aa0e8dd3edef4a1e9c20
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- made GaussianLSS the default family
-- bugfix in internal qNormal function
+    - implemented first version of stability selection
+      (gamboostLSS therefore now depends on stabs)
 
-------------------------------------------------------------------------
-r96 | hofner | 2014-04-16 10:18:53 +0200 (Mi, 16. Apr 2014) | 8 Zeilen
+commit 4e8303a655b70c9e6aa3c9043f993aabe6a9bf82
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- improved as.families: User can now also specify 
-  fname as function or evaluated function
-- plot_PI now potentially works for all families
-- added qfun to (most of the) families which 
-  is required for plot_PI
-- moved some helper functions to helpers.R
-- improvements in manuals
+    - fixed bug regarding predictions (returned a vector insead of a matrix)
 
-------------------------------------------------------------------------
-r95 | hofner | 2014-01-28 11:25:43 +0100 (Di, 28. Jan 2014) | 3 Zeilen
+commit ed5a79ce77e94aa23c94a9b4b8e2fc6ded1b343e
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- added experimental version of marginal prediction plot
-  (plot_PI; currently only implemented for GaussianLSS models)
+    - Bugfix in predint: factors were coerced to characters
 
-------------------------------------------------------------------------
-r94 | hofner | 2014-01-27 15:04:30 +0100 (Mo, 27. Jan 2014) | 3 Zeilen
+commit 1026103b53c4d88714efe8fbebc5f55c6ba8ba26
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- fixed problem with subset method (mstop-names were ignored)
-- started experimental version for marginal prediction interval plots
+    RELEASE VERSION gamboostLSS 1.1-2
+    - make mboost 2.3-0 happy (by adding Suggests: survival)
+    - make tests platform independent
+    - removed generic risk function (which is available in mboost >= 2.3-0)
+    - improved checking of responses
 
-------------------------------------------------------------------------
-r93 | hofner | 2014-01-23 20:08:04 +0100 (Do, 23. Jan 2014) | 12 Zeilen
+commit 07457d51953aaedf3d09aeca8aa301a56ef7b4ab
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- renamed Families.gamlss to as.families 
-  (an kept gamlss.Families for compatibility with PhD thesis of A. Mayr)
-- stabilization factor:
-  * changed stabilization factor to median absolute deviation for all families
-    (and added the factor to the families where it was missing)
-  * introduced a minimal documentation of the options command needed to swith
-    stabilization on or off to all family manuals
-- data(india): 
-  * renamed distH to mcdist
-  * added variable (mcdist_lab) containing the district names
-- (renamed files gamlss.Families.Rd and gamlss.Families.R)
+    updated patch version (now synced with pkg)
 
-------------------------------------------------------------------------
-r92 | hofner | 2014-01-21 18:29:06 +0100 (Di, 21. Jan 2014) | 9 Zeilen
+commit 6ccaa8a9ec38bb02dd8ceb5e57ed6eefd2afc426
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- cross-validation:
-  *  improved speed when dense_mu_grid = TRUE is used 
-     (now there is really no increased run time with this arument)
-  *  improved plot function for cvriskLSS objects
-  *  added documentation for plot function
-- stabilization: changed factor to median absolute deviation
-  (currently only in GaussianLSS())
-- additional minor changes in manuals
+    RELEASE VERSION gamboostLSS 1.1-1
+    - re-added tests
+    - changed \dontrun to \donttest in examples
 
-------------------------------------------------------------------------
-r91 | hofner | 2014-01-14 21:08:56 +0100 (Di, 14. Jan 2014) | 4 Zeilen
+commit 9a76bf672e9127111e393a8a8a9ac901697f3e6d
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- included stability correction for GaussianLSS()
-- added new (experimental) plot for results from cvrisk
-- layout improvements and minor corrections in the manual
+    SECOND TRY: RELEASE VERSION gamboostLSS 1.1-0
 
-------------------------------------------------------------------------
-r90 | hofner | 2014-01-08 20:17:35 +0100 (Mi, 08. Jan 2014) | 6 Zeilen
+commit 86b30c61176aaa2ff4ba6c51e502ce2b8cd25cec
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- added option dense_mu_grid to make.grid
-- mstop values can now also be specified as vectors 
-  (with and without names)
-- improved manuals
-- some improvements in code layout and (internal) variable names
+    RELEASE VERSION gamboostLSS 1.1-0
 
-------------------------------------------------------------------------
-r89 | hofner | 2013-12-19 17:34:10 +0100 (Do, 19. Dez 2013) | 2 Zeilen
+commit d43ae992fdb85af3c332ab12ee202d6e5568f3d9
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-- added india data set
+    - changed default color of marginal prediction intervals to black
+
+commit 20e8ad1c4362d9b8ecd3948041de468ae4cc9d5c
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    - added qXXX functions for AFT models
+
+commit 9c280c380b75dd826c344c89fe553a285f14b128
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    - marginal prediction intervals:
+      *  added function to compute marginal PIs (predint)
+      *  replaced plot_PI with plot(predint())
+    - improved manual for methods
 
-------------------------------------------------------------------------
-r88 | amayr | 2013-11-04 16:17:34 +0100 (Mo, 04. Nov 2013) | 1 Zeile
+commit f35547b38c0ad1bb4004d5327477412e11c5681d
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-included stability correction for Families.gamlss
-------------------------------------------------------------------------
-r87 | hofner | 2013-10-30 19:24:34 +0100 (Mi, 30. Okt 2013) | 3 Zeilen
+    - families:
+      *  included some more quantile functions (needed for plot_PI)
+      *  improved checks for outcome variable
+    - plot:
+      *  fixed lattice plot (for bivariate effects)
+    - manuals:
+      *  restructured families in groups
+      *  improved documentation of gamboostLSS_stab_ngrad,
+         which can be used to stabilize the negative gradient
 
-- removed unneeded dependencies 
-- some code cleaning
+commit 2dbe28ea16925848d89589c96186263b555473b5
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r86 | hofner | 2013-10-30 19:01:31 +0100 (Mi, 30. Okt 2013) | 5 Zeilen
+    - made GaussianLSS the default family
+    - bugfix in internal qNormal function
 
-- fix: speed of model fitting was dependent on iteration, 
-    i.e. the algorithm got slower for larger mstop values
-    (to really fix speed problem mboost >= revision 754 needed)
-- changed email address
+commit 93ed2f603d9604655177b7d2e139a9ed69e563c4
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r85 | hofner | 2013-10-09 13:01:26 +0200 (Mi, 09. Okt 2013) | 3 Zeilen
+    - improved as.families: User can now also specify
+      fname as function or evaluated function
+    - plot_PI now potentially works for all families
+    - added qfun to (most of the) families which
+      is required for plot_PI
+    - moved some helper functions to helpers.R
+    - improvements in manuals
 
-- fixed offset in NBinomialMu wrt the computation of sigma 
-  (divide by var(y) and introduce lower positive limit if sigma gets negative)
+commit 2c60a7298205302d5dbf9935045f757507e645d4
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r84 | hofner | 2013-08-09 10:20:06 +0200 (Fr, 09. Aug 2013) | 2 Zeilen
+    - added experimental version of marginal prediction plot
+      (plot_PI; currently only implemented for GaussianLSS models)
 
-added ChangeLogs
+commit 71ec08a73ec3b94e933f1cd420b91fb11318dd30
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r83 | hofner | 2013-03-15 13:45:22 +0100 (Fr, 15. Mär 2013) | 2 Zeilen
+    - fixed problem with subset method (mstop-names were ignored)
+    - started experimental version for marginal prediction interval plots
 
-experimental: added a new global option options("gamboostLSS_stab_ngrad") to stabilize estimation
+commit 90af9885efcf97b20b5c36c5abd31fae33994739
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r82 | hofner | 2013-03-12 19:16:23 +0100 (Di, 12. Mär 2013) | 2 Zeilen
+    - renamed Families.gamlss to as.families
+      (an kept gamlss.Families for compatibility with PhD thesis of A. Mayr)
+    - stabilization factor:
+      * changed stabilization factor to median absolute deviation for all families
+        (and added the factor to the families where it was missing)
+      * introduced a minimal documentation of the options command needed to swith
+        stabilization on or off to all family manuals
+    - data(india):
+      * renamed distH to mcdist
+      * added variable (mcdist_lab) containing the district names
+    - (renamed files gamlss.Families.Rd and gamlss.Families.R)
 
-require mboost >= 2.2-3 to make cvrisk happy
+commit cc9959150a75062bbd5b54413e569e9eb9480c25
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r81 | hofner | 2013-03-11 19:11:59 +0100 (Mo, 11. Mär 2013) | 4 Zeilen
+    - cross-validation:
+      *  improved speed when dense_mu_grid = TRUE is used
+         (now there is really no increased run time with this arument)
+      *  improved plot function for cvriskLSS objects
+      *  added documentation for plot function
+    - stabilization: changed factor to median absolute deviation
+      (currently only in GaussianLSS())
+    - additional minor changes in manuals
 
-added manual for cvrisk
-bug fixes in cvrisk (and related functions)
-minor fixes in manuals
+commit 0307241ae7723ee2a636ee4337fe5f8af5792a4e
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r80 | schmidm | 2013-03-04 17:58:50 +0100 (Mo, 04. Mär 2013) | 1 Zeile
+    - included stability correction for GaussianLSS()
+    - added new (experimental) plot for results from cvrisk
+    - layout improvements and minor corrections in the manual
 
-added wrapper functions for zero-inflated models
-------------------------------------------------------------------------
-r79 | hofner | 2013-02-25 10:47:43 +0100 (Mo, 25. Feb 2013) | 2 Zeilen
+commit f819446aa83c912d24648fa19a870c2138eb53fe
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-added cvrisk functions
+    - added option dense_mu_grid to make.grid
+    - mstop values can now also be specified as vectors
+      (with and without names)
+    - improved manuals
+    - some improvements in code layout and (internal) variable names
 
-------------------------------------------------------------------------
-r78 | hofner | 2013-02-22 17:49:25 +0100 (Fr, 22. Feb 2013) | 3 Zeilen
+commit 85df026b5ba0f11463ed9e4b9237a7e47708e4a3
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-added manual for cvrisk and related methods
-minor changes in code
+    - added india data set
 
-------------------------------------------------------------------------
-r77 | hofner | 2013-02-22 13:38:20 +0100 (Fr, 22. Feb 2013) | 3 Zeilen
+commit 4a08289b0bad16167881d5fa90e59a5e3bf6f4f3
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-added first version of cvrisk function for mboostLSS models
-documentation etc. still needs to be fixed
+    included stability correction for Families.gamlss
 
-------------------------------------------------------------------------
-r76 | hofner | 2013-02-21 13:05:17 +0100 (Do, 21. Feb 2013) | 3 Zeilen
+commit 2d5296d049dca087ec2d5222dc2ee1a699f3bb52
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-make update function work correctly (w.r.t. offset handling)
-make GausianLSS work with weighted offsets
+    - removed unneeded dependencies
+    - some code cleaning
 
-------------------------------------------------------------------------
-r75 | amayr | 2013-02-20 18:23:27 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+commit 30795bf9ee52a80f3348406afce348e476d40963
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-changed name of gamlss.Families to Families.gamlss
-------------------------------------------------------------------------
-r74 | amayr | 2013-02-20 18:22:55 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+    - fix: speed of model fitting was dependent on iteration,
+        i.e. the algorithm got slower for larger mstop values
+        (to really fix speed problem mboost >= revision 754 needed)
+    - changed email address
 
-changed name of gamlss.Families to Families.gamlss
-------------------------------------------------------------------------
-r73 | amayr | 2013-02-20 15:20:32 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+commit 9f0d6881f6395694811d4c5c87522fe1408c8a4a
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-changed name of gamlss.Families to Families.gamlss
-------------------------------------------------------------------------
-r72 | amayr | 2013-02-20 15:17:54 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+    - fixed offset in NBinomialMu wrt the computation of sigma
+      (divide by var(y) and introduce lower positive limit if sigma gets negative)
 
-changed name of gamlss.Families to Families.gamlss
-------------------------------------------------------------------------
-r71 | amayr | 2013-02-20 15:17:17 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+commit 815ff2da0a9c2e8062eac913c0677d732ad31646
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-changed name of gamlss.Families to Families.gamlss
-------------------------------------------------------------------------
-r70 | amayr | 2013-02-20 15:16:59 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+    added ChangeLogs
 
-changed name of gamlss.Families to Families.gamlss
-------------------------------------------------------------------------
-r69 | amayr | 2013-02-20 09:59:49 +0100 (Mi, 20. Feb 2013) | 1 Zeile
+commit 4a17e2c86a4a039b099cbdb6989a95cc270b08fe
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-fixed citation
-------------------------------------------------------------------------
-r68 | hofner | 2013-02-19 16:16:15 +0100 (Di, 19. Feb 2013) | 3 Zeilen
+    experimental: added a new global option options("gamboostLSS_stab_ngrad") to stabilize estimation
 
-changed interface
-preparations for cvrisk function
+commit 370a0d962f4e1fb9867fb5adc002c9345f594d2a
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r67 | amayr | 2013-02-19 13:47:11 +0100 (Di, 19. Feb 2013) | 1 Zeile
+    require mboost >= 2.2-3 to make cvrisk happy
 
-adding gamlss.Families
-------------------------------------------------------------------------
-r66 | amayr | 2013-02-19 13:46:30 +0100 (Di, 19. Feb 2013) | 1 Zeile
+commit afb50a174f1758eaa7913020f3bd36a7b16e5521
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-adding gamlss.Families
-------------------------------------------------------------------------
-r65 | amayr | 2013-02-19 13:45:22 +0100 (Di, 19. Feb 2013) | 1 Zeile
+    added manual for cvrisk
+    bug fixes in cvrisk (and related functions)
+    minor fixes in manuals
 
-adding gamlss.Families
-------------------------------------------------------------------------
-r64 | amayr | 2013-02-19 13:44:36 +0100 (Di, 19. Feb 2013) | 1 Zeile
+commit e2baec9cd540df201a65963b59c398b03dde7d8c
+Author: schmidm <schmidm@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-adding gamlss.Families
-------------------------------------------------------------------------
-r63 | amayr | 2013-02-19 13:43:49 +0100 (Di, 19. Feb 2013) | 1 Zeile
+    added wrapper functions for zero-inflated models
 
-adding gamlss.dist to suggested + cosmetics
-------------------------------------------------------------------------
-r62 | amayr | 2013-02-18 17:12:46 +0100 (Mo, 18. Feb 2013) | 1 Zeile
+commit 9ce2a8525ef2847388e6d697fa4deacb74b72113
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-cosmetics
-------------------------------------------------------------------------
-r61 | amayr | 2013-02-11 16:58:26 +0100 (Mo, 11. Feb 2013) | 1 Zeile
+    added cvrisk functions
 
-cleanup + cosmetics
-------------------------------------------------------------------------
-r60 | amayr | 2013-02-11 16:25:46 +0100 (Mo, 11. Feb 2013) | 1 Zeile
+commit 9d56e875beea68ecb706e652248bb83b257cc122
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-cleanup + cosmetics
-------------------------------------------------------------------------
-r59 | amayr | 2013-02-04 15:03:41 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+    added manual for cvrisk and related methods
+    minor changes in code
 
-updating citation of Applied Statistics article
-------------------------------------------------------------------------
-r58 | amayr | 2013-02-04 14:50:44 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+commit 572b6248a6ce6fff260ab31a925fcb41f3eb66aa
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-updating citation of Applied Statistics article
-------------------------------------------------------------------------
-r57 | amayr | 2013-02-04 14:45:19 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+    added first version of cvrisk function for mboostLSS models
+    documentation etc. still needs to be fixed
 
-adding BetaLSS
-------------------------------------------------------------------------
-r56 | amayr | 2013-02-04 14:42:28 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+commit db3363bb756f3d213d79105237dc37ecb7f10fab
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-adding BetaLSS
-------------------------------------------------------------------------
-r55 | amayr | 2013-02-04 14:37:37 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+    make update function work correctly (w.r.t. offset handling)
+    make GausianLSS work with weighted offsets
 
-adding BetaLSS
-------------------------------------------------------------------------
-r54 | amayr | 2013-02-04 14:35:53 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+commit 961cdd54130b5745db8db2f196abcb4d5012e633
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-adding BetaLSS
-------------------------------------------------------------------------
-r53 | amayr | 2013-02-04 14:32:55 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+    changed name of gamlss.Families to Families.gamlss
 
-adding BetaLSS
-------------------------------------------------------------------------
-r52 | amayr | 2013-02-04 14:30:44 +0100 (Mo, 04. Feb 2013) | 1 Zeile
+commit 4ce47629b9c689ec568dc4ca208e30734ac506c5
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-adding BetaLSS
-------------------------------------------------------------------------
-r51 | hofner | 2013-01-09 18:13:18 +0100 (Mi, 09. Jan 2013) | 2 Zeilen
+    changed name of gamlss.Families to Families.gamlss
 
-ping
+commit b8dc9d457caa1b51ed2cb86922de7158af3d5472
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-------------------------------------------------------------------------
-r50 | hofner | 2011-11-23 14:42:08 +0100 (Mi, 23. Nov 2011) | 1 Zeile
+    changed name of gamlss.Families to Families.gamlss
 
-fixed links to CHANGES
-------------------------------------------------------------------------
-r49 | hofner | 2011-11-16 20:44:03 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
+commit 324d8e3d698b7346d2f34ba233662594a7ae6f36
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-gamboostLSS 1.0-3
-- fixed potential problem that might occur if users specify different outcomes for different components
-- updated tests
-------------------------------------------------------------------------
-r48 | hofner | 2011-11-16 18:58:43 +0100 (Mi, 16. Nov 2011) | 3 Zeilen
+    changed name of gamlss.Families to Families.gamlss
 
-- fixed bug in regtest-gamboostLSS.R
-- removed duplicated (and slightly altered) code from mboost 
-  (gamboostLSS now requires mboost >= 2.0-12)
-------------------------------------------------------------------------
-r47 | hofner | 2011-11-16 18:27:50 +0100 (Mi, 16. Nov 2011) | 1 Zeile
+commit 804785daebb64a3b3712f29a925e37464d95b1f4
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-added v. 1.0-2 to folder patch for patch updates (pkg contains minor / major updates)
-------------------------------------------------------------------------
-r46 | hofner | 2011-10-13 18:23:43 +0200 (Do, 13. Okt 2011) | 1 Zeile
+    changed name of gamlss.Families to Families.gamlss
 
-start 1.1-0
-------------------------------------------------------------------------
-r45 | amayr | 2011-10-13 10:35:29 +0200 (Do, 13. Okt 2011) | 1 Zeile
+commit 5927c13c196ce9c25488ca3577dfbe95f669d1c5
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-updating NAMESPACE for GammaLSS
-------------------------------------------------------------------------
-r44 | amayr | 2011-10-13 10:20:55 +0200 (Do, 13. Okt 2011) | 1 Zeile
+    changed name of gamlss.Families to Families.gamlss
 
-Updating CHANGES due to GammaLSS
-------------------------------------------------------------------------
-r43 | amayr | 2011-10-13 10:13:49 +0200 (Do, 13. Okt 2011) | 1 Zeile
+commit 2aebf5a5faf50a18a6aafae50caa023bbfeef28c
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-Updating manual for GammaLSS
-------------------------------------------------------------------------
-r42 | amayr | 2011-10-13 10:12:01 +0200 (Do, 13. Okt 2011) | 1 Zeile
+    fixed citation
 
-updating NAMESPACE for GammaLSS
-------------------------------------------------------------------------
-r41 | amayr | 2011-10-13 10:10:52 +0200 (Do, 13. Okt 2011) | 1 Zeile
+commit e7354054136808155151dca9bd5e7ce08dbe9b8b
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-Updating manual for GammaLSS
-------------------------------------------------------------------------
-r40 | amayr | 2011-10-13 10:09:12 +0200 (Do, 13. Okt 2011) | 1 Zeile
+    changed interface
+    preparations for cvrisk function
 
-Adding new GammaLSS family 
-------------------------------------------------------------------------
-r39 | hofner | 2011-09-23 13:13:59 +0200 (Fr, 23. Sep 2011) | 1 Zeile
+commit cce73e86a0aec12944d97ff8645f416471566be4
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-make mboost happy again
-------------------------------------------------------------------------
-r38 | amayr | 2011-09-20 11:01:30 +0200 (Di, 20. Sep 2011) | 1 Zeile
+    adding gamlss.Families
 
-new family added to NAMESPACE + minor fixes
-------------------------------------------------------------------------
-r37 | amayr | 2011-09-19 17:28:20 +0200 (Mo, 19. Sep 2011) | 2 Zeilen
+commit 7b1ded16abb310c38afdca6eb308afde8713f175
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-update manual due to GaussianLSS
+    adding gamlss.Families
 
-------------------------------------------------------------------------
-r36 | amayr | 2011-09-19 17:24:19 +0200 (Mo, 19. Sep 2011) | 1 Zeile
+commit eaf49d3de4596323c2d067c066a40c13dae12df7
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-Implement GaussianLSS to fit mu and sigma in a Gaussian setting
-------------------------------------------------------------------------
-r35 | hofner | 2011-08-31 10:07:36 +0200 (Mi, 31. Aug 2011) | 1 Zeile
+    adding gamlss.Families
 
-changed the way we use environments (to get rid of note: no visible binding)
-------------------------------------------------------------------------
-r34 | hofner | 2011-08-12 15:02:07 +0200 (Fr, 12. Aug 2011) | 1 Zeile
+commit bf1880e1b5c3d0045213c0a78a45075d03b80b0f
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-version 1.0-1
-------------------------------------------------------------------------
-r33 | hofner | 2011-08-12 14:47:26 +0200 (Fr, 12. Aug 2011) | 1 Zeile
+    adding gamlss.Families
 
-version 1.0-1
-------------------------------------------------------------------------
-r32 | hofner | 2011-08-10 17:39:19 +0200 (Mi, 10. Aug 2011) | 1 Zeile
+commit 19eea4281bb25aac4970b9bd5b390a024891fd6b
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-version 1.0-0
-------------------------------------------------------------------------
-r31 | hofner | 2011-08-10 16:09:39 +0200 (Mi, 10. Aug 2011) | 1 Zeile
+    adding gamlss.dist to suggested + cosmetics
 
-version 1.0-0
-------------------------------------------------------------------------
-r30 | amayr | 2011-03-25 17:29:30 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+commit 9883b996c5e0b0b52413be3a9b8ef57e130fa0b4
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-minor changes by NF
-------------------------------------------------------------------------
-r29 | amayr | 2011-03-25 17:25:18 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+    cosmetics
 
-minor changes by NF
-------------------------------------------------------------------------
-r28 | amayr | 2011-03-25 17:18:16 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+commit ac4e22738853ce2a04e4753eb799635c835dcca6
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-minor changes by NF
-------------------------------------------------------------------------
-r27 | amayr | 2011-03-25 17:13:40 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+    cleanup + cosmetics
 
-minor changes by NF
-------------------------------------------------------------------------
-r26 | amayr | 2011-03-25 17:00:17 +0100 (Fr, 25. Mär 2011) | 1 Zeile
+commit c6d03df2597b7e0bf251d298e7f79bdd4f64af31
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
+    cleanup + cosmetics
 
-------------------------------------------------------------------------
-r25 | hofner | 2011-02-09 17:35:46 +0100 (Mi, 09. Feb 2011) | 1 Zeile
+commit d02ecf602934a077667b2ec1680095feff96f8ae
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-typo
-------------------------------------------------------------------------
-r24 | schmidm | 2010-12-21 15:30:12 +0100 (Di, 21. Dez 2010) | 1 Zeile
+    updating citation of Applied Statistics article
 
-minor changes to documentation files
-------------------------------------------------------------------------
-r23 | hofner | 2010-12-21 10:52:15 +0100 (Di, 21. Dez 2010) | 1 Zeile
+commit 88f775672c10dd9c14dd399f3514993a2013427e
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
+    updating citation of Applied Statistics article
 
-------------------------------------------------------------------------
-r22 | amayr | 2010-12-20 18:18:15 +0100 (Mo, 20. Dez 2010) | 1 Zeile
+commit aa03b8f07338574c51cb0ee01e8b7a52b6dc4f69
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-delete obsolete help-file
-------------------------------------------------------------------------
-r21 | amayr | 2010-12-20 18:13:52 +0100 (Mo, 20. Dez 2010) | 1 Zeile
+    adding BetaLSS
 
-Major changes to the help files 
-------------------------------------------------------------------------
-r20 | hofner | 2010-12-16 16:31:09 +0100 (Do, 16. Dez 2010) | 1 Zeile
+commit dd8ccd516c86e0cac33f0b9f114f6ba397250f58
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-renamed makeFamilies() to Families()
-------------------------------------------------------------------------
-r19 | amayr | 2010-12-16 11:41:21 +0100 (Do, 16. Dez 2010) | 1 Zeile
+    adding BetaLSS
 
-small changes
-------------------------------------------------------------------------
-r18 | hofner | 2010-12-14 16:56:56 +0100 (Di, 14. Dez 2010) | 1 Zeile
+commit ca1e90348427795f63ef3855134f527c93b073da
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-AM: some changes in manuals
-------------------------------------------------------------------------
-r17 | hofner | 2010-08-24 11:24:07 +0200 (Di, 24. Aug 2010) | 2 Zeilen
+    adding BetaLSS
 
-bugfix: no subset method available if initial mstop = 1
-changed generic function selected
-------------------------------------------------------------------------
-r16 | hofner | 2010-07-29 15:06:25 +0200 (Do, 29. Jul 2010) | 2 Zeilen
+commit 07e71f8da9a5ff816989230515b60d9242f3c359
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-improved manual
-added some tests
-------------------------------------------------------------------------
-r15 | hofner | 2010-07-28 19:12:22 +0200 (Mi, 28. Jul 2010) | 2 Zeilen
+    adding BetaLSS
 
-changed behavior of subset method (now smarter)
-added new tests
-------------------------------------------------------------------------
-r14 | hofner | 2010-07-28 17:11:38 +0200 (Mi, 28. Jul 2010) | 2 Zeilen
+commit e8cae4ed83dad9a831d895b4edfc216ad91230dd
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-changes in callies (now specify arguments explicitly instead of using "...")
-added predict function
-------------------------------------------------------------------------
-r13 | hofner | 2010-07-28 10:49:09 +0200 (Mi, 28. Jul 2010) | 2 Zeilen
+    adding BetaLSS
 
-added support for mulitple nu values
-bugfix in subset method
-------------------------------------------------------------------------
-r12 | hofner | 2010-07-28 09:40:14 +0200 (Mi, 28. Jul 2010) | 4 Zeilen
+commit 71fc1f0ee233bb6923e313fd779cff37e3cc014a
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-added support for multiple mstops
-added function fitted() to extract fitted values
-changed behaviour of mstop (now returns a named vector)
-added new checks
-------------------------------------------------------------------------
-r11 | hofner | 2010-07-20 17:33:00 +0200 (Di, 20. Jul 2010) | 3 Zeilen
+    adding BetaLSS
 
-fixed problem with internal call of glmboost()
-added and improved plot methods for glmboostLSS und gamboostLSS models
-added print method
-------------------------------------------------------------------------
-r10 | hofner | 2010-07-14 17:29:28 +0200 (Mi, 14. Jul 2010) | 1 Zeile
+commit 66f95685690f38691600d9fff96488d6797b3679
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-fixed: ngradient of StudentTSigma family
-------------------------------------------------------------------------
-r9 | hofner | 2010-07-14 15:47:06 +0200 (Mi, 14. Jul 2010) | 1 Zeile
+    ping
 
-fixed: now some (or all) parameters of a family can be initiated with an offset
-------------------------------------------------------------------------
-r8 | hofner | 2010-07-13 17:18:08 +0200 (Di, 13. Jul 2010) | 4 Zeilen
+commit 9ebf29d506da49e06d9470ecdbc6b275041fd3ef
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-corrected AFT families
-included manuals for AFT families
-renamed crtl --> control in mboostLSS_fit()
-other minor changes
-------------------------------------------------------------------------
-r7 | hofner | 2010-07-09 17:33:56 +0200 (Fr, 09. Jul 2010) | 1 Zeile
+    fixed links to CHANGES
 
-added families to fit AFT models
-------------------------------------------------------------------------
-r6 | hofner | 2010-07-08 18:01:37 +0200 (Do, 08. Jul 2010) | 2 Zeilen
+commit 2177f34ed75a42a4572c8cf9757bc355933c23bc
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-offset per default computed by minimizing the risk function per component
-plot.glmboostLSS enhanced
-------------------------------------------------------------------------
-r5 | hofner | 2010-07-06 17:59:23 +0200 (Di, 06. Jul 2010) | 2 Zeilen
+    gamboostLSS 1.0-3
+    - fixed potential problem that might occur if users specify different outcomes for different components
+    - updated tests
 
-familes changed (defaults, usage of offset values, ...)
-documentation added
-------------------------------------------------------------------------
-r4 | hofner | 2010-07-05 17:51:08 +0200 (Mo, 05. Jul 2010) | 1 Zeile
+commit b8e7bdf08c2fe9ac79ff3a497d475792af5a705d
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-tests added
-------------------------------------------------------------------------
-r3 | hofner | 2010-07-05 17:38:34 +0200 (Mo, 05. Jul 2010) | 3 Zeilen
+    - fixed bug in regtest-gamboostLSS.R
+    - removed duplicated (and slightly altered) code from mboost
+      (gamboostLSS now requires mboost >= 2.0-12)
 
-formula can now be a (named) list
-subset now also able to increase mstop
-some helpers added
-------------------------------------------------------------------------
-r2 | hofner | 2010-07-02 17:24:23 +0200 (Fr, 02. Jul 2010) | 1 Zeile
+commit 2447ee7af974f0240454ff0c57199348f5f25364
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
 
-initial version
-------------------------------------------------------------------------
+    added v. 1.0-2 to folder patch for patch updates (pkg contains minor / major updates)
+
+commit 8ac2e3f6ed36d659236bba881f38edf31c30730b
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    start 1.1-0
+
+commit 17b0910480013c73c74a6b39243cd651e87d99e9
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    updating NAMESPACE for GammaLSS
+
+commit a1820c422c016f5241f3d2085be14a973d9d80af
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Updating CHANGES due to GammaLSS
+
+commit 5cbaaa04605b729c11578aa95da4af74cb71c017
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Updating manual for GammaLSS
+
+commit cfd055a617b3f38d0fb55a45500196a9ddf9cabd
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    updating NAMESPACE for GammaLSS
+
+commit 4e93767d1dce561b5dab542a871910f3b62269f3
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Updating manual for GammaLSS
+
+commit 429aedda17552025255afa74d4425d018f4b38e9
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Adding new GammaLSS family
+
+commit 3f6e4e057eba532df0fed0a61683c5d335360621
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    make mboost happy again
+
+commit 31a062c128d41424fe79370c3bdae5fabaf81bb9
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    new family added to NAMESPACE + minor fixes
+
+commit 14c769ac2da3e737b2d87bdde32d06eb236390bf
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    update manual due to GaussianLSS
+
+commit 7349637caf2b5acb187c56bbdaec3368ee11592b
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Implement GaussianLSS to fit mu and sigma in a Gaussian setting
+
+commit 0624287cc254ad11d4b7ead5868429de9819be32
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    changed the way we use environments (to get rid of note: no visible binding)
+
+commit 1d953bb81b4f0f7a67fd45eafb5f5aa6b1a06143
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    version 1.0-1
+
+commit fe8e528c92529edb6e2f1c52c62b6ebfa97768dc
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    version 1.0-1
+
+commit 8e0e736232ff159e4880522cbb6ebd7ea074ef10
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    version 1.0-0
+
+commit 42a5915e9ced0a6562fac0a76e45c58592a59302
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    version 1.0-0
+
+commit e0dc5c329085ba4ee87b2a6a4a4c7a1eb0724cb7
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor changes by NF
+
+commit d37deb2fe3a430dace0da68a92c81fe434c31500
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor changes by NF
+
+commit 6410d78cb8efff4379c52862e2c859089fa01dfc
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor changes by NF
+
+commit e8cbaf0c069d8fc7cfec4f27b909bfb3f4613d3a
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor changes by NF
+
+commit eb9b119120257f429c86ce0dfc6850644e2b9021
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    git-svn-id: svn+ssh://svn.r-forge.r-project.org/svnroot/gamboostlss@26 edb9625f-4e0d-4859-8d74-9fd3b1da38cb
+
+commit 42a87280ea0755c181448b9c4308c747c39e8c13
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    typo
+
+commit af762be9dd5d83b0afa4030b4a6a806ec14838d9
+Author: schmidm <schmidm@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor changes to documentation files
+
+commit ca339a6ab31ec232027caa13074acf82f5513bbb
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    git-svn-id: svn+ssh://svn.r-forge.r-project.org/svnroot/gamboostlss@23 edb9625f-4e0d-4859-8d74-9fd3b1da38cb
+
+commit 4224669651247537f7308ba0e51a76fc8d5356cf
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    delete obsolete help-file
+
+commit 0a16355dd858f7c8f1c4795ddc4e4cd94acb5932
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Major changes to the help files
+
+commit fe9fd4c4ed9f9ad3e5e985a4d2e7cef1facf926f
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    renamed makeFamilies() to Families()
+
+commit 306e10e6ff80fb25b1611fd00eabccdeafc3c27a
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    small changes
+
+commit eb0f54152772fab281f66d869dc1a85a04445ff3
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    AM: some changes in manuals
+
+commit 59357625a68ef480a51ace472270180f84da6be2
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    bugfix: no subset method available if initial mstop = 1
+    changed generic function selected
+
+commit 5f3f16ef01b2cdafa0ec3ae279a89627f04702d1
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    improved manual
+    added some tests
+
+commit 3200efd5557a8a597e0b48bb6bf17d1935ced9ac
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    changed behavior of subset method (now smarter)
+    added new tests
+
+commit fca9035a62947c9dab3964fafc86148f33827c24
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    changes in callies (now specify arguments explicitly instead of using "...")
+    added predict function
+
+commit 506b8de42df2717c95247a7a8cfbbabaf006de49
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    added support for mulitple nu values
+    bugfix in subset method
+
+commit 0de5d63a9011e10214f8a74a24775c1aabff9f6e
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    added support for multiple mstops
+    added function fitted() to extract fitted values
+    changed behaviour of mstop (now returns a named vector)
+    added new checks
+
+commit 08890a483d9e7d01eb541b6526c4b82792dfee79
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    fixed problem with internal call of glmboost()
+    added and improved plot methods for glmboostLSS und gamboostLSS models
+    added print method
+
+commit 8a041a86a994d3bd35d44a0547af5f654c4bc967
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    fixed: ngradient of StudentTSigma family
+
+commit 2b46bdc0f853848f91ea6e21b523a189b1b1758a
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    fixed: now some (or all) parameters of a family can be initiated with an offset
+
+commit df4e9a0baf6d8a22a7b486131ebe5c00d0db5220
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    corrected AFT families
+    included manuals for AFT families
+    renamed crtl --> control in mboostLSS_fit()
+    other minor changes
+
+commit a76c5edc750716b5fd4b19613641998261d28bd1
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    added families to fit AFT models
+
+commit 1668429b59e63e38ff02fd681cfaca0a91b40029
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    offset per default computed by minimizing the risk function per component
+    plot.glmboostLSS enhanced
+
+commit 8444f2b4bdc5c4aca3bac82752d6c07868320562
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    familes changed (defaults, usage of offset values, ...)
+    documentation added
+
+commit 06daaa5afc09ff92561cc5b7dc3b8c4c9d632ee5
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    tests added
+
+commit f2c6058c02df9fd7e89161db3e33b4a970140a1d
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    formula can now be a (named) list
+    subset now also able to increase mstop
+    some helpers added
+
+commit 2282cd73c2a925cd92fcc7689b344e77385986b2
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    initial version

@@ -12,6 +12,15 @@
       \item Changes in \file{inst/CITATION} to make CRAN happy:
       Citations can now be extracted without the need to install the
       package.
+      \item Corrected \code{india} data set:\cr
+      stunting ranged from -600 to 600 but should range from -6 to 6
+      \item Fixed unstated dependencies
+      \item changed \code{require} to \code{requireNamespace}
+      and added \code{gamlss.dist::} where necessary
+      \item fixed bug in \code{selected.mboostLSS}
+      \item \code{predict()} returned a vector insead of a matrix
+      \item \code{factor}s were coerced to \code{character}s in
+      \code{predint()}
     }
   }
 }
@@ -75,6 +84,7 @@
     \itemize{
       \item Speed of model fitting was dependent on iteration,
       i.e. the algorithm got slower for larger \code{mstop} values
+    }
   }
 }
 
