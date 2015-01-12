@@ -7,10 +7,9 @@
   Update ChangeLog
   ------------------
 
-  Go to root directory of project:
+  Go to patch/pkg directory of project:
 
-    svn log -rHEAD:2 > pkg/ChangeLog
-
+    git log abba..HEAD --pretty=short > ChangeLog
 
   Checking the package with latest development verstion of R
   ----------------------------------------------------------
@@ -60,8 +59,8 @@
 
 	 [1] For details see
              http://r.789695.n4.nabble.com/Generate-Rout-save-files-for-vignettes-td4652752.html
-         [2] NOTE: Reference output should be produced without having the --timings option set. 
- 
+         [2] NOTE: Reference output should be produced without having the --timings option set.
+
     Run checks on WinBuilder:
        upload package to http://win-builder.r-project.org/
 
