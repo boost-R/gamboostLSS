@@ -218,8 +218,9 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)
-        if (getOption("gamboostLSS_stab_ngrad")) {
+      if(FAM$type == "Mixed"){ ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)}
+      else{ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)}
+      if (getOption("gamboostLSS_stab_ngrad")) {
             div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
             div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
@@ -261,8 +262,9 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu) * FAM$sigma.dr(eta = f)
-        if (getOption("gamboostLSS_stab_ngrad")) {
+      if(FAM$type == "Mixed"){ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f))  * FAM$sigma.dr(eta = f)}
+      else{ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu)  * FAM$sigma.dr(eta = f)}
+      if (getOption("gamboostLSS_stab_ngrad")) {
             div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
             div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
@@ -302,8 +304,9 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL, fname = "TF") {
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
-        if (getOption("gamboostLSS_stab_ngrad")) {
+      if(FAM$type == "Mixed"){ngr <- FAM$dldv(y = y, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)}
+      else{ ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)}
+      if (getOption("gamboostLSS_stab_ngrad")) {
             div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
             div <- ifelse(div < 0.0001, 0.0001, div)
             ngr <- ngr / div
