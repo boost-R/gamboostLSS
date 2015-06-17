@@ -1,5 +1,5 @@
 
-R version 3.1.0 (2014-04-10) -- "Spring Dance"
+R version 3.1.2 (2014-10-31) -- "Pumpkin Helmet"
 Copyright (C) 2014 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -20,22 +20,11 @@ Type 'q()' to quit R.
 > pkgname <- "gamboostLSS"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
-> base::assign(".ExTimings", "gamboostLSS-Ex.timings", pos = 'CheckExEnv')
-> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
-> base::assign(".format_ptime",
-+ function(x) {
-+   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
-+   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
-+   options(OutDec = '.')
-+   format(x[1L:3L], digits = 7L)
-+ },
-+ pos = 'CheckExEnv')
-> 
-> ### * </HEADER>
 > library('gamboostLSS')
 Loading required package: mboost
 Loading required package: parallel
-This is mboost 2.3-0. See ‘package?mboost’ and the NEWS file
+Loading required package: stabs
+This is mboost 2.4-1. See ‘package?mboost’ and ‘news(package  = "mboost")’
 for a complete list of changes.
 
 
@@ -53,7 +42,6 @@ The following object is masked from ‘package:stats’:
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: as.families
 > ### Title: Include 'gamlss' families in the boosting framework of
 > ###   'gamboostLSS'
@@ -75,8 +63,19 @@ The following object is masked from ‘package:stats’:
 > ## boosting
 > glmss <- glmboostLSS(y ~ x, families = as.families("NO"))
 > ## the same:
-> glmss <- glmboostLSS(y ~ x, families = as.families(NO))
-> glmss <- glmboostLSS(y ~ x, families = as.families(NO()))
+> if (require("gamlss.dist")) {
++     glmss <- glmboostLSS(y ~ x, families = as.families(NO))
++     glmss <- glmboostLSS(y ~ x, families = as.families(NO()))
++ }
+Loading required package: gamlss.dist
+Loading required package: MASS
+
+Attaching package: ‘gamlss.dist’
+
+The following object is masked from ‘package:mboost’:
+
+    Family
+
 > 
 > coef(glmss, off2int = TRUE)
 $mu
@@ -93,7 +92,7 @@ $sigma
 Loading required package: splines
 Loading required package: gamlss.data
 Loading required package: nlme
- **********   GAMLSS Version 4.3-0  ********** 
+ **********   GAMLSS Version 4.3-1  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -111,8 +110,6 @@ GAMLSS-RS iteration 3: Global Deviance = 3844.149
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("as.families", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 
 detaching ‘package:gamlss’, ‘package:nlme’, ‘package:gamlss.data’,
@@ -123,7 +120,6 @@ detaching ‘package:gamlss’, ‘package:nlme’, ‘package:gamlss.data’,
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: cvrisk.mboostLSS
 > ### Title: Cross-Validation
 > ### Aliases: cvrisk cvrisk.mboostLSS make.grid plot.cvriskLSS
@@ -200,8 +196,6 @@ detaching ‘package:gamlss’, ‘package:nlme’, ‘package:gamlss.data’,
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("cvrisk", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 > nameEx("families")
@@ -209,7 +203,6 @@ detaching ‘package:gamlss’, ‘package:nlme’, ‘package:gamlss.data’,
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: Families
 > ### Title: Families for GAMLSS models
 > ### Aliases: Families families GaussianLSS GaussianMu GaussianSigma
@@ -285,15 +278,12 @@ detaching ‘package:gamlss’, ‘package:nlme’, ‘package:gamlss.data’,
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("families", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("gamboostLSS-package")
 > ### * gamboostLSS-package
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: gamboostLSS-package
 > ### Title: Boosting algorithms for GAMLSS
 > ### Aliases: gamboostLSS-package
@@ -334,15 +324,12 @@ $sigma
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("gamboostLSS-package", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("india")
 > ### * india
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: india
 > ### Title: Malnutrition of Children in India (DHS, 1998-99)
 > ### Aliases: india india.bnd
@@ -372,8 +359,6 @@ Note: Function plotsurf depends on akima which has
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("india", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 
 detaching ‘package:BayesX’, ‘package:shapefiles’, ‘package:foreign’
@@ -383,7 +368,6 @@ detaching ‘package:BayesX’, ‘package:shapefiles’, ‘package:foreign’
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: mboostLSS
 > ### Title: Fitting GAMLSS by Boosting
 > ### Aliases: mboostLSS blackboostLSS glmboostLSS gamboostLSS mboostLSS_fit
@@ -465,8 +449,6 @@ attr(,"offset")
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("mboostLSS", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > cleanEx()
 > nameEx("methods")
@@ -474,7 +456,6 @@ attr(,"offset")
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: methods
 > ### Title: Methods for mboostLSS
 > ### Aliases: coef.mboostLSS coef.glmboostLSS risk risk.mboostLSS
@@ -639,14 +620,12 @@ attr(,"offset")
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("methods", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > graphics::par(get("par.postscript", pos = 'CheckExEnv'))
 > ### * <FOOTER>
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  8.224 0.092 8.592 0 0 
+Time elapsed:  8.239 0.176 8.763 0 0 
 > grDevices::dev.off()
 null device 
           1 
