@@ -174,4 +174,20 @@ stopifnot(weighted.median(x, w) == median(rep(x, w)))
 ## hope this is correct:
 w <- runif(100, 0, 1)
 x <- rnorm(100)
-weighted.median(x, w)
+(wm <- weighted.median(x, w))
+
+## check weighted.median with NAs.
+
+# Missing in weights
+tmp <- w[2]
+w[2] <- NA
+stopifnot(is.na(weighted.median(x, w)))
+stopifnot(weighted.median(x, w, na.rm = TRUE) == wm)
+## not always true but here it is
+
+# Missing in x
+w[2] <- tmp
+x[5] <- NA
+stopifnot(is.na(weighted.median(x, w)))
+stopifnot(weighted.median(x, w, na.rm = TRUE) == wm)
+## not always true but here it is
