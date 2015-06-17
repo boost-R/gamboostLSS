@@ -1,6 +1,25 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 1.1-4 (2015-06-17)}{
+  \subsection{User-visible changes}{
+    \itemize{
+      \item Added \code{weighted.median}.
+    }
+  }
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item Added technical report of tutorial paper as reference.
+    }
+  }
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item Use \code{weighted.median} to compute MAD when negative
+      gradients are stabilized.
+    }
+  }
+}
+
 \section{Changes in gamboostLSS version 1.1-3 (2015-01-12)}{
   \subsection{Miscellaneous}{
     \itemize{
