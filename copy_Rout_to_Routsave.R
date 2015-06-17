@@ -5,18 +5,17 @@
 # Author: Benjamin Hofner, 2013
 #
 # USAGE:
-#   Use either
+#   Use
 #     ## To copy test output
-#     Rscript copy_Rout_to_Routsave.R "which='gamboostLSS'" "vignettes=FALSE"
+#     Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=FALSE"
 #     ## To copy vignette output
-#     Rscript copy_Rout_to_Routsave.R "which='gamboostLSS'" "vignettes=TRUE"
+#     Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=TRUE"
 #
-# ALTERNATIVE USAGE (with R CMD BATCH):
-#   Use either
+#   or use
 #     ## To copy test output
-#     R CMD BATCH "--args which='gamboostLSS' vignettes=FALSE" copy_Rout_to_Routsave.R
+#     Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=FALSE"
 #     ## To copy vignette output
-#     R CMD BATCH "--args which='gamboostLSS' vignettes=TRUE" copy_Rout_to_Routsave.R
+#     Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=TRUE"
 #
 ################################################################################
 
@@ -26,20 +25,18 @@ if (length(args) > 2)
     stop("specify (at maximum) two arguments (i.e., which and vignettes)")
 eval(parse(text=args))
 if (length(args) == 0) {
-    which <- "gamboostLSS"
     vignettes <- FALSE
+    path <- "pkg"
 }
-#if (is.null(which))
-which <- "gamboostLSS"
+
+if (is.null(path))
+    path <- "pkg"
+
 if (is.null(vignettes))
     vignettes <- FALSE
 
-if (which == "gamboostLSS") {
-    path <- "pkg"
-    check_path <- "gamboostLSS.Rcheck/"
-} else {
-    stop("which is not correctly specified")
-}
+which <- "gamboostLSS"
+check_path <- "gamboostLSS.Rcheck/"
 
 ################################################################################
 ## Copy output of test files
@@ -69,9 +66,9 @@ if (vignettes == FALSE) {
 
     cat("#########################################################################",
         "# To revert changes simply use:",
-#        ifelse(which == "gamboostLSS",
-               "#   svn revert --recursive pkg/tests",
-#               "#   svn revert --recursive pkg/mboostPatch/tests"),
+        ifelse(path == "pkg",
+               "#   git checkout -- pkg/tests",
+               "#   git checkout -- patch/tests"),
         "#########################################################################",
         sep = "\n")
 
@@ -108,9 +105,9 @@ if (vignettes == TRUE) {
 
         cat("#########################################################################",
             "# To revert changes simply use:",
-#            ifelse(which == "gamboostLSS",
-                   "#   svn revert --recursive pkg/vignettes",
-#                   "#   svn revert --recursive pkg/mboostPatch/vignettes"),
+            ifelse(path == "pkg",
+                   "#   git checkout -- pkg/vignettes",
+                   "#   git checkout -- patch/vignettes"),
             "#########################################################################",
             sep = "\n")
     } else {
