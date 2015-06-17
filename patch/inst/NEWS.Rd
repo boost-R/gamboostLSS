@@ -5,6 +5,10 @@
   \subsection{User-visible changes}{
     \itemize{
       \item Added \code{weighted.median}.
+      \item New interface: Stabilization of negative gradient is now
+      specified via families, e.g., \code{GaussianLSS(stabilization =
+	"MAD")}. Using \code{options(gamboostLSS_stab_ngrad = TRUE)} is
+      still supported for backward compatibility but discurraged.
     }
   }
   \subsection{Miscellaneous}{
@@ -89,7 +93,7 @@
        intervals
        \item added stabilization factor for negative gradients (MAD):
        turn on the stabilization by using\cr
-       \code{> options(gamboostLSS_stab_ngrad = TRUE)}
+       \code{options(gamboostLSS_stab_ngrad = TRUE)}
        \item added new data sets \code{india} and \code{india.bnd}
     }
   }
