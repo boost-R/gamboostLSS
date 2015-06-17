@@ -286,13 +286,23 @@ weighted.sd <- function(x, w, ...) {
 }
 
 ## weighted median
-weighted.median <- function (x, w = 1) {
+weighted.median <- function (x, w = 1, na.rm = FALSE) {
     if (length(w) == 1)
         w <- rep(w, length(x))
 
     ## remove observations with zero weights
     x <- x[w != 0]
     w <- w[w != 0]
+
+    ## remove NAs if na.rm = TRUE
+    if (na.rm) {
+        keep <- !is.na(x) & !is.na(w)
+        x <- x[keep]
+        w <- w[keep]
+    } else {
+        if (any(is.na(x)) | any(is.na(w)))
+            return(NA)
+    }
 
     ## sort data and weights
     ind <- order(x)

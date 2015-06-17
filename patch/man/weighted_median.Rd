@@ -9,7 +9,7 @@
   Function to compute the weighted median.
 }
 \usage{
-weighted.median(x, w = 1)
+weighted.median(x, w = 1, na.rm = FALSE)
 }
 \arguments{
   \item{x}{
@@ -20,6 +20,10 @@ weighted.median(x, w = 1)
     weights that are used to compute the median. This can be either a
     single value (which will be used as weight for all observations)
     or a numeric vector of the same length as \code{x}.
+  }
+  \item{na.rm}{
+    logical. Should \code{NA}s (from weights \code{w} and/or data
+    \code{x}) be removed?
   }
 }
 \details{
