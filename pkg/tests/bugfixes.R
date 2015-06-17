@@ -24,6 +24,6 @@ model[10]
 
 
 ## selected() was broken (didn't call mboost-function)
-stopifnot(all.equal(selected(model), 
+stopifnot(all.equal(selected(model),
                     list(mu = mboost::selected(model[[1]]),
                          sigma = mboost::selected(model[[2]]))))

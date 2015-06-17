@@ -14,8 +14,8 @@
   This package uses boosting algorithms for fitting GAMLSS (generalized
   additive models for location, scale and shape). For information on
   GAMLSS theory see Rigby and Stasinopoulos (2005), or the information
-  provided at \url{http://gamlss.org}.
-
+  provided at \url{http://gamlss.org}. For a tutorial on
+  \code{\link{gamboostLSS}} see Hofner et al. (2014).
 
   The fitting methods \code{\link{glmboostLSS}} and
   \code{\link{gamboostLSS}}, are alternatives for the algorithms
@@ -23,7 +23,6 @@
   package. They offer shrinkage of effect estimates, intrinsic variable
   selecion and model choice for potentially high-dimensional data
   settings.
-
 
   \code{\link{glmboostLSS}} (for linear effects) and
   \code{\link{gamboostLSS}} (for smooth effects) depend on their
@@ -34,7 +33,6 @@
 
   The package includes some pre-defined GAMLSS distributions, but the
   user can also specify new distributions with \code{\link{Families}}.
-
 
   A wide range of different base-learners is available for covariate
   effects (see \code{\link[mboost]{baselearners}}) including linear
@@ -50,6 +48,10 @@
   Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
 }
 \references{
+
+  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  Model Building and Variable Selection in the GAMLSS Framework.
+  Technical Report, arXiv:1407.1774.
 
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for

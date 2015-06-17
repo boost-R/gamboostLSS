@@ -446,3 +446,41 @@ weighted.sd <- function(x, w, ...) {
     var <- weighted.mean((x - m)^2, w, ...) * sum(w) / (sum(w) - 1)
     return(sqrt(var))
 }
+
+## weighted median
+weighted.median <- function (x, w = 1, na.rm = FALSE) {
+    if (length(w) == 1)
+        w <- rep(w, length(x))
+
+    ## remove observations with zero weights
+    x <- x[w != 0]
+    w <- w[w != 0]
+
+    ## remove NAs if na.rm = TRUE
+    if (na.rm) {
+        keep <- !is.na(x) & !is.na(w)
+        x <- x[keep]
+        w <- w[keep]
+    } else {
+        if (any(is.na(x)) | any(is.na(w)))
+            return(NA)
+    }
+
+    ## sort data and weights
+    ind <- order(x)
+    x <- x[ind]
+    w <- w[ind]
+
+    ## first time that fraction of weights is above 0.5
+    ind1 <- min(which(cumsum(w)/sum(w) > 0.5))
+
+    ## first time that fraction of weights is below 0.5
+    ind2 <- ifelse(ind1 == 1, 1, max(which(cumsum(w)/sum(w) <= 0.5)))
+
+    ## if sum of weights is an even integer
+    if(sum(w) %% 1 == 0 && sum(w) %% 2 == 0)
+        return(mean(c(x[ind1], x[ind2])))
+
+    ## else return
+    return(max(c(x[ind1], x[ind2])))
+}

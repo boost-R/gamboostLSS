@@ -143,3 +143,51 @@ NBinomialLSS2 <- function(mu = NULL, sigma = NULL){
 try(NBinomialLSS2())
 
 #detach("package:gamboostLSS", unload = TRUE)
+
+
+### Check that weighed median works well, which is needed if the negative
+### gradient is stabilized using MAD
+set.seed(122)
+
+## some tests
+x <- c(1, 2, 3)
+stopifnot(weighted.median(x) == median(x))
+
+## this doesn't work a.t.m.
+w <- c(0, 1, 2)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+x <- c(1, 2, 3, 4)
+stopifnot(weighted.median(x) == median(x))
+
+w <- c(0, 1, 2, 3)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+w <- rep(0:1, each = 50)
+x <- rnorm(100)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+w <- rep(0:1, each = 51)
+x <- rnorm(102)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+## hope this is correct:
+w <- runif(100, 0, 1)
+x <- rnorm(100)
+(wm <- weighted.median(x, w))
+
+## check weighted.median with NAs.
+
+# Missing in weights
+tmp <- w[2]
+w[2] <- NA
+stopifnot(is.na(weighted.median(x, w)))
+stopifnot(weighted.median(x, w, na.rm = TRUE) == wm)
+## not always true but here it is
+
+# Missing in x
+w[2] <- tmp
+x[5] <- NA
+stopifnot(is.na(weighted.median(x, w)))
+stopifnot(weighted.median(x, w, na.rm = TRUE) == wm)
+## not always true but here it is

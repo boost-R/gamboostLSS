@@ -83,8 +83,9 @@ gamlss.Families(...)
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
   lists of available distributions are provided at
-  \url{http://gamlss.org}. For more on details boosting GAMLSS see Mayr et
-  al., 2012.
+  \url{http://gamlss.org}. For more on details boosting GAMLSS see Mayr
+  et al. (2012). Hofner et al. (2014) provides a worked example and more
+  details on \code{as.families}.
 }
 
 \author{
@@ -99,6 +100,10 @@ gamlss.Families(...)
 }
 
 \references{
+
+  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  Model Building and Variable Selection in the GAMLSS Framework.
+  Technical Report, arXiv:1407.1774.
 
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for
@@ -132,8 +137,10 @@ y <- rnorm(mean = 2 + 3 * x,        # effect on mu
 ## boosting
 glmss <- glmboostLSS(y ~ x, families = as.families("NO"))
 ## the same:
-glmss <- glmboostLSS(y ~ x, families = as.families(NO))
-glmss <- glmboostLSS(y ~ x, families = as.families(NO()))
+if (require("gamlss.dist")) {
+    glmss <- glmboostLSS(y ~ x, families = as.families(NO))
+    glmss <- glmboostLSS(y ~ x, families = as.families(NO()))
+}
 
 coef(glmss, off2int = TRUE)
 

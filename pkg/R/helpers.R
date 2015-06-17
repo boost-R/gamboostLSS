@@ -118,3 +118,14 @@ myApply <- function(X, FUN, ...) {
 }
 
 
+## helper function that stabilizes the negative gradient if requested by the user
+stabilize_ngradient <- function(ngr, w = 1, which) {
+    ## stabilization using the mean absolute deviation (MAD)
+    if (which) {
+        div <- weighted.median(abs(ngr - weighted.median(ngr, w = w, na.rm = TRUE)),
+                               w = w, na.rm = TRUE)
+        div <- ifelse(div < 0.0001, 0.0001, div)
+        ngr <- ngr / div
+    }
+    ngr
+}
