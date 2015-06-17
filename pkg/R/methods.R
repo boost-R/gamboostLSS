@@ -402,6 +402,10 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                  sampling.type = sampling.type, papply = papply,
                  verbose = verbose, FWER = FWER, eval = eval,
                  names = unlist(nms), ...)
+
+    if (!eval)
+        return(ret)
+
     #if (verbose){
     #    qq <- sapply(ss, function(x) length(unique(x)))
     #    sum_of_violations <- sum(qq < q)
