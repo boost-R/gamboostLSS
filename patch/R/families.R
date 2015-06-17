@@ -31,11 +31,7 @@ NBinomialMu <- function(mu = NULL, sigma = NULL) {
     }
     ngradient <- function(y, f, w = 1) {
         ngr <- y - (y + sigma)/(exp(f) + sigma) * exp(f)
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -76,11 +72,7 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL) {
     ngradient <- function(y, f, w = 1) {       # f is sigma !
         ngr <- exp(f)*(digamma(y +exp(f)) - digamma(exp(f)) + log(exp(f)) + 1 -
                        log(mu +exp(f)) - (exp(f) + y)/(mu +exp(f)))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y,w){
@@ -140,11 +132,7 @@ StudentTMu <- function(mu = NULL, sigma = NULL, df = NULL) {
     }
     ngradient <- function(y, f, w = 1) {
         ngr <- (df+1)*(y-f)/(df*sigma^2 +(y-f)^2)
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
      }
 
@@ -181,11 +169,7 @@ StudentTSigma <- function(mu = NULL, sigma = NULL, df = NULL) {
     }
     ngradient <- function(y, f, w = 1) {
         ngr <- (-1 + (df+1)/(df*exp(2*f)/(y-mu)^2 + 1))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -225,11 +209,7 @@ StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL) {
         ngr <- exp(f)/2 * (digamma((exp(f)+1)/2)-digamma(exp(f)/2)) - 0.5 -
             (exp(f)/2 * log(1+ (y-mu)^2/(exp(f)*sigma^2)) -
              (y-mu)^2/(sigma^2 + (y-mu)^2/exp(f)) * (exp(-f) +1)/2 )
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -300,11 +280,7 @@ LogNormalMu <- function (mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - f)/sigma
         ngr <- (y[,2] * eta + (1 - y[,2]) * dnorm(eta)/(1 - pnorm(eta)))/sigma
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -343,11 +319,7 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - mu)/exp(f)
         ngr <- -(y[,2] - y[,2]*eta^2 + (y[,2]-1)*eta*dnorm(eta)/(1-pnorm(eta)))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -411,11 +383,7 @@ LogLogMu <- function (mu = NULL, sigma = NULL){
         eta <- (log(y[,1]) - f)/sigma
         nom <- (exp(-eta) + 1)
         ngr <- (y[,2] * (2/nom - 1) + (1 - y[,2])/nom)/sigma
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -457,11 +425,7 @@ LogLogSigma <- function (mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - mu)/exp(f)
         ngr <- -(y[,2] + y[,2]*eta -(y[,2]+1)*eta/(1+exp(-eta)))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -520,11 +484,7 @@ WeibullMu <- function (mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1){
         eta <- (log(y[,1]) - f)/sigma
         ngr <- (y[,2] * (exp(eta) - 1) + (1 - y[,2]) * exp(eta))/sigma
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -564,11 +524,7 @@ WeibullSigma <- function (mu = NULL, sigma = NULL){
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - mu)/exp(f)
         ngr <- -(y[,2] * (eta + 1) - eta * exp(eta))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -618,11 +574,7 @@ GaussianMu  <- function(mu = NULL, sigma = NULL){
     }
     ngradient <- function(y, f, w = 1) {
         ngr <- (1/sigma^2)*(y - f)
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
 
@@ -648,11 +600,7 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL){
     }
     ngradient <- function(y, f, w = 1) {
         ngr <- (- 1 + exp(-2*f)*((y - mu)^2))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w){
@@ -694,11 +642,7 @@ GammaMu <-function (mu = NULL, sigma = NULL) {
     }
     ngradient <- function(y, f, w = 1) {
         ngr <- sigma * y * exp(-f) - sigma
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w) {
@@ -736,11 +680,7 @@ GammaSigma <- function(mu = NULL, sigma = NULL) {
     ngradient <- function(y, f, w = 1) {
         ngr <- - digamma(exp(f))*exp(f) + (f+1)*exp(f) - log(mu)*exp(f) +
             exp(f)*log(y) - (y*exp(f))/mu
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w) {
@@ -807,11 +747,7 @@ BetaMu <- function(mu = NULL, phi = NULL){
     ngradient <- function(y, f, w = 1) {
         ngr <- +1 * exp(f)/(1 + exp(f))^2 * (phi * (qlogis(y) - (digamma(plogis(f) * phi) -
               digamma((1 - plogis(f)) * phi)))) # Nachdifferenzieren? -> nein, da nach mu ableiten und nicht nach beta
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w) {
@@ -861,11 +797,7 @@ BetaPhi <- function(mu = NULL, phi = NULL){
         #y <- (y * (length(y) - 1) + 0.5)/length(y)
         ngr <- +1 * exp(f) * (mu * (qlogis(y) - (digamma(mu * exp(f)) - digamma((1 - mu) * exp(f)))) +
               digamma(exp(f)) - digamma((1 - mu) * exp(f)) + log(1 - y))
-        if (getOption("gamboostLSS_stab_ngrad")) {
-            div <- median(abs(ngr - median(ngr, na.rm=TRUE)), na.rm=TRUE)
-            div <- ifelse(div < 0.0001, 0.0001, div)
-            ngr <- ngr / div
-        }
+        ngr <- stabilize_ngradient(ngr, getOption("gamboostLSS_stab_ngrad"))
         return(ngr)
     }
     offset <- function(y, w) {
