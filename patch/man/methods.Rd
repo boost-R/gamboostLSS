@@ -181,7 +181,9 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
   }
 }
 \details{
-  These functions can be used to extract details from fitted models.
+  These functions can be used to extract details from fitted models. For
+  a tutorial with worked examples see Hofner et al. (2014).
+
   \code{print} shows a dense representation of the model fit.
 
   The function \code{coef} extracts the regression coefficients of
@@ -240,6 +242,10 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 }
 
 \references{
+
+B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+Model Building and Variable Selection in the GAMLSS Framework.
+Technical Report, arXiv:1407.1774.
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
 Generalized additive models for location, scale and shape for

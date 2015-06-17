@@ -174,6 +174,10 @@ Families(..., qfun = NULL, name = NULL)
 }
 
 \references{
+  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  Model Building and Variable Selection in the GAMLSS Framework.
+  Technical Report, arXiv:1407.1774.
+
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for
   high-dimensional data - a flexible approach based on boosting. Journal
@@ -267,20 +271,20 @@ x2 <- runif(n)
 mu <- 2 -1*x1 - 3*x2
 df <- exp(1 + 0.5*x1 )
 y <- rTF(n = n, mu = mu, nu = df)
- 
+
 ## model fitting
 model <- glmboostLSS(y ~ x1 + x2, families = newStudentT,
                      control = boost_control(mstop = 100),
                      center = TRUE)
 ## shrinked effect estimates
 coef(model, off2int = TRUE)
- 
+
 ## compare to pre-defined three parametric t-distribution:
 model2 <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(),
                       control = boost_control(mstop = 100),
                       center = TRUE)
 coef(model2, off2int = TRUE)
- 
+
 ## with effect on sigma:
 sigma <- 3+ 1*x2
 y <- rTF(n = n, mu = mu, nu = df, sigma=sigma)

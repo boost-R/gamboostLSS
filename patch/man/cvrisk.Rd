@@ -120,12 +120,21 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   additionally shows information on the variability of the risk from
   fold to fold. The heatmap shows only the average risk but in a nicer
   fashion.
+
+  Hofner et al. (2014) provide a detailed description of
+  cross-validation for \code{\link{gamboostLSS}} models and show a
+  worked example.
 }
 \value{
   An object of class \code{cvriskLSS} (when \code{fun} wasn't
   specified), basically a matrix containing estimates of the empirical
   risk for a varying number of bootstrap iterations. \code{plot} and
   \code{print} methods are available as well as an \code{mstop} method.
+}
+\references{
+  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  Model Building and Variable Selection in the GAMLSS Framework.
+  Technical Report, arXiv:1407.1774.
 }
 \seealso{
   \code{\link{cvrisk.mboost}} and \code{\link{cv}} (both in package

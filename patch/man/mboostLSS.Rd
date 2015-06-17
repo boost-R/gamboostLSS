@@ -76,8 +76,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 }
 \details{
 
-  For information on GAMLSS theory see Rigby and Stasinopoulos (2005)
-  or the information provided at \url{http://gamlss.org}.
+  For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
+  the information provided at \url{http://gamlss.org}. For a tutorial on
+  \code{\link{gamboostLSS}} see Hofner et al. (2014).
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
   distribution parameters of a GAMLSS -- a linear boosting model is
@@ -125,7 +126,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   the negative gradients. In each step the negative gradient is
   divided by its median absolute deviation
   \deqn{median_i (|u_{k,i} - median_j(u_{k,j})|).}
-  To turn the stabilization off, use \code{options(gamboostLSS_stab_ngrad = FALSE)}.
+  To turn the stabilization off, use
+  \code{options(gamboostLSS_stab_ngrad = FALSE)}.
+  See Hofner et. al (2014) for details.
 
 }
 \value{
@@ -133,16 +136,15 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   extract information.
 }
 \references{
+B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+Model Building and Variable Selection in the GAMLSS Framework.
+Technical Report, arXiv:1407.1774.
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
 Generalized additive models for location, scale and shape for
 high-dimensional data - a flexible approach based on boosting. Journal
 of the Royal Statistical Society, Series C (Applied Statistics) 61(3):
 403-427.
-
-Preliminary version: Department of Statistics, Technical Report 98.
-\url{http://epub.ub.uni-muenchen.de/11938/}
-
 
 M. Schmid, S. Potapov, A. Pfahlberg, and T. Hothorn. Estimation and
 regularization techniques for regression models with multidimensional

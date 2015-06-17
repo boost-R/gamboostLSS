@@ -31,10 +31,14 @@ weighted.median(x, w = 1, na.rm = FALSE)
   relative weights (relative to the sum of all weights) crosses 0.5.
 
   This function is used in the stabilization of the negative gradient
-  via the meadian absolute deviation (MAD).
+  via the meadian absolute deviation (MAD). For details see Hofner et al
+  (2014).
 }
 
 \references{
+  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  Model Building and Variable Selection in the GAMLSS Framework.
+  Technical Report, arXiv:1407.1774.
 }
 
 \seealso{
