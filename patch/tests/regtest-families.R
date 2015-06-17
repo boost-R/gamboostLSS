@@ -143,3 +143,35 @@ NBinomialLSS2 <- function(mu = NULL, sigma = NULL){
 try(NBinomialLSS2())
 
 #detach("package:gamboostLSS", unload = TRUE)
+
+
+### Check that weighed median works well, which is needed if the negative
+### gradient is stabilized using MAD
+set.seed(122)
+
+## some tests
+x <- c(1, 2, 3)
+stopifnot(weighted.median(x) == median(x))
+
+## this doesn't work a.t.m.
+w <- c(0, 1, 2)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+x <- c(1, 2, 3, 4)
+stopifnot(weighted.median(x) == median(x))
+
+w <- c(0, 1, 2, 3)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+w <- rep(0:1, each = 50)
+x <- rnorm(100)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+w <- rep(0:1, each = 51)
+x <- rnorm(102)
+stopifnot(weighted.median(x, w) == median(rep(x, w)))
+
+## hope this is correct:
+w <- runif(100, 0, 1)
+x <- rnorm(100)
+weighted.median(x, w)
