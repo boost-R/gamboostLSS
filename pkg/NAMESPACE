@@ -1,5 +1,6 @@
-import(stabs)
 import(mboost)
+importFrom(stabs, stabsel, subsample, run_stabsel)
+
 import(parallel)
 
 export(glmboostLSS,
@@ -10,6 +11,7 @@ export(glmboostLSS,
        model.weights,
        PI, predint, plot.predint,
        make.grid, cvrisk.mboostLSS,
+       selected, selected.mboostLSS, selected.stabsel_mboostLSS,
        stabsel.mboostLSS,
        Families,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
