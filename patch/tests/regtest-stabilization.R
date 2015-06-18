@@ -35,7 +35,107 @@ m3 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
 stopifnot(all.equal(coef(m3), coef(m2)))
 
 ## check if everything is handled correctly
+GaussianLSS(stabilization = "MAD")
+GaussianLSS(stabilization = "none")
 res <- try(GaussianLSS(stabilization = "test"),silent = TRUE)
 res
 
-## continue these checks for (all?) other families
+
+############################################################
+## continue these checks for other families
+dat$y <- runif(1000, min = 0.01, max = 0.99)
+FAMILIES <- list(
+    GaussianLSS,
+    GammaLSS,
+    BetaLSS,
+    StudentTLSS)
+for (i in 1:length(FAMILIES)) {
+    m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                          families = FAMILIES[[i]](stabilization = "none"),
+                          data=dat)
+    m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                         families = FAMILIES[[i]](stabilization = "MAD"),
+                         data=dat)
+    stopifnot(tail(risk(m_none, merge = TRUE), 1) != tail(risk(m_MAD, merge = TRUE), 1))
+    cat('Risks:\n  stabilization = "none":',
+        tail(risk(m_none, merge = TRUE), 1),
+        '\n  stabilization = "MAD":',
+        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+}
+
+## check as.families interface for 2:4 parametric families
+dat$y <- rnorm(1000, mean = 10, sd = 1)
+FAMILIES <- list(
+    "NO",
+    "TF")
+for (i in 1:length(FAMILIES)) {
+    m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                          families = as.families(FAMILIES[[i]], stabilization = "none"),
+                          data=dat)
+    m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                         families = as.families(FAMILIES[[i]], stabilization = "MAD"),
+                         data=dat)
+    cat('Risks:\n  stabilization = "none":',
+        tail(risk(m_none, merge = TRUE), 1),
+        '\n  stabilization = "MAD":',
+        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+}
+
+FAMILIES <- list("BCT")
+require("gamlss.dist")
+dat$y <- rBCT(1000, mu = 100, sigma = 0.1, nu = 0, tau = 2)
+for (i in 1:length(FAMILIES)) {
+    m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                          families = as.families(FAMILIES[[i]], stabilization = "none"),
+                          data=dat)
+    m_MAD <- try(glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                             families = as.families(FAMILIES[[i]], stabilization = "MAD"),
+                             data=dat), silent = TRUE)
+    if (inherits(m_MAD, "try-error")) {
+        warning("BCT cannot be fitted with stabilization", immediate. = TRUE)
+        break
+    }
+    cat('Risks:\n  stabilization = "none":',
+        tail(risk(m_none, merge = TRUE), 1),
+        '\n  stabilization = "MAD":',
+        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+}
+
+## check survival families
+dat$zens <- sample(c(0, 1), 1000, replace = TRUE)
+FAMILIES <- list(
+    LogNormalLSS,
+    WeibullLSS,
+    LogLogLSS)
+require(survival)
+for (i in 1:length(FAMILIES)) {
+    m_none <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
+                          families = FAMILIES[[i]](stabilization = "none"),
+                          data=dat)
+    m_MAD <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
+                         families = FAMILIES[[i]](stabilization = "MAD"),
+                         data=dat)
+    cat('Risks:\n  stabilization = "none":',
+        tail(risk(m_none, merge = TRUE), 1),
+        '\n  stabilization = "MAD":',
+        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+}
+
+## check count data
+dat$y <- rnbinom(1000, size=10, mu=5)
+FAMILIES <- list(
+    NBinomialLSS,
+    ZIPoLSS,
+    ZINBLSS)
+for (i in 1:length(FAMILIES)) {
+    m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                          families = FAMILIES[[i]](stabilization = "none"),
+                          data=dat)
+    m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                         families = FAMILIES[[i]](stabilization = "MAD"),
+                         data=dat)
+    cat('Risks:\n  stabilization = "none":',
+        tail(risk(m_none, merge = TRUE), 1),
+        '\n  stabilization = "MAD":',
+        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+}
