@@ -32,7 +32,8 @@ mstop(model2)
 
 f1 <- fitted(model, parameter = "mu", type = "response")
 f2 <- fitted(model, parameter = "sigma", type = "response")
-model3 <- glmboost(y ~ ., family = NBinomialSigma(mu = f1, sigma = f2),
+model3 <- glmboost(y ~ ., family = NBinomialSigma(mu = f1, sigma = f2,
+                          stabilization = "none"),
                    data = dat,
                    control = boost_control(mstop = 10),
                    center = TRUE)
