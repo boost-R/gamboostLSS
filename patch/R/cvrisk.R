@@ -120,7 +120,11 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     ## fam_name <- object$family@name
     call <- deparse(attr(object, "call"))
     oobrisk <- matrix(0, nrow = ncol(folds), ncol = ncol(grid))
-    dense_mu_grid <- attr(grid, "dense_mu_grid")
+    if (!is.null(attr(grid, "dense_mu_grid"))) {
+        dense_mu_grid <- attr(grid, "dense_mu_grid")
+    } else {
+        dense_mu_grid <- FALSE
+    }
     if (trace)
         cat("Starting cross-validation...\n",
             "[fold]\t[current mstop]\n", sep = "")

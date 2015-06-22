@@ -220,7 +220,11 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)
+        if (FAM$type == "Mixed") { 
+            ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
+        } else {
+            ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -260,7 +264,11 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL,
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu) * FAM$sigma.dr(eta = f)
+        if (FAM$type == "Mixed") {
+            ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f))  * FAM$sigma.dr(eta = f)
+        } else {
+            ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu) * FAM$sigma.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -298,7 +306,11 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
+        if (FAM$type == "Mixed") {
+            ngr <- FAM$dldv(y = y, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
+        } else { 
+            ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -331,7 +343,7 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, stabilization, fna
 ## 4 parameters
 
 gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                         stabilization, fname = "BCT") {
+                         stabilization, fname = "BCPE") {
 
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family

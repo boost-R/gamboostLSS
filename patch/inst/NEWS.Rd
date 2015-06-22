@@ -20,6 +20,7 @@
     \itemize{
       \item Use \code{weighted.median} to compute MAD when negative
       gradients are stabilized.
+      \item Fixed handling of \pkg{gamlss.dist} families with \code{type = "Mixed"}.
     }
   }
 }

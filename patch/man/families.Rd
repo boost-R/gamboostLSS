@@ -296,7 +296,6 @@ mu <- 2 -1*x1 - 3*x2
 df <- exp(1 + 0.5*x1 )
 y <- rTF(n = n, mu = mu, nu = df)
 
-
 ## model fitting
 model <- glmboostLSS(y ~ x1 + x2, families = newStudentT,
                      control = boost_control(mstop = 100),
