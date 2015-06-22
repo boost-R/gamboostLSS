@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 1.1-4 (2015-06-17)}{
+\section{Changes in gamboostLSS version 1.2-0 (2015-06-17)}{
   \subsection{User-visible changes}{
     \itemize{
       \item Added \code{weighted.median}.

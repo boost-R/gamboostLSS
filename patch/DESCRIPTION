@@ -1,7 +1,7 @@
 Package: gamboostLSS
 Type: Package
 Title: Boosting Methods for GAMLSS
-Version: 1.1-4
+Version: 1.2-0
 Date: 2015-06-17
 Author: Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
 Maintainer: Benjamin Hofner <benjamin.hofner@fau.de>
