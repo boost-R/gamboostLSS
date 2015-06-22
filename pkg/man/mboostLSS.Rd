@@ -5,12 +5,6 @@
 \alias{gamboostLSS}
 \alias{mboostLSS_fit}
 
-\alias{options}
-\alias{gamboostLSS_stab_ngrad}
-\alias{stab_ngrad}
-\alias{stabilize_ngrad}
-\alias{stabilize_ngradient}
-
 \title{
   Fitting GAMLSS by Boosting
 }
@@ -35,11 +29,6 @@ blackboostLSS(formula, data = list(), families = GaussianLSS(),
 mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
               control = boost_control(), weights = NULL,
               fun = mboost, funchar = "mboost", call = NULL, ...)
-
-############################################################
-# Turn the stability correction on or off:
-## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
-## or  options(gamboostLSS_stab_ngrad = FALSE) ## off
 }
 
 \arguments{
@@ -121,14 +110,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   more-dimensional stopping, one can specify, e.g., \code{mstop =
     list(mu = 100, sigma = 200)} (see examples).
 
-  To (potentially) stabilize the model estimation one can use
-  \code{options(gamboostLSS_stab_ngrad = TRUE)} in order to standardize
-  the negative gradients. In each step the negative gradient is
-  divided by its median absolute deviation
-  \deqn{median_i (|u_{k,i} - median_j(u_{k,j})|).}
-  To turn the stabilization off, use
-  \code{options(gamboostLSS_stab_ngrad = FALSE)}.
-  See Hofner et. al (2014) for details.
+  To (potentially) stabilize the model estimation by standardizing the
+  negative gradients one can use the argument \code{stabilization} of
+  the families. See \code{\link{Families}} for details.
 
 }
 \value{

@@ -33,14 +33,10 @@
 }
 \usage{
 as.families(fname = "NO", mu = NULL, sigma = NULL,
-            nu = NULL, tau = NULL)
+            nu = NULL, tau = NULL, stabilization = c("none", "MAD"))
 
 ## a wrapper to as.families:
 gamlss.Families(...)
-
-#### Turn the stability correction on or off:
-## use options(gamboostLSS_stab_ngrad = TRUE)  ## on
-## or  options(gamboostLSS_stab_ngrad = FALSE) ## off
 }
 
 \arguments{
@@ -55,6 +51,10 @@ gamlss.Families(...)
   \item{sigma}{possible offset value for parameter \code{sigma}.}
   \item{nu}{possible offset value for parameter \code{nu}.}
   \item{tau}{possible offset value for parameter \code{tau}.}
+  \item{stabilization}{ governs if the negative gradient should be
+    standardized in each boosting step. It can be either "none" or
+    "MAD". For details see \code{\link{Families}}.
+  }
   \item{\ldots}{same arguments as above.}
 }
 \details{
@@ -86,6 +86,10 @@ gamlss.Families(...)
   \url{http://gamlss.org}. For more on details boosting GAMLSS see Mayr
   et al. (2012). Hofner et al. (2014) provides a worked example and more
   details on \code{as.families}.
+
+  To (potentially) stabilize the model estimation by standardizing the
+  negative gradients one can use the argument \code{stabilization} of
+  the families. See \code{\link{Families}} for details.
 }
 
 \author{

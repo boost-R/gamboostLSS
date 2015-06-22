@@ -119,13 +119,30 @@ myApply <- function(X, FUN, ...) {
 
 
 ## helper function that stabilizes the negative gradient if requested by the user
-stabilize_ngradient <- function(ngr, w = 1, which) {
+stabilize_ngradient <- function(ngr, w = 1, stabilization) {
+    ## set which to MAD if gamboostLSS_stab_ngrad = TRUE and which == "none"
+    if (stabilization == "none" && getOption("gamboostLSS_stab_ngrad"))
+        stabilization <- "MAD"
     ## stabilization using the mean absolute deviation (MAD)
-    if (which) {
+    if (stabilization == "MAD") {
         div <- weighted.median(abs(ngr - weighted.median(ngr, w = w, na.rm = TRUE)),
                                w = w, na.rm = TRUE)
         div <- ifelse(div < 0.0001, 0.0001, div)
         ngr <- ngr / div
     }
     ngr
+}
+
+
+check_stabilization <- function(stabilization = c("none", "MAD")) {
+    stabilization <- match.arg(stabilization)
+    ## check if old stabilization interface is used and issue a warning
+    if (getOption("gamboostLSS_stab_ngrad")) {
+        warning("Usage of ", sQuote("options(gamboostLSS_stab_ngrad = TRUE)"),
+                " is deprecated.\n", "Use argument ", sQuote("stabilization"),
+                " in the fitting family. See ?Families for details.")
+        if (stabilization == "none")
+           warning(sQuote("stabilization"), " is set to ", dQuote("MAD"))
+    }
+    stabilization
 }
