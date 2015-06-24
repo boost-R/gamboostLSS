@@ -286,7 +286,8 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                     B = ifelse(sampling.type == "MB", 100, 50),
                     assumption = c("unimodal", "r-concave", "none"),
                     sampling.type = c("SS", "MB"),
-                    papply = mclapply, verbose = TRUE, FWER, eval = TRUE, ...) {
+                    papply = mclapply, verbose = TRUE, FWER, eval = TRUE,
+                    n.steps = 10, ...) {
 
     cll <- match.call()
     p <- sum(sapply(x, function(obj) length(variable.names(obj))))
@@ -311,9 +312,17 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         warning("Usually one should use the same ", sQuote("mstop"),
                 " value for all components for stability selection.")
 
+    if (verbose)
+        cat("Run stabsel ")
+
+    ## set mstop = 1 to speed things up
+    x <- update(x, weights = model.weights(x), mstop = 1)
+
     ## define the fitting function (args.fitfun is not used but needed for
     ## compatibility with run_stabsel
     fit_model <- function(i, folds, q, args.fitfun) {
+        if (verbose)
+            cat(".")
         ## start by fitting 1 step in each component
         mod <- update(x, weights = folds[, i], mstop = 1)
         ## make sure dispatch works correctly
@@ -321,21 +330,17 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         xs <- selected(mod)
         nsel <- length(mod)
         ## now update model until we obtain q different base-learners altogether
-        for (m in 1:max(mstop)) {
+        ## do this in batches of max(mstop)/n.steps to speed things up.
+        for (m in round(seq(1, max(mstop), length.out = n.steps))) {
             if (nsel >= q)
                 break
-            for (j in 1:length(mod)) {
-                if (m < mstop[j]) {
-                    tmp <- mstop(mod)
-                    tmp[j] <- tmp[j] + 1
-                    mstop(mod) <- tmp
-                    xs <- selected(mod)
-                    nsel <- sum(sapply(xs, function(selection)
-                        length(unique(selection))))
-                }
-                if (nsel >= q)
-                    break
-            }
+
+            mstop(mod) <- m
+            xs <- selected(mod)
+            nsel <- sum(sapply(xs, function(selection)
+                length(unique(selection))))
+            if (nsel >= q)
+                break
         }
         ## complete paths
         if (any(sapply(xs, length) < mstop)) {
@@ -393,7 +398,10 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             }
         }
         colnames(sequence) <- 1:ncol(sequence)
-        return(list(selected = ret, path = sequence))
+        ret <- list(selected = ret, path = sequence)
+        ## was mstop to small?
+        attr(ret, "violations") <- ifelse(sum(ret$selected) < q, TRUE, FALSE)
+        return(ret)
     }
 
     ret <- run_stabsel(fitter = fit_model, args.fitter = list(),
@@ -403,19 +411,21 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                  verbose = verbose, FWER = FWER, eval = eval,
                  names = unlist(nms), ...)
 
+    if (verbose)
+        cat("\n")
+
     if (!eval)
         return(ret)
 
-    #if (verbose){
-    #    qq <- sapply(ss, function(x) length(unique(x)))
-    #    sum_of_violations <- sum(qq < q)
-    #    if (sum_of_violations > 0)
-    #        warning(sQuote("mstop"), " too small in ",
-    #                sum_of_violations, " of the ", ncol(folds),
-    #                " subsampling replicates to select ", sQuote("q"),
-    #                " base-learners; Increase ", sQuote("mstop"),
-    #                " bevor applying ", sQuote("stabsel"))
-    #}
+    if (!is.null(attr(ret, "violations")))
+        violations <- attr(ret, "violations")
+
+    if (any(violations))
+        warning(sQuote("mstop"), " too small in ",
+                sum(violations), " of the ", length(violations),
+                " subsampling replicates to select ", sQuote("q"),
+                " base-learners; Increase ", sQuote("mstop"),
+                " bevor applying ", sQuote("stabsel"))
 
     ret$call <- cll
     ret$call[[1]] <- as.name("stabsel")
