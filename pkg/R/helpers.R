@@ -60,6 +60,38 @@ get_qfun <- function(x) {
     return(qfun)
 }
 
+## obtain pdf from gamlss.dist or global environment
+## (needed in as.families)
+get_pdf <- function(fname) {
+    dfun <- paste("gamlss.dist::d", fname, sep = "")
+    pdf <- try(eval(parse(text = dfun)), silent = TRUE)
+    if (inherits(pdf, "try-error")) {
+        ## try to find the function in global environment
+        ## this is needed e.g. for truncated families
+        dfun2 <- paste("d", fname, sep = "")
+        pdf <- try(eval(parse(text = dfun2)), silent = TRUE)
+        if (inherits(pdf, "try-error"))
+            stop(sQuote(dfun2), " and ", sQuote(dfun), " do not exist.")
+    }
+    return(pdf)
+}
+
+## obtain pdf from gamlss.dist or global environment
+## (needed in as.families)
+get_qfun <- function(fname) {
+    qfun <- paste("gamlss.dist::q", fname, sep = "")
+    pdf <- try(eval(parse(text = qfun)), silent = TRUE)
+    if (inherits(pdf, "try-error")) {
+        ## try to find the function in global environment
+        ## this is needed e.g. for truncated families
+        qfun2 <- paste("q", fname, sep = "")
+        pdf <- try(eval(parse(text = qfun2)), silent = TRUE)
+        if (inherits(pdf, "try-error"))
+            stop(sQuote(qfun2), " and ", sQuote(qfun), " do not exist.")
+    }
+    return(pdf)
+}
+
 ## return mean or (first) modus of a vector depending on its class
 mean_mod <- function(x) {
     if (is.numeric(x))

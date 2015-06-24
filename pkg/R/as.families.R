@@ -113,8 +113,7 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL,
 
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, sigma, w = 1) {
@@ -154,8 +153,7 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
                             stabilization, fname = "NO") {
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, w = 1, mu) {
@@ -192,7 +190,7 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
 gamlss2parFam <- function(mu = NULL, sigma = NULL, stabilization, fname = "NO") {
     Families(mu = gamlss2parMu(mu = mu, sigma = sigma, stabilization, fname = fname),
              sigma = gamlss2parSigma(mu = mu, sigma = sigma, stabilization, fname = fname),
-             qfun = eval(parse(text=paste0("gamlss.dist::q", fname))),
+             qfun = get_qfun(fname),
              name = fname)
 }
 
@@ -205,8 +203,7 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
 
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, sigma, nu, w = 1) {
@@ -220,7 +217,7 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        if (FAM$type == "Mixed") { 
+        if (FAM$type == "Mixed") {
             ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
         } else {
             ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu) * FAM$mu.dr(eta = f)
@@ -249,8 +246,7 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL,
                             stabilization, fname = "TF") {
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, w = 1, mu, nu) {
@@ -291,8 +287,7 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
                          stabilization, fname = "TF") {
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, w = 1, mu, sigma) {
@@ -308,7 +303,7 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
     ngradient <- function(y, f, w = 1) {
         if (FAM$type == "Mixed") {
             ngr <- FAM$dldv(y = y, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
-        } else { 
+        } else {
             ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f)) * FAM$nu.dr(eta = f)
         }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
@@ -334,7 +329,7 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, stabilization, fna
     Families(mu = gamlss3parMu(mu = mu, sigma = sigma, nu = nu, stabilization, fname = fname),
              sigma = gamlss3parSigma(mu = mu, sigma = sigma, nu = nu, stabilization, fname = fname),
              nu = gamlss3parNu(mu = mu, sigma = sigma, nu = nu, stabilization, fname = fname),
-             qfun = eval(parse(text=paste0("gamlss.dist::q", fname))),
+             qfun = get_qfun(fname),
              name = fname)
 }
 
@@ -347,8 +342,7 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, sigma, nu, tau, w = 1) {
@@ -386,8 +380,7 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                             stabilization, fname = "BCPE") {
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, w = 1, mu, nu, tau) {
@@ -426,8 +419,7 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                          stabilization, fname = "BCPE") {
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, w = 1, mu, sigma, tau) {
@@ -468,8 +460,7 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                           stabilization, fname = "BCPE") {
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
-    dfun <- paste("gamlss.dist::d", fname, sep = "")
-    pdf <- eval(parse(text = dfun))
+    pdf <- get_pdf(fname)
 
     ## get the loss
     loss <- function(y, f, w = 1, mu, sigma, nu) {
@@ -509,6 +500,6 @@ gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, stabil
              sigma = gamlss4parSigma(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
              nu = gamlss4parNu(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
              tau = gamlss4parTau(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
-             qfun = eval(parse(text=paste0("gamlss.dist::q", fname))),
+             qfun = get_qfun(fname),
              name = fname)
 }

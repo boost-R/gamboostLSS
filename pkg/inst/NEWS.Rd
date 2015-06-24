@@ -40,6 +40,8 @@
       \item Use \code{weighted.median} to compute MAD when negative
       gradients are stabilized.
       \item Fixed handling of \pkg{gamlss.dist} families with \code{type = "Mixed"}.
+      \item Fixed a bug in \code{as.families} with truncated \code{families} 
+	  (which can be obtained using the package \pkg{gamlss.tr}).
     }
   }
 }
@@ -113,7 +115,7 @@
        intervals
        \item added stabilization factor for negative gradients (MAD):
        turn on the stabilization by using\cr
-       \code{> options(gamboostLSS_stab_ngrad = TRUE)}
+       \code{options(gamboostLSS_stab_ngrad = TRUE)}
        \item added new data sets \code{india} and \code{india.bnd}
     }
   }
