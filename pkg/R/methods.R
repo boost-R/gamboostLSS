@@ -415,6 +415,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
     if (!eval)
         return(ret)
 
+    violations <- FALSE
     if (!is.null(attr(ret, "violations")))
         violations <- attr(ret, "violations")
 
