@@ -286,8 +286,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                     B = ifelse(sampling.type == "MB", 100, 50),
                     assumption = c("unimodal", "r-concave", "none"),
                     sampling.type = c("SS", "MB"),
-                    papply = mclapply, verbose = TRUE, FWER, eval = TRUE,
-                    n.steps = 10, ...) {
+                    papply = mclapply, verbose = TRUE, FWER, eval = TRUE, ...) {
 
     cll <- match.call()
     p <- sum(sapply(x, function(obj) length(variable.names(obj))))
@@ -330,8 +329,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         xs <- selected(mod)
         nsel <- length(mod)
         ## now update model until we obtain q different base-learners altogether
-        ## do this in batches of max(mstop)/n.steps to speed things up.
-        for (m in round(seq(1, max(mstop), length.out = n.steps))) {
+        for (m in 1:max(mstop)) {
             if (nsel >= q)
                 break
 
