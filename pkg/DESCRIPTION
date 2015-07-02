@@ -13,4 +13,4 @@ Suggests: gamlss, BayesX, gamlss.dist, survival
 LazyLoad: yes
 LazyData: yes
 License: GPL-2
-URL: For development versions and source code see http://r-forge.r-project.org/projects/gamboostlss/
+URL: For development versions and source code see https://github.com/hofnerb/gamboostLSS
