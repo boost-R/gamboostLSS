@@ -1,0 +1,25 @@
+## check development version of gamboostLSS
+## see http://docs.travis-ci.com/user/languages/r/
+
+## Test multiple directories (see https://lord.io/blog/2014/travis-multiple-subdirs/)
+## env:
+##  - TEST_DIR=tilt-client
+##  - TEST_DIR=tilt-server
+
+language: r
+sudo: required
+
+before_install:
+  - cd pkg/
+
+r_github_packages:
+  - hofnerb/mboost/pkg/mboostPatch
+  - hofnerb/stabs
+  
+after_failure:
+  - ./travis-tool.sh dump_logs
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
