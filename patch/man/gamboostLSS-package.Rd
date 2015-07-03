@@ -28,8 +28,8 @@
   \code{\link{gamboostLSS}} (for smooth effects) depend on their
   analogous companions \code{\link[mboost]{glmboost}} and
   \code{\link[mboost]{gamboost}} for generalized additive models
-  (contained in package \code{\link{mboost}}, see Hothorn et al. 2010a,
-  b) and are similar in their usage.
+  (contained in package \code{\link{mboost}}, see Hothorn et al. 2010,
+  2015) and are similar in their usage.
 
   The package includes some pre-defined GAMLSS distributions, but the
   user can also specify new distributions with \code{\link{Families}}.
@@ -74,13 +74,13 @@
   Buehlmann, P. and Hothorn, T. (2007). Boosting algorithms: Regularization,
   prediction and model fitting. Statistical Science, 22(4), 477--505.
 
-  Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2010a).
+  Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2010).
   Model-based boosting 2.0. Journal of Machine Learning Research 11(Aug),
   2109-2113.
 
-  Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2010b).
-  mboost: Model-based boosting 2.0. R package version 2.0-9.
-  \url{http://cran.r-project.org/web/packages/mboost}
+  Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2015).
+  mboost: Model-based boosting. R package version 2.4-2.
+  \url{http://cran.r-project.org/package=mboost}
 }
 \keyword{ package }
 
