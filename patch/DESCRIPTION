@@ -9,6 +9,7 @@ Description: Boosting models for fitting generalized additive models for
   location, shape and scale (GAMLSS) to potentially high dimensional
   data.
 Depends: R (>= 2.10.0), mboost (>= 2.3-0), parallel
+Imports: graphics, grDevices, stats, utils
 Suggests: gamlss, BayesX, gamlss.dist, survival
 LazyLoad: yes
 LazyData: yes

@@ -1,5 +1,11 @@
-import(mboost)
-import(parallel)
+import("mboost")
+import("parallel")
+
+importFrom("graphics", "axis", "box", "lines", "plot", "points")
+importFrom("grDevices", "grey", "rgb")
+importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize", "plogis", "pnorm", "predict", "qlnorm", "qlogis", "qnorm", "qt", "qweibull", "rmultinom", "update", "var", "weighted.mean")
+importFrom("utils", "tail")
+
 
 export(glmboostLSS,
        gamboostLSS,
