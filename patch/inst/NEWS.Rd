@@ -21,8 +21,9 @@
       \item Use \code{weighted.median} to compute MAD when negative
       gradients are stabilized.
       \item Fixed handling of \pkg{gamlss.dist} families with \code{type = "Mixed"}.
-      \item Fixed a bug in \code{as.families} with truncated \code{families} 
-	  (which can be obtained using the package \pkg{gamlss.tr}).
+      \item Fixed a bug in \code{as.families} with truncated \code{families}
+      (which can be obtained using the package \pkg{gamlss.tr}).
+      \item The internal helper \code{get_qfun} is now a generic function.
     }
   }
 }
