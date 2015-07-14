@@ -60,3 +60,6 @@ S3method(fitted, mboostLSS)
 S3method(predict, mboostLSS)
 
 S3method(update, mboostLSS)
+
+S3method(get_qfun, mboostLSS)
+S3method(get_qfun, character)
