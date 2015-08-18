@@ -167,11 +167,12 @@ model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 grid <-  make.grid(mstop(model), length.out = 5, dense_mu_grid = FALSE)
 plot(grid)
 
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
 ### a tiny toy example (5-fold bootsrap with maximum stopping value 100)
 ## (to run it on multiple cores of a Linux or Mac OS computer remove
 ##  set papply = mclapply (default) and set mc.nodes to the
 ##  appropriate number of nodes)
-\donttest{cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5),
+cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5),
               papply = lapply, grid = grid)
 cvr
 ## plot the results
@@ -180,15 +181,20 @@ plot(cvr)
 plot(cvr, type = "lines")
 ## extract optimal mstop (here: grid to small)
 mstop(cvr)
+### END (don't test automatically)
 }
+
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
 ### a more realistic example
-\donttest{grid <- make.grid(c(mu = 400, sigma = 400), dense_mu_grid = FALSE)
+grid <- make.grid(c(mu = 400, sigma = 400), dense_mu_grid = FALSE)
 plot(grid)
 cvr <- cvrisk(model, grid = grid)
 mstop(cvr)
-## reset model to mstop values:
-model[mstop(cvr)]
+## set model to optimal values:
+mstop(model) <- mstop(cvr)
+### END (don't test automatically)
 }
+
 ### Other grids:
 plot(make.grid(mstop(model), length.out = 3, dense_mu_grid = FALSE))
 plot(make.grid(c(mu = 400, sigma = 400), log = FALSE, dense_mu_grid = FALSE))

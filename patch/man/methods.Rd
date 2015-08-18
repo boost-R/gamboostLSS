@@ -306,8 +306,9 @@ dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 100))
 
-\donttest{### use a model with more iterations for a better fit
-model[400]
+\donttest{### Do not test the following line per default on CRAN as it takes some time to run:
+### use a model with more iterations for a better fit
+mstop(model) <- 400
 }
 ### extract coefficients
 coef(model)
@@ -332,39 +333,41 @@ plot(model, which = "x3")
 par(mfrow = c(1, 1))
 plot(model, which = 1, parameter = 2)
 
-\donttest{### plot marginal prediction interval
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
+### plot marginal prediction interval
 pi <- predint(model, pi = 0.9, which = "x1")
 pi <- predint(model, pi = c(0.8, 0.9), which = "x1")
 plot(pi, log = "y")  # warning as some y values are below 0
 ## here it would be better to plot x1 against
 ## sqrt(y) and sqrt(pi)
 
-### subset model for mstop = 300 (one-dimensional)
-model[300]
+### set model to mstop = 300 (one-dimensional)
+mstop(model) <- 300
+### END (don't test automatically)
 }
-# WARNING: Subsetting via model[mstopnew] changes the model directly!
-# For the original fit one has to subset again: model[mstop]
 
 par(mfrow = c(2, 2))
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 
-\donttest{### get back to orignal fit
-model[400]
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
+### get back to orignal fit
+mstop(model) <- 400
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 
 ### use different mstop values for the components
-model[c(100, 200)]
+mstop(model) <- c(100, 200)
 ## same as
-  model[c(mu = 100, sigma = 200)]
+  mstop(model) <- c(mu = 100, sigma = 200)
 ## or
-  model[list(mu = 100, sigma = 200)]
+  mstop(model) <- list(mu = 100, sigma = 200)
 ## or
-  model[list(100, 200)]
+  mstop(model) <- list(100, 200)
 
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
+### END (don't test automatically)
 }
 }
 \keyword{methods}
