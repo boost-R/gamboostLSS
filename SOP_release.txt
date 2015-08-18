@@ -24,7 +24,7 @@
     ../relative/path/to/R-devel/bin/R
 
   Run
-    install.packages(c("gamlss", "BayesX", "gamlss.dist", "mboost"))
+    install.packages(c("gamlss", "BayesX", "gamlss.dist", "mboost", "R2BayesX"))
 
   Quit R and run
    ../relative/path/to/R-devel/bin/R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
@@ -46,13 +46,13 @@
     If differences to .Rout.save occure:
        - Copy new .Rout files to .Rout.save [1,2]:
 
-       	    Rscript copy_Rout_to_Routsave.R "vignettes=FALSE"
-         or         
+       	    Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=FALSE"
+         or
             Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=FALSE"
 
        - Update vignette .Rout.save files if necessary [1,2]:
 
-            Rscript copy_Rout_to_Routsave.R "vignettes=TRUE"
+            Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=TRUE"
 	or
             Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=TRUE"
 
@@ -79,4 +79,4 @@
 
     To use the script copy it to R RHOME (< enter this in the console) /bin and make it executable.
 
-    Ftp source package to CRAN or use web form at http://xmpalantir.wu.ac.at/cransubmit/.
+    Use web form at http://xmpalantir.wu.ac.at/cransubmit/.
