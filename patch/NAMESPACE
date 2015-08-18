@@ -36,6 +36,7 @@ S3method("[", mboostLSS)
 S3method(print, mboostLSS)
 S3method(selected, mboostLSS)
 S3method(risk, mboostLSS)
+S3method(summary, mboostLSS)
 
 S3method(mstop, oobag)
 S3method(mstop, mboostLSS)

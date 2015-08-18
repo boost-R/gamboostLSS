@@ -260,6 +260,42 @@ model.weights.default <- function(x, ...)
 model.weights.mboostLSS <- function(x, ...)
     attr(x, "(weights)")
 
+### summary function based on print.mboostLSS() and summary.mboost()
+summary.mboostLSS <- function(object, ...) {
+    cat("\n")
+    cat("\t LSS Models fitted via Model-based Boosting\n")
+    cat("\n")
+    if (!is.null(attr(object, "call")))
+        cat("Call:\n", deparse(attr(object, "call")), "\n\n", sep = "")
+    cat("Number of boosting iterations: mstop =", mstop(object), "\n")
+    cat("Step size: ", object[[1]]$control$nu, "\n\n")
+
+    cat("Families:\n")
+    lapply(object, function(xi) show(xi$family))
+
+    if (inherits(object, "glmboostLSS")) {
+        cat("Coefficients:\n")
+        cf <- coef(object, off2int = TRUE)
+        for (i in 1:length(cf)) {
+            cat("Parameter ", names(cf)[i], ":\n", sep = "")
+            print(cf[[i]])
+            cat("\n")
+        }
+    }
+
+    cat("Selection frequencies:\n")
+    for (i in 1:length(object)) {
+        cat("Parameter ", names(object)[i], ":\n", sep = "")
+        nm <- variable.names(object[[i]])
+        selprob <- tabulate(selected(object[[i]]), nbins = length(nm)) /
+            length(selected(object[[i]]))
+        names(selprob) <- names(nm)
+        selprob <- sort(selprob, decreasing = TRUE)
+        selprob <- selprob[selprob > 0]
+        print(selprob)
+    }
+    invisible(object)
+}
 
 ################################################################################
 ### helpers
@@ -322,3 +358,4 @@ weighted.median <- function (x, w = 1, na.rm = FALSE) {
     ## else return
     return(max(c(x[ind1], x[ind2])))
 }
+

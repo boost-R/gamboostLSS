@@ -1,5 +1,8 @@
 \name{methods}
 
+\alias{print.mboostLSS}
+\alias{summary.mboostLSS}
+
 \alias{coef.mboostLSS}
 \alias{coef.glmboostLSS}
 
@@ -38,7 +41,13 @@
   Methods for GAMLSS models fitted by boosting algorithms.
 }
 \usage{
-## extract coefficients
+### print model
+\method{print}{mboostLSS}(x, ...)
+
+### summarize model
+\method{summary}{mboostLSS}(object, ...)
+
+### extract coefficients
 \method{coef}{glmboostLSS}(object, which = NULL,
      aggregate = c("sum", "cumsum", "none"),
      off2int = FALSE, parameter = names(object), ...)
@@ -46,52 +55,51 @@
      aggregate = c("sum", "cumsum", "none"),
      parameter = names(object), ...)
 
-## plot partial effects
+### plot partial effects
 \method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x),
      off2int = FALSE, ...)
 \method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x), ...)
 
-## extract and plot marginal prediction intervals
+### extract and plot marginal prediction intervals
 predint(x, which, pi = 0.9, newdata = NULL, ...)
 PI(x, which, pi = 0.9, newdata = NULL, ...)
 \method{plot}{predint}(x, main = "Marginal Prediction Interval(s)",
      xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
      lcol = c("black", "black"), log = "", ...)
 
-## extract mstop
+### extract mstop
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
 \method{mstop}{cvriskLSS}(object, parameter = NULL, ...)
 
-## set mstop
+### set mstop
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
-## extract risk
+### extract risk
 \method{risk}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
 
-## extract selected base-learners
+### extract selected base-learners
 \method{selected}{mboostLSS}(object, parameter = names(object), ...)
 
-## extract fitted values
+### extract fitted values
 \method{fitted}{mboostLSS}(object, parameter = names(object), ...)
 
-## make predictions
+### make predictions
 \method{predict}{mboostLSS}(object, newdata = NULL,
         type = c("link", "response", "class"), which = NULL,
         aggregate = c("sum", "cumsum", "none"),
         parameter = names(object), ...)
 
-## update weights of the fitted model
+### update weights of the fitted model
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
        risk = NULL, trace = NULL, mstop = NULL, ...)
 
-## extract model weights
+### extract model weights
 \method{model.weights}{mboostLSS}(x, ...)
 
 }
 \arguments{
-  \item{x}{ an object of the appropriate class (see usage). }
-  \item{object}{ an object of the appropriate class (see usage). }
+  \item{x, object}{ an object of the appropriate class (see usage). }
   \item{which}{ a subset of base-learners to take into account when computing
      predictions or coefficients. If \code{which} is given
      (as an integer vector or characters corresponding
