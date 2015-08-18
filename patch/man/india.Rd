@@ -42,11 +42,13 @@ data(india.bnd)
   }
 }
 
-\source{ The complete data set is provided by the Monitoring and
-  Evaluation to Assess and Use Results Demographic and Health Surveys
-  (MEASURE DHS) which is funded by the U.S. Agency of International
-  Development (USAID). It can be obtained for research purposes (after
-  registration) from
+\source{
+
+  The complete data set is provided by the Monitoring and Evaluation to
+  Assess and Use Results Demographic and Health Surveys (MEASURE DHS)
+  which is funded by the U.S. Agency of International Development
+  (USAID). It can be obtained for research purposes (after registration)
+  from
   \url{http://www.measuredhs.com/what-we-do/survey/survey-display-156.cfm}
   (Data set for All-India, Children's Recode: iakr42dt.zip) }
   \references{ For details on the data set see also:

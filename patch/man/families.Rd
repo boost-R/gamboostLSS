@@ -183,8 +183,8 @@ Families(..., qfun = NULL, name = NULL)
   negative gradients one can use the argument \code{stabilization} of
   the families. If \code{stabilization = "MAD"}, the negative gradient
   is divided by its (weighted) median absolute deviation \deqn{median_i
-  (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et.
-  al (2014) for details.
+  (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et
+  al. (2015) for details.
 
 }
 \value{
@@ -197,9 +197,11 @@ Families(..., qfun = NULL, name = NULL)
 }
 
 \references{
-  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Technical Report, arXiv:1407.1774.
+  Journal of Statistical Software. Accepted for publication.
+
+  Available as \code{vignette("gamboostLSS_Tutorial")}.
 
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for

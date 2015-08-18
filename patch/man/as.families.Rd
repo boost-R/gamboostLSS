@@ -84,7 +84,7 @@ gamlss.Families(...)
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
   lists of available distributions are provided at
   \url{http://gamlss.org}. For more on details boosting GAMLSS see Mayr
-  et al. (2012). Hofner et al. (2014) provides a worked example and more
+  et al. (2012). Hofner et al. (2015) provides a worked example and more
   details on \code{as.families}.
 
   To (potentially) stabilize the model estimation by standardizing the
@@ -105,9 +105,11 @@ gamlss.Families(...)
 
 \references{
 
-  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Technical Report, arXiv:1407.1774.
+  Journal of Statistical Software. Accepted for publication.
+
+  Available as \code{vignette("gamboostLSS_Tutorial")}.
 
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for
