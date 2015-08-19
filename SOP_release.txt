@@ -36,9 +36,9 @@
     Increase patch or minor level in DESCRIPTION
     Update Date: field in DESCRIPTION
     Update NEWS
-    Update ChangeLog (see above)
 
-    R CMD build --resave-data --compact-vignettes pkg && R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
+    R CMD build --resave-data --compact-vignettes [[pkg OR patch]] &&
+        R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
 
     Run check with R-devel
        (see section "Checking the package with latest development version of R")
@@ -69,7 +69,7 @@
 
     Commit changes
 
-    Add latest svn LATEST version to NEWS
+    Update ChangeLog (see above)
 
     Now  build package without test folder to be submitted to CRAN
 
