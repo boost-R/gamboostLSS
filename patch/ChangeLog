@@ -1,7 +1,226 @@
-commit 0275d0edc94ccfbaa04922d0acdc6fdfb20d3dac
+commit 73b484b0b606df5cdaaaef2cf2287b3a8f2f0521
 Author: Benjamin Hofner <benjamin.hofner@fau.de>
 
-    Updated NEWS.Rd and DESCRIPTION
+    Release version 1.2-0
+
+commit ce8fa96e414af1fe50523370d7749772e1b505f2
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed SOPs, .Rbuildignore files and NAMESPACE
+
+commit b28403bc6c3f22a513bc0a8c84f4542f24c19ac7
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated vignette
+
+commit 37009df1109851bf7e663db7a88411dc2d04cdf9
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated manuals
+
+commit 5ce03e6c00cc71270981dfffe664f424961d6555
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated .Rout.save files
+
+commit 35ccbb1556e6ace00e22d8d08a59f3a05def6b0c
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Improve calls (close #3)
+
+commit 873b0d6b272c4669fbfcdba36dfc54899f857cde
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added summary function (closes #2)
+
+commit f1aa58c137beadd068e9584f3ab18fed9a95cead
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated refernce to tutorial (now JSS, accepted)
+
+commit 3fb38232f52fd9161476cbc03d2df97cc6d9de44
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added tutorial as vignette
+
+commit 434b351c8bb73c3cead101d295b795efa29b07ec
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Minor changes to prepare release of gamboostLSS 1.2-0
+
+commit 5c38817041b7204c8e68fd2c5f5262ce3ca646e1
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed: Duplicated function get_qfun now as generic
+
+commit 75080ec261783cfcfc1b4de37be9a2589cf14602
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed mboost URL and updated references
+
+commit 7d4a7a005cfddacaf1071ecccdb0df6dda09e660
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Adhere to CRAN policies regarding import of base packages (close #1)
+
+commit 17ced716a73e24d38eec096e88d5a0158c994e59
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    (DESCRIPTION) Updated link > now points to github
+
+commit 2378bc83fbf103141b1860bf2fae2f83afdf9c8a
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Adding github for development
+
+commit a2d99db4d6c70d86255bcea26f77b6a3c9cebf89
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    bugfix in stabsel: violations was missing if no violations occured
+
+commit 4582b2fed6f65438db8aea1e2ab56fb8380f8923
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    remove stepsize as this does not really result in a speed gain
+
+commit 70c3cf655ee3154d52f45b825ac60e382d16e26d
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    lots of improvements in stabsel.mboostLSS:
+    - stabsel now returns status messages per default
+    - stabsel now returns a warning if mstop is to small to select q variables
+    - large speed up in the computation of the updates
+      (used to get slower and slower with increasing mstop)
+
+commit 6b7858e0eb8e517a67d035130954fc8af7123dca
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Fixed issue with truncated distributions
+
+commit 4e0394ce2b1336949046d974bd7e05b5fd4b1fcb
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    increased versions in pkg and patch
+
+commit f2316868fcbacbe84402638dbae4a4266fa6f2fc
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    merged handling of families with 'Mixed' type to patch
+
+commit d0bcac4c0f0b128775e1d6e331ea62289bc02185
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    merged changes from patch to pkg
+
+commit 110ae2879f282b5372fd7592d0eba35c2a52f309
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor fix in tests
+
+commit cd90f8962ea6c9638af6c71f690ce2bbb1d0f00f
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    updated documentation of stabilization
+
+commit 18135422ef31cbfb3ff0215c104cbbc17a0ba19e
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    more tests for novel stabilization interface
+
+commit 5f5bedba6fcc831240a07cb6638c38e1e36b24d9
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    fix 'replacing previous import' issue regarding selected
+
+commit e4e6caec0b342545277dcbd874b311f9a001dbf4
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    New interface: Stabilization of negative gradient is now specified via families
+
+commit f6f559c4f4f419ff7a9d4f4c56e54e9bc2e95bad
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    merged changes from patch version to pkg
+
+commit 216673a30eef357853c3a1b8bde8695b86ba0bd8
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    stabsel now is able to use argument eval
+
+commit 39a05601e9481c9f4dee7e7600e03832b70d8f25
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    minor bug fix for backward compatibility
+
+commit 5e05740103b6060e593aaccca113d37dde07507b
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    started new version and updated NEWS.Rd
+
+commit 89ebb33513436a74b1a939f55ea26bcbb77ef340
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    updated tests for weighted.median
+
+commit 626ff3b4c29a72693dc94d870b923a8f40edd2a9
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Added technical report of tutorial as reference
+
+commit d268bb83b2d87a6f37d2c6bf06f8d6b22307d203
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    use weighted median in stabilization
+
+commit 11f192cb926dbb72ac857e11346e7d0e3eb17435
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    refactored code: moved standardization to a separate function
+
+commit 071a53f50f95ae150094fe3eb8d683068720982f
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Typos
+
+commit 7354861ad8fa53bb3905daeb14706acab3862f4a
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Updated release SOPs and scripts
+
+commit 844f77836d78e7813e40c945d7ddb705cdec6be9
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Added weighted median (based on a contribution of Andreas Mayr)
+
+commit cf0597f6a14c0441249d100a6dff0d780e9b991e
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    updated .Rout.save files to reflect latest changes
+
+commit 92b15036d60857359435849e2cb0d01ab367d8dd
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    fix again
+
+commit c669fb0794d087514ba4dcd7034df2008e94fd2e
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    solve problem with selected to pass the test
+
+commit 81129240db04e88e3b5389b3ea246652a86b5fa6
+Author: amayr <amayr@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Fix mixture bug for 3 param families (mail Gert van Dijck)
+
+commit f89999c9ea7110cd06e751702e5f4dbfff061d66
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    updated release SOPs
+
+commit 96c3ee472f1ea48467c3e18d168df02305609bd3
+Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>
+
+    Updated NEWS.Rd, DESCRIPTION and ChangeLog
 
 commit 21f2c5a7ca1375c33f7b60c13856b7eae600509f
 Author: hofner <hofner@edb9625f-4e0d-4859-8d74-9fd3b1da38cb>

@@ -1096,7 +1096,7 @@ if (!file.exists("cvrisk/cvr_india.Rda")) {
     densegrid <- make.grid(max = c(mu = 5000, sigma = 500), min = 20,
                            length.out = 10, dense_mu_grid = TRUE)
     cvr <- cvrisk(mod, grid = densegrid, folds = folds, mc.cores = cores)
-    save("cvr", file = "cvrisk/cvr_india.Rda")
+    save("cvr", file = "cvrisk/cvr_india.Rda", compress = "xz")
 }
 @
 
