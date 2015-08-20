@@ -14,7 +14,7 @@ sudo: required
 ## as R packages are not available elsewise
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install texlive-science
+  - sudo apt-get install texlive-science texlive-latex-extra
   - cd $TEST_DIR
 
 r_github_packages:
