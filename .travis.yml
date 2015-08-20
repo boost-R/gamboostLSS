@@ -11,12 +11,11 @@ language: r
 sudo: required
 
 ## change directory before installation 
-## as packages are not available elsewise
+## as R packages are not available elsewise
 before_install:
-  - cd $TEST_DIR
-
-install:
+  - sudo apt-get update -qq
   - sudo apt-get install texlive-science
+  - cd $TEST_DIR
 
 r_github_packages:
   - hofnerb/mboost/pkg/mboostPatch
