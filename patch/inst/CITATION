@@ -2,6 +2,7 @@ citHeader("To cite package 'gamboostLSS' in publications use:")
 
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("{R} package version", meta$Version)
+txt_vers <- paste("R package version", meta$Version)
 
 citEntry(
   entry="Manual",
@@ -16,7 +17,7 @@ citEntry(
   textVersion =
   paste("B. Hofner, A. Mayr, N. Fenske and M. Schmid (", year,
 	"). gamboostLSS: Boosting Methods for GAMLSS Models, ",
-	vers, ", http://CRAN.R-project.org/package=gamboostLSS", ".",
+	txt_vers, ", http://CRAN.R-project.org/package=gamboostLSS", ".",
 	sep="")
 )
 

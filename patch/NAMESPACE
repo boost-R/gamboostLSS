@@ -8,7 +8,6 @@ importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize",
            "qweibull", "rmultinom", "update", "var", "variable.names", "weighted.mean")
 importFrom("utils", "tail")
 
-
 export(glmboostLSS,
        gamboostLSS,
        blackboostLSS,

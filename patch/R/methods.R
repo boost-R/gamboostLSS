@@ -358,4 +358,3 @@ weighted.median <- function (x, w = 1, na.rm = FALSE) {
     ## else return
     return(max(c(x[ind1], x[ind2])))
 }
-
