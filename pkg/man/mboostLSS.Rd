@@ -67,7 +67,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
   the information provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2014).
+  \code{\link{gamboostLSS}} see Hofner et al. (2015).
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
   distribution parameters of a GAMLSS -- a linear boosting model is
@@ -120,9 +120,11 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   extract information.
 }
 \references{
-B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
 Model Building and Variable Selection in the GAMLSS Framework.
-Technical Report, arXiv:1407.1774.
+Journal of Statistical Software. Accepted for publication.
+
+Available as \code{vignette("gamboostLSS_Tutorial")}.
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
 Generalized additive models for location, scale and shape for
@@ -178,7 +180,8 @@ coef(model, off2int = TRUE)
 ### estimate model with different formulas for mu and sigma:
 names(NBinomialLSS())      # names of the family
 
-\donttest{# Note: Multiple formulas must be specified via a _named list_
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
+# Note: Multiple formulas must be specified via a _named list_
 #       where the names correspond to the names of the distribution parameters
 #       in the family (see above)
 model2 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
@@ -187,6 +190,7 @@ model2 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                      control = boost_control(mstop = 400, trace = TRUE),
                      center = TRUE)
 coef(model2, off2int = TRUE)
+### END (don't test automatically)
 }
 
 
@@ -202,7 +206,8 @@ coef(model)
 log(mean(mu))
 log(mean(sigma))
 
-\donttest{### use different mstop values for the two distribution parameters
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
+### use different mstop values for the two distribution parameters
 ### (two-dimensional early stopping)
 ### the number of iterations is passed to boost_control via a named list
 model3 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
@@ -214,18 +219,15 @@ model3 <- glmboostLSS(formula = list(mu = y ~ x1 + x2 + x3 + x4,
                      center = TRUE)
 coef(model3, off2int = TRUE)
 
-### Alternatively we can subset model2:
+### Alternatively we can change mstop of model2:
 # here it is assumed that the first element in the vector corresponds to
 # the first distribution parameter of model2 etc.
-model2[c(400, 300)]
+mstop(model2) <- c(400, 300)
 par(mfrow = c(1,2))
 plot(model2, xlim = c(0, max(mstop(model2))))
 ## all.equal(coef(model2), coef(model3)) # same!
+### END (don't test automatically)
 }
-
-### WARNING: Subsetting via model[mstopnew] changes the model directly!
-### For the original fit one has to subset again: model[mstop]
-
 }
 
 \keyword{models}

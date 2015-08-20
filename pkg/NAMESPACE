@@ -4,7 +4,9 @@ import("parallel")
 
 importFrom("graphics", "axis", "box", "lines", "plot", "points")
 importFrom("grDevices", "grey", "rgb")
-importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize", "plogis", "pnorm", "predict", "qlnorm", "qlogis", "qnorm", "qt", "qweibull", "rmultinom", "update", "var", "weighted.mean")
+importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize",
+           "plogis", "pnorm", "predict", "qlnorm", "qlogis", "qnorm", "qt",
+           "qweibull", "rmultinom", "update", "var", "variable.names", "weighted.mean")
 importFrom("utils", "tail")
 
 export(glmboostLSS,
@@ -38,6 +40,7 @@ S3method("[", mboostLSS)
 S3method(print, mboostLSS)
 S3method(selected, mboostLSS)
 S3method(risk, mboostLSS)
+S3method(summary, mboostLSS)
 
 S3method(mstop, oobag)
 S3method(mstop, mboostLSS)
@@ -65,3 +68,6 @@ S3method(fitted, mboostLSS)
 S3method(predict, mboostLSS)
 
 S3method(update, mboostLSS)
+
+S3method(get_qfun, mboostLSS)
+S3method(get_qfun, character)

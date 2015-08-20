@@ -15,7 +15,7 @@
   additive models for location, scale and shape). For information on
   GAMLSS theory see Rigby and Stasinopoulos (2005), or the information
   provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2014).
+  \code{\link{gamboostLSS}} see Hofner et al. (2015).
 
   The fitting methods \code{\link{glmboostLSS}} and
   \code{\link{gamboostLSS}}, are alternatives for the algorithms
@@ -45,13 +45,15 @@
 \author{
   Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
 
-  Maintainer:  Benjamin Hofner <benjamin.hofner@imbe.med.uni-erlangen.de>
+  Maintainer:  Benjamin Hofner <benjamin.hofner@fau.de>
 }
 \references{
 
-  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Technical Report, arXiv:1407.1774.
+  Journal of Statistical Software. Accepted for publication.
+
+  Available as \code{vignette("gamboostLSS_Tutorial")}.
 
   Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
   Generalized additive models for location, scale and shape for

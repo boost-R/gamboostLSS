@@ -1,6 +1,6 @@
 
-R version 3.1.0 (2014-04-10) -- "Spring Dance"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -23,7 +23,8 @@ Type 'q()' to quit R.
 Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
-This is mboost 2.3-0. See 'package?mboost' and the NEWS file
+Loading required package: stabs
+This is mboost 2.5-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -66,7 +67,8 @@ The following object is masked from 'package:stats':
 > 
 > f1 <- fitted(model, parameter = "mu", type = "response")
 > f2 <- fitted(model, parameter = "sigma", type = "response")
-> model3 <- glmboost(y ~ ., family = NBinomialSigma(mu = f1, sigma = f2),
+> model3 <- glmboost(y ~ ., family = NBinomialSigma(mu = f1, sigma = f2,
++                           stabilization = "none"),
 +                    data = dat,
 +                    control = boost_control(mstop = 10),
 +                    center = TRUE)
@@ -398,4 +400,4 @@ Final risk: 3261.092
 > 
 > proc.time()
    user  system elapsed 
-  4.708   0.108   5.659 
+  3.262   0.047   3.449 

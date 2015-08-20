@@ -32,13 +32,15 @@ weighted.median(x, w = 1, na.rm = FALSE)
 
   This function is used in the stabilization of the negative gradient
   via the meadian absolute deviation (MAD). For details see Hofner et al
-  (2014).
+  (2015).
 }
 
 \references{
-  B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Technical Report, arXiv:1407.1774.
+  Journal of Statistical Software. Accepted for publication.
+
+  Available as \code{vignette("gamboostLSS_Tutorial")}.
 }
 
 \seealso{

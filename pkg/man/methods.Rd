@@ -1,5 +1,8 @@
 \name{methods}
 
+\alias{print.mboostLSS}
+\alias{summary.mboostLSS}
+
 \alias{coef.mboostLSS}
 \alias{coef.glmboostLSS}
 
@@ -38,7 +41,13 @@
   Methods for GAMLSS models fitted by boosting algorithms.
 }
 \usage{
-## extract coefficients
+### print model
+\method{print}{mboostLSS}(x, ...)
+
+### summarize model
+\method{summary}{mboostLSS}(object, ...)
+
+### extract coefficients
 \method{coef}{glmboostLSS}(object, which = NULL,
      aggregate = c("sum", "cumsum", "none"),
      off2int = FALSE, parameter = names(object), ...)
@@ -46,52 +55,51 @@
      aggregate = c("sum", "cumsum", "none"),
      parameter = names(object), ...)
 
-## plot partial effects
+### plot partial effects
 \method{plot}{glmboostLSS}(x, main = names(x), parameter = names(x),
      off2int = FALSE, ...)
 \method{plot}{gamboostLSS}(x, main = names(x), parameter = names(x), ...)
 
-## extract and plot marginal prediction intervals
+### extract and plot marginal prediction intervals
 predint(x, which, pi = 0.9, newdata = NULL, ...)
 PI(x, which, pi = 0.9, newdata = NULL, ...)
 \method{plot}{predint}(x, main = "Marginal Prediction Interval(s)",
      xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
      lcol = c("black", "black"), log = "", ...)
 
-## extract mstop
+### extract mstop
 \method{mstop}{mboostLSS}(object, parameter = names(object), ...)
 \method{mstop}{oobag}(object, parameter = names(object), ...)
 \method{mstop}{cvriskLSS}(object, parameter = NULL, ...)
 
-## set mstop
+### set mstop
 \method{[}{mboostLSS}(x, i, return = TRUE, ...)
 
-## extract risk
+### extract risk
 \method{risk}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
 
-## extract selected base-learners
+### extract selected base-learners
 \method{selected}{mboostLSS}(object, parameter = names(object), ...)
 
-## extract fitted values
+### extract fitted values
 \method{fitted}{mboostLSS}(object, parameter = names(object), ...)
 
-## make predictions
+### make predictions
 \method{predict}{mboostLSS}(object, newdata = NULL,
         type = c("link", "response", "class"), which = NULL,
         aggregate = c("sum", "cumsum", "none"),
         parameter = names(object), ...)
 
-## update weights of the fitted model
+### update weights of the fitted model
 \method{update}{mboostLSS}(object, weights, oobweights = NULL,
        risk = NULL, trace = NULL, mstop = NULL, ...)
 
-## extract model weights
+### extract model weights
 \method{model.weights}{mboostLSS}(x, ...)
 
 }
 \arguments{
-  \item{x}{ an object of the appropriate class (see usage). }
-  \item{object}{ an object of the appropriate class (see usage). }
+  \item{x, object}{ an object of the appropriate class (see usage). }
   \item{which}{ a subset of base-learners to take into account when computing
      predictions or coefficients. If \code{which} is given
      (as an integer vector or characters corresponding
@@ -182,7 +190,7 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 }
 \details{
   These functions can be used to extract details from fitted models. For
-  a tutorial with worked examples see Hofner et al. (2014).
+  a tutorial with worked examples see Hofner et al. (2015).
 
   \code{print} shows a dense representation of the model fit.
 
@@ -243,9 +251,11 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 
 \references{
 
-B. Hofner, A. Mayr, M. Schmid (2014). gamboostLSS: An R Package for
+B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
 Model Building and Variable Selection in the GAMLSS Framework.
-Technical Report, arXiv:1407.1774.
+Journal of Statistical Software. Accepted for publication.
+
+Available as \code{vignette("gamboostLSS_Tutorial")}.
 
 Mayr, A., Fenske, N., Hofner, B., Kneib, T. and Schmid, M. (2012):
 Generalized additive models for location, scale and shape for
@@ -296,8 +306,9 @@ dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 100))
 
-\donttest{### use a model with more iterations for a better fit
-model[400]
+\donttest{### Do not test the following line per default on CRAN as it takes some time to run:
+### use a model with more iterations for a better fit
+mstop(model) <- 400
 }
 ### extract coefficients
 coef(model)
@@ -322,39 +333,41 @@ plot(model, which = "x3")
 par(mfrow = c(1, 1))
 plot(model, which = 1, parameter = 2)
 
-\donttest{### plot marginal prediction interval
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
+### plot marginal prediction interval
 pi <- predint(model, pi = 0.9, which = "x1")
 pi <- predint(model, pi = c(0.8, 0.9), which = "x1")
 plot(pi, log = "y")  # warning as some y values are below 0
 ## here it would be better to plot x1 against
 ## sqrt(y) and sqrt(pi)
 
-### subset model for mstop = 300 (one-dimensional)
-model[300]
+### set model to mstop = 300 (one-dimensional)
+mstop(model) <- 300
+### END (don't test automatically)
 }
-# WARNING: Subsetting via model[mstopnew] changes the model directly!
-# For the original fit one has to subset again: model[mstop]
 
 par(mfrow = c(2, 2))
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 
-\donttest{### get back to orignal fit
-model[400]
+\donttest{### Do not test the following code per default on CRAN as it takes some time to run:
+### get back to orignal fit
+mstop(model) <- 400
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
 
 ### use different mstop values for the components
-model[c(100, 200)]
+mstop(model) <- c(100, 200)
 ## same as
-  model[c(mu = 100, sigma = 200)]
+  mstop(model) <- c(mu = 100, sigma = 200)
 ## or
-  model[list(mu = 100, sigma = 200)]
+  mstop(model) <- list(mu = 100, sigma = 200)
 ## or
-  model[list(100, 200)]
+  mstop(model) <- list(100, 200)
 
 plot(risk(model, parameter = "mu")[[1]])
 plot(risk(model, parameter = "sigma")[[1]])
+### END (don't test automatically)
 }
 }
 \keyword{methods}

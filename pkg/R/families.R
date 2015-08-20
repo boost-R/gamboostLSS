@@ -863,10 +863,10 @@ ZIPoLSS <- function(mu = NULL, sigma = NULL,
                     stabilization = c("none", "MAD")) {
     fam <- as.families(fname = "ZIP", mu = mu, sigma = sigma, stabilization = stabilization)
 
-  fam$mu@name <- "Zero-inflated Poisson model: count data component"
-  fam$sigma@name <- "Zero-inflated Poisson model: zero component"
+    fam$mu@name <- "Zero-inflated Poisson model: count data component"
+    fam$sigma@name <- "Zero-inflated Poisson model: zero component"
 
-  fam
+    fam
 }
 
 # Zero-inflated negative binomial model
@@ -874,9 +874,9 @@ ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL,
                     stabilization = c("none", "MAD")) {
     fam <- as.families(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu, stabilization = stabilization)
 
-  fam$mu@name <- "Zero-inflated negative binomial model: location parameter for count data component"
-  fam$sigma@name <- "Zero-inflated negative binomial model: scale parameter for count data component"
-  fam$nu@name <- "Zero-inflated negative binomial model: zero component"
+    fam$mu@name <- "Zero-inflated negative binomial model: location parameter for count data component"
+    fam$sigma@name <- "Zero-inflated negative binomial model: scale parameter for count data component"
+    fam$nu@name <- "Zero-inflated negative binomial model: zero component"
 
-  fam
+    fam
 }

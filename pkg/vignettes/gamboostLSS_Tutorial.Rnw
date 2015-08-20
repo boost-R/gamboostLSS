@@ -1,0 +1,1635 @@
+\documentclass[shortnames,nojss]{jss} % onecolumn
+
+% \VignetteIndexEntry{gamboostLSS Tutorial}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Setup LaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{booktabs}
+\usepackage{multirow}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bm}
+\usepackage{dsfont}
+
+\usepackage{pdflscape,rotating}
+
+\usepackage{algorithm}
+
+%%% Needed for RCS
+\usepackage{ulem}      % use this for sout
+\normalem              % set \emph to \textit again
+
+\shortcites{borghi_who,bmc_growth,schmid2013beta,villarini2009}
+
+%%% RCS System
+\def\rcsmark#1{\colorbox{yellow}{#1}}
+\def\rcscom#1{\noindent\newline\vspace*{0.5cm}\colorbox{yellow}{\parbox{\textwidth}{#1}}\vspace*{0.5cm}}
+\def\rcsdel#1{{\color{red}\sout{#1}}} % delete
+\def\rcsdelp#1{{\color{red}$<$DEL$>$#1$<$/DEL$>$}} % delete paragraph
+\def\rcsadd#1{{\color{blue}#1}} % added
+
+%%% Used for diamond at the end of the case study parts
+\DeclareSymbolFont{extraup}{U}{zavm}{m}{n}
+\DeclareMathSymbol{\varheart}{\mathalpha}{extraup}{86}
+\DeclareMathSymbol{\vardiamond}{\mathalpha}{extraup}{87}
+
+%% do not \usepackage{Sweave}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Setup R
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<init, echo = FALSE, results = hide>>=
+options(prompt = "R> ", continue = "+  ", width = 76, useFancyQuotes = FALSE)
+repos <- "http://cran.at.r-project.org"
+## check if a current version of gamboostLSS is installed
+suppressWarnings(pd <- packageDescription("gamboostLSS"))
+if (all(is.na(pd))){
+    install.packages("gamboostLSS", repos = repos)
+    pd <- packageDescription("gamboostLSS")
+} else {
+    if (compareVersion(pd$Version, "1.2-0") < 0){
+        warning(sQuote("gamboostLSS"), " (1.2-0 or newer) is being installed!")
+        install.packages("gamboostLSS", repos = repos)
+    }
+}
+
+## for the exact reproduction of the plots R2BayesX >= 0.3.2 is needed
+suppressWarnings(if (!require("R2BayesX"))
+                     install.packages("R2BayesX"))
+
+## remove (possibly) altered versions of "india" from working environment
+suppressWarnings(rm("india"))
+require("gamboostLSS")
+
+## make graphics directory if not existing
+if (!file.exists("graphics"))
+    dir.create("graphics")
+if (!file.exists("cvrisk"))
+    dir.create("cvrisk")
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Title Information
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\pkg{gamboostLSS}: An \proglang{R} Package for Model Building and
+  Variable Selection in the GAMLSS Framework}
+\Plaintitle{gamboostLSS: An R Package for Model Building and Variable Selection
+  in the GAMLSS Framework}
+\Shorttitle{\pkg{gamboostLSS}: Model Building and Variable Selection for GAMLSS}
+\author{Benjamin Hofner\\FAU Erlangen-Nürnberg \And
+        Andreas Mayr\\FAU Erlangen-Nürnberg \And
+        Matthias Schmid\\University of Bonn}
+\Plainauthor{Benjamin Hofner, Andreas Mayr, Matthias Schmid}
+
+\Abstract{ \emph{This vignette is a slightly modified version of
+    \citet{Hofner:gamboostLSS:2015} which was accepted for publication in the
+    \textbf{Journal of Statistical Software}. Please cite that article when
+    using the package \pkg{gamboostLSS} in your work.}\\[1em]
+
+  Generalized additive models for location, scale and shape are a
+  flexible class of regression models that allow to model multiple parameters of
+  a distribution function, such as the mean and the standard deviation,
+  simultaneously. With the \proglang{R} package \pkg{gamboostLSS}, we provide a
+  boosting method to fit these models. Variable selection and model choice are
+  naturally available within this regularized regression framework. To introduce
+  and illustrate the \proglang{R} package \pkg{gamboostLSS} and its
+  infrastructure, we use a data set on stunted growth in India. In addition to
+  the specification and application of the model itself, we present a variety of
+  convenience functions, including methods for tuning parameter selection,
+  prediction and visualization of results. The package \pkg{gamboostLSS} is
+  available from CRAN (\url{http://cran.r-project.org/package=gamboostLSS}).}
+
+\Keywords{additive models, prediction intervals, high-dimensional data}
+
+\Address{
+  Benjamin Hofner \& Andreas Mayr\\
+  Department of Medical Informatics, Biometry and Epidemiology\\
+  Friedrich-Alexander-Universität Erlangen-Nürnberg\\
+  Waldstra{\ss}e 6\\
+  91054 Erlangen, Germany\\
+  E-mail: \email{benjamin.hofner@fau.de},\\
+  \hphantom{E-mail: }\email{andreas.mayr@fau.de}\\
+  URL: \url{http://www.imbe.med.uni-erlangen.de/cms/benjamin_hofner.html},\\
+  \hphantom{URL: }\url{http://www.imbe.med.uni-erlangen.de/ma/A.Mayr/}\\
+
+  Matthias Schmid\\
+  Department of Medical Biometry, Informatics and Epidemiology\\
+  University of Bonn\\
+  Sigmund-Freud-Stra{\ss}e 25\\
+  53105 Bonn\\
+  E-mail: \email{matthias.schmid@imbie.uni-bonn.de}\\
+  URL: \url{http://www.imbie.uni-bonn.de}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\SweaveOpts{concordance=FALSE}
+\SweaveOpts{echo = TRUE, results = verbatim, prefix.string=graphics/fig}
+\SweaveOpts{width = 5, height = 5}
+\SweaveOpts{keep.source = TRUE}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:intro}
+
+Generalized additive models for location, scale and shape (GAMLSS) are a
+flexible statistical method to analyze the relationship between a response
+variable and a set of predictor variables. Introduced by \citet{rs}, GAMLSS are
+an extension of the classical GAM (generalized additive model) approach
+\citep{hastietib}. The main difference between GAMs and GAMLSS is that GAMLSS do
+not only model the conditional mean of the outcome distribution (location) but
+\textit{several} of its parameters, including scale and shape parameters (hence
+the extension ``LSS''). In Gaussian regression, for example, the density of the
+outcome variable $Y$ conditional on the predictors $\mathbf{X}$ may depend on
+the mean parameter $\mu$, and an additional scale parameter $\sigma$, which
+corresponds to the standard deviation of $Y| \mathbf{X}$. Instead of assuming
+$\sigma$ to be fixed, as in classical GAMs, the Gaussian GAMLSS regresses both
+parameters on the predictor variables,
+\begin{eqnarray}
+\label{Gaussian:mu}
+\mu = \E(y \, | \,  \mathbf{X}) & = & \eta_\mu = \beta_{\mu,0} + \sum_j f_{\mu,j}(x_j), \\
+\label{Gaussian:sigma}
+\log(\sigma) = \log ( \sqrt{\VAR(y \, | \,  \mathbf{X})}) & = &
+\eta_{\sigma} = \beta_{\sigma,0} +\sum_j f_{\sigma, j}(x_j),
+\end{eqnarray}
+where $\eta_\mu$ and $\eta_\sigma$ are \emph{additive predictors} with parameter
+specific intercepts $\beta_{\mu,0}$ and $\beta_{\sigma,0}$, and functions
+$f_{\mu,j}(x_j)$ and $f_{\sigma, j}(x_j)$, which represent the effects of
+predictor $x_j$ on $\mu$ and $\sigma$, respectively. In this notation, the
+functional terms $f(\cdot)$ can denote various types of effects (e.g., linear,
+smooth, random).
+
+In our case study, we will analyze the prediction of stunted growth for children
+in India via a Gaussian GAMLSS. The response variable is a stunting score, which
+is commonly used to relate the growth of a child to a reference population in
+order to assess effects of malnutrition in early childhood. In our analysis, we
+model the expected value ($\mu$) of this stunting score and also its variability
+($\sigma$) via smooth effects for mother- or child-specific predictors, as well
+as a spatial effect to account for the region of India where the child is
+growing up. This way, we are able to construct point predictors (via
+$\eta_{\mu}$) and additionally child-specific prediction intervals (via
+$\eta_{\mu}$ and $\eta_{\sigma}$) to evaluate the individual risk of stunted
+growth.
+
+In recent years, due to their versatile nature, GAMLSS have been used to address
+research questions in a variety of fields. Applications involving GAMLSS range
+from the normalization of complementary DNA microarray data
+\citep{khondoker2009} and the analysis of flood frequencies
+\citep{villarini2009} to the development of rainfall models
+\citep{serinaldi2012} and stream-flow forecasting models \citep{ogtrop2011}. The
+most prominent application of GAMLSS is the estimation of centile curves, e.g.,
+for reference growth charts \citep{onis2006child, borghi_who, bmc_growth}. The
+use of GAMLSS in this context has been recommended by the World Health
+Organization \citep[see][and the references therein]{rigby:smoothing:2014}.
+
+Classical estimation of a GAMLSS is based on backfitting-type Gauss-Newton
+algorithms with AIC-based selection of relevant predictors. This strategy is
+implemented in the \proglang{R} \citep{R:3.1.0} package \pkg{gamlss}
+\citep{rs,gamlss:jss:2007,pkg:gamlss:4.3-0}, which provides a great variety of
+functions for estimation, hyper-parameter selection, variable selection and
+hypothesis testing in the GAMLSS framework.
+
+In this article we present the \proglang{R} package \pkg{gamboostLSS}
+\citep{pkg:gamboostLSS:1.2-0}, which is designed as an alternative to
+\pkg{gamlss} for high-dimensional data settings where variable selection is of
+major importance. Specifically, \pkg{gamboostLSS} implements the
+\emph{gamboostLSS} algorithm, which is a new fitting method for GAMLSS that was
+recently introduced by \cite{mayretal}. The \emph{gamboostLSS} algorithm uses
+the same optimization criterion as the Gauss-Newton type algorithms implemented
+in the package \pkg{gamlss} (namely, the log-likelihood of the model under
+consideration) and hence fits the same type of statistical model. In contrast to
+\pkg{gamlss}, however, the \pkg{gamboostLSS} package operates within the
+component-wise gradient boosting framework for model fitting and variable
+selection \citep{BuehlmannYu2003,BuhlmannHothorn07}. As demonstrated in
+\cite{mayretal}, replacing Gauss-Newton optimization by boosting techniques
+leads to a considerable increase in flexibility: Apart from being able to fit
+basically any type of GAMLSS, \pkg{gamboostLSS} implements an efficient
+mechanism for variable selection and model choice. As a consequence,
+\pkg{gamboostLSS} is a convenient alternative to the AIC-based variable
+selection methods implemented in \pkg{gamlss}. The latter methods can be
+unstable, especially when it comes to selecting possibly different sets of
+variables for multiple distribution parameters. Furthermore, model fitting via
+\emph{gamboostLSS} is also possible for high-dimensional data with more
+candidate variables than observations ($p > n$), where the classical fitting
+methods become unfeasible.
+
+The \pkg{gamboostLSS} package is a comprehensive implementation of the most
+important issues and aspects related to the use of the \emph{gamboostLSS}
+algorithm. The package is available on CRAN
+(\url{http://cran.r-project.org/package=gamboostLSS}). Current development
+versions are hosted on GitHub (\url{https://github.com/hofnerb/gamboostLSS}). As
+will be demonstrated in this paper, the package provides a large number of
+response distributions \citep[e.g., distributions for continuous data, count
+data and survival data, including \textit{all} distributions currently available
+in the \pkg{gamlss} framework; see][]{pkg:gamlss.dist:4.3-0}. Moreover, users of
+\pkg{gamboostLSS} can choose among many different possibilities for modeling
+predictor effects. These include linear effects, smooth effects and trees, as
+well as spatial and random effects, and interaction terms.
+
+After starting with a toy example (Section~\ref{sec:toy-example}) for
+illustration, we will provide a brief theoretical overview of GAMLSS and
+component-wise gradient boosting (Section~\ref{sec:boost-gamlss-models}). In
+Section~\ref{sec:india}, we will introduce the \code{india} data set, which is
+shipped with the \proglang{R} package \pkg{gamboostLSS}. We present the
+infrastructure of \pkg{gamboostLSS}, discuss model comparison methods and model
+tuning, and will show how the package can be used to build regression models in
+the GAMLSS framework (Section~\ref{sec:package}). In particular, we will give a
+step by step introduction to \pkg{gamboostLSS} by fitting a flexible GAMLSS
+model to the \code{india} data. In addition, we will present a variety of
+convenience functions, including methods for the selection of tuning parameters,
+prediction and the visualization of results (Section~\ref{sec:methods}).
+
+\section[A toy example]{A toy example}
+\label{sec:toy-example}
+
+Before we discuss the theoretical aspects of the \emph{gamboostLSS} algorithm
+and the details of the implementation, we present a short, illustrative toy
+example. This highlights the ease of use of the \pkg{gamboostLSS} package in
+simple modeling situations. Before we start, we load the package
+<<load_package>>=
+library("gamboostLSS")
+@
+Note that \pkg{gamboostLSS} 1.2-0 or newer is needed. We simulate data
+from a heteroscedastic normal distribution, i.e., both the mean and the variance
+depend on covariates:
+<<simulate_data>>=
+set.seed(1907)
+n <- 150
+x1 <- rnorm(n)
+x2 <- rnorm(n)
+x3 <- rnorm(n)
+toydata <- data.frame(x1 = x1, x2 = x2, x3 = x3)
+toydata$y <- rnorm(n, mean = 1 + 2 * x1 - x2,
+                      sd = exp(0.5 - 0.25 * x1 + 0.5 * x3))
+@
+Next we fit a linear model for location, scale and shape to the simulated data
+<<modelfitting>>=
+lmLSS <- glmboostLSS(y ~ x1 + x2 + x3, data = toydata)
+@
+and extract the coefficients using \code{coef(lmLSS)}. When we add the offset
+(i.e., the starting values of the fitting algorithm) to the intercept, we obtain
+<<coefficients2>>=
+coef(lmLSS, off2int = TRUE)
+@
+Usually, model fitting involves additional tuning steps, which are skipped here
+for the sake of simplicity (see Section~\ref{sec:model_tuning} for details).
+Nevertheless, the coefficients coincide well with the true effects, which are
+$\beta_\mu = (1, 2, -1, 0)$ and $\beta_\sigma = (0.5, - 0.25, 0, 0.5)$. To get a
+graphical display, we \code{plot} the resulting model
+<<coef_paths, eval = false>>=
+par(mfrow = c(1, 2), mar = c(4, 4, 2, 5))
+plot(lmLSS, off2int = TRUE)
+@
+
+\setkeys{Gin}{width = 0.9\textwidth}
+\begin{figure}[ht!]
+  \centering
+<<plot_coef_paths, echo = FALSE,  fig = TRUE, width = 10, height = 4.5>>=
+<<coef_paths>>
+@
+\caption{Coefficient paths for linear LSS models, which depict the
+    change of the coefficients over the iterations of the algorithm.}
+\end{figure}
+
+To extract fitted values for the mean, we use the function \code{fitted(,
+  parameter = "mu")}. The results are very similar to the true values:
+<<>>=
+muFit <- fitted(lmLSS, parameter = "mu")
+rbind(muFit, truth = 1 + 2 * x1 - x2)[, 1:5]
+@
+The same can be done for the standard deviation, but we need to make sure that
+we apply the response function (here $\exp(\eta)$) to the fitted values by
+additionally using the option \code{type = "response"}:
+<<>>=
+sigmaFit <- fitted(lmLSS, parameter = "sigma", type = "response")[, 1]
+rbind(sigmaFit, truth = exp(0.5 - 0.25 * x1 + 0.5 * x3))[, 1:5]
+@
+
+For new observations stored in a data set \code{newData} we could use
+\code{predict(lmLSS, newdata = newData)} essentially in the same way. As
+presented in Section~\ref{sec:methods}, the complete distribution could also be
+depicted as marginal prediction intervals via the function \code{predint()}.
+
+\section[Boosting GAMLSS models]{Boosting GAMLSS models}
+\label{sec:boost-gamlss-models}
+
+\emph{GamboostLSS} is an algorithm to fit GAMLSS models via component-wise
+gradient boosting \citep{mayretal} adapting an earlier strategy by
+\cite{schmidetal}. While the concept of boosting emerged from the field of
+supervised machine learning, boosting algorithms are nowadays often applied as
+flexible alternative to estimate and select predictor effects in statistical
+regression models \citep[statistical boosting,][]{mayr_boosting_part1}. The key
+idea of statistical boosting is to iteratively fit the different predictors with
+simple regression functions (base-learners) and combine the estimates to an
+additive predictor. In case of gradient boosting, the base-learners are fitted
+to the negative gradient of the loss function; this procedure can be described
+as gradient descent in function space \citep{BuhlmannHothorn07}. For GAMLSS, we
+use the negative log-likelihood as loss function. Hence, the negative gradient
+of the loss function equals the (positive) gradient of the log-likelihood. To
+avoid confusion we directly use the gradient of the log-likelihood in the
+remainder of the article.
+
+To adapt the standard boosting algorithm to fit additive predictors for all
+distribution parameters of a GAMLSS we extended the component-wise fitting to
+multiple parameter dimensions: In each iteration, \emph{gamboostLSS} calculates
+the partial derivatives of the log-likelihood function $l(y, \bm{\theta})$ with
+respect to each of the additive predictors $\eta_{\theta_k}$, $k=1,\ldots,K$.
+The predictors are related to the parameter vector $\bm{\theta} =
+(\theta_k)^\top_{k = 1,\ldots,K}$ via parameter-specific link functions $g_k$,
+$\theta_k = g_k^{-1}(\eta_{\theta_k})$. Typically, we have at maximum $K = 4$
+distribution parameters \citep{rs}, but in principle more are possible. The
+predictors are updated successively in each iteration, while the current
+estimates of the other distribution parameters are used as offset values. A
+schematic representation of the updating process of \emph{gamboostLSS} with four
+parameters in iteration $m+1$ looks as follows:
+
+\begin{alignat*}{8}
+   \frac{\partial}{\partial \eta_{\mu}}\, l(&y, \hat{\mu}^{[m]}&,& \hat{\sigma}^{[m]}&,& \hat{\nu}^{[m]}&,&
+  \hat{\tau}^{[m]}&)
+  &\quad \stackrel{\rm update}{\longrightarrow}&  \hat{\eta}_\mu^{[\boldmath{m+1}]}    \Longrightarrow  \hat{\mu}^{[\emph{m+1}]} \ ,& \\
+%
+   \frac{\partial}{\partial \eta_{\sigma}}\, l(&y, \hat{\mu}^{[\emph{m+1}]}&,& \hat{\sigma}^{[m]}&,& \hat{\nu}^{[m]}&,&
+  \hat{\tau}^{[m]}&)
+  &\quad \stackrel{\rm update }{\longrightarrow} \quad &  \hat{\eta}_\sigma^{[\emph{m+1}]}    \Longrightarrow  \hat{\sigma}^{[\emph{m+1}]} \ ,& \\
+%
+   \frac{\partial}{\partial \eta_{\nu}}\, l(&y, \hat{\mu}^{[\emph{m+1}]}&,& \hat{\sigma}^{[\emph{m+1}]}&,&
+  \hat{\nu}^{[m]}&,& \hat{\tau}^{[m]}&)
+  &\quad \stackrel{\rm update }{\longrightarrow}&  \hat{\eta}_\nu^{[\emph{m+1}]}    \Longrightarrow  \hat{\nu}^{[\emph{m+1}]} \ ,  \\
+%
+   \frac{\partial}{\partial \eta_{\tau}}\, l(&y, \hat{\mu}^{[\emph{m+1}]}&,& \hat{\sigma}^{[\emph{m+1}]}&,&
+  \hat{\nu}^{[\emph{m+1}]}&,& \hat{\tau}^{[m]}&)
+  &\quad \stackrel{\rm update}{\longrightarrow}& \hat{\eta}_\tau^{[\emph{m+1}]} \Longrightarrow
+  \hat{\tau}^{[\emph{m+1}]} \ .
+\end{alignat*}
+
+
+The algorithm hence circles through the different parameter dimensions: in every
+dimension, it carries out one boosting iteration, updates the corresponding
+additive predictor and includes the new prediction in the loss function for the
+next dimension.
+
+As in classical statistical boosting, inside each boosting iteration only the
+best fitting base-learner is included in the update. Typically, each
+base-learner corresponds to one component of $\mathbf{X}$, and in every boosting
+iteration only a small proportion (a typical value of the \textit{step-length}
+is 0.1) of the fit of the selected base-learner is added to the current additive
+predictor $\eta^{[m]}_{\theta_k}$. This procedure effectively leads to
+data-driven variable selection which is controlled by the stopping iterations
+$\bm{m}_{\text{stop}} = (m_{\text{stop},1},...,m_{\text{stop},K})^{\top}$: Each
+additive predictor $\eta_{\theta_k}$ is updated until the corresponding stopping
+iterations $\bm{m}_{\text{stop},k}$ is reached. If $m$ is greater than
+$m_{\text{stop},k}$, the $k$th distribution parameter dimension is no longer
+updated. Predictor variables that have never been selected up to iteration
+$m_{\text{stop},k}$ are effectively excluded from the resulting model. The
+vector $\bm{m}_{\text{stop}}$ is a tuning parameter that can, for example, be
+determined using multi-dimensional cross-validation (see
+Section~\ref{sec:model_tuning} for details). A discussion of model comparison
+methods and diagnostic checks can be found in
+Section~\ref{sec:model_complexity}. The complete \emph{gamboostLSS} algorithm
+can be found in Appendix~\ref{algorithm} and is described in detail in
+\cite{mayretal}.
+
+\paragraph{Scalability of boosting algorithms} One of the main advantages of
+boosting algorithms in practice, besides the automated variable selection, is
+their applicability in situations with more variables than observations ($p >
+n$). Despite the growing model complexity, the run time of boosting algorithms
+for GAMs increases only linearly with the number of base-learners
+\cite{BuehlmannYu2007}. An evaluation of computing times for up to $p = 10000$
+predictors can be found in \cite{BinMueSch2012}. In case of boosting GAMLSS, the
+computational complexity additionally increases with the number of distribution
+parameters $K$. For an example on the performance of \emph{gamboostLSS} in case
+of $p > n$ see the simulation studies provided in \cite{mayretal}. To speed up
+computations for the tuning of the algorithm via cross-validation or resampling,
+\pkg{gamboostLSS} incorporates parallel computing (see
+Section~\ref{sec:model_tuning}).
+
+\section{Childhood malnutrition in India}
+\label{sec:india}
+
+Eradicating extreme poverty and hunger is one of the Millennium Development
+Goals that all 193 member states of the United Nations have agreed to achieve by
+the year 2015. Yet, even in democratic, fast-growing emerging countries like
+India, which is one of the biggest global economies, malnutrition of children is
+still a severe problem in some parts of the population. Childhood malnutrition
+in India, however, is not necessarily a consequence of extreme poverty but can
+also be linked to low educational levels of parents and cultural factors
+\citep{india_nut}. Following a bulletin of the World Health Organization, growth
+assessment is the best available way to define the health and nutritional status
+of children \citep{who}. Stunted growth is defined as a reduced growth rate
+compared to a standard population and is considered as the first consequence of
+malnutrition of the mother during pregnancy, or malnutrition of the child during
+the first months after birth. Stunted growth is often measured via a $Z$ score
+that compares the anthropometric measures of the child with a reference
+population:
+\begin{eqnarray*}
+Z_i = \frac{\text{AI}_i - \text{MAI}}{s}
+\end{eqnarray*}
+In our case, the individual anthropometric indicator ($\text{AI}_i$) will be the
+height of the child $i$, while MAI and $s$ are the median and the standard
+deviation of the height of children in a reference population. This $Z$ score
+will be denoted as \textit{stunting score} in the following. Negative values of
+the score indicate that the child's growth is below the expected growth of a
+child with normal nutrition.
+
+The stunting score will be the outcome (response) variable in our application,:
+we analyze the relationship of the mother's and the child's body mass index
+(BMI) and age with stunted growth resulting from malnutrition in early
+childhood. Furthermore, we will investigate regional differences by including
+also the district of India in which the child is growing up. The aim of the
+analysis is both, to explain the underlying structure in the data as well as to
+develop a prediction model for children growing up in India. A prediction rule,
+based also on regional differences, could help to increase awareness for the
+individual risk of a child to suffer from stunted growth due to malnutrition.
+For an in-depth analysis on the multi-factorial nature of child stunting in
+India, based on boosted quantile regression, see \citet{Fenske:2011:JASA}, and
+\citet{fenske2013plos}.
+
+The data set that we use in this analysis is based on the Standard Demographic
+and Health Survey, 1998-99, on malnutrition of children in India, which can be
+downloaded after registration from \url{http://www.measuredhs.com}. For
+illustrative purposes, we use a random subset of \Sexpr{nrow(india)}
+observations from the original data (approximately 12\%) and only a (very small)
+subset of variables. For details on the data set and the data source see the
+help file of the \code{india} data set in the \pkg{gamboostLSS} package and
+\citet{FahrmeirKneib:2011}.
+
+\paragraph{Case study: Childhood malnutrition in India}
+
+First of all we load the data sets \code{india} and \code{india.bnd} into the
+workspace. The first data set includes the outcome and \Sexpr{ncol(india) - 2}
+explanatory variables. The latter data set consists of a special boundary file
+containing the neighborhood structure of the districts in India.
+
+<<load_package_and_data>>=
+data("india")
+data("india.bnd")
+names(india)
+@
+
+The outcome variable \code{stunting} is depicted with its spatial structure in
+Figure~\ref{fig:india}. An overview of the data set can be found in
+Table~\ref{tab:summary_india}. One can clearly see a trend towards malnutrition
+in the data set as even the 75\% quantile of the stunting score is below zero.
+\hfill $\vardiamond$
+
+\setkeys{Gin}{width = 0.45\textwidth}
+\begin{figure}[ht!]
+  \centering
+<<india_stunting1, echo = FALSE,  fig = TRUE, width = 5, height = 4.5>>=
+library("R2BayesX")
+## plot mean
+FUN <- mean
+india_agg <- data.frame(mcdist = names(tapply(india$stunting, india$mcdist, FUN,
+                                              na.rm = TRUE)),
+                        stunting = tapply(india$stunting, india$mcdist, FUN,
+                                          na.rm = TRUE))
+par(mar = c(1, 0, 2, 0))
+plotmap(india.bnd, india_agg, pos = "bottomright",
+        range = c(-5.1, 1.50), main = "Mean", mar.min = NULL)
+@
+\hfill
+<<india_stunting2, echo = FALSE,  fig = TRUE, width = 5, height = 4.5>>=
+## plot sd
+FUN <- sd
+india_agg <- data.frame(mcdist = names(tapply(india$stunting, india$mcdist, FUN,
+                                              na.rm = TRUE)),
+                        stunting = tapply(india$stunting, india$mcdist, FUN,
+                                          na.rm = TRUE))
+## remove missing values (= no variation)
+india_agg <- india_agg[complete.cases(india_agg),]
+par(mar = c(1, 0, 2, 0))
+plotmap(india.bnd, india_agg, pos = "bottomright",
+        range = c(0, 4.00), main = "Standard deviation")
+@
+\caption{Spatial structure of stunting in India. The raw mean per district is
+  given in the left figure, ranging from dark blue (low stunting score), to dark
+  red (higher scores). The right figure depicts the standard deviation of the
+  stunting score in the district, ranging from dark blue (no variation) to dark
+  red (maximal variability). Dashed regions represent regions without
+  data.}\label{fig:india}
+\end{figure}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{llrrrrrr}
+<<summary, results = tex, echo = false>>=
+out <- data.frame(Description = c("Stunting", "BMI (child)", "Age (child; months)",
+                                 "BMI (mother)", "Age (mother; years)"),
+                  Variable = paste0("\\code{", c(names(india)[1:5]),"}"),
+                  "Min." = apply(india[, 1:5], 2, min),
+                  "25\\% Quantile" = apply(india[, 1:5], 2, quantile, p = 0.25),
+                  "Median" = apply(india[, 1:5], 2, median),
+                  "Mean" = apply(india[, 1:5], 2, mean),
+                  "75\\% Quantile" = apply(india[, 1:5], 2, quantile, p = 0.75),
+                  "Max." = apply(india[, 1:5], 2, max))
+names(out)[c(4, 7)] <- c("25\\% Qu.", "75\\% Qu.")
+names(out)[1:2] <- ""
+out[, 3:8] <- round(out[, 3:8], 2)
+cat("\\toprule \n")
+cat(paste(colnames(out), collapse = " & "), "\\\\ \n \\cmidrule{3-8}", "\n")
+out <- apply(out, 1, function(x) cat(paste(x, collapse = " & "), " \\\\ \n"))
+cat("\\bottomrule \n")
+@
+  \end{tabular}
+  \caption{Overview of \code{india} data.\label{tab:summary_india}}
+\end{table}
+\pagebreak[3]
+
+\section[The Package gamboostLSS]{The package \pkg{gamboostLSS}}
+\label{sec:package}
+The \emph{gamboostLSS} algorithm is implemented in the publicly available
+\proglang{R} add-on package \pkg{gamboostLSS} \citep{pkg:gamboostLSS:1.2-0}. The
+package makes use of the fitting algorithms and some of the infrastructure of
+\pkg{mboost}
+\citep{BuhlmannHothorn07,Hothorn+Buehlmann+Kneib+Schmid+Hofner:mboost:2010,pkg:mboost:2.4-0}.
+Furthermore, many naming conventions and features are implemented in analogy to
+\pkg{mboost}. By relying on the \pkg{mboost} package, \pkg{gamboostLSS}
+incorporates a wide range of base-learners and hence offers a great flexibility
+when it comes to the types of predictor effects on the parameters of a GAMLSS
+distribution. In addition to making the infrastructure available for GAMLSS,
+\pkg{mboost} constitutes a well-tested, mature software package in the back end.
+For the users of \pkg{mboost}, \pkg{gamboostLSS} offers the advantage of
+providing a drastically increased number of possible distributions to be fitted
+by boosting.
+
+As a consequence of this partial dependency on \pkg{mboost}, we recommend users
+of \pkg{gamboostLSS} to make themselves familiar with the former before using
+the latter package. To make this tutorial self-contained, we try to shortly
+explain all relevant features here as well. However, a dedicated hands-on
+tutorial is available for an applied introduction to \pkg{mboost}
+\citep{Hofner:mboost:2014}.
+
+\subsection{Model fitting}\label{sec:model-fitting}
+
+The models can be fitted using the function \code{glmboostLSS()} for linear
+models. For all kinds of structured additive models the function
+\code{gamboostLSS()} can be used. The function calls are as
+follows:
+
+\begin{Sinput}
+R> glmboostLSS(formula, data = list(), families = GaussianLSS(),
++              control = boost_control(), weights = NULL, ...)
+R> gamboostLSS(formula, data = list(), families = GaussianLSS(),
++              control = boost_control(), weights = NULL, ...)
+\end{Sinput}
+
+Note that here and in the remainder of the paper we sometimes focus on the most
+relevant (or most interesting) arguments of a function only. Further arguments
+might exist. Thus, for a complete list of arguments and their description we
+refer the reader to the respective help file.
+
+The \code{formula} can consist of a single \code{formula} object, yielding the
+same candidate model for all distribution parameters. For example,
+\begin{Sinput}
+R> glmboostLSS(y ~ x1 + x2 + x3, data = toydata)
+\end{Sinput}
+specifies linear models with predictors \code{x1} to \code{x3} for all GAMLSS
+parameters (here $\mu$ and $\sigma$ of the Gaussian distribution). As an
+alternative, one can also use a named list to specify different candidate models
+for different parameters, e.g.,
+\begin{Sinput}
+R> glmboostLSS(list(mu = y ~ x1 + x2, sigma = y ~ x1 + x3), data = toydata)
+\end{Sinput}
+fits a linear model with predictors \code{x1} and \code{x2} for the \code{mu}
+component and a linear model with predictors \code{x1} and \code{x3} for the
+\code{sigma} component. As for all \proglang{R} functions with a formula
+interface, one must specify the data set to be used (argument \code{data}).
+Additionally, \code{weights} can be specified for weighted regression. Instead
+of specifying the argument \code{family} as in \pkg{mboost} and other modeling
+packages, the user needs to specify the argument \code{families}, which
+basically consists of a list of sub-families, i.e., one family for each of the
+GAMLSS distribution parameters. These sub-families define the parameters of the
+GAMLSS distribution to be fitted. Details are given in the next section.
+
+The initial number of boosting iterations as well as the step-lengths
+($\nu_{\text{sl}}$; see Appendix~\ref{algorithm}) are specified via the function
+\code{boost\_control()} with the same arguments as in \pkg{mboost}. However, in
+order to give the user the possibility to choose different values for each
+additive predictor (corresponding to the different parameters of a GAMLSS), they
+can be specified via a vector or list. Preferably a \emph{named} vector or list
+should be used, where the names correspond to the names of the sub-families. For
+example, one can specify:
+
+\begin{Sinput}
+R> boost_control(mstop = c(mu = 100, sigma = 200),
++                nu = c(mu = 0.2, sigma = 0.01))
+\end{Sinput}
+
+Specifying a single value for the stopping iteration \code{mstop} or the
+step-length \code{nu} results in equal values for all sub-families. The defaults
+is \code{mstop = 100} for the initial number of boosting iterations and \code{nu
+  = 0.1} for the step-length. Additionally, the user can specify if status
+information should be printed by setting \code{trace = TRUE} in
+\code{boost_control}. Note that the argument \code{nu} can also refer to one of
+the GAMLSS distribution parameters in some families (and is also used in
+\pkg{gamlss} as the name of a distribution parameter). In \code{boost\_control},
+however, \code{nu} always represents the step-length $\nu_{\text{sl}}$.
+
+\subsection{Distributions}\label{sec:distributions}
+
+Some GAMLSS distributions are directly implemented in the \proglang{R} add-on
+package \pkg{gamboostLSS} and can be specified via the \code{families} argument
+in the fitting function \code{gamboostLSS()} and \code{glmboostLSS()}. An
+overview of the implemented families is given in
+Table~\ref{tab:gamboostlss_families}. The parametrization of the negative
+binomial distribution, the log-logistic distribution and the $t$ distribution in
+boosted GAMLSS models is given in \citet{mayretal}. The derivation of boosted
+beta regression, another special case of GAMLSS, can be found in
+\cite{schmid2013beta}. In our case study we will use the default
+\code{GaussianLSS()} family to model childhood malnutrition in India. The
+resulting object of the family looks as follows:
+
+<<families>>=
+str(GaussianLSS(), 1)
+@
+
+We obtain a list of class \code{"families"} with two sub-families, one for the
+$\mu$ parameter of the distribution and another one for the $\sigma$ parameter.
+Each of the sub-families is of type \code{"boost_family"} from package
+\pkg{mboost}. Attributes specify the name and the quantile function
+(\code{"qfun"}) of the distribution.
+
+In addition to the families implemented in the \pkg{gamboostLSS} package, there
+are many more possible GAMLSS distributions available in the \pkg{gamlss.dist}
+package \citep{pkg:gamlss.dist:4.3-0}. In order to make our boosting approach
+available for these distributions as well, we provide an interface to
+automatically convert available distributions of \pkg{gamlss.dist} to objects of
+class \code{"families"} to be usable in the boosting framework via the function
+\code{as.families()}. As input, a character string naming the
+\code{"gamlss.family"}, or the function itself is required. The function
+\code{as.families()} then automatically constructs a \code{"families"} object
+for the \pkg{gamboostLSS} package. To use for example the gamma family as
+parametrized in \pkg{gamlss.dist}, one can simply use \code{as.families("GA")}
+and plug this into the fitting algorithms of \pkg{gamboostLSS}:
+
+\begin{Sinput}
+R> gamboostLSS(y ~ x, families = as.families("GA"))
+\end{Sinput}
+
+\begin{landscape}
+  \begin{table}[h!]
+    \centering
+    \begin{tabular}{lllllllp{0.5\textwidth}}
+      \toprule
+      & &  Name & Response & $\mu$ & $\sigma$  & $\nu$  & Note\\
+      \cmidrule{2-8}
+
+      \multicolumn{8}{l}{\textbf{Continuous response}} \\
+      & Gaussian & \code{GaussianLSS()} & cont.  & id & log & & \\
+      & Student's $t$  & \code{StudentTLSS()} & cont.   & id & log & log & The 3rd parameter is denoted by \code{df} (degrees of freedom). \\
+      \cmidrule{2-8}
+
+      \multicolumn{8}{l}{\textbf{Continuous non-negative response}} \\
+      & Gamma & \code{GammaLSS()} & cont. $>0$  & log & log & & \\
+      \cmidrule{2-8}
+
+      \multicolumn{8}{l}{\textbf{Fractions and bounded continuous response}} \\
+      & Beta & \code{BetaLSS()} & $\in (0,1)$  & logit & log & & The 2nd parameter is denoted by \code{phi}.\\
+      \cmidrule{2-8}
+
+      \multicolumn{8}{l}{\textbf{Models for count data}} \\
+      & Negative binomial & \code{NBinomialLSS()} & count  & log & log &   & For over-dispersed count data.\\
+      & Zero inflated Poisson & \code{ZIPoLSS()} & count  & log & logit & & For zero-inflated count data; the 2nd parameter is the probability parameter of the zero mixture component.\\
+      & Zero inflated neg. binomial & \code{ZINBLSS()} & count  & log & log & logit & For over-dispersed and zero-inflated count data; the 3rd parameter is the probability parameter of the zero mixture component.\\
+      \cmidrule{2-8}
+
+      \multicolumn{8}{l}{\textbf{Survival models} \citep[accelerated failure time models; see, e.g.,][]{klein03}} \\
+      & Log-normal & \code{LogNormalLSS()} & cont. $>0$ & id & log &&
+      \multirow{3}{8cm}{All three families assume that the data are subject to
+        right-censoring. Therefore the response must be a \code{Surv()} object.}\\
+      & Weibull & \code{WeibullLSS()} & cont. $>0$ & id & log &&  \\
+      & Log-logistic & \code{LogLogLSS()} & cont. $>0$ & id & log &&\\
+      \bottomrule
+  \end{tabular}
+  \caption{Overview of \code{"families"} that are implemented in
+    \pkg{gamboostLSS}. For every distribution parameter the  corresponding
+    link-function is displayed (id = identity link).} \label{tab:gamboostlss_families}
+\end{table}
+\end{landscape}
+
+With this interface, it is possible to apply boosting for any distribution
+implemented in \pkg{gamlss.dist} and for all new distributions that will be
+added in the future. Note that one can also fit censored or truncated
+distributions by using \code{gen.cens()} \citep[from package
+\pkg{gamlss.cens}; see][]{pkg:gamlss.cens:4.2-7} or \code{gen.trun()} \citep[from
+package \pkg{gamlss.tr}; see][]{pkg:gamlss.tr:4.2.7}, respectively. An overview of
+common GAMLSS distributions is given in Appendix~\ref{sec:additional-families}.
+Minor differences in the model fit when applying a pre-specified distribution
+(e.g., \code{GaussianLSS()}) and the transformation of the corresponding
+distribution from \pkg{gamlss.dist} (e.g., \code{as.families("NO")}) can be
+explained by possibly different offset values.
+
+\subsection{Base-learners}\label{sec:base-learners}
+
+For the base-learners, which carry out the fitting of the gradient vectors using
+the covariates, the \pkg{gamboostLSS} package completely depends on the
+infrastructure of \pkg{mboost}. Hence, every base-learner which is available in
+\pkg{mboost} can also be applied to fit GAMLSS distributions via
+\pkg{gamboostLSS}. The choice of base-learners is crucial for the application of
+the \emph{gamboostLSS} algorithm, as they define the type(s) of effect(s) that
+covariates will have on the predictors of the GAMLSS distribution parameters.
+See \citet{Hofner:mboost:2014} for details and application notes on the
+base-learners.
+
+The available base-learners include simple linear models for \textit{linear}
+effects and penalized regression splines \citep[\textit{P}-splines,
+][]{Eilers1996} for \textit{non-linear} effects. \textit{Spatial} or other
+\textit{bivariate} effects can be incorporated by setting up a bivariate tensor
+product extension of P-splines for two continuous variables \citep{kneibetal}.
+Another way to include spatial effects is the adaptation of Markov random fields
+for modeling a neighborhood structure \citep{sobotka12} or radial basis
+functions \citep{Hofner:Dissertation:2011}. \textit{Constrained} effects such as
+monotonic or cyclic effects can be specified as well
+\citep{Hofner:monotonic:2011,Hofner:constrained:2014}. \textit{Random} effects
+can be taken into account by using ridge-penalized base-learners for fitting
+categorical grouping variables such as random intercepts or slopes \citep[see
+supplementary material of][]{kneibetal}.
+
+\paragraph{Case study (\textit{cont'd}): Childhood malnutrition in India}
+\hfill\newline First, we are going to set up and fit our model. Usually, one
+could use \code{bmrf(mcdist, bnd = india.bnd)} to specify the spatial
+base-learner using a Markov random field. However, as it is relatively
+time-consuming to compute the neighborhood matrix from the boundary file and as
+we need it several times, we pre-compute it once. Note that \pkg{R2BayesX}
+\citep{pkg:R2BayesX:0.3-1} needs to be loaded in order to use this function:
+
+<<compute_neighborhood, results=hide>>=
+library("R2BayesX")
+neighborhood <- bnd2gra(india.bnd)
+@
+
+The other effects can be directly specified without further care. We use smooth
+effects for the age (\code{mage}) and BMI (\code{mbmi}) of the mother and smooth
+effects for the age (\code{cage}) and BMI (\code{cbmi}) of the child. Finally,
+we specify the spatial effect for the district in India where mother and child
+live (\code{mcdist}).
+
+We set the options
+
+<<options>>=
+ctrl <- boost_control(trace = TRUE, mstop = c(mu = 1269, sigma = 84))
+@
+
+and fit the boosting model
+
+<<modeling, eval = false>>=
+mod_nonstab <- gamboostLSS(stunting ~ bbs(mage) + bbs(mbmi) +
+                             bbs(cage) + bbs(cbmi) +
+                             bmrf(mcdist, bnd = neighborhood),
+                           data = india,
+                           families = GaussianLSS(),
+                           control = ctrl)
+@
+
+<<run_modeling, echo = FALSE, results = hide>>=
+## abbreviate output to use less manuscript space
+out <- capture.output(
+<<modeling>>
+)
+out <- out[c(1:5, 33:35)]
+out[3:5] <- c("", "(...)", "")
+@
+<<print_modeling_results, echo = FALSE>>=
+writeLines(out)
+@
+
+We specified the initial number of boosting iterations as \code{mstop = c(mu =
+  \Sexpr{mstop(mod_nonstab)["mu"]}, sigma =
+  \Sexpr{mstop(mod_nonstab)["sigma"]})}, i.e., we used
+$\Sexpr{mstop(mod_nonstab)["mu"]}$ boosting iterations for the $\mu$ parameter
+and only $\Sexpr{mstop(mod_nonstab)["sigma"]}$ for the $\sigma$ parameter. This
+means that we cycle between the $\mu$ and $\sigma$ parameter until we have
+computed $\Sexpr{mstop(mod_nonstab)["sigma"]}$ update steps in both sub-models.
+Subsequently, we update only the $\mu$ model and leave the $\sigma$ model
+unchanged. The selection of these tuning parameters will be
+discussed in the next section. \hfill $\vardiamond$\\
+
+Instead of optimizing the gradients per GAMLSS parameter in each boosting
+iteration, one can potentially stabilize the estimation further by standardizing
+the gradients in each step. Details and an explanation are given in
+Appendix~\ref{sec:stab-ngrad}.
+
+\paragraph{Case study (\textit{cont'd}): Childhood malnutrition in India}
+\label{page:stabilization}
+
+We now refit the model with the built-in median absolute deviation (MAD)
+stabilization by setting \code{stabilization = "MAD"} in the definition of the
+families:
+
+<<modeling2, eval = FALSE>>=
+mod <- gamboostLSS(stunting ~ bbs(mage) + bbs(mbmi) +
+                     bbs(cage) + bbs(cbmi) +
+                     bmrf(mcdist, bnd = neighborhood),
+                   data = india,
+                   families = GaussianLSS(stabilization = "MAD"),
+                   control = ctrl)
+@
+
+<<run_modeling2, echo = FALSE, results = hide>>=
+## abbreviate output to use less manuscript space
+out <- capture.output(
+<<modeling2>>
+)
+out <- out[c(1:5, 33:35)]
+out[3:5] <- c("", "(...)", "")
+@
+<<print_modeling2_results, echo = FALSE>>=
+writeLines(out)
+@
+
+One can clearly see that the stabilization changes the model and reduces the
+intermediate and final risks. \hfill $\vardiamond$
+
+\subsection[Model complexity and diagnostic checks]{Model complexity and
+  diagnostic checks}\label{sec:model_complexity}
+
+Measuring the complexity of a GAMLSS is a crucial issue for model building and
+parameter tuning, especially with regard to the determination of optimal
+stopping iterations for gradient boosting (see next section). In the GAMLSS
+framework, valid measures of the complexity of a fitted model are even more
+important than in classical regression, since variable selection and model
+choice have to be carried out in \emph{several} additive predictors within the
+same model.
+
+In the original work by \cite{rs}, the authors suggested to evaluate AIC-type
+information criteria to measure the complexity of a GAMLSS. Regarding the
+complexity of a classical boosting fit with one predictor, AIC-type measures are
+available for a limited number of distributions
+\citep[see][]{BuhlmannHothorn07}. Still, there is no commonly accepted approach
+to measure the degrees of freedom of a boosting fit, even in the classical
+framework with only one additive predictor. This is mostly due to the
+algorithmic nature of gradient boosting, which results in regularized model fits
+for which complexity is difficult to evaluate \cite{Hast:comment:2007}. As a
+consequence, the problem of deriving valid (and easy-to-compute) complexity
+measures for boosting remains largely unsolved
+\citep[Sec.~4]{Kneib:comment:2014}.
+
+In view of these considerations, and because it is not possible to use the
+original information criteria specified for GAMLSS in the \emph{gamboostLSS}
+framework, \cite{mayretal} suggested to use cross-validated estimates of the
+empirical risk (i.e., of the predicted log-likelihood) to measure the complexity
+of \emph{gamboostLSS} fits. Although this strategy is computationally expensive
+and might be affected by the properties of the used cross-validation technique,
+it is universally applicable to all \pkg{gamboostLSS} families and does not rely
+on possibly biased estimators of the effective degrees of freedom. We therefore
+decided to implement various resampling procedures in the function
+\code{cvrisk()} to estimate model complexity of a \code{gamboostLSS} fit via
+cross-validated empirical risks (see next section).
+
+A related problem is to derive valid diagnostic checks to compare different
+families or link functions. For the original GAMLSS method, \cite{rs} proposed
+to base diagnostic checks on normalized quantile residuals. In the boosting
+framework, however, residual checks are generally difficult to derive because
+boosting algorithms result in regularized fits that reflect the trade-off
+between bias and variance of the effect estimators. As a consequence, residuals
+obtained from boosting fits usually contain a part of the remaining structure of
+the predictor effects, rendering an unbiased comparison of competing model
+families via residual checks a highly difficult issue. While it is of course
+possible to compute residuals from \code{gamboostLSS} models, valid comparisons
+of competing models are more conveniently obtained by considering estimates of
+the predictive risk.
+
+\paragraph{Case study (\textit{cont'd}): Childhood malnutrition in India}
+To extract the empirical risk in the last boosting iteration (i.e., in the last
+step) of the model which was fitted with stabilization (see
+Page~\pageref{page:stabilization}) one can use
+<<>>=
+emp_risk <- risk(mod, merge = TRUE)
+tail(emp_risk, n = 1)
+@
+and compare it to the risk of the non-stabilized model
+<<>>=
+emp_risk_nonstab <- risk(mod_nonstab, merge = TRUE)
+tail(emp_risk_nonstab, n = 1)
+@
+In this case, the stabilized model has a lower (in-bag) risk than the
+non-stabilized model. Note that usually both models should be tuned before the
+empirical risk is compared. Here it merely shows that the risk of the stabilized
+model decreases quicker.
+
+To compare the risk on new data sets, i.e., the predictive risk, one could
+combine all data in one data set and use weights that equal zero for the new
+data. Let us fit the model only on a random subset of 2000 observations. To
+extract the risk for observations with zero weights, we need to additionally set
+\code{risk = "oobag"}.
+<<>>=
+weights <- sample(c(rep(1, 2000), rep(0, 2000)))
+mod_subset <- update(mod, weights = weights, risk = "oobag")
+@
+Note that we could also specify the model anew via
+<<eval = FALSE>>=
+mod_subset <- gamboostLSS(stunting ~ bbs(mage) + bbs(mbmi) +
+                     bbs(cage) + bbs(cbmi) +
+                     bmrf(mcdist, bnd = neighborhood),
+                   data = india,
+                   weights = weights,
+                   families = GaussianLSS(),
+                   control = boost_control(mstop = c(mu = 1269, sigma = 84),
+                                           risk = "oobag"))
+@
+To refit the non-stabilized model we use
+<<>>=
+mod_nonstab_subset <- update(mod_nonstab,
+                             weights = weights, risk = "oobag")
+@
+Now we extract the predictive risks which are now computed on the 2000 ``new''
+observations:
+<<>>=
+tail(risk(mod_subset, merge = TRUE), 1)
+tail(risk(mod_nonstab_subset, merge = TRUE), 1)
+@
+Again, the stabilized model has a lower predictive risk.\hfill $\vardiamond$
+
+\subsection{Model tuning: Early stopping to prevent overfitting}\label{sec:model_tuning}
+
+As for other component-wise boosting algorithms, the most important tuning
+parameter of the \emph{gamboostLSS} algorithm is the stopping iteration
+$\bm{m}_{\text{stop}}$ (here a $K$-dimensional vector). In some low-dimensional
+settings it might be convenient to let the algorithm run until convergence
+(i.e., use a large number of iterations for each of the $K$ distribution
+parameters). In these cases, as they are optimizing the same likelihood,
+boosting should converge to the same model as \pkg{gamlss} -- at least when the
+same penalties are used for smooth effects.
+
+However, in most settings, where the application of boosting is favorable, it is
+crucial that the algorithm is not run until convergence but some sort of early
+stopping is applied \citep{Mayr:mstop:2012}. Early stopping results in shrunken
+effect estimates, which has the advantage that predictions become more stable
+since the variance of the estimates is reduced. Another advantage of early
+stopping is that \emph{gamboostLSS} has an intrinsic mechanism for data-driven
+variable selection, since only the best-fitting base-learner is updated in each
+boosting iteration. Hence, the stopping iteration $m_{\text{stop},k}$ does not
+only control the amount of shrinkage applied to the effect estimates but also
+the complexity of the models for the distribution parameter~$\theta_k$.
+
+To find the optimal complexity, the resulting model should be evaluated
+regarding the predictive risk on a large grid of stopping values by
+cross-validation or resampling methods, using the function \code{cvrisk()}. In
+case of \emph{gamboostLSS}, the predictive risk is computed as the negative log
+likelihood of the out-of-bag sample. The search for the optimal
+$\bm{m}_{\text{stop}}$ based on resampling is far more complex than for standard
+boosting algorithms. Different stopping iterations can be chosen for the
+parameters, thus allowing for different levels of complexity in each sub-model
+(\emph{multi-dimensional} early stopping). In the package \pkg{gamboostLSS} a
+multi-dimensional grid can be easily created utilizing the function
+\code{make.grid()}.
+
+In most of the cases the $\mu$ parameter is of greatest interest in a GAMLSS
+model and thus more care should be taken to accurately model this parameter.
+\citet{pkg:gamlss:4.3-0}, the inventors of GAMLSS, stated on the help page for
+the function \code{gamlss()}: ``Respect the parameter hierarchy when you are
+fitting a model. For example a good model for $\mu$ should be fitted before a
+model for $\sigma$ is fitted.''. Consequently, we provide an option
+\code{dense_mu_grid} in the \code{make.grid()} function that allows to have a
+finer grid for (a subset of) the $\mu$ parameter. Thus, we can better tune the
+complexity of the model for $\mu$ which helps to avoid over- or underfitting of
+the mean without relying to much on the grid. Details and explanations are given
+in the following paragraphs.
+
+\paragraph{Case study (\textit{cont'd}): Childhood malnutrition in India}
+
+We first set up a grid for \code{mstop} values starting at $20$ and going in
+$10$ equidistant steps on a logarithmic scale to $500$:
+
+<<setup_grid1>>=
+grid <- make.grid(max = c(mu = 500, sigma = 500), min = 20,
+                  length.out = 10, dense_mu_grid = FALSE)
+@
+
+Additionally, we can use the \code{dense\_mu\_grid} option to create a dense
+grid for $\mu$. This means that we compute the risk for all iterations
+$m_{\text{stop},\mu}$, if $m_{\text{stop},\mu} \geq m_{\text{stop},\sigma}$ and
+do not use the values on the sparse grid only:
+
+<<setup_grid2_code, eval = false>>=
+densegrid <- make.grid(max = c(mu = 500, sigma = 500), min = 20,
+                       length.out = 10, dense_mu_grid = TRUE)
+plot(densegrid, pch = 20, cex = 0.2,
+     xlab = "Number of boosting iterations (mu)",
+     ylab = "Number of boosting iterations (sigma)")
+abline(0,1)
+points(grid, pch = 20, col = "red")
+@
+
+A comparison and an illustration of the sparse and the dense grids can be found
+in Figure~\ref{fig:grid} (left). Red dots refer to all possible combinations of
+$m_{\text{stop},\mu}$ and $m_{\text{stop},\sigma}$ on the sparse grid, whereas
+the black lines refer to the additional combinations when a dense grid is used.
+For a given $m_{\text{stop},\sigma}$, all iterations $m_{\text{stop},\mu} \geq
+m_{\text{stop},\sigma}$ (i.e., below the bisecting line) can be computed without
+additional computing time. For example, if we fit a model with \code{mstop =
+  c(mu = 30, sigma = 15)}, all $m_{\text{stop}}$ combinations on the red path
+(Figure~\ref{fig:grid}, right) are computed. Until the point where
+$m_{\text{stop}, \mu} = m_{\text{stop}, \sigma}$, we move along the bisecting
+line. Then we stop increasing $m_{\text{stop}, \sigma}$ and increase
+$m_{\text{stop}, \mu}$ only, i.e., we start moving along a horizontal line.
+Thus, all iterations on this horizontal line are computed anyway. Note that it
+is quite expensive to move from the computed model to one with \code{mstop =
+  c(mu = 30, sigma = 16)}. One cannot simply increase $m_{\text{stop},\sigma}$
+by 1 but needs to go along the black dotted path. As the dense grid does not
+increase the run time (or only marginally), we recommend to always use this
+option, which is also the default.
+
+\setkeys{Gin}{width = 0.45\textwidth}
+\begin{figure}[h!]
+  \centering
+<<setup_grid2, fig = true, echo = false, results = hide>>=
+par(mar = c(4, 4, 0.1, 0.1))
+<<setup_grid2_code>>
+@
+\hfill
+<<iterations, fig = true, echo = false, results = hide>>=
+par(mar = c(4, 4, 0.1, 0.1))
+plot(1:30, type = "n", xlab = "Number of boosting iterations (mu)",
+     ylab = "Number of boosting iterations (sigma)")
+j <- 0
+for (i in 0:29) {
+    lines(c(i, i + 1), c(j, j), col = "red", lwd = 2)
+    points(i, j, col = "red", pch = 20, cex = 1.3)
+    if (j < 15) {
+        lines(c(i + 1, i + 1), c(j, j + 1), col = "red", lwd = 2)
+        points(i + 1, j, col = "red", pch = 20, cex = 1.3)
+        j <- j + 1
+    }
+}
+points(30, 15, col = "red", pch = 20, cex = 1.3)
+lines(c(16, 16), c(15, 16), lwd = 2)
+lines(c(16, 30), c(16, 16), lwd = 2)
+points(c(16:30), rep(16, 15), col = "black", pch = 20, cex = 1.3)
+abline(0,1)
+lines(c(-1, 15), c(15, 15), lty = "dotted")
+lines(c(15, 15), c(-1, 15), lty = "dotted")
+legend("topleft", legend = c("mstop = c(mu = 30, sigma = 15)", "mstop = c(mu = 30, sigma = 16)"),
+       lty = "solid", pch = 20, cex = 1.1, col = c("red", "black"), bty = "n")
+@
+\caption{\emph{Left:} Comparison between sparse grid (red) and dense $\mu$ grid
+  (black horizontal lines in addition to the sparse red grid). \emph{Right:}
+  Example of the path of the iteration counts.}\label{fig:grid}
+\end{figure}
+
+The \code{dense\_mu\_grid} option also works for asymmetric grids (e.g.,
+\code{make.grid(max = c(mu = 100, sigma = 200))}) and for more than two
+parameters (e.g., \code{make.grid(max = c(mu = 100, sigma = 200, nu = 20))}).
+For an example in the latter case see the help file of \code{make.grid()}.
+
+Now we use the dense grid for cross-validation (or subsampling to be more
+precise). The computation of the cross-validated risk using \code{cvrisk()}
+takes more than one hour on a 64-bit Ubuntu machine using 2 cores.
+
+<<cvrisk, eval = TRUE, results = hide>>=
+cores <- ifelse(grepl("linux|apple", R.Version()$platform), 2, 1)
+if (!file.exists("cvrisk/cvr_india.Rda")) {
+    set.seed(1907)
+    folds <- cv(model.weights(mod), type = "subsampling")
+    densegrid <- make.grid(max = c(mu = 5000, sigma = 500), min = 20,
+                           length.out = 10, dense_mu_grid = TRUE)
+    cvr <- cvrisk(mod, grid = densegrid, folds = folds, mc.cores = cores)
+    save("cvr", file = "cvrisk/cvr_india.Rda", compress = "xz")
+}
+@
+
+By using more computing cores or a larger computer cluster the speed can be
+easily increased. The usage of \code{cvrisk()} is practically identical to that
+of \code{cvrisk()} from package \pkg{mboost}. See \citet{Hofner:mboost:2014} for
+details on parallelization and grid computing. As Windows does not support
+addressing multiple cores from \proglang{R}, on Windows we use only one core
+whereas on Unix-based systems two cores are used. We then load the pre-computed
+results of the cross-validated risk:
+
+<<load_cvrisk, echo = TRUE, results = hide>>=
+load("cvrisk/cvr_india.Rda")
+@
+\vspace{-2em} \hfill $\vardiamond$
+
+\subsection{Methods to extract and display results}\label{sec:methods}
+
+In order to work with the results, methods to extract information both from
+boosting models and the corresponding cross-validation results have been
+implemented. Fitted \pkg{gamboostLSS} models (i.e., objects of type
+\code{"mboostLSS"}) are lists of \code{"mboost"} objects. The most important
+distinction from the methods implemented in \pkg{mboost} is the widespread
+occurrence of the additional argument \code{parameter}, which enables the user
+to apply the function on all parameters of a fitted GAMLSS model or only on one
+(or more) specific parameters.
+
+Most importantly, one can extract the coefficients of a fitted model
+(\code{coef()}) or plot the effects (\code{plot()}). Different versions of both
+functions are available for linear GAMLSS models (i.e., models of class
+\code{"glmboostLSS"}) and for non-linear GAMLSS models (e.g., models with
+P-splines). Additionally, the user can extract the risk for all iterations using
+the function \code{risk()}. Selected base-learners can be extracted using
+\code{selected()}. Fitted values and predictions can be obtained by
+\code{fitted()} and \code{predict()}. For details and examples, see the
+corresponding help files and \citet{Hofner:mboost:2014}. Furthermore, a special
+function for marginal prediction intervals is available (\code{predint()})
+together with a dedicated plot function (\code{plot.predint()}).
+
+For cross-validation results (objects of class \code{"cvriskLSS"}), there exists
+a function to extract the estimated optimal number of boosting iterations
+(\code{mstop()}). The results can also be plotted using a special \code{plot()}
+function. Hence, convergence and overfitting behavior can be visually inspected.
+
+In order to increase or reduce the number of boosting steps to the appropriate
+number (as e.g., obtained by cross-validation techniques) one can use the
+function \code{mstop}. If we want to reduce our model, for example, to 10
+boosting steps for the \code{mu} parameter and 20 steps for the \code{sigma}
+parameter we can use
+\begin{Sinput}
+R> mstop(mod) <- c(10, 20)
+\end{Sinput}
+This directly alters the object \code{mod}. Instead of specifying a vector with
+separate values for each sub-family one can also use a single value, which then
+is used for each sub-family (see Section~\ref{sec:model-fitting}).
+
+\paragraph{Case study (\textit{cont'd}): Childhood malnutrition in India}
+
+We first inspect the cross-validation results (see Figure~\ref{fig:cvr}):
+
+<<crossvalidation_code, eval = false>>=
+plot(cvr)
+@
+
+\setkeys{Gin}{width = 0.5\textwidth}
+\begin{figure}[h!]
+  \centering
+<<crossvalidation, fig = true, results = hide, echo = false>>=
+<<crossvalidation_code>>
+@
+\caption{Cross-validated risk. Darker color represents higher predictive risks.
+  The optimal combination of stopping iterations is indicated by dashed red
+  lines.}\label{fig:cvr}
+\end{figure}
+
+If the optimal stopping iteration is close to the boundary of the grid one
+should re-run the cross-validation procedure with different \code{max} values
+for the grid and/or more grid points. This is not the case here
+(Figure~\ref{fig:cvr}). To extract the optimal stopping iteration one can now
+use
+<<mstop>>=
+mstop(cvr)
+@
+
+<<check_initial_assignement, echo = FALSE, results = hide>>=
+## for the purpose of the tutorial we started already with the optimal number of
+## boosting steps. Check if this is really true:
+if (!isTRUE(all.equal(mstop(mod), mstop(cvr))))
+    warning("Check mstop(mod) throughout the manuscript.")
+@
+
+To use the optimal model, i.e., the model with the iteration number from the
+cross-validation, we set the model to these values:
+
+<<subset, results = hide>>=
+mstop(mod) <- mstop(cvr)
+@
+
+In the next step, the \code{plot()} function can be used to plot the partial
+effects. A partial effect is the effect of a certain predictor only, i.e., all
+other model components are ignored for the plot. Thus, the reference level of
+the plot is arbitrary and even the actual size of the effect might not be
+interpretable; only changes and hence the functional form are meaningful. If no
+further arguments are specified, all \emph{selected} base-learners are plotted:
+
+<<effects>>=
+par(mfrow = c(2, 5))
+plot(mod)
+@
+
+Special base-learners can be plotted using the argument \code{which} (to specify
+the base-learner) and the argument \code{parameter} (to specify the parameter,
+e.g., \code{"mu"}). Partial matching is used for \code{which}, i.e., one can
+specify a sub-string of the base-learners' names. Consequently, all matching
+base-learners are selected. Alternatively, one can specify an integer which
+indicates the number of the effect in the model formula. Thus
+
+<<smooth_effects_code, eval = FALSE, height = 8>>=
+par(mfrow = c(2, 4), mar = c(5.1, 4.5, 4.1, 1.1))
+plot(mod, which = "bbs", type = "l")
+@
+
+plots \emph{all} P-spline base-learners irrespective if they where selected or
+not. The partial effects in Figure~\ref{fig:smooth_effects} can be interpreted
+as follows: The age of the mother seems to have a minor impact on stunting for
+both the mean effect and the effect on the standard deviation. With increasing
+BMI of the mother, the stunting score increases, i.e., the child is better
+nourished. At the same time the variability increases until a BMI of roughly 25
+and then decreases again. The age of the child has a negative effect until the
+age of approximately 1.5 years (18 months). The variability increases over the
+complete range of age. The BMI of the child has a negative effect on stunting,
+with lowest variability for an BMI of approximately 16. While all other effects
+can be interpreted quite easily, this effect is more difficult to interpret.
+Usually, one would expect that a child that suffers from malnutrition also has a
+small BMI. However, the height of the child enters the calculation of the BMI in
+the denominator, which means that a lower stunting score (i.e., small height)
+should lead on average to higher BMI values if the weight of a child is fixed.
+
+\setkeys{Gin}{width = 0.99\textwidth}
+\begin{figure}[h!]
+  \centering
+<<smooth_effects, fig = true, results = hide, echo = false, width = 8, height = 4>>=
+par(cex.axis = 1.3, cex.lab = 1.3, mar = c(4, 5, 2, 1))
+<<smooth_effects_code>>
+@
+\caption{Smooth partial effects of the estimated model with the rescaled
+  outcome. The effects for \code{sigma} are estimated and plotted on the
+  log-scale (see Equation~\ref{Gaussian:sigma}), i.e., we plot the predictor
+  against $\log(\hat{\sigma})$.}\label{fig:smooth_effects}
+\end{figure}
+
+If we want to plot the effects of all P-spline base-learners for the $\mu$
+parameter, we can use
+
+<<smooth_effects_2>>=
+plot(mod, which = "bbs", parameter = "mu")
+@
+
+Instead of specifying (sub-)strings for the two arguments one could use integer
+values in both cases. For example,
+
+<<smooth_effects_3>>=
+plot(mod, which = 1:4, parameter = 1)
+@
+
+results in the same plots.
+
+Prediction intervals for new observations can be easily constructed by computing
+the quantiles of the conditional GAMLSS distribution. This is done by plugging
+the estimates of the distribution parameters (e.g., $\hat{\mu}(x_{\text{new}}),
+\hat{\sigma}(x_{\text{new}})$ for a new observation $x_{\text{new}}$) into the
+quantile function \citep{mayretal}.
+
+Marginal prediction intervals, which reflect the effect of a single predictor on
+the quantiles (keeping all other variables fixed), can be used to illustrate the
+combined effect of this variable on various distribution parameters and hence
+the shape of the distribution. For illustration purposes we plot the influence
+of the children's BMI via \code{predint()}. To obtain marginal prediction
+intervals, the function uses a grid for the variable of interest, while fixing
+all others at their mean (continuous variables) or modus (categorical
+variables).
+
+<<marginal_prediction_plot_code, fig = false, results = hide>>=
+plot(predint(mod, pi = c(0.8, 0.9), which = "cbmi"),
+     lty = 1:3, lwd = 3, xlab =  "BMI (child)",
+     ylab = "Stunting score")
+@
+
+To additionally highlight observations from Greater Mumbai, we use
+<<greater_mumbai, fig = false, results = hide>>=
+points(stunting ~ cbmi, data = india, pch = 20,
+       col = rgb(1, 0, 0, 0.5), subset = mcdist == "381")
+@
+
+
+\setkeys{Gin}{width = 0.45\textwidth}
+\begin{figure}[h!]
+  \centering
+<<marginal_prediction_plot, fig = true, results = hide, echo = false>>=
+<<marginal_prediction_plot_code>>
+<<greater_mumbai>>
+@
+\caption{80\% (dashed) and 90\% (dotted) marginal prediction intervals for the
+  BMI of the children in the district of Greater Mumbai (which is the region
+  with the most observations). For all other variables we used average values
+  (i.e., a child with average age, and a mother with average age and BMI). The
+  solid line corresponds to the median prediction (which equals the mean for
+  symmetric distributions such as the Gaussian distribution). Observations from
+  Greater Mumbai are highlighted in red.}\label{fig:pred_interval}
+\end{figure}
+
+The resulting marginal prediction intervals are displayed in
+Figure~\ref{fig:pred_interval}. For the interpretation and evaluation of
+prediction intervals, see \cite{MayrPI}.
+
+For the spatial \code{bmrf()} base-learner we need some extra work to plot the
+effect(s). We need to obtain the (partial) predicted values per region using
+either \code{fitted()} or \code{predict()}:
+<<spatial_effects_code1, eval = false>>=
+fitted_mu <- fitted(mod, parameter = "mu", which = "mcdist",
+                    type = "response")
+fitted_sigma <- fitted(mod, parameter = "sigma", which = "mcdist",
+                       type = "response")
+@
+
+In case of \code{bmrf()} base-learners we then need to aggregate the data for
+multiple observations in one region before we can plot the data. Here, one could
+also plot the coefficients, which constitute the effect estimates per region.
+Note that this interpretation is not possible for for other bivariate or spatial
+base-learners such as \code{bspatial()} or \code{brad()}:
+
+<<spatial_effects_code2, eval = false>>=
+fitted_mu <- tapply(fitted_mu, india$mcdist, FUN = mean)
+fitted_sigma <- tapply(fitted_sigma, india$mcdist, FUN = mean)
+plotdata <- data.frame(region = names(fitted_mu),
+                       mu = fitted_mu, sigma = fitted_sigma)
+par(mfrow = c(1, 2), mar = c(1, 0, 2, 0))
+plotmap(india.bnd, plotdata[, c(1, 2)], range = c(-0.62, 0.82),
+        main = "Mean", pos = "bottomright", mar.min = NULL)
+plotmap(india.bnd, plotdata[, c(1, 3)], range = c(0.75, 1.1),
+        main = "Standard deviation", pos = "bottomright", mar.min = NULL)
+@
+
+\setkeys{Gin}{width = 0.9\textwidth}
+\begin{figure}[h!]
+  \centering
+<<spatial_effects, fig = true, results = hide, echo = false, width = 10, height = 4.5>>=
+<<spatial_effects_code1>>
+<<spatial_effects_code2>>
+@
+\caption{Spatial partial effects of the estimated model. Dashed regions
+  represent regions without data. Note that effect estimates for these regions
+  exist and could be extracted. \label{fig:spatial_effects}}
+\end{figure}
+
+Figure~\ref{fig:spatial_effects} (left) shows a clear spatial pattern of
+stunting. While children in the southern regions like Tamil Nadu and Kerala as
+well as in the north-eastern regions around Assam and Arunachal Pradesh seem to
+have a smaller risk for stunted growth, the central regions in the north of
+India, especially Bihar, Uttar Pradesh and Rajasthan seem to be the most
+problematic in terms of stunting due to malnutrition. Since we have also modeled
+the scale of the distribution, we can gain much richer information concerning
+the regional distribution of stunting: the regions in the south which seem to be
+less affected by stunting do also have a lower partial effect with respect to
+the expected standard deviation (Figure~\ref{fig:spatial_effects}, right), i.e.,
+a reduced standard deviation compared to the average region. This means that not
+only the expected stunting score is smaller on average, but that the
+distribution in this region is also narrower. This leads to a smaller size of
+prediction intervals for children living in that area. In contrast, the regions
+around Bihar in the central north, where India shares border with Nepal, do not
+only seem to have larger problems with stunted growth but have a positive
+partial effect with respect the scale parameter of the conditional distribution
+as well. This leads to larger prediction intervals, which could imply a greater
+risk for very small values of the stunting score for an individual child in that
+region. On the other hand, the larger size of the interval also offers the
+chance for higher values and could reflect higher differences between different
+parts of the population. \hfill $\vardiamond$
+
+\section{Summary}
+\label{sec:summary}
+
+The GAMLSS model class has developed into one of the most flexible tools in
+statistical modeling, as it can tackle nearly any regression setting of practical
+relevance. Boosting algorithms, on the other hand, are one of the most flexible
+estimation and prediction tools in the toolbox of a modern statistician
+\citep{mayr_boosting_part1}.
+
+In this paper, we have presented the \proglang{R} package \pkg{gamboostLSS},
+which provides the first implementation of a boosting algorithm for GAMLSS.
+Hence, beeing a combination of boosting and GAMLSS, \pkg{gamboostLSS} combines a
+powerful machine learning tool with the world of statistical modeling
+\citep{Breiman2001:TwoCultures}, offering the advantage of intrinsic model
+choice and variable selection in potentially high-dimensional data situations.
+The package also combines the advantages of both \pkg{mboost} (with a
+well-established, well-tested modular structure in the back-end) and
+\pkg{gamlss} (which implements a large amount of families that are available via
+conversion with the \code{as.families()} function).
+
+While the implementation in the \proglang{R} package \pkg{gamlss} (provided by
+the inventors of GAMLSS) must be seen as the gold standard for fitting GAMLSS,
+the \pkg{gamboostLSS} package offers a flexible alternative, which can be
+advantageous, amongst others, in following data settings: (i) models with a
+large number of coefficients, where classical estimation approaches become
+unfeasible; (ii) data situations where variable selection is of great interest;
+(iii) models where a greater flexibility regarding the effect types is needed,
+e.g., when spatial, smooth, random, or constrained effects should be included
+and selected at the same time.
+
+\section*{Acknowledgments}
+
+We thank the editors and the two anonymous referees for their valuable comments
+that helped to greatly improve the manuscript. We gratefully acknowledge the
+help of Nora Fenske and Thomas Kneib, who provided code to prepare the data and
+also gave valuable input on the package \pkg{gamboostLSS}. We thank Mikis
+Stasinopoulos for his support in implementing \code{as.families} and Thorsten
+Hothorn for his great work on \pkg{mboost}. The work of Matthias Schmid and
+Andreas Mayr was supported by the Deutsche Forschungsgemeinschaft (DFG), grant
+SCHM-2966/1-1, and the Interdisciplinary Center for Clinical Research (IZKF) of
+the Friedrich-Alexander University Erlangen-N{\"u}rnberg, project J49.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Bibligraphy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliography{bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clearpage
+\appendix
+
+\section[The gamboostLSS algorithm]{The \emph{gamboostLSS} algorithm}\label{algorithm}
+
+Let $\bm{\theta} = (\theta_k)_{k = 1,\ldots,K}$ be the vector of distribution
+parameters of a GAMLSS, where $\theta_k = g_k^{-1}(\eta_{\theta_k})$ with
+parameter-specific link functions $g_k$ and additive predictor
+$\eta_{\theta_k}$. The \emph{gamboostLSS} algorithm \citep{mayretal} circles
+between the different distribution parameters $\theta_k,\, k=1, \ldots, K,$ and
+fits all base-learners $h(\cdot)$ separately to the negative partial derivatives
+of the loss function, i.e., in the GAMLSS context to the partial derivatives of
+the log-likelihood with respect to the additive predictors $\eta_{\theta_k}$,
+i.e., $\frac{\partial}{\partial \eta_{\theta_k}} l(\bm{y}, \bm{\theta})$.
+
+
+\begin{enumerate}
+\item[] \textbf{Initialize}
+  \begin{enumerate}
+  \item[(1)] Set the iteration counter $m := 0$. Initialize the additive
+    predictors $\hat{\eta}_{\theta_{k,i}}^{[m]},\, k = 1, \ldots, K,\, i=1,
+    \ldots, n,$ with offset values, e.g., $\hat{\eta}_{\theta_{k,i}}^{[0]} \equiv
+    \underset{c}{\operatorname{argmax}} \sum_{i=1}^n l(y_i, \theta_{k,i} = c)$.
+  \item[(2)] For each distribution parameter $\theta_k$, $k=1,\ldots, K$,
+    specify a set of base-learners: i.e., for parameter $\theta_k$ by $h_{k,1}
+    (\cdot),\ldots,h_{k,p_k} (\cdot)$, where $p_k$ is the cardinality of the set
+    of base-learners specified for $\theta_k$.
+  \end{enumerate}
+\item[] \textbf{Boosting in multiple dimensions}
+  \begin{enumerate}
+  \item[(3)] \textbf{Start} a new boosting iteration: increase $m$ by 1 and set
+    $k := 0$.
+  \item[(4)]
+    \begin{enumerate}
+    \item[(a)] Increase $k$ by 1. \\
+      \textbf{If} $m > m_{\rm{stop},\emph{k}}$ proceed to
+      step 4(e).\\
+      \textbf{Else} compute the partial derivative $\frac{\partial}{\partial
+        \eta_{\theta_k}} l(y,\bm{\theta})$ and plug in the current estimates
+      $\hat{\bm{\theta}}_i^{[m-1]} = \left( \hat{\theta}_{1,i}^{[m-1]}, \ldots,
+        \hat{\theta}_{K,i}^{[m-1]} \right) = \left(
+        g^{-1}_1(\hat{\eta}_{\theta_{1,i}}^{[m-1]}), \ldots,
+        g^{-1}_K(\hat{\eta}_{\theta_{K,i}}^{[m-1]}) \right)$:
+      \begin{equation*}
+        u^{[m-1]}_{k,i} = \left. \frac{\partial}{\partial \eta_{\theta_k}} l(y_i,
+          \bm{\theta})\right|_{\bm{\theta} = \hat{\bm{\theta}}_i^{[m-1]}} ,\, i = 1,\ldots, n.
+      \end{equation*}
+    \item[(b)] \textbf{Fit} each of the base-learners contained in the set of
+      base-learners specified for the parameter $\theta_k$ in step (2) to the
+      gradient vector $\bm{u}^{[m-1]}_k$.
+    \item[(c)] \textbf{Select} the base-learner $j^*$ that best fits the
+      partial-derivative vector according to the least-squares criterion, i.e.,
+      select the base-learner $h_{k,j^*}$ defined by
+      \begin{equation*}
+        j^* = \underset{1 \leq j \leq p_k}{\operatorname{argmin}}\sum_{i=1}^n (u_{k,i}^{[m-1]} - h_{k,j}(\cdot))^2 \ .
+      \end{equation*}
+    \item[(d)] \textbf{Update} the additive predictor $\eta_{\theta_k}$ as
+      follows:
+      \begin{equation*}
+        \hat{\eta}_{\theta_k}^{[m-1]} := \hat{\eta}_{\theta_k}^{[m-1]} + \nu_{\text{sl}} \cdot h_{k,j^*}(\cdot)\ ,
+      \end{equation*}
+      where $\nu_{\text{sl}}$ is a small step-length ($0 <
+        \nu_{\text{sl}} \ll 1$).
+    \item[(e)] Set $\hat{\eta}_{\theta_k}^{[m]} :=
+      \hat{\eta}_{\theta_k}^{[m-1]}$.
+    \item[(f)] \textbf{Iterate} steps 4(a) to 4(e) for $k=2,\ldots, K$.
+    \end{enumerate}
+  \end{enumerate}
+
+\item[] \textbf{Iterate}
+  \begin{enumerate}
+  \item[(5)] Iterate steps 3 and 4 until  $m > m_{\text{stop},k}$ for all
+    $k=1,\ldots, K$.
+  \end{enumerate}
+\end{enumerate}
+
+\section{Data pre-processing and stabilization of gradients}\label{sec:stab-ngrad}
+
+As the \emph{gamboostLSS} algorithm updates the parameter estimates in turn by
+optimizing the gradients, it is important that these are comparable for
+all GAMLSS parameters. Consider for example the standard Gaussian distribution
+where the gradients of the log-likelihood with respect to $\eta_{\mu}$ and
+$\eta_{\sigma}$ are
+\begin{equation*}
+   \frac{\partial }{\partial \eta_{\mu}}\, l(y_i, g_{\mu}^{-1}(\eta_{\mu}), \hat{\sigma}) =
+  \frac{ y_i - \eta_{\mu i}}{\hat{\sigma}_i^2},
+\end{equation*}
+with identity link, i.e., $g_{\mu}^{-1}(\eta_{\mu}) = \eta_{\mu}$, and
+\begin{equation*}
+  \frac{\partial }{\partial \eta_{\sigma}}\, l(y_i, \hat{\mu}, g_{\sigma}^{-1}(\eta_{\sigma})) =
+  -1 + \frac{(y_i - \hat{\mu}_i)^2}{\exp(2\eta_{\sigma i})},
+\end{equation*}
+with log link, i.e., $g_{\sigma}^{-1}(\eta_{\sigma}) = \exp(\eta_{\sigma})$.
+
+For small values of $\hat{\sigma}_i$, the gradient vector for $\mu$ will hence
+inevitably become huge, while for large variances it will become very small. As
+the base-learners are directly fitted to this gradient vector, this will have a
+dramatic effect on convergence speed. Due to imbalances regarding the range of
+$\frac{\partial }{\partial \eta_{\mu}} l(y_i, \mu, \sigma)$ and $\frac{\partial
+}{\partial \eta_{\sigma}} l(y_i, \mu, \sigma)$, a potential bias might be
+induced when the algorithm becomes so unstable that it does not converge to the
+optimal solution (or converges very slowly).
+
+Consequently, one can use standardized gradients, where in \textbf{each step}
+the gradient is divided by its median absolute deviation, i.e., it is divided by
+\begin{equation}
+  \label{eq:MAD}
+  \text{MAD} = \text{median}_i(|u_{k,i} - \text{median}_j(u_{k,j})|),
+\end{equation}
+where $u_{k,i}$ is the gradient of the $k$th GAMLSS parameter in the current
+boosting step $i$. If weights are specified (explicitly or implicitly as for
+cross-validation) a weighted median is used. MAD-stabilization can be activated
+by setting the argument \code{stabilization} to \code{"MAD"} in the fitting
+families (see example on p.~\pageref{page:stabilization}). Using
+\code{stabilization = "none"} explicitly switches off the stabilization. As this
+is the current default, this is only needed for clarity.
+
+Another way to improve convergence speed might be to standardize the response
+variable (and/or to use a larger step size $\nu_{\text{sl}}$). This is
+especially useful if the range of the response differs strongly from the range
+of the negative gradients. Both, the built in stabilization and the
+standardization of the response are not always advised but need to be carefully
+considered given the data at hand. If convergence speed is slow or if the
+negative gradient even starts to become unstable, one should consider one or
+both options to stabilize the fit. To judge the impact of these methods one can
+run the \code{gamboostLSS} algorithm using different options and compare the
+results via cross-validated predictive risks (see
+Sections~\ref{sec:model_complexity} and~\ref{sec:model_tuning}).
+
+\pagebreak
+
+\section{Additional Families}\label{sec:additional-families}
+
+Table~\ref{tab:gamlss_families} gives an overview of common, additional GAMLSS
+distributions and GAMLSS distributions with a different parametrization than in
+\pkg{gamboostLSS}. For a comprehensive overview see the distribution tables
+available at \url{www.gamlss.org} and the documentation of the
+\pkg{gamlss.dist} package \citep{pkg:gamlss.dist:4.3-0}. Note that
+\pkg{gamboostLSS} works only for more-parametric distributions, while in
+\pkg{gamlss.dist} also a few one-parametric distributions are implemented. In
+this case the \code{as.families()} function will construct a corresponding
+\code{"boost\_family"} which one can use as \code{family} in \pkg{mboost} (a
+corresponding advice is given in a warning message).
+
+\begin{landscape}
+  \begin{table}[h!]
+    \centering
+    \begin{tabular}{llllllllp{0.5\textwidth}}
+      \toprule
+      & &  Name & Response & $\mu$ & $\sigma$  & $\nu$  & $\tau$  & Note\\
+      \cmidrule{2-9}
+
+      \multicolumn{9}{l}{\textbf{Continuous response}} \\
+      & Generalized $t$  & \code{GT} & cont.   & id & log & log& log & \\
+      & Box-Cox $t$  & \code{BCT} & cont.   & id & log & id& log& \\
+      & Gumbel & \code{GU} & cont.  & id & log & & & For moderately skewed data.\\
+      & Reverse Gumbel & \code{RG} & cont.  & id & log & & &  Extreme value distribution.\\
+      \cmidrule{2-9}
+
+      \multicolumn{9}{l}{\textbf{Continuous non-negative response} (without censoring)} \\
+      & Gamma & \code{GA} & cont. $>0$  & log & log & & & Also implemented as
+      \code{GammaLSS()}$\,^{a,b}$.\\
+      & Inverse Gamma & \code{IGAMMA} & cont. $>0$  & log & log & & & \\
+      & Zero-adjusted Gamma & \code{ZAGA} & cont. $\geq 0$    & log & log& logit
+      & & Gamma, additionally allowing for zeros.\\
+      & Inverse Gaussian & \code{IG} & cont. $>0$   & log & log & & & \\
+      & Log-normal & \code{LOGNO} & cont. $>0$  & log & log & & & For positively skewed data.\\
+      & Box-Cox Cole and Green & \code{BCCG} & cont. $>0$  & id & log & id & & For positively and negatively skewed data.\\
+      & Pareto & \code{PARETO2} & cont. $>0$  & log & log & & & \\
+      & Box-Cox power exponential & \code{BCPE} & cont. $>0$  & id & log & id & log & Recommended for child growth centiles.\\
+      \cmidrule{2-9}
+
+      \multicolumn{9}{l}{\textbf{Fractions and bounded continuous response}} \\
+      & Beta & \code{BE} & $\in (0,1)$  & logit & logit & & & Also implemented
+      as \code{BetaLSS()}$\,^{a,c}$.\\
+      & Beta inflated & \code{BEINF} & $\in [0,1]$  & logit & logit & log &log
+      & Beta, additionally allowing for zeros and ones.\\
+      \cmidrule{2-9}
+
+      \multicolumn{9}{l}{\textbf{Models for count data}} \\
+      & Beta binomial & \code{BB} & count  & logit & log &  &  &   \\
+      & Negative binomial & \code{NBI} & count  & log & log &  &  & For
+      over-dispersed count data; also implemented as
+      \code{NBinomialLSS()}$\,^{a,d}$.\\
+      \bottomrule
+    \end{tabular}
+    \caption{\label{tab:gamlss_families} Overview of common, additional GAMLSS distributions that can be used via
+      \code{as.families()} in \pkg{gamboostLSS}. For every modeled
+      distribution parameter, the corresponding link-function is displayed. $^a$
+      The parametrizations of the distribution functions in \pkg{gamboostLSS}
+      and \pkg{gamlss.dist} differ with respect to the variance. $\,^b$
+      \code{GammaLSS(mu, sigma)} has $\VAR(y|x) =
+      \text{\code{mu}}^2/\text{\code{sigma}}$, and \code{as.families(GA)(mu,
+        sigma)} has $\VAR(y|x) = \text{\code{sigma}}^2\cdot \text{\code{mu}}^2$.
+      $\,^c$ \code{BetaLSS(mu, phi)} has $\VAR(y|x) = \text{\code{mu}}\cdot(1-
+      \text{\code{mu}}) \cdot(1 + \text{\code{phi}})^{-1}$, and
+      \code{as.families(BE)(mu, sigma)} has $\VAR(y|x) =
+      \text{\code{mu}}\cdot(1- \text{\code{mu}}) \cdot\text{\code{sigma}}^2$.
+      $\,^d$ \code{NBinomialLSS(mu, sigma)} has $\VAR(y|x) = \text{\code{mu}}+
+      1/\text{\code{sigma}}\cdot\text{\code{mu}}^2$,
+      and \code{as.families(NBI)(mu, sigma)} has $\VAR(y|x) =
+      \text{\code{mu}}+\text{\code{sigma}}\cdot\text{\code{mu}}^2$.}
+  \end{table}
+\end{landscape}
+
+\end{document}

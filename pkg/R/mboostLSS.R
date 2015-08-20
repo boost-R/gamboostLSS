@@ -253,6 +253,16 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         mstop <<- i
     }
 
+    ## make call in submodels nicer:
+    cl <- call
+    cl[[1]] <- as.name(gsub("LSS", "", cl[[1]]))
+    names(cl)[names(cl) == "families"] <- "family"
+    for (i in 1:length(fit)) {
+        fit[[i]]$call <- cl
+        ## <FIXME> This is not really nice
+        fit[[i]]$call$family <- families[[i]]
+    }
+
     attr(fit, "(weights)") <- weights  ## attach weights used for fitting
 
     ## update to new weights; just a fresh start

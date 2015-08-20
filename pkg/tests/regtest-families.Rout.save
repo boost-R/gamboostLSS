@@ -1,6 +1,6 @@
 
-R version 3.1.0 (2014-04-10) -- "Spring Dance"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -22,7 +22,8 @@ Type 'q()' to quit R.
 Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
-This is mboost 2.3-0. See 'package?mboost' and the NEWS file
+Loading required package: stabs
+This is mboost 2.5-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -46,7 +47,7 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 4.3-0  ********** 
+ **********   GAMLSS Version 4.3-5  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -252,13 +253,6 @@ Error in family@check_y(y) :
   response is not an object of class 'Surv' but 'families = LogNormalLSS()'
 > require("survival")
 Loading required package: survival
-
-Attaching package: 'survival'
-
-The following object is masked from 'package:gamlss':
-
-    ridge
-
 > try(glmboostLSS(list(mu = Surv(time, status) ~ x1 + x2 + x3,
 +                      sigma = time ~ x1 + x2 + x3), families = LogNormalLSS(),
 +                 control = boost_control(trace = TRUE), center = TRUE))
@@ -461,6 +455,55 @@ Error in Families(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSi
 > 
 > #detach("package:gamboostLSS", unload = TRUE)
 > 
+> 
+> ### Check that weighed median works well, which is needed if the negative
+> ### gradient is stabilized using MAD
+> set.seed(122)
+> 
+> ## some tests
+> x <- c(1, 2, 3)
+> stopifnot(weighted.median(x) == median(x))
+> 
+> ## this doesn't work a.t.m.
+> w <- c(0, 1, 2)
+> stopifnot(weighted.median(x, w) == median(rep(x, w)))
+> 
+> x <- c(1, 2, 3, 4)
+> stopifnot(weighted.median(x) == median(x))
+> 
+> w <- c(0, 1, 2, 3)
+> stopifnot(weighted.median(x, w) == median(rep(x, w)))
+> 
+> w <- rep(0:1, each = 50)
+> x <- rnorm(100)
+> stopifnot(weighted.median(x, w) == median(rep(x, w)))
+> 
+> w <- rep(0:1, each = 51)
+> x <- rnorm(102)
+> stopifnot(weighted.median(x, w) == median(rep(x, w)))
+> 
+> ## hope this is correct:
+> w <- runif(100, 0, 1)
+> x <- rnorm(100)
+> (wm <- weighted.median(x, w))
+[1] 0.0965101
+> 
+> ## check weighted.median with NAs.
+> 
+> # Missing in weights
+> tmp <- w[2]
+> w[2] <- NA
+> stopifnot(is.na(weighted.median(x, w)))
+> stopifnot(weighted.median(x, w, na.rm = TRUE) == wm)
+> ## not always true but here it is
+> 
+> # Missing in x
+> w[2] <- tmp
+> x[5] <- NA
+> stopifnot(is.na(weighted.median(x, w)))
+> stopifnot(weighted.median(x, w, na.rm = TRUE) == wm)
+> ## not always true but here it is
+> 
 > proc.time()
    user  system elapsed 
-  9.236   0.108   9.672 
+  6.895   0.117   7.212 
