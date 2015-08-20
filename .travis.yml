@@ -2,16 +2,18 @@
 ## see http://docs.travis-ci.com/user/languages/r/
 
 ## Test multiple directories (see https://lord.io/blog/2014/travis-multiple-subdirs/)
-## env:
-##  - TEST_DIR=tilt-client
-##  - TEST_DIR=tilt-server
+env:
+ - TEST_DIR=patch/
+ - TEST_DIR=pkg/
 
 language: r
 sudo: required
 
-before_install:
+install:
   - sudo apt-get install texlive-science
-  - cd patch/
+
+before_script:
+  - cd $TEST_DIR
 
 r_github_packages:
   - hofnerb/mboost/pkg/mboostPatch
