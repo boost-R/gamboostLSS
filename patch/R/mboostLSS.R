@@ -125,9 +125,11 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     for (j in mods){
         ## update value of nuisance parameters in families
+         ## use response(fitted()) as this is much quicker than
+         ## fitted(, type = response) as the latter uses predict()
         for (k in mods[-j]){
             if (!is.null(fit[[k]]))
-                assign(names(fit)[k], fitted(fit[[k]], type = "response"),
+                assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]]),
                        environment(families[[j]]@ngradient))
         }
         ## use appropriate nu for the model
@@ -157,7 +159,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         for (i in 1:max(niter)){
             for (j in mods){
                 ## update value of nuisance parameters
-                ## use response(fitted()) as this is much quicker than fitted(, type = response)
+                ## use response(fitted()) as this is much quicker than
+                ## fitted(, type = response) as the latter uses predict()
                 for (k in mods[-j])
                     assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
                            environment(get("ngradient", environment(fit[[j]]$subset))))
