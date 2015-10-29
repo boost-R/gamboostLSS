@@ -229,7 +229,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
   
   firstRun <- FALSE
   
-  class(fit) <- c(paste(funchar, "LSS", sep=""), "mboostLSS")
+  class(fit) <- c(paste(funchar, "LSS", sep=""), "nc_mboostLSS" ,"mboostLSS")
   
   ### update to a new number of boosting iterations mstop
   ### i <= mstop means less iterations than current
