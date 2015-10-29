@@ -18,8 +18,8 @@ environment:
 
 before_build:
   matrix:
-  - ps: $env:TEST_DIR=patch/
-  - ps: $env:TEST_DIR=pkg/
+  - ps: $env:TEST_DIR="patch/"
+  - ps: $env:TEST_DIR="pkg/"
 
 build_script:
   - ps: cd %TEST_DIR%
