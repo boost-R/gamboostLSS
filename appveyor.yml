@@ -17,7 +17,8 @@ environment:
   - TEST_DIR: pkg/
 
 build_script:
-  - cmd: cd $TEST_DIR  
+  - ps: echo %TEST_DIR%
+  - ps: cd %TEST_DIR%
   - travis-tool.sh install_deps
 
 test_script:
