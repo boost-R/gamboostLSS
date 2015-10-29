@@ -17,10 +17,13 @@ environment:
   - TEST_DIR: pkg/
 
 before_build:
-  - ps: echo %TEST_DIR%
-  - ps: cd %TEST_DIR%
+  matrix:
+  - ps: $env:TEST_DIR=patch/
+  - ps: $env:TEST_DIR=pkg/
 
 build_script:
+  - ps: cd %TEST_DIR%
+  - ps: cd $TEST_DIR
   - travis-tool.sh install_deps
 
 test_script:
