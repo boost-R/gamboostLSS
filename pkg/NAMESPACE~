@@ -9,11 +9,11 @@ importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize",
            "qweibull", "rmultinom", "update", "var", "variable.names", "weighted.mean")
 importFrom("utils", "tail")
 
-export(glmboostLSS, nc_glmboostLSS,
-       gamboostLSS, nc_gamboostLSS,
-       blackboostLSS, nc_blackboostLSS,
-       mboostLSS, nc_mboostLSS,
-       mboostLSS_fit, nc_mboostLSS_fit,
+export(glmboostLSS,
+       gamboostLSS,
+       blackboostLSS,
+       mboostLSS,
+       mboostLSS_fit,
        model.weights,
        PI, predint, plot.predint,
        make.grid, cvrisk.mboostLSS,
@@ -40,7 +40,6 @@ S3method("[", mboostLSS)
 S3method(print, mboostLSS)
 S3method(selected, mboostLSS)
 S3method(risk, mboostLSS)
-S3method(risk, nc_mboostLSS)
 S3method(summary, mboostLSS)
 
 S3method(mstop, oobag)
@@ -50,7 +49,6 @@ S3method(model.weights, default)
 S3method(model.weights, mboostLSS)
 
 S3method(cvrisk, mboostLSS)
-S3method(cvrisk, nc_mboostLSS)
 S3method(print, cvriskLSS)
 S3method(plot, cvriskLSS)
 S3method(mstop, cvriskLSS)

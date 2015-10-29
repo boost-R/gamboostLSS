@@ -4,6 +4,11 @@
 \alias{glmboostLSS}
 \alias{gamboostLSS}
 \alias{mboostLSS_fit}
+\alias{nc_mboostLSS}
+\alias{nc_blackboostLSS}
+\alias{nc_glmboostLSS}
+\alias{nc_gamboostLSS}
+\alias{nc_mboostLSS_fit}
 
 \title{
   Fitting GAMLSS by Boosting
