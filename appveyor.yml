@@ -16,9 +16,11 @@ environment:
   - TEST_DIR: patch/
   - TEST_DIR: pkg/
 
-build_script:
+before_build:
   - ps: echo $TEST_DIR
   - ps: cd $TEST_DIR
+
+build_script:
   - travis-tool.sh install_deps
 
 test_script:
