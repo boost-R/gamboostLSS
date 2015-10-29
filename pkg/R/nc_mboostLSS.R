@@ -1,3 +1,13 @@
+nc_mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
+                      control = boost_control(), weights = NULL, ...){
+  cl <- match.call()
+  fit <- nc_mboostLSS_fit(formula = formula, data = data, families = families,
+                       control = control, weights = weights, ...,
+                       fun = mboost, funchar = "mboost", call = cl)
+  return(fit)
+}
+
+
 nc_glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
   cl <- match.call()
@@ -15,6 +25,18 @@ nc_gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                        fun = gamboost, funchar = "gamboost", call = cl)
   return(fit)
 }
+
+
+nc_blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
+                          control = boost_control(), weights = NULL, ...){
+  cl <- match.call()
+  fit <- nc_mboostLSS_fit(formula = formula, data = data, families = families,
+                       control = control, weights = weights, ...,
+                       fun = blackboost, funchar = "blackboost", call = cl)
+  return(fit)
+}
+
+
 
 
 nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
