@@ -18,9 +18,11 @@ environment:
   - TEST_DIR: pkg/
 
 before_build:
+  - dir
   - echo %TEST_DIR%
-  - cp scripts/travis-tool.sh %TEST_DIR%  
+  - cp travis-tool.sh %TEST_DIR%  
   - cd %TEST_DIR%
+  - dir
 
 build_script:
   - travis-tool.sh install_deps
