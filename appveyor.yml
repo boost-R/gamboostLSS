@@ -20,7 +20,7 @@ environment:
 before_build:
   - dir
   - echo %TEST_DIR%
-  - cp travis-tool.sh %TEST_DIR%  
+  - cp travis-tool.sh.cmd %TEST_DIR%  
   - cd %TEST_DIR%
   - dir
 
