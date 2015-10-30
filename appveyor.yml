@@ -6,6 +6,7 @@ init:
         $ErrorActionPreference = "Stop"
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
+
 install:
   ps: Bootstrap
 
@@ -13,11 +14,17 @@ install:
 
 environment:
   matrix:
-  - TEST_DIR=patch/
-  - TEST_DIR=pkg/
+  - TEST_DIR: patch
+  - TEST_DIR: pkg
+
+before_build:
+  - cp ..\travis-tool.sh .\travis-tool.sh
+  - cp travis-tool.sh.cmd %TEST_DIR%\travis-tool.sh.cmd
+  - cd %TEST_DIR%
+  - bash -c "echo '^travis-tool\.sh\.cmd$' >> .Rbuildignore"
+  - dir
 
 build_script:
-  - cmd: cd $TEST_DIR  
   - travis-tool.sh install_deps
 
 test_script:
