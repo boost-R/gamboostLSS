@@ -7,11 +7,6 @@ init:
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
 
-before_install:
-  - cp scripts/travis-tool.sh %TEST_DIR%
-  - cd %TEST_DIR%
-  - ./travis-tool.sh bootstrap
-
 install:
   ps: Bootstrap
 
@@ -24,6 +19,7 @@ environment:
 
 before_build:
   - echo %TEST_DIR%
+  - cp scripts/travis-tool.sh %TEST_DIR%  
   - cd %TEST_DIR%
 
 build_script:
