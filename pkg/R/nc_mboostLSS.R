@@ -1,43 +1,8 @@
-nc_mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                      control = boost_control(), weights = NULL, ...){
-  cl <- match.call()
-  fit <- nc_mboostLSS_fit(formula = formula, data = data, families = families,
-                       control = control, weights = weights, ...,
-                       fun = mboost, funchar = "mboost", call = cl)
-  return(fit)
-}
-
-
-nc_glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                        control = boost_control(), weights = NULL, ...){
-  cl <- match.call()
-  fit <- nc_mboostLSS_fit(formula = formula, data = data, families = families,
-                       control = control, weights = weights, ...,
-                       fun = glmboost, funchar = "glmboost", call = cl)
-  return(fit)
-}
-
-nc_gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                        control = boost_control(), weights = NULL, ...){
-  cl <- match.call()
-  fit <- nc_mboostLSS_fit(formula = formula, data = data, families = families,
-                       control = control, weights = weights, ...,
-                       fun = gamboost, funchar = "gamboost", call = cl)
-  return(fit)
-}
-
-
-nc_blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                          control = boost_control(), weights = NULL, ...){
-  cl <- match.call()
-  fit <- nc_mboostLSS_fit(formula = formula, data = data, families = families,
-                       control = control, weights = weights, ...,
-                       fun = blackboost, funchar = "blackboost", call = cl)
-  return(fit)
-}
-
-
-
+#Alternative fitting algorithm for mboostLSS. In this version instead of cycling
+#through the distribution parameters, in every step the dist param is chosen,
+#that decreases the loss the most. The algorithm can be selected with the 
+# 'cycling' argument in mboostLSS, glmboostLSS, gamboostLSS and blackboostLSS
+# calls
 
 nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL,

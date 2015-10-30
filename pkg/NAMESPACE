@@ -9,11 +9,11 @@ importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize",
            "qweibull", "rmultinom", "update", "var", "variable.names", "weighted.mean")
 importFrom("utils", "tail")
 
-export(glmboostLSS, nc_glmboostLSS,
-       gamboostLSS, nc_gamboostLSS,
-       blackboostLSS, nc_blackboostLSS,
-       mboostLSS, nc_mboostLSS,
-       mboostLSS_fit, nc_mboostLSS_fit,
+export(glmboostLSS,
+       gamboostLSS,
+       blackboostLSS,
+       mboostLSS,
+       mboostLSS_fit,
        model.weights,
        PI, predint, plot.predint,
        make.grid, cvrisk.mboostLSS,

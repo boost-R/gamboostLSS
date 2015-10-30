@@ -4,38 +4,81 @@
 ### (glm/gam/m/black)boostLSS functions
 
 mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                      control = boost_control(), weights = NULL, ...){
+                      control = boost_control(), weights = NULL, cycling = TRUE,
+                      ...){
     cl <- match.call()
-    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
-                         control = control, weights = weights, ...,
-                         fun = mboost, funchar = "mboost", call = cl)
+    
+    if(cycling){
+      fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                           control = control, weights = weights, ...,
+                           fun = mboost, funchar = "mboost", call = cl)
+    }
+    else{
+      fit <- nc_mboostLSS_fit(formula = formula, data = data, 
+                              families = families, control = control, 
+                              weights = weights, ..., fun = mboost, 
+                              funchar = "mboost", call = cl)
+    }
+
     return(fit)
 }
 
 glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                        control = boost_control(), weights = NULL, ...){
+                        control = boost_control(), weights = NULL, 
+                        cycling = TRUE, ...){
+  
     cl <- match.call()
-    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
-                         control = control, weights = weights, ...,
-                         fun = glmboost, funchar = "glmboost", call = cl)
+    if(cycling){
+      fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                           control = control, weights = weights, ...,
+                           fun = glmboost, funchar = "glmboost", call = cl)
+    }
+    else{
+      fit <- nc_mboostLSS_fit(formula = formula, data = data, 
+                              families = families, control = control, 
+                              weights = weights, ..., fun = glmboost, 
+                              funchar = "glmboost", call = cl)
+    }
+
     return(fit)
 }
 
 gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                        control = boost_control(), weights = NULL, ...){
+                        control = boost_control(), weights = NULL, 
+                        cycling = TRUE, ...){
+    
     cl <- match.call()
-    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
-                         control = control, weights = weights, ...,
-                         fun = gamboost, funchar = "gamboost", call = cl)
+    if(cycling){
+      fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                           control = control, weights = weights, ...,
+                           fun = gamboost, funchar = "gamboost", call = cl)
+    }
+    else{
+      fit <- nc_mboostLSS_fit(formula = formula, data = data, 
+                              families = families, control = control, 
+                              weights = weights, ..., fun = gamboost, 
+                              funchar = "gamboost", call = cl)
+    }
+
     return(fit)
 }
 
 blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
-                          control = boost_control(), weights = NULL, ...){
+                          control = boost_control(), weights = NULL, 
+                          cycling = TRUE, ...){
     cl <- match.call()
-    fit <- mboostLSS_fit(formula = formula, data = data, families = families,
-                         control = control, weights = weights, ...,
-                         fun = blackboost, funchar = "blackboost", call = cl)
+    if(cycling){
+      fit <- mboostLSS_fit(formula = formula, data = data, families = families,
+                           control = control, weights = weights, ...,
+                           fun = blackboost, funchar = "blackboost", call = cl)
+    }
+    else{
+      fit <- nc_mboostLSS_fit(formula = formula, data = data, 
+                              families = families, control = control, 
+                              weights = weights, ..., fun = blackboost, 
+                              funchar = "blackboost", call = cl)
+    }
+
     return(fit)
 }
 
