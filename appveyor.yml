@@ -14,8 +14,8 @@ install:
 
 environment:
   matrix:
-  - TEST_DIR: patch/
-  - TEST_DIR: pkg/
+  - TEST_DIR: patch
+  - TEST_DIR: pkg
 
 before_build:
   - dir
@@ -25,13 +25,13 @@ before_build:
   - dir
 
 build_script:
-  - ./travis-tool.sh install_deps
+  - .\travis-tool.sh install_deps
 
 test_script:
-  - ./travis-tool.sh run_tests
+  - .\travis-tool.sh run_tests
 
 on_failure:
-  - ./travis-tool.sh dump_logs
+  - .\travis-tool.sh dump_logs
 
 artifacts:
   - path: '*.Rcheck\**\*.log'
