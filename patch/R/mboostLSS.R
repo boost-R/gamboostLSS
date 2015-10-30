@@ -129,7 +129,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
          ## fitted(, type = response) as the latter uses predict()
         for (k in mods[-j]){
             if (!is.null(fit[[k]]))
-                assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]]),
+                assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
                        environment(families[[j]]@ngradient))
         }
         ## use appropriate nu for the model
