@@ -62,6 +62,10 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   \item{call}{ used to forward the call from \code{mboostLSS},
     \code{glmboostLSS}, \code{gamboostLSS} and \code{blackboostLSS}.
     This argument should not be directly specified by users!}
+  \item{cycling}{ Logical parameter to select the fitting algorithm, if 
+  \code{cycling = TRUE}, the regular fitting approach is used. 
+  If \code{cycling = FALSE}, instead of cycling through all distribution 
+  parameters in each step only the best is selected.}  
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
     passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
@@ -103,7 +107,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   In all four fitting functions it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one single value, this
-  value is used for all distribution parameters of the GAMLSS model.
+  value is used for all distribution parameters of the GAMLSS model. 
   Alternatively, a (named) vector or a (named) list with separate values
   for each component can be used to specify a seperate value for each
   parameter of the GAMLSS model. The names of the list must correspond
@@ -114,6 +118,8 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
   more-dimensional stopping, one can specify, e.g., \code{mstop =
     list(mu = 100, sigma = 200)} (see examples).
+  If \code{cycling = TRUE} only one value for \code{mstop} is allowed, this
+  value is then optimally split between the distribution parameters.
 
   To (potentially) stabilize the model estimation by standardizing the
   negative gradients one can use the argument \code{stabilization} of
