@@ -173,13 +173,11 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
          fit[[best]][mstop(fit[[best]]) + 1]
         
       if (trace){
-        ## which is the current risk? rev() needed to get the last
-        ## list element with maximum length
-        whichRisk <- names(which.max(rev(lapply(lapply(fit, function(x) x$risk()), length))))
-        do_trace(current = max(sapply(mvals, function(x) x[i])),
-                 mstart = ifelse(firstRun, 0, max(start)),
-                 mstop = ifelse(firstRun, niter + 1, niter),
-                 risk = fit[[whichRisk]]$risk())
+               do_trace(current = length(combined_risk[combined_risk != 0]),
+                 mstart = ifelse(firstRun, length(fit) + 1, 
+                                 length(combined_risk[combined_risk != 0])),
+                 mstop = ifelse(firstRun, niter - length(fit), niter),
+                 risk = combined_risk[combined_risk != 0])
       }
     }
     combined_risk  <<- combined_risk
