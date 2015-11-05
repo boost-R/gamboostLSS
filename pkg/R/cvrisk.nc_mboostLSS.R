@@ -31,7 +31,7 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
       
 
       
-      risks <- attr(mod, "combined_risk")[grid]
+      risks <- attr(mod, "combined_risk")()[grid]
       names(risks) <- grid
       risks
 
