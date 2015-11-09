@@ -1,9 +1,10 @@
 gamboostLSS
 ===========
 
-[![Build Status](https://travis-ci.org/hofnerb/gamboostLSS.svg?branch=master)](https://travis-ci.org/hofnerb/gamboostLSS) 
-[![Build status](https://ci.appveyor.com/api/projects/status/81eo6c6v7v4h2llo/branch/master?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss/branch/master)
+[![Build Status (Linux)](https://travis-ci.org/hofnerb/gamboostLSS.svg?branch=master)](https://travis-ci.org/hofnerb/gamboostLSS) 
+[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/81eo6c6v7v4h2llo/branch/master?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss/branch/master)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/gamboostLSS)](http://cran.r-project.org/package=gamboostLSS)
+[![Coverage Status](https://coveralls.io/repos/hofnerb/gamboostLSS/badge.svg?branch=master&service=github)](https://coveralls.io/github/hofnerb/gamboostLSS?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/gamboostLSS)](http://cran.rstudio.com/web/packages/gamboostLSS/index.html)
 
 `gamboostLSS` implements boosting algorithms for fitting generalized linear,
