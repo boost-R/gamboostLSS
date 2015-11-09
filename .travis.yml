@@ -20,9 +20,13 @@ before_install:
 r_github_packages:
   - hofnerb/mboost/pkg/mboostPatch
   - hofnerb/stabs
+  - jimhester/covr
   
 after_failure:
   - ./travis-tool.sh dump_logs
+
+after_success:
+  - Rscript -e 'library(covr); coveralls("patch/")'
 
 notifications:
   email:
