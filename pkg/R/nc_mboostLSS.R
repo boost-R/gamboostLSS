@@ -41,8 +41,9 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
   
   mstop <- mstoparg <- control$mstop
   control$mstop <- 1
-  if(length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(formula)){
-    stop(sQuote("mstop"), " has to be an integer larger than ", length(formula))
+  if(length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(families)){
+    stop(sQuote("mstop"), " has to be an integer larger than ", 
+         length(families))
   }
   
   nu <- control$nu
