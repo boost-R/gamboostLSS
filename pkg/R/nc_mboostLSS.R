@@ -117,7 +117,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     
     if(is.null(attr(fit, "combined_risk"))){
       combined_risk <- c(vapply(fit, risk, numeric(1)), 
-                         numeric(niter - length(fit)))
+                         numeric(niter))
     }
 
     
