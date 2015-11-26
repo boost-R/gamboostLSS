@@ -140,7 +140,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         st <- mstop(fit[[b]])
         fit[[b]][st + 1]
         #risks[b] <- get("risk",environment(get("ngradient", environment(fit[[b]]$subset))))(y = environment((fit[[b]]$subset))[["y"]], f = environment((fit[[b]]$subset))[["fit"]])
-        risks[b] <- tail(risk(fit[[b]]),1)
+        risks[b] <- evalq({riskfct(y, fit, 1)}, envir = ENV[[b]])
         fit[[b]][st]
         
         ## fit[[b]][st] is not enough to reduce the model back to beginning, so
@@ -158,8 +158,6 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
       #print(head(environment(fit[[2]]$subset)[["fit"]]))
       #print(risks)
       best <- which.min(risks)
-      combined_risk[(i+length(fit))] <- risks[best]
-      names(combined_risk)[(i+length(fit))] <- names(fit)[best]
 
       ## update value of u, i.e. compute ngradient with new nuisance parameters
          ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], 
@@ -172,6 +170,9 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         
         ## update selected component by 1
          fit[[best]][mstop(fit[[best]]) + 1]
+         
+         combined_risk[(i+length(fit))] <- tail(risk(fit[[best]]), 1)
+         names(combined_risk)[(i+length(fit))] <- names(fit)[best]
         
       if (trace){
                do_trace(current = length(combined_risk[combined_risk != 0]),
