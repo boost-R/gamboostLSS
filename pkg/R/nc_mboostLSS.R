@@ -143,7 +143,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         st <- mstop(fit[[b]])
         fit[[b]][st + 1]
         #risks[b] <- get("risk",environment(get("ngradient", environment(fit[[b]]$subset))))(y = environment((fit[[b]]$subset))[["y"]], f = environment((fit[[b]]$subset))[["fit"]])
-        risks[b] <- evalq({riskfct(y, fit, 1)}, envir = ENV[[b]])
+        risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
         fit[[b]][st]
         
         ## fit[[b]][st] is not enough to reduce the model back to beginning, so
