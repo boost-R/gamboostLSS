@@ -37,3 +37,25 @@ model_oob <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 
 stopifnot(all(unlist(model$mu$coef()) ==  unlist(model_oob$mu$coef())) &
           all(unlist(model$sigma$coef()) ==  unlist(model_oob$sigma$coef())))
+
+
+#stepwise updates from the model should be identical to full fitting
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 10), cycling = FALSE)
+
+
+i <- 100
+model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                      control = boost_control(mstop = i), cycling = FALSE)
+
+for (j in 11:i) {
+  mstop(model) <- j
+}
+
+print(mstop(model))
+print(mstop(model2))
+
+all.equal.environment(environment(model$mu$subset), environment(model2$mu$subset))
+all.equal.environment(environment(model$sigma$subset), environment(model2$sigma$subset))
+

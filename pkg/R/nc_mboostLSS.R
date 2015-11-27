@@ -115,14 +115,17 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
   ### set up a function for iterating boosting steps
   iBoost <- function(niter) {
     
+    #this is the case for boosting from the beginning
     if(is.null(attr(fit, "combined_risk"))){
-      combined_risk <- c(vapply(fit, risk, numeric(1)), 
-                         numeric(niter))
+      combined_risk <- vapply(fit, risk, numeric(1))
     }
+
+    best <- which(names(fit) == tail(names(combined_risk), 1))
+
 
     
     ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
-    best <- length(fit)
+    
     for (i in 1:niter){
       
       ## update value of nuisance parameters
@@ -171,8 +174,8 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         ## update selected component by 1
          fit[[best]][mstop(fit[[best]]) + 1]
          
-         combined_risk[(i+length(fit))] <- tail(risk(fit[[best]]), 1)
-         names(combined_risk)[(i+length(fit))] <- names(fit)[best]
+         combined_risk[(length(combined_risk) + 1)] <- tail(risk(fit[[best]]), 1)
+         names(combined_risk)[length(combined_risk)] <- names(fit)[best]
         
       if (trace){
                do_trace(current = length(combined_risk[combined_risk != 0]),
