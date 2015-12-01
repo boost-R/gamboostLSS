@@ -66,6 +66,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   \code{cycling = TRUE}, the regular fitting approach is used. 
   If \code{cycling = FALSE}, instead of cycling through all distribution 
   parameters in each step only the best is selected.}  
+  \item{experimental} Logical parameter to choose a experimental version of a
+  fitting algorithm, only works with \code{cycling = FALSE}. If used, the 
+  selection of the baselearner is done via the outer loss, not the inner.
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
     passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So

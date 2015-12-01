@@ -6,8 +6,8 @@
 
 nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL,
-                          fun = mboost, funchar = "mboost", call = NULL, ...){
-  
+                          fun = mboost, funchar = "mboost", call = NULL,
+                          experimental = FALSE, ...){
   if (length(families) == 0)
     stop(sQuote("families"), " not specified")
   
@@ -134,48 +134,96 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])),
                  environment(get("ngradient", environment(fit[[k]]$subset))))
         }
-
-
-    
-      #calculate the possible loss for every parameter
-      risks <- numeric(length(fit))
-      for(b  in 1:length(fit)){
-        st <- mstop(fit[[b]])
-        fit[[b]][st + 1]
-        #risks[b] <- get("risk",environment(get("ngradient", environment(fit[[b]]$subset))))(y = environment((fit[[b]]$subset))[["y"]], f = environment((fit[[b]]$subset))[["fit"]])
-        risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
-        fit[[b]][st]
+      
+      
+      #this is pretty unreadable, maybe not so compact code
+      #get all possible risks
+      if (experimental) {
+        lik_risks <- list()
+        coefs <- list()
         
-        ## fit[[b]][st] is not enough to reduce the model back to beginning, so
-        ## so all these values have to be reduced, so that they are calculated 
-        ## correctly the next time
+        for(i in mods){
+          coefs[[i]] <- evalq(environment(fit1)[["est"]](u)/
+                                environment(fit1)[["sxtx"]], envir = ENV[[i]])
+          
+          all_fitted <- sweep(environment(ENV[[i]][["fit1"]])[["X"]], 2, 
+                              coefs[[i]] ,`*`)
+          
+          lik_risks[[i]] <- sapply(1:ncol(all_fitted), function(j) 
+            ENV[[i]][["triskfct"]](ENV[[i]][["y"]], 
+                                   ENV[[i]][["fit"]] + nu[i] * all_fitted[,j]))
+        }
+        
+        #do a mboost step per hand
+        best <- which.min(vapply(lik_risks, min, 
+                                      FUN.VALUE = numeric(1), ...))
+        
+        ENV[[best]]$all_fitted <- all_fitted
+        ENV[[best]]$lik_risks <- lik_risks
+        ENV[[best]]$best <- best
+        ENV[[best]]$coefs <- coefs
+        
+        evalq({
+          xs <- which.min(lik_risks[[best]])
+          basses <- list(model = c(coef = coefs[[best]][xs],
+                                   xselect = xs,
+                                   p = length(coefs[[best]])),
+                         fitted = function() {
+                           return(coefs[[best]][xs] * environment(fit1)[["X"]][, xs, drop = FALSE])
+                         })
+          class(basses) <- c("bm_cwlin", "bm_lin", "bm")
+          fit <- fit + nu * basses$fitted()
+          u <- ngradient(y, fit, weights)
+          mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
+          ens[[(length(ens) + 1)]] <- basses
+          xselect[(length(xselect) + 1)] <- xs
+          nuisance[[(length(ens) + 1)]] <- family@nuisance()
+          mstop <- mstop + 1}, 
+          envir = ENV[[best]])
+      }
+
+      else{
+        
+        risks <- numeric(length(fit))
+        for(b  in 1:length(fit)){
+          st <- mstop(fit[[b]])
+          fit[[b]][st + 1]
+          #risks[b] <- get("risk",environment(get("ngradient", environment(fit[[b]]$subset))))(y = environment((fit[[b]]$subset))[["y"]], f = environment((fit[[b]]$subset))[["fit"]])
+          risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
+          fit[[b]][st]
+          
+          ## fit[[b]][st] is not enough to reduce the model back to beginning, so
+          ## so all these values have to be reduced, so that they are calculated 
+          ## correctly the next time
           evalq({xselect <- xselect[1:mstop];
           mrisk <- mrisk[1:mstop];
           ens <- ens[1:mstop];
           nuisance <- nuisance[1:mstop]},
           environment(fit[[b]]$subset))
+          
+        }
         
-       
-      }
-      
-      #print(head(environment(fit[[2]]$subset)[["fit"]]))
-      #print(risks)
-      best <- which.min(risks)
-
-      ## update value of u, i.e. compute ngradient with new nuisance parameters
-         ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], 
-                                                    ENV[[best]][["fit"]],
-                                                    ENV[[best]][["weights"]])
-
+        #print(head(environment(fit[[2]]$subset)[["fit"]]))
+        #print(risks)
+        best <- which.min(risks)
+        
+        ## update value of u, i.e. compute ngradient with new nuisance parameters
+        ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], 
+                                                         ENV[[best]][["fit"]],
+                                                         ENV[[best]][["weights"]])
+        
         # same as:
         # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
         
         
         ## update selected component by 1
-         fit[[best]][mstop(fit[[best]]) + 1]
+        fit[[best]][mstop(fit[[best]]) + 1]
+      }
+      #calculate the possible loss for every parameter
+      
          
-         combined_risk[(length(combined_risk) + 1)] <- tail(risk(fit[[best]]), 1)
-         names(combined_risk)[length(combined_risk)] <- names(fit)[best]
+      combined_risk[(length(combined_risk) + 1)] <- tail(risk(fit[[best]]), 1)
+      names(combined_risk)[length(combined_risk)] <- names(fit)[best]
         
       if (trace){
                do_trace(current = length(combined_risk[combined_risk != 0]),
