@@ -139,47 +139,79 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
       #this is pretty unreadable, maybe not so compact code
       #get all possible risks
       if (experimental) {
-        lik_risks <- list()
-        coefs <- list()
         
-        for(i in mods){
-          coefs[[i]] <- evalq(environment(fit1)[["est"]](u)/
-                                environment(fit1)[["sxtx"]], envir = ENV[[i]])
+        #this is for cw_lin baselearner
+        if (funchar == "glmboost") {
+          warning("cw_lin baselearner have some issues, better use gamboost with
+                  bols baselearner.")
+          lik_risks <- list()
+          coefs <- list()
           
-          all_fitted <- sweep(environment(ENV[[i]][["fit1"]])[["X"]], 2, 
-                              coefs[[i]] ,`*`)
+          for(i in mods){
+            coefs[[i]] <- evalq(environment(fit1)[["est"]](u)/
+                                  environment(fit1)[["sxtx"]], envir = ENV[[i]])
+            
+            all_fitted <- sweep(environment(ENV[[i]][["fit1"]])[["X"]], 2, 
+                                coefs[[i]] ,`*`)
+            
+            lik_risks[[i]] <- sapply(1:ncol(all_fitted), function(j) 
+              ENV[[i]][["triskfct"]](ENV[[i]][["y"]], 
+                                     ENV[[i]][["fit"]] + nu[i] * all_fitted[,j]))
+          }
           
-          lik_risks[[i]] <- sapply(1:ncol(all_fitted), function(j) 
-            ENV[[i]][["triskfct"]](ENV[[i]][["y"]], 
-                                   ENV[[i]][["fit"]] + nu[i] * all_fitted[,j]))
+          #do a mboost step per hand
+          best <- which.min(vapply(lik_risks, min, 
+                                   FUN.VALUE = numeric(1), ...))
+          
+          ENV[[best]]$all_fitted <- all_fitted
+          ENV[[best]]$lik_risks <- lik_risks
+          ENV[[best]]$best <- best
+          ENV[[best]]$coefs <- coefs
+          
+          evalq({
+            xs <- which.min(lik_risks[[best]])
+            basses <- list(model = c(coef = coefs[[best]][xs],
+                                     xselect = xs,
+                                     p = length(coefs[[best]])),
+                           fitted = function() {
+                             return(coefs[[best]][xs] * environment(fit1)[["X"]][, xs, drop = FALSE])
+                           })
+            class(basses) <- c("bm_cwlin", "bm_lin", "bm")
+            fit <- fit + nu * basses$fitted()
+            u <- ngradient(y, fit, weights)
+            mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
+            ens[[(length(ens) + 1)]] <- basses
+            xselect[(length(xselect) + 1)] <- xs
+            nuisance[[length(ens)]] <- family@nuisance()
+            mstop <- mstop + 1}, 
+            envir = ENV[[best]])
         }
         
-        #do a mboost step per hand
-        best <- which.min(vapply(lik_risks, min, 
-                                      FUN.VALUE = numeric(1), ...))
-        
-        ENV[[best]]$all_fitted <- all_fitted
-        ENV[[best]]$lik_risks <- lik_risks
-        ENV[[best]]$best <- best
-        ENV[[best]]$coefs <- coefs
-        
-        evalq({
-          xs <- which.min(lik_risks[[best]])
-          basses <- list(model = c(coef = coefs[[best]][xs],
-                                   xselect = xs,
-                                   p = length(coefs[[best]])),
-                         fitted = function() {
-                           return(coefs[[best]][xs] * environment(fit1)[["X"]][, xs, drop = FALSE])
-                         })
-          class(basses) <- c("bm_cwlin", "bm_lin", "bm")
-          fit <- fit + nu * basses$fitted()
-          u <- ngradient(y, fit, weights)
-          mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
-          ens[[(length(ens) + 1)]] <- basses
-          xselect[(length(xselect) + 1)] <- xs
-          nuisance[[(length(ens) + 1)]] <- family@nuisance()
-          mstop <- mstop + 1}, 
-          envir = ENV[[best]])
+        #all other baselearner
+        else{
+          risks <- list()
+          for( i in mods){
+            risks[[i]] <- evalq({
+              sapply(ss, function(x) triskfct(y, fit + nu * x$fitted()))
+            }, envir = ENV[[i]])
+          }
+          
+          best <- which.min(vapply(risks, min, 
+                                   FUN.VALUE = numeric(1)))
+          
+          evalq({
+            xselect[length(xselect) + 1] <- which.min(sapply(ss, function(x) 
+              triskfct(y, fit + nu * x$fitted())))
+            fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
+            u <- ngradient(y, fit, weights)
+            mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
+            ens[[(length(ens) + 1)]] <- ss[[tail(xselect, 1)]]
+            nuisance[[length(ens)]] <- family@nuisance()
+            mstop <- mstop + 1}, 
+            envir = ENV[[best]])
+          
+        }
+       
       }
 
       else{
