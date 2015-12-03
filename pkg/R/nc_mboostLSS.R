@@ -192,7 +192,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             risks[[i]] <- evalq({
               ss_new <- lapply(get("blfit", envir = environment(basefit)), 
                                function(x) x(u))
-              sapply(ss_new, function(x) triskfct(y, fit + nu * x$fitted()))
+              sapply(ss_new, function(x) riskfct(y, fit + nu * x$fitted(), weights))
             }, envir = ENV[[i]])
           }
           
@@ -203,7 +203,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             ss <- lapply(get("blfit", envir = environment(basefit)), 
                          function(x) x(u))
             xselect[length(xselect) + 1] <- which.min(sapply(ss, function(x) 
-              triskfct(y, fit + nu * x$fitted())))
+              riskfct(y, fit + nu * x$fitted(), weights)))
             fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
             u <- ngradient(y, fit, weights)
             mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
