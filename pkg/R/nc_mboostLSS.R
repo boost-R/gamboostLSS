@@ -116,7 +116,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
   iBoost <- function(niter) {
     
     #this is the case for boosting from the beginning
-    if(is.null(attr(fit, "combined_risk"))){
+    if(is.null(attr(fit, "combined_risk")) | niter == 0){
       combined_risk <- vapply(fit, risk, numeric(1))
     }
 
@@ -126,7 +126,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     
     ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
     
-    for (i in 1:niter){
+    for (i in seq_len(niter)){
       
       ## update value of nuisance parameters
       ## use response(fitted()) as this is much quicker than fitted(, type = response)
@@ -142,8 +142,6 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         
         #this is for cw_lin baselearner
         if (funchar == "glmboost") {
-          warning("cw_lin baselearner have some issues, better use gamboost with
-                  bols baselearner.")
           lik_risks <- list()
           coefs <- list()
           
@@ -192,7 +190,9 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           risks <- list()
           for( i in mods){
             risks[[i]] <- evalq({
-              sapply(ss, function(x) triskfct(y, fit + nu * x$fitted()))
+              ss_new <- lapply(get("blfit", envir = environment(basefit)), 
+                               function(x) x(u))
+              sapply(ss_new, function(x) triskfct(y, fit + nu * x$fitted()))
             }, envir = ENV[[i]])
           }
           
@@ -200,13 +200,15 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                                    FUN.VALUE = numeric(1)))
           
           evalq({
+            ss <- lapply(get("blfit", envir = environment(basefit)), 
+                         function(x) x(u))
             xselect[length(xselect) + 1] <- which.min(sapply(ss, function(x) 
               triskfct(y, fit + nu * x$fitted())))
             fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
             u <- ngradient(y, fit, weights)
             mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
             ens[[(length(ens) + 1)]] <- ss[[tail(xselect, 1)]]
-            nuisance[[length(ens)]] <- family@nuisance()
+            nuisance[[(length(nuisance) + 1)]] <- family@nuisance()
             mstop <- mstop + 1}, 
             envir = ENV[[best]])
           
@@ -268,7 +270,7 @@ nc_mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     combined_risk  <<- combined_risk
     return(TRUE)
   }
-  if (any(mstop > 1)){
+  if (mstop >= length(fit)){
     ## actually go for initial mstop iterations!
     firstRun <- TRUE
     combined_risk <- NULL
