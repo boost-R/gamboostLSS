@@ -2,8 +2,6 @@ require("gamboostLSS")
 
 ###negbin dist, linear###
 
-
-#there was a bug that if mstop is length(families) + 1
 set.seed(2611)
 x1 <- rnorm(1000)
 x2 <- rnorm(1000)
@@ -14,48 +12,111 @@ x6 <- rnorm(1000)
 mu    <- exp(1.5 + x1^2 +0.5 * x2 - 3 * sin(x3) -1 * x4)
 sigma <- exp(-0.2 * x4 +0.2 * x5 +0.4 * x6)
 y <- numeric(1000)
-for( i in 1:1000)
+for (i in 1:1000)
   y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
 dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 
+#fit models at number of params + 1
+
+#glmboost
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 3), cycling = FALSE)
-
-
-set.seed(2611)
-#Regular fit and fit with risk = "oob" should be identical
-w <- sample(c(0,1), 1000, replace = TRUE)
+                     control = boost_control(mstop = 3), method = "outer")
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 100), cycling = TRUE,
-                     weights = w)
+                     control = boost_control(mstop = 3), method = "inner")
 
-model_oob <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                         control = boost_control(mstop = 100, risk = "oob"), 
-                         cycling = TRUE,
-                         weights = w)
+#linear baselearner with bols
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "outer",
+                     baselearner = "bols")
 
-stopifnot(all(unlist(model$mu$coef()) ==  unlist(model_oob$mu$coef())) &
-          all(unlist(model$sigma$coef()) ==  unlist(model_oob$sigma$coef())))
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "inner",
+                     baselearner = "bols")
+
+#nonlinear bbs baselearner
+
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "outer",
+                     baselearner = "bbs")
+
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "inner",
+                     baselearner = "bbs")
 
 
-#stepwise updates from the model should be identical to full fitting
+
+#reducing model and increasing it afterwards should yield the same fit
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 10), cycling = FALSE)
+                     control = boost_control(mstop = 50), method = "outer")
+
+m_co <- coef(model)
+
+mstop(model) <- 5
+mstop(model) <- 50
+
+stopifnot(all.equal(m_co, coef(model)))
 
 
-i <- 100
-model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                      control = boost_control(mstop = i), cycling = FALSE)
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 50), method = "outer",
+                     baselearner = "bols")
 
-for (j in 11:i) {
-  mstop(model) <- j
-}
+m_co <- coef(model)
 
-print(mstop(model))
-print(mstop(model2))
+mstop(model) <- 5
+mstop(model) <- 50
 
-all.equal.environment(environment(model$mu$subset), environment(model2$mu$subset))
-all.equal.environment(environment(model$sigma$subset), environment(model2$sigma$subset))
+stopifnot(all.equal(m_co, coef(model)))
+
+
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 50), method = "outer",
+                     baselearner = "bbs")
+
+m_co <- coef(model)
+
+mstop(model) <- 5
+mstop(model) <- 50
+
+stopifnot(all.equal(m_co, coef(model)))
+
+
+##inner###
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 50), method = "inner")
+
+m_co <- coef(model)
+
+mstop(model) <- 5
+mstop(model) <- 50
+
+stopifnot(all.equal(m_co, coef(model)))
+
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 50), method = "inner",
+                     baselearner = "bols")
+
+m_co <- coef(model)
+
+mstop(model) <- 5
+mstop(model) <- 50
+
+stopifnot(all.equal(m_co, coef(model)))
+
+
+model <- gamboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 50), method = "inner",
+                     baselearner = "bbs")
+
+m_co <- coef(model)
+
+mstop(model) <- 5
+mstop(model) <- 50
+
+stopifnot(all.equal(m_co, coef(model)))
+
+
 
