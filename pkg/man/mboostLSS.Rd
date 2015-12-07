@@ -62,13 +62,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   \item{call}{ used to forward the call from \code{mboostLSS},
     \code{glmboostLSS}, \code{gamboostLSS} and \code{blackboostLSS}.
     This argument should not be directly specified by users!}
-  \item{cycling}{ Logical parameter to select the fitting algorithm, if 
-  \code{cycling = TRUE}, the regular fitting approach is used. 
-  If \code{cycling = FALSE}, instead of cycling through all distribution 
-  parameters in each step only the best is selected.}  
-  \item{experimental} Logical parameter to choose a experimental version of a
-  fitting algorithm, only works with \code{cycling = FALSE}. If used, the 
-  selection of the baselearner is done via the outer loss, not the inner.
+  \item{method}{ fitting method, currently three methods are supported:
+  \code{"cycling"}, \code{"inner"} and \code{"outer"}. The latter two require a
+  one dimensional \code{mstop} value.}
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
     passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
@@ -107,7 +103,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   function without \code{LSS}. For further possible arguments see
   these functions as well as \code{\link{mboost_fit}}.
 
-  In all four fitting functions it is possible to specify one or
+  For \code{method = "cycling"} it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one single value, this
   value is used for all distribution parameters of the GAMLSS model. 
@@ -121,8 +117,12 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
   more-dimensional stopping, one can specify, e.g., \code{mstop =
     list(mu = 100, sigma = 200)} (see examples).
-  If \code{cycling = TRUE} only one value for \code{mstop} is allowed, this
-  value is then optimally split between the distribution parameters.
+  If \code{method} is set to \code{"inner"} or \code{"outer"}, \code{mstop} has
+  to be a one dimensional integer. Instead of cycling through all distribution 
+  parameters, in each iteration only the best baselearner is used. For 
+  \code{"inner"} one baselearner of every parameter is selected via RSS, the 
+  distribution parameter is then chosen via the loss. For \code{"outer"} the
+  selection is solely based on the (outer) loss.
 
   To (potentially) stabilize the model estimation by standardizing the
   negative gradients one can use the argument \code{stabilization} of
