@@ -134,6 +134,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
       for( k in mods[-best]){
         assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])),
                environment(get("ngradient", environment(fit[[k]]$subset))))
+        
+        evalq(u <- ngradient(y, fit, weights), ENV[[k]])
       }
       
       if (funchar == "glmboost") {
@@ -531,6 +533,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
               assign(k, families[[k]]@response(fitted(fit[[k]])),
                      environment(get("ngradient", environment(fit[[j]]$subset))))
             }
+          }
+          
+          for(k in mods){
+            evalq(u <- ngradient(y, fit, weights), ENV[[k]])
           }
           
           
