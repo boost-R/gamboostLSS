@@ -114,7 +114,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     return(TRUE)
   }
-    iBoost_outer <- function(niter){
+    iBoost_inner <- function(niter){
     
     #this is the case for boosting from the beginning
     if(is.null(attr(fit, "combined_risk")) | niter == 0){
@@ -223,7 +223,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     combined_risk  <<- combined_risk
     return(TRUE)
   }
-    iBoost_inner <- function(niter){
+    iBoost_outer <- function(niter){
     
     
     #this is the case for boosting from the beginning
