@@ -114,7 +114,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     return(TRUE)
   }
-    iBoost_inner <- function(niter){
+    iBoost_outer <- function(niter){
     
     #this is the case for boosting from the beginning
     if(is.null(attr(fit, "combined_risk")) | niter == 0){
@@ -172,10 +172,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           class(basses) <- c("bm_cwlin", "bm_lin", "bm")
           fit <- fit + nu * basses$fitted()
           u <- ngradient(y, fit, weights)
-          mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
-          ens[[(length(ens) + 1)]] <- basses
-          xselect[(length(xselect) + 1)] <- xs
-          nuisance[[length(ens)]] <- family@nuisance()
+          mrisk[(mstop + 1)] <- triskfct(y, fit)
+          ens[[(mstop + 1)]] <- basses
+          xselect[(mstop + 1)] <- xs
+          nuisance[[(mstop +1)]] <- family@nuisance()
           mstop <- mstop + 1}, 
           envir = ENV[[best]])
       }
@@ -197,13 +197,13 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         evalq({
           ss <- lapply(get("blfit", envir = environment(basefit)), 
                        function(x) x(u))
-          xselect[length(xselect) + 1] <- which.min(sapply(ss, function(x) 
+          xselect[mstop + 1] <- which.min(sapply(ss, function(x) 
             riskfct(y, fit + nu * x$fitted(), weights)))
           fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
           u <- ngradient(y, fit, weights)
-          mrisk[(length(mrisk) + 1)] <- triskfct(y, fit)
-          ens[[(length(ens) + 1)]] <- ss[[tail(xselect, 1)]]
-          nuisance[[(length(nuisance) + 1)]] <- family@nuisance()
+          mrisk[(mstop + 1)] <- triskfct(y, fit)
+          ens[[(mstop + 1)]] <- ss[[tail(xselect, 1)]]
+          nuisance[[(mstop + 1)]] <- family@nuisance()
           mstop <- mstop + 1}, 
           envir = ENV[[best]])
         
@@ -223,7 +223,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     combined_risk  <<- combined_risk
     return(TRUE)
   }
-    iBoost_outer <- function(niter){
+    iBoost_inner <- function(niter){
     
     
     #this is the case for boosting from the beginning
