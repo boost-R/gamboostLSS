@@ -46,8 +46,8 @@ artifacts:
   - path: '*.Rcheck\**\*.Rout'
     name: Logs
 
-  - path: '\*_*.tar.gz'
+  - path: '%TEST_DIR%/\*_*.tar.gz'
     name: Bits
 
-  - path: '\*_*.zip'
+  - path: '%TEST_DIR%/\*_*.zip'
     name: Bits
