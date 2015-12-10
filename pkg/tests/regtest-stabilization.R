@@ -107,14 +107,21 @@ FAMILIES <- list(
     LogNormalLSS,
     WeibullLSS,
     LogLogLSS)
+families <- c("LogNormalLSS", "WeibullLSS", "LogLogLSS")
 require(survival)
 for (i in 1:length(FAMILIES)) {
+    cat(families[i], "\n\n")
     m_none <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
                           families = FAMILIES[[i]](stabilization = "none"),
                           data=dat)
-    m_MAD <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
+    m_MAD <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
                          families = FAMILIES[[i]](stabilization = "MAD"),
-                         data=dat)
+                             data=dat), silent = TRUE)
+
+    if (inherits(m_MAD, "try-error")) {
+        warning(families[i], "cannot be fitted with stabilization", immediate. = TRUE)
+        break
+    }
     cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
