@@ -1,5 +1,5 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+R version 3.2.2 (2015-08-14) -- "Fire Safety"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -75,8 +75,8 @@ Type gamlssNews() to see new features/changes/bug fixes.
 Call:
 glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 10), center = TRUE)
 
-Number of boosting iterations: mstop = 20 20 20 
-Step size:  0.1 
+Number of boosting iterations (mstop):  mu = 20, sigma = 20, df = 20 
+Step size:  mu = 0.1, sigma = 0.1, df = 0.1 
 
 Families:
 
@@ -121,8 +121,8 @@ Loss function: {
 Call:
 glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 20), center = TRUE)
 
-Number of boosting iterations: mstop = 10 10 10 
-Step size:  0.1 
+Number of boosting iterations (mstop):  mu = 10, sigma = 10, df = 10 
+Step size:  mu = 0.1, sigma = 0.1, df = 0.1 
 
 Families:
 
@@ -174,8 +174,8 @@ Final risk: 12491.57
 Call:
 glmboostLSS(formula = y ~ x1 + x2, families = StudentTLSS(),     control = boost_control(mstop = 10, trace = TRUE), center = TRUE)
 
-Number of boosting iterations: mstop = 100 100 100 
-Step size:  0.1 
+Number of boosting iterations (mstop):  mu = 100, sigma = 100, df = 100 
+Step size:  mu = 0.1, sigma = 0.1, df = 0.1 
 
 Families:
 
@@ -321,4 +321,4 @@ Final risk: 13810.99
 > 
 > proc.time()
    user  system elapsed 
-  6.235   0.066   6.432 
+  6.398   0.166   6.738 

@@ -1,5 +1,5 @@
 
-R version 3.2.1 (2015-06-18) -- "World-Famous Astronaut"
+R version 3.2.2 (2015-08-14) -- "Fire Safety"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -58,8 +58,8 @@ The following object is masked from 'package:stats':
 Call:
 gamboostLSS(formula = y ~ ., data = dat, families = NBinomialLSS(),     control = boost_control(mstop = 1))
 
-Number of boosting iterations: mstop = 10 10 
-Step size:  0.1 
+Number of boosting iterations (mstop):  mu = 10, sigma = 10 
+Step size:  mu = 0.1, sigma = 0.1 
 
 Families:
 
@@ -83,4 +83,4 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > 
 > proc.time()
    user  system elapsed 
-  1.579   0.073   1.724 
+  1.656   0.090   1.809 
