@@ -14,10 +14,6 @@ various distribution parameters such as location, scale and shape at the same
 time (hence the name GAMLSS, generalized additive models for location, scale and
 shape).
 
-This [GitHub repository](https://github.com/hofnerb/gamboostLSS) is essentially just
-a copy of the r-forge repository which is hosted at
-[R-forge](https://r-forge.r-project.org/projects/gamboostlss).
-
 ## Installation
 
 - Current version (from CRAN): 
@@ -28,14 +24,14 @@ a copy of the r-forge repository which is hosted at
 - Latest **patch version** (under development) from GitHub:
   ```
   library("devtools")
-  install_github("hofnerb/gamboostLSS/patch")
+  install_github("boost-R/gamboostLSS/patch")
   library("gamboostLSS")
   ```
 
 - Latest **development version** from GitHub:
   ```
   library("devtools")
-  install_github("hofnerb/gamboostLSS/pkg")
+  install_github("boost-R/gamboostLSS/pkg")
   library("gamboostLSS")
   ```
 
@@ -44,14 +40,6 @@ a copy of the r-forge repository which is hosted at
   install.packages("devtools")
   ```
 
-- Alternatively, the current development version of `gamboostLSS` 
-  can be downloaded from R-forge if it was successfully built:
-  ```
-  install.packages("gamboostLSS", repos = "http://r-forge.r-project.org")
-  ```
-  However, currently these builds often don't succeed and furthermore are only available 
-  for recent versions of R.
-  
 ## Using gamboostLSS
 
 Instructions on how to use `gamboostLSS` can be found here:
