@@ -1,10 +1,10 @@
 gamboostLSS
 ===========
 
-[![Build Status (Linux)](https://travis-ci.org/hofnerb/gamboostLSS.svg?branch=master)](https://travis-ci.org/hofnerb/gamboostLSS) 
-[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/81eo6c6v7v4h2llo/branch/master?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss/branch/master)
+[![Build Status (Linux)](https://travis-ci.org/boost-R/gamboostLSS.svg?branch=master)](https://travis-ci.org/boost-R/gamboostLSS) 
+[![Build status (Windows)](https://ci.appveyor.com/api/projects/status/373t0tvx5v1i5ooq/branch/master?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss-s2whe/branch/master)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/gamboostLSS)](http://cran.r-project.org/package=gamboostLSS)
-[![Coverage Status](https://coveralls.io/repos/hofnerb/gamboostLSS/badge.svg?branch=master&service=github)](https://coveralls.io/github/hofnerb/gamboostLSS?branch=master)
+[![Coverage Status](https://coveralls.io/repos/boost-R/gamboostLSS/badge.svg?branch=master&service=github)](https://coveralls.io/github/boost-R/gamboostLSS?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/gamboostLSS)](http://cran.rstudio.com/web/packages/gamboostLSS/index.html)
 
 `gamboostLSS` implements boosting algorithms for fitting generalized linear,
@@ -13,10 +13,6 @@ Instead of modeling only the mean, `gamboostLSS` enables the user to model
 various distribution parameters such as location, scale and shape at the same
 time (hence the name GAMLSS, generalized additive models for location, scale and
 shape).
-
-This [GitHub repository](https://github.com/hofnerb/gamboostLSS) is essentially just
-a copy of the r-forge repository which is hosted at
-[R-forge](https://r-forge.r-project.org/projects/gamboostlss).
 
 ## Installation
 
@@ -28,14 +24,14 @@ a copy of the r-forge repository which is hosted at
 - Latest **patch version** (under development) from GitHub:
   ```
   library("devtools")
-  install_github("hofnerb/gamboostLSS/patch")
+  install_github("boost-R/gamboostLSS/patch")
   library("gamboostLSS")
   ```
 
 - Latest **development version** from GitHub:
   ```
   library("devtools")
-  install_github("hofnerb/gamboostLSS/pkg")
+  install_github("boost-R/gamboostLSS/pkg")
   library("gamboostLSS")
   ```
 
@@ -44,14 +40,6 @@ a copy of the r-forge repository which is hosted at
   install.packages("devtools")
   ```
 
-- Alternatively, the current development version of `gamboostLSS` 
-  can be downloaded from R-forge if it was successfully built:
-  ```
-  install.packages("gamboostLSS", repos = "http://r-forge.r-project.org")
-  ```
-  However, currently these builds often don't succeed and furthermore are only available 
-  for recent versions of R.
-  
 ## Using gamboostLSS
 
 Instructions on how to use `gamboostLSS` can be found here:
