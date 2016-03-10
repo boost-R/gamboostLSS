@@ -8,7 +8,7 @@ mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                       method = c("cycling", "inner", "outer"), ...){
   
     cl <- match.call()
-    method = match.arg(method)
+    method <- match.arg(method)
 
     
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -24,7 +24,7 @@ glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         method = c("cycling", "inner", "outer"), ...){
   
     cl <- match.call()
-    method = match.arg(method)
+    method <- match.arg(method)
 
     
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -40,7 +40,7 @@ gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         method = c("cycling", "inner", "outer"), ...){
     
     cl <- match.call()
-    method = match.arg(method)
+    method <- match.arg(method)
 
    
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
@@ -55,7 +55,7 @@ blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL, 
                           method = c("cycling", "inner", "outer"), ...){
     cl <- match.call()
-    method = match.arg(method)
+    method <- match.arg(method)
 
    
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
