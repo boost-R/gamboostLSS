@@ -234,8 +234,11 @@ print.mboostLSS <- function(x, ...){
     cat("\n")
     if (!is.null(attr(x, "call")))
         cat("Call:\n", deparse(attr(x, "call")), "\n\n", sep = "")
-    cat("Number of boosting iterations: mstop =", mstop(x), "\n")
-    cat("Step size: ", x[[1]]$control$nu, "\n\n")
+    cat("Number of boosting iterations (mstop): ",
+        paste(names(mstop(x)), mstop(x), sep = " = ", collapse = ", "), "\n")
+    nus <- sapply(x, function(xi) xi$control$nu)
+    cat("Step size: ",
+        paste(names(nus), nus, sep = " = ", collapse = ", "), "\n\n")
     cat("Families:\n")
     lapply(x, function(xi) show(xi$family))
     invisible(x)
@@ -286,8 +289,13 @@ summary.mboostLSS <- function(object, ...) {
     cat("\n")
     if (!is.null(attr(object, "call")))
         cat("Call:\n", deparse(attr(object, "call")), "\n\n", sep = "")
-    cat("Number of boosting iterations: mstop =", mstop(object), "\n")
-    cat("Step size: ", object[[1]]$control$nu, "\n\n")
+    cat("Number of boosting iterations (mstop): ",
+        paste(names(mstop(object)), mstop(object),
+              sep = " = ", collapse = ", "),
+        "\n")
+    nus <- sapply(object, function(xi) xi$control$nu)
+    cat("Step size: ",
+        paste(names(nus), nus, sep = " = ", collapse = ", "), "\n\n")
 
     cat("Families:\n")
     lapply(object, function(xi) show(xi$family))

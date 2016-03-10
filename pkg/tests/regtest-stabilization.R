@@ -37,7 +37,7 @@ stopifnot(all.equal(coef(m3), coef(m2)))
 ## check if everything is handled correctly
 GaussianLSS(stabilization = "MAD")
 GaussianLSS(stabilization = "none")
-res <- try(GaussianLSS(stabilization = "test"),silent = TRUE)
+res <- try(GaussianLSS(stabilization = "test"), silent = TRUE)
 res
 
 
@@ -115,7 +115,7 @@ for (i in 1:length(FAMILIES)) {
                           families = FAMILIES[[i]](stabilization = "none"),
                           data=dat)
     m_MAD <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
-                         families = FAMILIES[[i]](stabilization = "MAD"),
+                             families = FAMILIES[[i]](stabilization = "MAD"),
                              data=dat), silent = TRUE)
 
     if (inherits(m_MAD, "try-error")) {

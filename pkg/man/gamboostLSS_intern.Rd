@@ -7,8 +7,7 @@
   Call one of the internal gamboostLSS functions.
 }
 \usage{
-gamboostLSS_intern(..., fun = c("check", "do_trace",
-                                "rescale_weights"))
+gamboostLSS_intern(..., fun = c("check", "do_trace"))
 }
 \arguments{
   \item{\dots}{ Arguments to \code{fun}. }

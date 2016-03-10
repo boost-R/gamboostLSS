@@ -6,6 +6,8 @@
 mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                       control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = mboost, funchar = "mboost", call = cl)
@@ -15,6 +17,8 @@ mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = glmboost, funchar = "glmboost", call = cl)
@@ -24,6 +28,8 @@ glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = gamboost, funchar = "gamboost", call = cl)
@@ -33,6 +39,8 @@ gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = blackboost, funchar = "blackboost", call = cl)
@@ -125,9 +133,11 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     for (j in mods){
         ## update value of nuisance parameters in families
+         ## use response(fitted()) as this is much quicker than
+         ## fitted(, type = response) as the latter uses predict()
         for (k in mods[-j]){
             if (!is.null(fit[[k]]))
-                assign(names(fit)[k], fitted(fit[[k]], type = "response"),
+                assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
                        environment(families[[j]]@ngradient))
         }
         ## use appropriate nu for the model
@@ -157,7 +167,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         for (i in 1:max(niter)){
             for (j in mods){
                 ## update value of nuisance parameters
-                ## use response(fitted()) as this is much quicker than fitted(, type = response)
+                ## use response(fitted()) as this is much quicker than
+                ## fitted(, type = response) as the latter uses predict()
                 for (k in mods[-j])
                     assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
                            environment(get("ngradient", environment(fit[[j]]$subset))))

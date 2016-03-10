@@ -19,6 +19,35 @@
   }
 }
 
+\section{Changes in gamboostLSS version 1.2-1 (2016-03-11)}{
+  \subsection{User-visible changes}{
+    \itemize{
+      \item Speed up computations by using \code{response(fitted())}
+      instead of \code{fitted(, type = response)} as the latter uses
+      \code{predict()}. Closes issue
+      \href{https://github.com/boost-R/gamboostLSS/issues/5}{#5}.
+      \item Improved output of \code{print.mboostLSS()} and
+      \code{summary.mboostLSS()}. Closes issue
+      \href{https://github.com/boost-R/gamboostLSS/issues/7}{#7}.
+      \item Added \code{gamboostLSS_intern()} to make \pkg{FDboost}
+      happy. Caution: Do not use this function.
+    }
+  }
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item Fixed \file{inst/CITATION}.
+    }
+  }
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item Fixed tests for stabilization.
+      \item Fixed bug in \code{cvrisk.mboostLSS()} which occurred if
+      \code{families} wasn't explicitly specified when fitting the
+      model. Closes
+      \href{https://github.com/boost-R/gamboostLSS/issues/9}{#9}.
+    }
+  }
+}
 
 \section{Changes in gamboostLSS version 1.2-0 (2015-08-19)}{
   \subsection{User-visible changes}{

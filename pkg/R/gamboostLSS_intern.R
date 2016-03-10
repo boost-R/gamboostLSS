@@ -1,5 +1,4 @@
-gamboostLSS_intern <- function(..., fun = c("check", "do_trace",
-                                            "rescale_weights")) {
+gamboostLSS_intern <- function(..., fun = c("check", "do_trace")) {
 
     fun <- match.arg(fun)
     do.call(fun, list(...))
