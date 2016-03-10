@@ -80,16 +80,55 @@ mstop.oobag <- function(object, parameter = names(object), ...){
     return(RET)
 }
 
-selected.mboostLSS <- function(object, parameter = names(object), ...){
+selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
+                               ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    RET <- lapply(parameter, function(i, object)
-                                 selected(object[[i]]),
-                  object = object)
-    names(RET) <- names(object)[parameter]
-    if (length(RET) == 1)
+    
+    #merge is different for noncyclical fitting
+    if (merge) {
+      if (inherits(object, "nc_mboostLSS")){
+        RET <- names(attr(object, "combined_risk")())
+       
+        for(p in names(parameter)){
+          RET[RET == p] <- object[[p]]$xselect()
+        }
+        RET <- as.numeric(RET)
+        names(RET) <- names(attr(object, "combined_risk")())
+        return(RET)
+      }
+      else {
+        get_sel <- function(i, object) {
+          mmo <- max(mstop(object))
+          sel <- object[[i]]$xselect()
+          if (length(sel) != mmo) {
+            sel <- c(sel, rep(NA, mmo - length(sel)))
+          }
+          sel
+        }
+        
+        RET <- sapply(parameter, get_sel,
+                      object = object)
+        
+        RET <- as.vector(t(RES))
+        names(RET) <- rep(names(parameter), mstop(object)[1])
+        lo <- length(unique(mstop(object)))
+        if (lo != 1)
+          RET <- RET[!is.na(RET)]
+        return(RET)
+      }
+      
+    }
+    else { 
+      RET <- lapply(parameter, function(i, object)
+        selected(object[[i]]),
+        object = object)
+      names(RET) <- names(object)[parameter]
+      if (length(RET) == 1)
         RET <- RET[[1]]
-    return(RET)
+      return(RET)
+    }
+
 }
 
 selected.stabsel_mboostLSS <- function(object, parameter = NULL, ...) {
@@ -347,10 +386,24 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
     else
         assumption <- match.arg(assumption)
 
-    ## check mstop
-    if (is.null(mstop))
+
+    if (inherits(x, "nc_mboostLSS")) {
+      ## check mstop
+      if (is.null(mstop))
+        mstop <- sum(mstop(x))
+      if (length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(x)) {
+        stop(sQuote("mstop"), " has to be an integer larger than ", 
+             length(x))
+      }
+      mstop_min <- length(x)
+    }
+    else {
+      if (is.null(mstop))
         mstop <- mstop(x)
-    mstop <- check(mstop, "mstop", names(x))
+      mstop <- check(mstop, "mstop", names(x))
+      mstop_min <- 1
+    }
+
     if (length(unique(mstop)) != 1)
         warning("Usually one should use the same ", sQuote("mstop"),
                 " value for all components for stability selection.")
@@ -359,7 +412,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         cat("Run stabsel ")
 
     ## set mstop = 1 to speed things up
-    x <- update(x, weights = model.weights(x), mstop = 1)
+    x <- update(x, weights = model.weights(x), mstop = mstop_min)
 
     ## define the fitting function (args.fitfun is not used but needed for
     ## compatibility with run_stabsel
@@ -367,13 +420,13 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         if (verbose)
             cat(".")
         ## start by fitting 1 step in each component
-        mod <- update(x, weights = folds[, i], mstop = 1)
+        mod <- update(x, weights = folds[, i], mstop = mstop_min)
         ## make sure dispatch works correctly
         class(mod) <- class(x)
         xs <- selected(mod)
         nsel <- length(mod)
         ## now update model until we obtain q different base-learners altogether
-        for (m in 1:max(mstop)) {
+        for (m in mstop_min:max(mstop)) {
             if (nsel >= q)
                 break
 
@@ -384,6 +437,9 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             if (nsel >= q)
                 break
         }
+        #this changes nothing for method = "cycling" but fixes mstop for
+        #method = "inner" or "outer"
+        mstop <- check(mstop, "mstop", names(x))
         ## complete paths
         if (any(sapply(xs, length) < mstop)) {
             for (j in 1:length(xs)) {
@@ -400,45 +456,68 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             res
         })
         ret <- unlist(ret)
+        
         ## compute selection paths
-        sequences <- lapply(1:length(xs), function(i) {
-            res <- matrix(FALSE, nrow = length(nms[[i]]), ncol = mstop[[i]])
-            rownames(res) <- nms[[i]]
-            for (j in 1:mstop[[i]])
-                res[xs[[i]][j], j:mstop[[i]]] <- TRUE
-            res
-        })
-        if (any(mstop < max(mstop)))
+        #merging for method cycling
+        if(!inherits(x, "nc_mboostLSS")){
+          sequences <- lapply(1:length(xs), function(i) {
+              res <- matrix(FALSE, nrow = length(nms[[i]]), ncol = mstop[[i]])
+              rownames(res) <- nms[[i]]
+              for (j in 1:mstop[[i]])
+                  res[xs[[i]][j], j:mstop[[i]]] <- TRUE
+              res
+          })
+
+          if (any(mstop < max(mstop)))
             stop("simply add the last column to the smaller matrices")
-        ## now merge sequences
-        for (i in 1:ncol(sequences[[1]])) {
+          ## now merge sequences
+          for (i in 1:ncol(sequences[[1]])) {
             for (j in 1:length(sequences)) {
-                if (i == 1) {
-                    if (j == 1) {
-                        other_params <- rep(FALSE, sum(sapply(sequences, nrow)[-1]))
-                        sequence <- matrix(c(sequences[[i]][, j],
-                                             other_params))
-                    } else {
-                        tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                           i]))
-                        other_params <- rep(FALSE, sum(sapply(sequences,
-                                                              nrow)[-(1:j)]))
-                        tmp <- c(tmp, other_params)
-                        sequence <- cbind(sequence, tmp)
-                    }
+              if (i == 1) {
+                if (j == 1) {
+                  other_params <- rep(FALSE, sum(sapply(sequences, nrow)[-1]))
+                  sequence <- matrix(c(sequences[[i]][, j],
+                                       other_params))
                 } else {
-                    if (j < length(sequences)) {
-                        tmp <- unlist(c(lapply(sequences[1:j], function(x) x[, i]),
-                                        lapply(sequences[(j+1):length(sequences)],
-                                               function(x) x[, i - 1])))
-                    } else {
-                        tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                           i]))
-                    }
-                    sequence <- cbind(sequence, tmp)
+                  tmp <- unlist(lapply(sequences[1:j], function(x) x[,
+                                                                     i]))
+                  other_params <- rep(FALSE, sum(sapply(sequences,
+                                                        nrow)[-(1:j)]))
+                  tmp <- c(tmp, other_params)
+                  sequence <- cbind(sequence, tmp)
                 }
+              } else {
+                if (j < length(sequences)) {
+                  tmp <- unlist(c(lapply(sequences[1:j], function(x) x[, i]),
+                                  lapply(sequences[(j+1):length(sequences)],
+                                         function(x) x[, i - 1])))
+                } else {
+                  tmp <- unlist(lapply(sequences[1:j], function(x) x[,
+                                                                     i]))
+                }
+                sequence <- cbind(sequence, tmp)
+              }
             }
+          }
         }
+        else {
+          sequence <- matrix(FALSE, nrow = p, ncol = mstop[1])
+          rownames(sequence) <- unlist(nms)
+          
+          sel <- selected(mod, merge = TRUE)
+          
+          for (i in names(mod)) {
+            varnames <- variable.names(mod[[i]])
+            for(j in seq_along(varnames)){
+              pos <- which(names(sel) == i & sel == j)
+              if(length(pos) > 0)
+                sequence[paste(varnames[j], i, sep = "."), min(pos):mstop[1]] <- TRUE
+            }
+            
+          }
+          
+        }
+        
         colnames(sequence) <- 1:ncol(sequence)
         ret <- list(selected = ret, path = sequence)
         ## was mstop to small?
