@@ -1,5 +1,5 @@
 
-R version 3.2.2 (2015-08-14) -- "Fire Safety"
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
 Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -23,7 +23,7 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.5-0. See 'package?mboost' and 'news(package  = "mboost")'
+This is mboost 2.6-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -147,7 +147,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
-> res <- try(GaussianLSS(stabilization = "test"),silent = TRUE)
+> res <- try(GaussianLSS(stabilization = "test"), silent = TRUE)
 > res
 [1] "Error in match.arg(stabilization) : 'arg' should be one of \"none\", \"MAD\"\n"
 attr(,"class")
@@ -243,7 +243,23 @@ The following object is masked from 'package:mboost':
 +         tail(risk(m_MAD, merge = TRUE), 1), "\n")
 + }
 Warning: BCT cannot be fitted with stabilization
-There were 12 warnings (use warnings() to see them)
+Warning messages:
+1: In min(which(cumsum(w)/sum(w) > 0.5)) :
+  no non-missing arguments to min; returning Inf
+2: In max(which(cumsum(w)/sum(w) <= 0.5)) :
+  no non-missing arguments to max; returning -Inf
+3: In min(which(cumsum(w)/sum(w) > 0.5)) :
+  no non-missing arguments to min; returning Inf
+4: In max(which(cumsum(w)/sum(w) <= 0.5)) :
+  no non-missing arguments to max; returning -Inf
+5: In min(which(cumsum(w)/sum(w) > 0.5)) :
+  no non-missing arguments to min; returning Inf
+6: In max(which(cumsum(w)/sum(w) <= 0.5)) :
+  no non-missing arguments to max; returning -Inf
+7: In min(which(cumsum(w)/sum(w) > 0.5)) :
+  no non-missing arguments to min; returning Inf
+8: In max(which(cumsum(w)/sum(w) <= 0.5)) :
+  no non-missing arguments to max; returning -Inf
 > 
 > ## check survival families
 > dat$zens <- sample(c(0, 1), 1000, replace = TRUE)
@@ -251,30 +267,35 @@ There were 12 warnings (use warnings() to see them)
 +     LogNormalLSS,
 +     WeibullLSS,
 +     LogLogLSS)
+> families <- c("LogNormalLSS", "WeibullLSS", "LogLogLSS")
 > require(survival)
 Loading required package: survival
 > for (i in 1:length(FAMILIES)) {
++     cat(families[i], "\n\n")
 +     m_none <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
 +                           families = FAMILIES[[i]](stabilization = "none"),
 +                           data=dat)
-+     m_MAD <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
-+                          families = FAMILIES[[i]](stabilization = "MAD"),
-+                          data=dat)
++     m_MAD <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
++                              families = FAMILIES[[i]](stabilization = "MAD"),
++                              data=dat), silent = TRUE)
++ 
++     if (inherits(m_MAD, "try-error")) {
++         warning(families[i], "cannot be fitted with stabilization", immediate. = TRUE)
++         break
++     }
 +     cat('Risks:\n  stabilization = "none":',
 +         tail(risk(m_none, merge = TRUE), 1),
 +         '\n  stabilization = "MAD":',
 +         tail(risk(m_MAD, merge = TRUE), 1), "\n")
 + }
+LogNormalLSS 
+
 Risks:
   stabilization = "none": 385.8235 
   stabilization = "MAD": 385.5457 
-Risks:
-  stabilization = "none": 3162.34 
-  stabilization = "MAD": NA 
-Risks:
-  stabilization = "none": 533.6021 
-  stabilization = "MAD": 557.8587 
-There were 50 or more warnings (use warnings() to see the first 50)
+WeibullLSS 
+
+Warning: WeibullLSScannot be fitted with stabilization
 > 
 > ## check count data
 > dat$y <- rnbinom(1000, size=10, mu=5)
@@ -306,4 +327,4 @@ Risks:
 > 
 > proc.time()
    user  system elapsed 
- 19.872   0.106  20.095 
+ 19.599   0.078  19.842 
