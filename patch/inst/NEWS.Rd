@@ -1,6 +1,36 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 1.2-1 (2016-03-11)}{
+  \subsection{User-visible changes}{
+    \itemize{
+      \item Speed up computations by using \code{response(fitted())}
+      instead of \code{fitted(, type = response)} as the latter uses
+      \code{predict()}. Closes issue
+      \href{https://github.com/boost-R/gamboostLSS/issues/5}{#5}.
+      \item Improved output of \code{print.mboostLSS()} and
+      \code{summary.mboostLSS()}. Closes issue
+      \href{https://github.com/boost-R/gamboostLSS/issues/7}{#7}.
+      \item Added \code{gamboostLSS_intern()} to make \pkg{FDboost}
+      happy. Caution: Do not use this function.
+    }
+  }
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item Fixed \file{inst/CITATION}.
+    }
+  }
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item Fixed tests for stabilization.
+      \item Fixed bug in \code{cvrisk.mboostLSS()} which occurred if
+      \code{families} wasn't explicitly specified when fitting the
+      model. Closes
+      \href{https://github.com/boost-R/gamboostLSS/issues/9}{#9}.
+    }
+  }
+}
+
 \section{Changes in gamboostLSS version 1.2-0 (2015-08-19)}{
   \subsection{User-visible changes}{
     \itemize{
@@ -14,7 +44,7 @@
       which is now available as \code{vignette("gamboostLSS_Tutorial",
 	package = "gamboostLSS")}.
       \item Added \code{summary} function (request
-      \href{https://github.com/hofnerb/gamboostLSS/issues/2}{#2}).
+      \href{https://github.com/boost-R/gamboostLSS/issues/2}{#2}).
     }
   }
   \subsection{Miscellaneous}{
@@ -25,7 +55,7 @@
   \subsection{Bug-fixes}{
     \itemize{
       \item Improve stored \code{call}s (closes
-      \href{https://github.com/hofnerb/gamboostLSS/issues/3}{#3}).
+      \href{https://github.com/boost-R/gamboostLSS/issues/3}{#3}).
       \item Use \code{weighted.median} to compute MAD when negative
       gradients are stabilized.
       \item Fixed handling of \pkg{gamlss.dist} families with \code{type
@@ -35,7 +65,7 @@
       \item The internal helper \code{get_qfun} is now a generic
       function.
       \item  Adhere to CRAN policies regarding import of base packages
-      (closes \href{https://github.com/hofnerb/gamboostLSS/issues/1}{#1}).
+      (closes \href{https://github.com/boost-R/gamboostLSS/issues/1}{#1}).
     }
   }
 }
