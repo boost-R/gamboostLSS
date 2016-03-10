@@ -6,6 +6,8 @@
 mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                       control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = mboost, funchar = "mboost", call = cl)
@@ -15,6 +17,8 @@ mboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = glmboost, funchar = "glmboost", call = cl)
@@ -24,6 +28,8 @@ glmboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                         control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = gamboost, funchar = "gamboost", call = cl)
@@ -33,6 +39,8 @@ gamboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL, ...){
     cl <- match.call()
+    if(is.null(cl$families))
+        cl$families <- families
     fit <- mboostLSS_fit(formula = formula, data = data, families = families,
                          control = control, weights = weights, ...,
                          fun = blackboost, funchar = "blackboost", call = cl)
