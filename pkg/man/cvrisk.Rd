@@ -1,6 +1,7 @@
 \name{cvrisk.mboostLSS}
 \alias{cvrisk}
 \alias{cvrisk.mboostLSS}
+\alias{cvrisk.nc_mboostLSS}
 \alias{make.grid}
 \alias{plot.cvriskLSS}
 
