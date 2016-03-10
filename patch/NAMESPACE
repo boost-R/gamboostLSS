@@ -31,7 +31,7 @@ export(glmboostLSS,
        gamlss2parMu, gamlss2parSigma,
        gamlss3parMu, gamlss3parSigma, gamlss3parNu,
        gamlss4parMu, gamlss4parSigma, gamlss4parNu, gamlss4parTau,
-       weighted.median)
+       weighted.median, gamboostLSS_intern)
 
 S3method("[", mboostLSS)
 S3method(print, mboostLSS)
