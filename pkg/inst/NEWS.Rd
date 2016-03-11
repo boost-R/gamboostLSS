@@ -62,7 +62,7 @@
       which is now available as \code{vignette("gamboostLSS_Tutorial",
 	package = "gamboostLSS")}.
       \item Added \code{summary} function (request
-      \href{https://github.com/hofnerb/gamboostLSS/issues/2}{#2}).
+      \href{https://github.com/boost-R/gamboostLSS/issues/2}{#2}).
     }
   }
   \subsection{Miscellaneous}{
@@ -73,7 +73,7 @@
   \subsection{Bug-fixes}{
     \itemize{
       \item Improve stored \code{call}s (closes
-      \href{https://github.com/hofnerb/gamboostLSS/issues/3}{#3}).
+      \href{https://github.com/boost-R/gamboostLSS/issues/3}{#3}).
       \item Use \code{weighted.median} to compute MAD when negative
       gradients are stabilized.
       \item Fixed handling of \pkg{gamlss.dist} families with \code{type
@@ -83,7 +83,7 @@
       \item The internal helper \code{get_qfun} is now a generic
       function.
       \item  Adhere to CRAN policies regarding import of base packages
-      (closes \href{https://github.com/hofnerb/gamboostLSS/issues/1}{#1}).
+      (closes \href{https://github.com/boost-R/gamboostLSS/issues/1}{#1}).
     }
   }
 }
