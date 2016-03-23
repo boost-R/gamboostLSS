@@ -8,7 +8,8 @@ init:
         Import-Module '..\appveyor-tool.ps1'
 
 install:
-  ps: Bootstrap
+  - mkdir src
+  - ps: Bootstrap
 
 # Adapt as necessary starting from here
 
