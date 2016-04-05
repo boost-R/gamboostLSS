@@ -110,7 +110,7 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
         RET <- sapply(parameter, get_sel,
                       object = object)
         
-        RET <- as.vector(t(RES))
+        RET <- as.vector(t(RET))
         names(RET) <- rep(names(parameter), mstop(object)[1])
         lo <- length(unique(mstop(object)))
         if (lo != 1)

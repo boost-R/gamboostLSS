@@ -79,7 +79,7 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 \method{risk}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
 
 ### extract selected base-learners
-\method{selected}{mboostLSS}(object, parameter = names(object), ...)
+\method{selected}{mboostLSS}(object, merge = FALSE, parameter = names(object), ...)
 
 ### extract fitted values
 \method{fitted}{mboostLSS}(object, parameter = names(object), ...)

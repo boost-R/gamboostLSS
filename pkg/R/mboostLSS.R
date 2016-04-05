@@ -75,7 +75,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                           fun = mboost, funchar = "mboost", call = NULL,
                           method, ...){
   
-    iBoost_cycling <- function(niter) {
+    if(method == "cycling")
+      iBoost_cycling <- function(niter) {
     
     start <- sapply(fit, mstop)
     mvals <- vector("list", length(niter))
@@ -117,7 +118,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     return(TRUE)
   }
-    iBoost_outer <- function(niter){
+    if(method == "outer")
+      iBoost_outer <- function(niter){
     
     #this is the case for boosting from the beginning
     if(is.null(attr(fit, "combined_risk")) | niter == 0){
@@ -138,7 +140,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])),
                environment(get("ngradient", environment(fit[[k]]$subset))))
         
-        evalq(u <- ngradient(y, fit, weights), ENV[[k]])
+        #evalq(u <- ngradient(y, fit, weights), ENV[[k]])
+        ENV[[k]][["u"]] <- ENV[[k]][["ngradient"]](ENV[[k]][["y"]],
+                                                   ENV[[k]][["fit"]],
+                                                   ENV[[k]][["weights"]])
       }
       
       if (funchar == "glmboost") {
@@ -146,8 +151,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         coefs <- list()
         
         for(i in mods){
-          coefs[[i]] <- evalq(environment(fit1)[["est"]](u)/
-                                environment(fit1)[["sxtx"]], envir = ENV[[i]])
+          coefs[[i]] <- evalq(environment(get("fit1"))[["est"]](u)/
+                                environment(get("fit1"))[["sxtx"]], envir = ENV[[i]])
           
           all_fitted <- sweep(environment(ENV[[i]][["fit1"]])[["X"]], 2, 
                               coefs[[i]] ,`*`)
@@ -172,17 +177,17 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                                    xselect = xs,
                                    p = length(coefs[[best]])),
                          fitted = function() {
-                           return(coefs[[best]][xs] * environment(fit1)[["X"]][, xs, drop = FALSE])
+                           return(coefs[[best]][xs] * environment(get("fit1"))[["X"]][, xs, drop = FALSE])
                          })
           class(basses) <- c("bm_cwlin", "bm_lin", "bm")
           fit <- fit + nu * basses$fitted()
-          u <- ngradient(y, fit, weights)
-          mrisk[(mstop + 1)] <- triskfct(y, fit)
+          u <- get("ngradient")(get("y"), fit, weights)
+          mrisk[(mstop + 1)] <- get("triskfct")(get("y"), fit)
           ens[[(mstop + 1)]] <- basses
           xselect[(mstop + 1)] <- xs
           nuisance[[(mstop +1)]] <- family@nuisance()
           mstop <- mstop + 1}, 
-          envir = ENV[[best]])
+          envir <- ENV[[best]])
       }
       
       #all other baselearner
@@ -190,9 +195,9 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         risks <- list()
         for( i in mods){
           risks[[i]] <- evalq({
-            ss_new <- lapply(get("blfit", envir = environment(basefit)), 
+            ss_new <- lapply(get("blfit", envir = environment(get("basefit"))), 
                              function(x) x(u))
-            sapply(ss_new, function(x) riskfct(y, fit + nu * x$fitted(), weights))
+            sapply(ss_new, function(x) get("riskfct")(get("y"), fit + nu * x$fitted(), weights))
           }, envir = ENV[[i]])
         }
         
@@ -200,13 +205,13 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                                  FUN.VALUE = numeric(1)))
         
         evalq({
-          ss <- lapply(get("blfit", envir = environment(basefit)), 
+          ss <- lapply(get("blfit", envir = environment(get("basefit"))), 
                        function(x) x(u))
           xselect[mstop + 1] <- which.min(sapply(ss, function(x) 
-            riskfct(y, fit + nu * x$fitted(), weights)))
+            get("riskfct")(get("y"), fit + nu * x$fitted(), weights)))
           fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
-          u <- ngradient(y, fit, weights)
-          mrisk[(mstop + 1)] <- triskfct(y, fit)
+          u <- get("ngradient")(get("y"), fit, weights)
+          mrisk[(mstop + 1)] <- get("triskfct")(get("y"), fit)
           ens[[(mstop + 1)]] <- ss[[tail(xselect, 1)]]
           nuisance[[(mstop + 1)]] <- family@nuisance()
           mstop <- mstop + 1}, 
@@ -228,7 +233,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     combined_risk  <<- combined_risk
     return(TRUE)
   }
-    iBoost_inner <- function(niter){
+    if(method == "inner" )
+      iBoost_inner <- function(niter){
     
     
     #this is the case for boosting from the beginning
@@ -255,7 +261,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
       for(b  in 1:length(fit)){
         st <- mstop(fit[[b]])
         fit[[b]][st + 1]
-        risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
+        #risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
+        risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], 
+                                          ENV[[b]][["fit"]],
+                                          ENV[[b]][["weights"]])
         fit[[b]][st]
         
         ## fit[[b]][st] is not enough to reduce the model back to beginning, so
@@ -485,7 +494,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             ## set negative values to 0
             ## (only applicable if some parameters do not need to be touched
             inc <- ifelse(i - minStart > 0, i - minStart, 0)
-            tmp <- iBoost(inc)
+            tmp <- iBoost_cycling(inc)
         }
         
         mstop <<- i
@@ -541,7 +550,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           }
           
           for(k in mods){
-            evalq(u <- ngradient(y, fit, weights), ENV[[k]])
+            evalq(u <- get("ngradient")(get("y"), fit, weights), ENV[[k]])
           }
           
           

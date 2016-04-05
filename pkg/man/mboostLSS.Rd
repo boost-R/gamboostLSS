@@ -4,11 +4,7 @@
 \alias{glmboostLSS}
 \alias{gamboostLSS}
 \alias{mboostLSS_fit}
-\alias{nc_mboostLSS}
-\alias{nc_blackboostLSS}
-\alias{nc_glmboostLSS}
-\alias{nc_gamboostLSS}
-\alias{nc_mboostLSS_fit}
+
 
 \title{
   Fitting GAMLSS by Boosting
@@ -22,18 +18,18 @@
 }
 \usage{
 mboostLSS(formula, data = list(), families = GaussianLSS(),
-          control = boost_control(), weights = NULL, ...)
+          control = boost_control(), weights = NULL, method = c("cycling", "inner", "outer"), ...)
 glmboostLSS(formula, data = list(), families = GaussianLSS(),
-            control = boost_control(), weights = NULL, ...)
+            control = boost_control(), weights = NULL, method = c("cycling", "inner", "outer"), ...)
 gamboostLSS(formula, data = list(), families = GaussianLSS(),
-            control = boost_control(), weights = NULL, ...)
+            control = boost_control(), weights = NULL, method = c("cycling", "inner", "outer"), ...)
 blackboostLSS(formula, data = list(), families = GaussianLSS(),
-              control = boost_control(), weights = NULL, ...)
+              control = boost_control(), weights = NULL,method = c("cycling", "inner", "outer"), ...)
 
 ## fit function:
 mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
               control = boost_control(), weights = NULL,
-              fun = mboost, funchar = "mboost", call = NULL, ...)
+              fun = mboost, funchar = "mboost", call = NULL, method, ...)
 }
 
 \arguments{
