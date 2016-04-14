@@ -84,12 +84,12 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
                                ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-    
+
     #merge is different for noncyclical fitting
     if (merge) {
       if (inherits(object, "nc_mboostLSS")){
         RET <- names(attr(object, "combined_risk")())
-       
+
         for(p in names(parameter)){
           RET[RET == p] <- object[[p]]$xselect()
         }
@@ -106,10 +106,10 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
           }
           sel
         }
-        
+
         RET <- sapply(parameter, get_sel,
                       object = object)
-        
+
         RET <- as.vector(t(RET))
         names(RET) <- rep(names(parameter), mstop(object)[1])
         lo <- length(unique(mstop(object)))
@@ -117,9 +117,9 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
           RET <- RET[!is.na(RET)]
         return(RET)
       }
-      
+
     }
-    else { 
+    else {
       RET <- lapply(parameter, function(i, object)
         selected(object[[i]]),
         object = object)
@@ -373,7 +373,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
 
     cll <- match.call()
     p <- sum(sapply(x, function(obj) length(variable.names(obj))))
-    n <- nrow(attr(x, "data"))
+    n <- x[[1]]$ydim[1]
 
     ## extract names of base-learners (and add paramter name)
     nms <- lapply(x, function(obj) variable.names(obj))
@@ -392,7 +392,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
       if (is.null(mstop))
         mstop <- sum(mstop(x))
       if (length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(x)) {
-        stop(sQuote("mstop"), " has to be an integer larger than ", 
+        stop(sQuote("mstop"), " has to be an integer larger than ",
              length(x))
       }
       mstop_min <- length(x)
@@ -456,7 +456,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             res
         })
         ret <- unlist(ret)
-        
+
         ## compute selection paths
         #merging for method cycling
         if(!inherits(x, "nc_mboostLSS")){
@@ -503,9 +503,9 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         else {
           sequence <- matrix(FALSE, nrow = p, ncol = mstop[1])
           rownames(sequence) <- unlist(nms)
-          
+
           sel <- selected(mod, merge = TRUE)
-          
+
           for (i in names(mod)) {
             varnames <- variable.names(mod[[i]])
             for(j in seq_along(varnames)){
@@ -513,11 +513,11 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
               if(length(pos) > 0)
                 sequence[paste(varnames[j], i, sep = "."), min(pos):mstop[1]] <- TRUE
             }
-            
+
           }
-          
+
         }
-        
+
         colnames(sequence) <- 1:ncol(sequence)
         ret <- list(selected = ret, path = sequence)
         ## was mstop to small?
