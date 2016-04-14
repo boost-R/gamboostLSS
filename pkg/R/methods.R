@@ -373,7 +373,12 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
 
     cll <- match.call()
     p <- sum(sapply(x, function(obj) length(variable.names(obj))))
-    n <- x[[1]]$ydim[1]
+    n <- if(inherits(x, "FDboostLSS")) {
+      x[[1]]$ydim[1]
+    } else {
+      nrow(attr(x, "data"))
+    }
+
 
     ## extract names of base-learners (and add paramter name)
     nms <- lapply(x, function(obj) variable.names(obj))
