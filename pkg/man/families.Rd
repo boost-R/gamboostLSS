@@ -246,7 +246,7 @@ newStudentTMu  <- function(mu, df){
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, df = df))
     }
-    # ngradient is the negative derivate w.r.t. mu
+    # ngradient is the negative derivate w.r.t. mu (=f)
     ngradient <- function(y, f, w = 1) {
         (df + 1) * (y - f)/(df  + (y - f)^2)
     }
@@ -271,7 +271,8 @@ newStudentTDf <- function(mu, df){
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f,  mu = mu))
     }
-    # ngradient is the negative derivate w.r.t. df
+    # ngradient is the negative derivate of the loss w.r.t. f
+    # in this case, just the derivative of the log-likelihood 
     ngradient <- function(y, f, w = 1) {
         exp(f)/2 * (digamma((exp(f) + 1)/2) - digamma(exp(f)/2)) -
             0.5 - (exp(f)/2 * log(1 + (y - mu)^2 / (exp(f) )) -
