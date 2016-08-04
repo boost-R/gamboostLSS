@@ -1,7 +1,0 @@
-tests/.*\.Rout\.save$
-tests/Examples
-^\..*
-vignettes/gamboostLSS_Tutorial.tex
-vignettes/auto
-vignettes/graphics
-vignettes/.*\.Rout\.save$
