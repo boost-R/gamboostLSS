@@ -4,17 +4,23 @@
 \section{Changes in gamboostLSS version 1.3-0 (xxxx-yy-zz)}{
   \subsection{User-visible changes}{
     \itemize{
-      \item First, experimental version of \code{stabsel} implemented.
+      \item Added new non-cyclic fitting \code{method}s for \code{gamboostLSS} models:
+      \itemize{
+        \item \code{method = "cycling"} is the standard approach which was also
+           used previously.
+        \item \code{method = "inner"} and \code{"outer"} provide two new
+           non-cyclic algorithms. For details see XXX.
+        \item Non-cyclic methods allow faster cross-validation and better results
+           for stability selection (see below).
+      }
+      \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
+         models.
+         
     }
   }
   \subsection{Miscellaneous}{
     \itemize{
-      \item 
-    }
-  }
-  \subsection{Bug-fixes}{
-    \itemize{
-      \item
+      \item Added Janek Thomas as new author.
     }
   }
 }
