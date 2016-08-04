@@ -43,7 +43,7 @@
   the covariate has on each distribution parameter in the final GAMLSS.
 }
 \author{
-  Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid
+  Benjamin Hofner, Andreas Mayr, Nora Fenske, Matthias Schmid, Janek Thomas
 
   Maintainer:  Benjamin Hofner <benjamin.hofner@fau.de>
 }
