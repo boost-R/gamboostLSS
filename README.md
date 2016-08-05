@@ -14,6 +14,18 @@ various distribution parameters such as location, scale and shape at the same
 time (hence the name GAMLSS, generalized additive models for location, scale and
 shape).
 
+
+## Using gamboostLSS
+
+For installation instructions see below.
+
+Instructions on how to use `gamboostLSS` can be found here:
+- [gamboostLSS tutorial](http://arxiv.org/pdf/1407.1774v1); This is apreliminary version currently under review.
+
+## Issues & Feature Requests
+
+For issues, bugs, feature requests etc. please use the [GitHub Issues](https://github.com/boost-R/gamboostLSS/issues).
+
 ## Installation
 
 - Current version (from CRAN): 
@@ -21,17 +33,17 @@ shape).
   install.packages("gamboostLSS")
   ```
 
-- Latest **patch version** (under development) from GitHub:
+- Latest **patch version** (patched version of CRAN package; under development) from GitHub:
   ```
   library("devtools")
-  install_github("boost-R/gamboostLSS/patch")
+  install_github("boost-R/gamboostLSS")
   library("gamboostLSS")
   ```
 
-- Latest **development version** from GitHub:
+- Latest **development version** (version with new features; under development) from GitHub:
   ```
   library("devtools")
-  install_github("boost-R/gamboostLSS/pkg")
+  install_github("boost-R/gamboostLSS", ref = "devel")
   library("gamboostLSS")
   ```
 
@@ -40,7 +52,3 @@ shape).
   install.packages("devtools")
   ```
 
-## Using gamboostLSS
-
-Instructions on how to use `gamboostLSS` can be found here:
-- [gamboostLSS tutorial](http://arxiv.org/pdf/1407.1774v1); This is apreliminary version currently under review.
