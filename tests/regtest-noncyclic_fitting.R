@@ -118,5 +118,35 @@ mstop(model) <- 50
 
 stopifnot(all.equal(m_co, coef(model)))
 
+## check cvrisk for noncyclic models
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "outer")
+cvr1 <- cvrisk(model, grid = 1:100)
+cvr1
+
+risk(model, merge = TRUE)
+risk(model, merge = FALSE)
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "inner")
+cvr2 <- cvrisk(model, grid = 1:100)
+cvr2
+
+risk(model, merge = TRUE)
+risk(model, merge = FALSE)
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 3), method = "cycling")
+cvr3 <- cvrisk(model, grid = make.grid(c(mu = 50, sigma = 50)))
+cvr3
+
+risk(model, merge = TRUE)
+risk(model, merge = FALSE)
+
+par(mfrow = c(2, 2))
+plot(cvr1)
+plot(cvr2)
+plot(cvr3, type = "heatmap")
+plot(cvr3, type = "lines")
 
 
