@@ -1,6 +1,11 @@
+^\..*
+^.*\.Rproj$
+^\.Rproj\.user$
+^.*\.yml$
+SOP_release.txt
+buildCRAN
 tests/.*\.Rout\.save$
 tests/Examples
-^\..*
 vignettes/gamboostLSS_Tutorial.tex
 vignettes/auto
 vignettes/graphics
