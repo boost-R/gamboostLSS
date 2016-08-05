@@ -1,11 +1,11 @@
 ## check development version of gamboostLSS
 ## see http://docs.travis-ci.com/user/languages/r/
 
-## test multiple directories 
-## (see https://lord.io/blog/2014/travis-multiple-subdirs/)
-env:
- - TEST_DIR=patch/
- - TEST_DIR=pkg/
+# ## test multiple directories 
+# ## (see https://lord.io/blog/2014/travis-multiple-subdirs/)
+# env:
+#  - TEST_DIR=patch/
+#  - TEST_DIR=pkg/
 
 language: r
 sudo: required
@@ -18,7 +18,7 @@ before_install:
   - cd $TEST_DIR
 
 r_github_packages:
-  - hofnerb/mboost/pkg/mboostPatch
+  - boost-R/mboost
   - hofnerb/stabs
   - jimhester/covr
   

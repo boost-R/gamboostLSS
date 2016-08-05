@@ -13,17 +13,17 @@ install:
 
 # Adapt as necessary starting from here
 
-environment:
-  matrix:
-  - TEST_DIR: patch
-  - TEST_DIR: pkg
+# environment:
+#   matrix:
+#   - TEST_DIR: patch
+#   - TEST_DIR: pkg
 
 before_build:
-  - cp ../travis-tool.sh ./travis-tool.sh
-  - cp travis-tool.sh.cmd %TEST_DIR%/travis-tool.sh.cmd
-  - cd %TEST_DIR%
+#   - cp ../travis-tool.sh ./travis-tool.sh
+#   - cp travis-tool.sh.cmd %TEST_DIR%/travis-tool.sh.cmd
+#   - cd %TEST_DIR%
   - bash -c "echo '^travis-tool\.sh\.cmd$' >> .Rbuildignore"
-  - dir
+#   - dir
 
 build_script:
   - travis-tool.sh install_deps
@@ -35,20 +35,20 @@ on_failure:
   - travis-tool.sh dump_logs
 
 artifacts:
-  - path: '$(TEST_DIR)\*.Rcheck\**\*.log'
+  - path: '*.Rcheck\**\*.log'
     name: Logs
 
-  - path: '$(TEST_DIR)\*.Rcheck\**\*.out'
+  - path: '*.Rcheck\**\*.out'
     name: Logs
 
-  - path: '$(TEST_DIR)\*.Rcheck\**\*.fail'
+  - path: '*.Rcheck\**\*.fail'
     name: Logs
 
-  - path: '$(TEST_DIR)\*.Rcheck\**\*.Rout'
+  - path: '*.Rcheck\**\*.Rout'
     name: Logs
 
-  - path: '$(TEST_DIR)\*_*.tar.gz'
+  - path: '*_*.tar.gz'
     name: Bits
 
-  - path: '$(TEST_DIR)\*_*.zip'
+  - path: '*_*.zip'
     name: Bits
