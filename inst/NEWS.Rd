@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 1.3-0 (xxxx-yy-zz)}{
+\section{Changes in gamboostLSS version 1.5-0 (2016-yy-zz)}{
   \subsection{User-visible changes}{
     \itemize{
       \item Added new non-cyclic fitting \code{method}s for \code{gamboostLSS} models:
@@ -15,7 +15,6 @@
       }
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
-         
     }
   }
   \subsection{Miscellaneous}{
