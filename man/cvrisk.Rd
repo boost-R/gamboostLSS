@@ -127,8 +127,8 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   fold to fold. The heatmap shows only the average risk but in a nicer
   fashion.
   For the noncyclical fitting methods (i.e. \code{method = "inner"} or 
-  \code{method = "outer"}) the plot function of \code{\link{mboost::cvrisk}} 
-  is used.
+  \code{method = "outer"}) the plot function of \code{\link{cvrisk}} from the 
+  packge \code{mboost} is used.
 
   Hofner et al. (2015) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
