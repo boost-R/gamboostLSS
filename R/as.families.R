@@ -2,9 +2,6 @@
 ################################################################################
 ### Family wrapper for gamlss families
 
-## to use stability correction for gradients
-## please set
-## options(gamboostLSS_stab_ngrad = TRUE)
 
 
 
@@ -72,33 +69,57 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
     NAMEofFAMILY <- FAM$family
     dfun <- paste("gamlss.dist::d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
-
+    is.bdfamily  <- "bd" %in% names(formals(pdf))
+    
+    
     ## get the loss
     loss <- function(y, f, w = 1) {
-        -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE)
+      if(is.bdfamily) 
+      {
+        bd <- rowSums(y)
+        y <- y[,1]
+        return( -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE, bd = bd))
+      }
+      -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
-        sum(w * loss(y = y, f = f))
+      sum(w * loss(y = y, f = f))
     }
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        FAM$dldm(y = y, mu = FAM$mu.linkinv(f)) * FAM$mu.dr(eta = f)
+      if(is.bdfamily) 
+      {
+        if (!is.matrix(y)) stop("y should be a matrix for this family")
+        bd <- rowSums(y)
+        y <- y[,1]
+        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), bd = bd) * FAM$mu.dr(eta = f)
+      }
+      else{
+        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f)) * FAM$mu.dr(eta = f)  
+      }
+      return(ngr)
     }
-
+    
     ## get the offset -> we take the starting values of gamlss
     offset <- function(y, w = 1) {
-        if (!is.null(mu)) {
-            RET <- FAM$mu.linkfun(mu)
-        } else {
-            eval(FAM$mu.initial)
-            RET <- FAM$mu.linkfun(mean(mu))
+      if (!is.null(mu)) {
+        RET <- FAM$mu.linkfun(mu)
+      } else {
+        if(is.bdfamily) 
+        {
+          if (!is.matrix(y)) stop("y should be a matrix for this family")
+          bd <- rowSums(y)
+          y <- y[,1]
         }
-        return(RET)
+        eval(FAM$mu.initial)
+        RET <- FAM$mu.linkfun(mean(mu))
+      }
+      return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) FAM$mu.linkinv(f), offset = offset,
            name = paste(FAM$family[2], "(mboost family)"))
@@ -114,35 +135,61 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    is.bdfamily  <- "bd" %in% names(formals(pdf))
+    
+    
     ## get the loss
-    loss <- function(y, f, sigma, w = 1) {
-        -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE)
+    loss <- function(y, f, sigma,  w = 1) {
+      if(is.bdfamily) 
+      {
+        #if (!is.matrix(y)) stop("y should be a matrix for this family")
+        bd <- rowSums(y)
+        y <- y[,1]
+        return( -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE, bd = bd))
+      }
+      
+      -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
-        sum(w * loss(y = y, f = f, sigma = sigma))
+      sum(w * loss(y = y, f = f, sigma = sigma))
     }
-
+    
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
-        ngr <- stabilize_ngradient(ngr, w = w, stabilization)
-        ngr
+      if(is.bdfamily) 
+      {
+        if (!is.matrix(y)) stop("y should be a matrix for this family")
+        bd <- rowSums(y)
+        y <- y[,1]
+        ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, bd = bd) * FAM$mu.dr(eta = f)
+      }
+      else{
+        ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)  
+      }
+      ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+      ngr
     }
-
+    
     ## get the offset -> we take the starting values of gamlss
     offset <- function(y, w = 1) {
-        if (!is.null(mu)) {
-            RET <- FAM$mu.linkfun(mu)
-        } else {
-            eval(FAM$mu.initial)
-            RET <- FAM$mu.linkfun(mean(mu))
+      if (!is.null(mu)) {
+        RET <- FAM$mu.linkfun(mu)
+      } else {
+        if(is.bdfamily) 
+        {
+          if (!is.matrix(y)) stop("y should be a matrix for this family")
+          bd <- rowSums(y)
+          y <- y[,1]
         }
-        return(RET)
+        eval(FAM$mu.initial)
+        RET <- FAM$mu.linkfun(mean(mu))
+      }
+      return(RET)
     }
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) FAM$mu.linkinv(f), offset = offset,
            name = paste(FAM$family[2], "1st parameter (mu)"))
@@ -155,31 +202,53 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
 
+    is.bdfamily  <- "bd" %in% names(formals(pdf))
+    
     ## get the loss
-    loss <- function(y, f, w = 1, mu) {
-        -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE)
+    loss <- function(y, f, w = 1, mu ) {
+      # check if bd exists in this family
+      if(is.bdfamily) 
+      {
+        bd <- rowSums(y)
+        y <- y[,1]
+        return( -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE, bd = bd))
+      }
+      
+      -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
-        sum(w * loss(y = y, f = f, mu = mu))
+      sum(w * loss(y = y, f = f, mu = mu))
     }
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
-        ngr <- stabilize_ngradient(ngr, w = w, stabilization)
-        ngr
+      
+      # check if bd exists in this family
+      if(is.bdfamily) 
+      {
+        if (!is.matrix(y)) stop("y should be a matrix for this family")
+        bd <- rowSums(y)
+        y <- y[,1]
+        ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), bd = bd) * FAM$sigma.dr(eta = f)
+        
+      }
+      else{ ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
+      }
+      
+      ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+      ngr
     }
     ## get the offset
     offset <- function(y, w = 1) {
-        if (!is.null(sigma)) {
-            RET <- FAM$sigma.linkfun(sigma)
-        } else {
-            eval(FAM$sigma.initial)
-            RET <- FAM$sigma.linkfun(mean(sigma))
-        }
-        return(RET)
+      if (!is.null(sigma)) {
+        RET <- FAM$sigma.linkfun(sigma)
+      } else {
+        eval(FAM$sigma.initial)
+        RET <- FAM$sigma.linkfun(mean(sigma))
+      }
+      return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) FAM$sigma.linkinv(f), offset = offset,
