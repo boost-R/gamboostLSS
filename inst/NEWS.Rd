@@ -17,6 +17,13 @@
          models.
     }
   }
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item Fixed \code{as.families("BB")} and \code{as.families("BI")}, which is actually an mboost family
+        Closes issue
+        \href{https://github.com/boost-R/gamboostLSS/issues/12}{#12}.
+    }
+  }
   \subsection{Miscellaneous}{
     \itemize{
       \item Added Janek Thomas as new author.
