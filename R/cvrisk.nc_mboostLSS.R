@@ -20,15 +20,15 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
   call <- deparse(attr(object, "call"))
   oobrisk <- matrix(0, nrow = ncol(folds), ncol = length(grid))
   if (trace)
-    cat("Starting cross-validation...\n",
-        "[fold]\t[current mstop]\n", sep = "")
+    cat("Starting cross-validation...")
   if (is.null(fun)) {
     dummyfct <- function(i, weights, oobweights) {
-      ## make model with new weights and minimal mstop
+      if (trace)
+        cat("\n[Fold: ", i, "]\n", sep = "")
+      ## make model with new weights and max mstop
       mod <- update(object, weights = weights, oobweights = oobweights,
-                    risk = "oobag", trace = FALSE,
-                    mstop = max(grid))
-      
+                    risk = "oobag",
+                    mstop = max(grid), trace = trace)
 
       
       risks <- attr(mod, "combined_risk")()[grid]
@@ -45,13 +45,15 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
   OOBweights[folds > 0] <- 0
   if (all.equal(papply, mclapply) == TRUE) {
     oobrisk <- papply(1:ncol(folds),
-                      function(i) dummyfct(weights = folds[, i],
+                      function(i) dummyfct(i = i,
+                                           weights = folds[, i],
                                            oobweights = OOBweights[, i]),
                       mc.preschedule = mc.preschedule,
                       ...)
   } else {
     oobrisk <- papply(1:ncol(folds),
-                      function(i) try(dummyfct(weights = folds[, i],
+                      function(i) try(dummyfct(i = i,
+                                               weights = folds[, i],
                                                oobweights = OOBweights[, i])),
                       ...)
   }
@@ -75,7 +77,7 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
   attr(oobrisk, "mstop") <- grid
   attr(oobrisk, "type") <- ifelse(!is.null(attr(folds, "type")),
                                   attr(folds, "type"), "user-defined")
-  class(oobrisk) <- "cvrisk"
+  class(oobrisk) <- c("nc_cvrisk", "cvrisk")
   oobrisk
 }
 
@@ -89,3 +91,11 @@ risk.nc_mboostLSS <- function(object, merge = FALSE,
   }
   
 }
+
+
+plot.nc_cvriskLSS <- function(x, ylab = attr(x, "risk"),
+                                xlab = "Number of boosting iterations",
+                                ylim = range(x), main = attr(x, "type"), ...) {
+  mboost:::plot.cvrisk(x, ylab, xlab, ylim, main, ...)
+}
+
