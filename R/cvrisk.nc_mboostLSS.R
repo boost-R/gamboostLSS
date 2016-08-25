@@ -20,21 +20,15 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
   call <- deparse(attr(object, "call"))
   oobrisk <- matrix(0, nrow = ncol(folds), ncol = length(grid))
   if (trace)
-    cat("Starting cross-validation...\n",
-        "[fold]\t[current mstop]\n", sep = "")
+    cat("Starting cross-validation...")
   if (is.null(fun)) {
     dummyfct <- function(i, weights, oobweights) {
+      if (trace)
+        cat("\n[Fold: ", i, "]\n", sep = "")
       ## make model with new weights and max mstop
       mod <- update(object, weights = weights, oobweights = oobweights,
-                    risk = "oobag", trace = FALSE,
-                    mstop = max(grid))
-      
-      if (trace) {
-        txt <- paste0(" [", i, "]\t",
-          paste0("[", paste(mstop(mod), collapse = ","),
-            "]"), "\n")
-        cat(txt)
-      }
+                    risk = "oobag",
+                    mstop = max(grid), trace = trace)
 
       
       risks <- attr(mod, "combined_risk")()[grid]
