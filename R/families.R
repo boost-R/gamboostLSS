@@ -759,7 +759,7 @@ BetaMu <- function(mu = NULL, phi = NULL, stabilization){
     # ngradient is the negative derivate w.r.t. mu
     ngradient <- function(y, f, w = 1) {
         ngr <- +1 * exp(f)/(1 + exp(f))^2 * (phi * (qlogis(y) - (digamma(plogis(f) * phi) -
-              digamma((1 - plogis(f)) * phi)))) # Nachdifferenzieren? -> nein, da nach mu ableiten und nicht nach beta
+              digamma((1 - plogis(f)) * phi)))) 
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         return(ngr)
     }
