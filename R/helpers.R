@@ -1,11 +1,11 @@
 ## helper functions
 
 check <- function(what, what_char, names) {
-
+    
     errormsg <- paste0(sQuote(what_char), " can be either a scalar, a (named) vector or a (named) list",
-                      " of ", what_char, " values with same names as ",  sQuote("families"), "in ",
-                      sQuote("boost_control"))
-
+                       " of ", what_char, " values with same names as ",  sQuote("families"), "in ",
+                       sQuote("boost_control"))
+    
     if (is.list(what)) {
         if (is.null(names(what)) && length(what) == length(names))
             names(what) <- names
@@ -28,7 +28,7 @@ check <- function(what, what_char, names) {
             what <- what[names] ## sort in order of families
         }
     }
-
+    
     return(what)
 }
 
@@ -41,7 +41,7 @@ get_data <- function(x, which = NULL) {
         data <- try(sapply(which, get, env = parent.frame(2)),
                     silent = TRUE)
         if (inherits(data, "try-error"))
-                stop("No data set found.")
+            stop("No data set found.")
         data <- as.data.frame(data)
     }
     return(data)
@@ -178,7 +178,7 @@ check_stabilization <- function(stabilization = c("none", "MAD")) {
                 " is deprecated.\n", "Use argument ", sQuote("stabilization"),
                 " in the fitting family. See ?Families for details.")
         if (stabilization == "none")
-           warning(sQuote("stabilization"), " is set to ", dQuote("MAD"))
+            warning(sQuote("stabilization"), " is set to ", dQuote("MAD"))
     }
     stabilization
 }

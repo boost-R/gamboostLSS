@@ -15,26 +15,26 @@ gamlss.Families <- function(...)
 as.families <- function(fname = "NO",
                         mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                         stabilization = c("none", "MAD")) {
-
+    
     ## require gamlss.dist
     if (!requireNamespace("gamlss.dist", quietly = TRUE))
         stop("Please install package 'gamlss.dist' for using gamlss families.")
-
+    
     if (is.function(fname))
         fname <- fname()
-
+    
     if (inherits(fname, "gamlss.family"))
         fname <- fname$family[1]
-
+    
     if (mode(fname) != "character" && mode(fname) != "name")
         fname <- as.character(substitute(fname))
-
+    
     gamlss.fam <- try(gamlss.dist::gamlss.family(fname), silent = TRUE)
     if (inherits(gamlss.fam, "try-error"))
         stop(sQuote("fname"), " specifies no valid gamlss family")
-
+    
     stabilization <- check_stabilization(stabilization)
-
+    
     npar <- gamlss.fam$nopar
     switch(npar, {
         ## 1 parameter
@@ -64,7 +64,7 @@ as.families <- function(fname = "NO",
 ## 1 parameter
 
 gamlss1parMu <- function(mu = NULL, fname = "EXP") {
-
+    
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("gamlss.dist::d", fname, sep = "")
@@ -74,50 +74,50 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
     
     ## get the loss
     loss <- function(y, f, w = 1) {
-      if(is.bdfamily) 
-      {
-        bd <- rowSums(y)
-        y <- y[,1]
-        return( -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE, bd = bd))
-      }
-      -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE)
+        if(is.bdfamily) 
+        {
+            bd <- rowSums(y)
+            y <- y[,1]
+            return( -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE, bd = bd))
+        }
+        -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE)
     }
     
     ## compute the risk
     risk <- function(y, f, w = 1) {
-      sum(w * loss(y = y, f = f))
+        sum(w * loss(y = y, f = f))
     }
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-      if(is.bdfamily) 
-      {
-        if (!is.matrix(y)) stop("y should be a matrix for this family")
-        bd <- rowSums(y)
-        y <- y[,1]
-        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), bd = bd) * FAM$mu.dr(eta = f)
-      }
-      else{
-        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f)) * FAM$mu.dr(eta = f)  
-      }
-      return(ngr)
+        if(is.bdfamily) 
+        {
+            if (!is.matrix(y)) stop("y should be a matrix for this family")
+            bd <- rowSums(y)
+            y <- y[,1]
+            ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), bd = bd) * FAM$mu.dr(eta = f)
+        }
+        else{
+            ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f)) * FAM$mu.dr(eta = f)  
+        }
+        return(ngr)
     }
     
     ## get the offset -> we take the starting values of gamlss
     offset <- function(y, w = 1) {
-      if (!is.null(mu)) {
-        RET <- FAM$mu.linkfun(mu)
-      } else {
-        if(is.bdfamily) 
-        {
-          if (!is.matrix(y)) stop("y should be a matrix for this family")
-          bd <- rowSums(y)
-          y <- y[,1]
+        if (!is.null(mu)) {
+            RET <- FAM$mu.linkfun(mu)
+        } else {
+            if(is.bdfamily) 
+            {
+                if (!is.matrix(y)) stop("y should be a matrix for this family")
+                bd <- rowSums(y)
+                y <- y[,1]
+            }
+            eval(FAM$mu.initial)
+            RET <- FAM$mu.linkfun(mean(mu))
         }
-        eval(FAM$mu.initial)
-        RET <- FAM$mu.linkfun(mean(mu))
-      }
-      return(RET)
+        return(RET)
     }
     
     Family(ngradient = ngradient, risk = risk, loss = loss,
@@ -131,7 +131,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
 
 gamlss2parMu <- function(mu = NULL, sigma = NULL,
                          stabilization, fname = "NO") {
-
+    
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
@@ -140,54 +140,54 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL,
     
     ## get the loss
     loss <- function(y, f, sigma,  w = 1) {
-      if(is.bdfamily) 
-      {
-        #if (!is.matrix(y)) stop("y should be a matrix for this family")
-        bd <- rowSums(y)
-        y <- y[,1]
-        return( -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE, bd = bd))
-      }
-      
-      -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE)
+        if(is.bdfamily) 
+        {
+            #if (!is.matrix(y)) stop("y should be a matrix for this family")
+            bd <- rowSums(y)
+            y <- y[,1]
+            return( -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE, bd = bd))
+        }
+        
+        -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, log = TRUE)
     }
     
     ## compute the risk
     risk <- function(y, f, w = 1) {
-      sum(w * loss(y = y, f = f, sigma = sigma))
+        sum(w * loss(y = y, f = f, sigma = sigma))
     }
     
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-      if(is.bdfamily) 
-      {
-        if (!is.matrix(y)) stop("y should be a matrix for this family")
-        bd <- rowSums(y)
-        y <- y[,1]
-        ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, bd = bd) * FAM$mu.dr(eta = f)
-      }
-      else{
-        ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)  
-      }
-      ngr <- stabilize_ngradient(ngr, w = w, stabilization)
-      ngr
+        if(is.bdfamily) 
+        {
+            if (!is.matrix(y)) stop("y should be a matrix for this family")
+            bd <- rowSums(y)
+            y <- y[,1]
+            ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, bd = bd) * FAM$mu.dr(eta = f)
+        }
+        else{
+            ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)  
+        }
+        ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+        ngr
     }
     
     ## get the offset -> we take the starting values of gamlss
     offset <- function(y, w = 1) {
-      if (!is.null(mu)) {
-        RET <- FAM$mu.linkfun(mu)
-      } else {
-        if(is.bdfamily) 
-        {
-          if (!is.matrix(y)) stop("y should be a matrix for this family")
-          bd <- rowSums(y)
-          y <- y[,1]
+        if (!is.null(mu)) {
+            RET <- FAM$mu.linkfun(mu)
+        } else {
+            if(is.bdfamily) 
+            {
+                if (!is.matrix(y)) stop("y should be a matrix for this family")
+                bd <- rowSums(y)
+                y <- y[,1]
+            }
+            eval(FAM$mu.initial)
+            RET <- FAM$mu.linkfun(mean(mu))
         }
-        eval(FAM$mu.initial)
-        RET <- FAM$mu.linkfun(mean(mu))
-      }
-      return(RET)
+        return(RET)
     }
     
     Family(ngradient = ngradient, risk = risk, loss = loss,
@@ -201,54 +201,54 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     is.bdfamily  <- "bd" %in% names(formals(pdf))
     
     ## get the loss
     loss <- function(y, f, w = 1, mu ) {
-      # check if bd exists in this family
-      if(is.bdfamily) 
-      {
-        bd <- rowSums(y)
-        y <- y[,1]
-        return( -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE, bd = bd))
-      }
-      
-      -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE)
+        # check if bd exists in this family
+        if(is.bdfamily) 
+        {
+            bd <- rowSums(y)
+            y <- y[,1]
+            return( -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE, bd = bd))
+        }
+        
+        -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE)
     }
     
     ## compute the risk
     risk <- function(y, f, w = 1) {
-      sum(w * loss(y = y, f = f, mu = mu))
+        sum(w * loss(y = y, f = f, mu = mu))
     }
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-      
-      # check if bd exists in this family
-      if(is.bdfamily) 
-      {
-        if (!is.matrix(y)) stop("y should be a matrix for this family")
-        bd <- rowSums(y)
-        y <- y[,1]
-        ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), bd = bd) * FAM$sigma.dr(eta = f)
         
-      }
-      else{ ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
-      }
-      
-      ngr <- stabilize_ngradient(ngr, w = w, stabilization)
-      ngr
+        # check if bd exists in this family
+        if(is.bdfamily) 
+        {
+            if (!is.matrix(y)) stop("y should be a matrix for this family")
+            bd <- rowSums(y)
+            y <- y[,1]
+            ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), bd = bd) * FAM$sigma.dr(eta = f)
+            
+        }
+        else{ ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
+        }
+        
+        ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+        ngr
     }
     ## get the offset
     offset <- function(y, w = 1) {
-      if (!is.null(sigma)) {
-        RET <- FAM$sigma.linkfun(sigma)
-      } else {
-        eval(FAM$sigma.initial)
-        RET <- FAM$sigma.linkfun(mean(sigma))
-      }
-      return(RET)
+        if (!is.null(sigma)) {
+            RET <- FAM$sigma.linkfun(sigma)
+        } else {
+            eval(FAM$sigma.initial)
+            RET <- FAM$sigma.linkfun(mean(sigma))
+        }
+        return(RET)
     }
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) FAM$sigma.linkinv(f), offset = offset,
@@ -269,16 +269,16 @@ gamlss2parFam <- function(mu = NULL, sigma = NULL, stabilization, fname = "NO") 
 ## sub-family for Mu
 gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
                          stabilization, fname = "TF") {
-
+    
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, sigma, nu, w = 1) {
         -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, sigma = sigma, nu = nu))
@@ -294,7 +294,7 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
-
+    
     ## get the offset -> we take the starting values of gamlss
     offset <- function(y, w = 1) {
         if (!is.null(mu)) {
@@ -316,12 +316,12 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, w = 1, mu, nu) {
         -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu, log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu, nu = nu))
@@ -357,12 +357,12 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, w = 1, mu, sigma) {
         -pdf(x = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f), log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu, sigma = sigma))
@@ -408,11 +408,11 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, stabilization, fna
 
 gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                          stabilization, fname = "BCPE") {
-
+    
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, sigma, nu, tau, w = 1) {
         -pdf(x = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau, log = TRUE)
@@ -450,13 +450,13 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, w = 1, mu, nu, tau) {
         -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu, tau = tau,
              log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu, nu = nu, tau = tau))
@@ -489,13 +489,13 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, w = 1, mu, sigma, tau) {
         -pdf(x = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f), tau = tau,
              log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu, sigma = sigma, tau = tau))
@@ -530,13 +530,13 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-
+    
     ## get the loss
     loss <- function(y, f, w = 1, mu, sigma, nu) {
         -pdf(x = y, mu = mu, sigma = sigma, nu = nu, tau = FAM$tau.linkinv(f),
              log = TRUE)
     }
-
+    
     ## compute the risk
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu, sigma = sigma, nu = nu))

@@ -13,9 +13,9 @@ coef.mboostLSS <- function(object, which = NULL,
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
     RET <- lapply(parameter, function(i, object)
-                  coef(object[[i]], which = which,
-                       aggregate = aggregate, ...),
-                  object = object)
+        coef(object[[i]], which = which,
+             aggregate = aggregate, ...),
+        object = object)
     if (length(RET) == 1)
         RET <- RET[[1]]
     return(RET)
@@ -31,7 +31,7 @@ coef.glmboostLSS <- function(object, which = NULL,
 risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-
+    
     lo <- length(unique(mstop(object)))
     if (merge) {
         get_rsk <- function(i, object) {
@@ -91,51 +91,51 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
                                ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
-
+    
     #merge is different for noncyclical fitting
     if (merge) {
-      if (inherits(object, "nc_mboostLSS")){
-        RET <- names(attr(object, "combined_risk")())
-
-        for(p in names(parameter)){
-          RET[RET == p] <- object[[p]]$xselect()
+        if (inherits(object, "nc_mboostLSS")){
+            RET <- names(attr(object, "combined_risk")())
+            
+            for(p in names(parameter)){
+                RET[RET == p] <- object[[p]]$xselect()
+            }
+            RET <- as.numeric(RET)
+            names(RET) <- names(attr(object, "combined_risk")())
+            return(RET)
         }
-        RET <- as.numeric(RET)
-        names(RET) <- names(attr(object, "combined_risk")())
-        return(RET)
-      }
-      else {
-        get_sel <- function(i, object) {
-          mmo <- max(mstop(object))
-          sel <- object[[i]]$xselect()
-          if (length(sel) != mmo) {
-            sel <- c(sel, rep(NA, mmo - length(sel)))
-          }
-          sel
+        else {
+            get_sel <- function(i, object) {
+                mmo <- max(mstop(object))
+                sel <- object[[i]]$xselect()
+                if (length(sel) != mmo) {
+                    sel <- c(sel, rep(NA, mmo - length(sel)))
+                }
+                sel
+            }
+            
+            RET <- sapply(parameter, get_sel,
+                          object = object)
+            
+            RET <- as.vector(t(RET))
+            names(RET) <- rep(names(parameter), mstop(object)[1])
+            lo <- length(unique(mstop(object)))
+            if (lo != 1)
+                RET <- RET[!is.na(RET)]
+            return(RET)
         }
-
-        RET <- sapply(parameter, get_sel,
-                      object = object)
-
-        RET <- as.vector(t(RET))
-        names(RET) <- rep(names(parameter), mstop(object)[1])
-        lo <- length(unique(mstop(object)))
-        if (lo != 1)
-          RET <- RET[!is.na(RET)]
-        return(RET)
-      }
-
+        
     }
     else {
-      RET <- lapply(parameter, function(i, object)
-        selected(object[[i]]),
-        object = object)
-      names(RET) <- names(object)[parameter]
-      if (length(RET) == 1)
-        RET <- RET[[1]]
-      return(RET)
+        RET <- lapply(parameter, function(i, object)
+            selected(object[[i]]),
+            object = object)
+        names(RET) <- names(object)[parameter]
+        if (length(RET) == 1)
+            RET <- RET[[1]]
+        return(RET)
     }
-
+    
 }
 
 selected.stabsel_mboostLSS <- function(object, parameter = NULL, ...) {
@@ -163,8 +163,8 @@ plot.glmboostLSS <- function(x, main = names(x), parameter = names(x),
     if (is.character(parameter))
         parameter <- extract_parameter(x, parameter)
     lapply(parameter, function(i, x, main, off2int,  ...)
-                    plot(x[[i]], main = main[[i]], off2int = off2int,  ...),
-           x = x, main = main, off2int = off2int, ...)
+        plot(x[[i]], main = main[[i]], off2int = off2int,  ...),
+        x = x, main = main, off2int = off2int, ...)
     invisible(coef(x, aggregate = "cumsum", off2int = off2int))
 }
 
@@ -173,8 +173,8 @@ plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(x, parameter)
     RET <- lapply(parameter, function(i, x, main, ...)
-                      plot(x[[i]], main = main[[i]], ...),
-                  x = x, main = main, ...)
+        plot(x[[i]], main = main[[i]], ...),
+        x = x, main = main, ...)
     if (any(sapply(RET, class) == "trellis")) {
         return(RET)
     } else {
@@ -185,29 +185,29 @@ plot.gamboostLSS <- function(x, main = names(x), parameter = names(x), ...){
 plot.predint <- function(x, main = "Marginal Prediction Interval(s)",
                          xlab = NULL, ylab = NULL, lty = c("solid", "dashed"),
                          lcol = c("black", "black"), log = "", ...) {
-
+    
     pi <- attr(x, "pi")
     which <- attr(x, "which")
     rawdata <- attr(x, "rawdata")
-
+    
     if (length(lty) != length(pi) + 1)
         lty <- c(lty, rep(tail(lty, 1), (length(pi) + 1) - length(lty)))
     if (length(lcol) != length(pi) + 1)
         lcol <- c(lcol, rep(tail(lcol, 1), (length(pi) + 1) - length(lcol)))
-
+    
     if (is.null(xlab))
         xlab <- which
     if (is.null(ylab))
         ylab <- "prediction"
-
+    
     plot(rawdata$x, rawdata$y, pch = 20,
          col = rgb(0.5, 0.5, 0.5, 0.5),
          xlab = xlab, ylab = ylab, main = main,
          log = log, ...)
-
+    
     lines(x[, which], x$"Prediction (Median)",
           lty = lty[1], col = lcol[1], ...)
-
+    
     for (i in seq_along(pi)) {
         lines(x[, which], x[, paste0(pi[i] * 100, "% PI (lower)")],
               lty = lty[i + 1], col = lcol[i + 1], ...)
@@ -219,20 +219,20 @@ plot.predint <- function(x, main = "Marginal Prediction Interval(s)",
 
 PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
     qfun <- get_qfun(x)
-
+    
     if (length(which) != 1 || !is.character(which))
         stop("Please specify the variable for the marginal prediction interval.")
-
+    
     var <- get_data(x, which = which)
     if (ncol(var) > 1 || is.factor(var))
         stop("Prediction intervals are currently only implemented for ",
              "base-learners of one numeric variable")
-
+    
     pred_vars <- lapply(x, extract, what = "variable.names")
     pred_vars <- unique(unlist(pred_vars))
     if ("(Intercept)" %in% pred_vars)
         pred_vars <- pred_vars[pred_vars != "(Intercept)"]
-
+    
     if (is.null(newdata)) {
         tmp <- get_data(x, which = pred_vars)
         i <- grepl(which, names(tmp))
@@ -250,20 +250,20 @@ PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
         if (nrow(unique(newdata[, !i])) != 1)
             warning("All variables but", sQuote("which"), "should be constant")
     }
-
+    
     newdata[, names(x)] <- predict(x, newdata = newdata, type = "response")
     newdata$"Prediction (Median)" <- do.call(qfun, args = c(p = 0.5,
-        newdata[, names(x)]))
-
+                                                            newdata[, names(x)]))
+    
     for (i in seq_along(pi)) {
         newdata[, paste0(pi[i] * 100, "% PI (lower)")] <- do.call(qfun,
-            args = c(p = (1 - pi[i])/2, newdata[, names(x)]))
+                                                                  args = c(p = (1 - pi[i])/2, newdata[, names(x)]))
         newdata[, paste0(pi[i] * 100, "% PI (upper)")] <- do.call(qfun,
-            args = c(p = 1 - (1 - pi[i])/2, newdata[, names(x)]))
+                                                                  args = c(p = 1 - (1 - pi[i])/2, newdata[, names(x)]))
     }
     # drop predictions of parameters
     newdata <- newdata[, !names(newdata) %in% names(x)]
-
+    
     class(newdata) <- c("predint", "data.frame")
     attr(newdata, "pi") <- pi
     attr(newdata, "which") <- which
@@ -298,7 +298,7 @@ fitted.mboostLSS <- function(object, parameter = names(object), ...){
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
     myApply(parameter, function(i, mod, ...) fitted(mod[[i]], ...),
-           mod = object, ...)
+            mod = object, ...)
 }
 
 
@@ -310,9 +310,9 @@ predict.mboostLSS <- function(object, newdata = NULL,
     if (is.character(parameter))
         parameter <- extract_parameter(object, parameter)
     myApply(parameter, function(i, mod, ...)
-            predict(mod[[i]], newdata = newdata, type = type, which = which,
-                    aggregate = aggregate, ...),
-            mod = object, ...)
+        predict(mod[[i]], newdata = newdata, type = type, which = which,
+                aggregate = aggregate, ...),
+        mod = object, ...)
 }
 
 update.mboostLSS <- function(object, weights, oobweights = NULL,
@@ -346,10 +346,10 @@ summary.mboostLSS <- function(object, ...) {
     nus <- sapply(object, function(xi) xi$control$nu)
     cat("Step size: ",
         paste(names(nus), nus, sep = " = ", collapse = ", "), "\n\n")
-
+    
     cat("Families:\n")
     lapply(object, function(xi) show(xi$family))
-
+    
     if (inherits(object, "glmboostLSS")) {
         cat("Coefficients:\n")
         cf <- coef(object, off2int = TRUE)
@@ -359,7 +359,7 @@ summary.mboostLSS <- function(object, ...) {
             cat("\n")
         }
     }
-
+    
     cat("Selection frequencies:\n")
     for (i in 1:length(object)) {
         cat("Parameter ", names(object)[i], ":\n", sep = "")
@@ -376,60 +376,60 @@ summary.mboostLSS <- function(object, ...) {
 
 stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                               mstop = NULL,
-                    folds = subsample(model.weights(x), B = B),
-                    B = ifelse(sampling.type == "MB", 100, 50),
-                    assumption = c("unimodal", "r-concave", "none"),
-                    sampling.type = c("SS", "MB"),
-                    papply = mclapply, verbose = TRUE, FWER, eval = TRUE, ...) {
-
+                              folds = subsample(model.weights(x), B = B),
+                              B = ifelse(sampling.type == "MB", 100, 50),
+                              assumption = c("unimodal", "r-concave", "none"),
+                              sampling.type = c("SS", "MB"),
+                              papply = mclapply, verbose = TRUE, FWER, eval = TRUE, ...) {
+    
     cll <- match.call()
     p <- sum(sapply(x, function(obj) length(variable.names(obj))))
     n <- if(inherits(x, "FDboostLSS")) {
-      x[[1]]$ydim[1]
+        x[[1]]$ydim[1]
     } else {
-      nrow(attr(x, "data"))
+        nrow(attr(x, "data"))
     }
-
-
+    
+    
     ## extract names of base-learners (and add paramter name)
     nms <- lapply(x, function(obj) variable.names(obj))
     nms <- lapply(1:length(nms), function(i)
         paste(nms[[i]], names(nms)[i], sep = "."))
-
+    
     sampling.type <- match.arg(sampling.type)
     if (sampling.type == "MB")
         assumption <- "none"
     else
         assumption <- match.arg(assumption)
-
-
+    
+    
     if (inherits(x, "nc_mboostLSS")) {
-      ## check mstop
-      if (is.null(mstop))
-        mstop <- sum(mstop(x))
-      if (length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(x)) {
-        stop(sQuote("mstop"), " has to be an integer larger than ",
-             length(x))
-      }
-      mstop_min <- length(x)
+        ## check mstop
+        if (is.null(mstop))
+            mstop <- sum(mstop(x))
+        if (length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(x)) {
+            stop(sQuote("mstop"), " has to be an integer larger than ",
+                 length(x))
+        }
+        mstop_min <- length(x)
     }
     else {
-      if (is.null(mstop))
-        mstop <- mstop(x)
-      mstop <- check(mstop, "mstop", names(x))
-      mstop_min <- 1
+        if (is.null(mstop))
+            mstop <- mstop(x)
+        mstop <- check(mstop, "mstop", names(x))
+        mstop_min <- 1
     }
-
+    
     if (length(unique(mstop)) != 1)
         warning("Usually one should use the same ", sQuote("mstop"),
                 " value for all components for stability selection.")
-
+    
     if (verbose)
         cat("Run stabsel ")
-
+    
     ## set mstop = 1 to speed things up
     x <- update(x, weights = model.weights(x), mstop = mstop_min)
-
+    
     ## define the fitting function (args.fitfun is not used but needed for
     ## compatibility with run_stabsel
     fit_model <- function(i, folds, q, args.fitfun) {
@@ -445,7 +445,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         for (m in mstop_min:max(mstop)) {
             if (nsel >= q)
                 break
-
+            
             mstop(mod) <- m
             xs <- selected(mod)
             nsel <- sum(sapply(xs, function(selection)
@@ -463,7 +463,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                 xs[[j]][start:mstop[j]] <- xs[[j]][1]
             }
         }
-
+        
         selected <- lapply(xs, unique)
         ret <- lapply(1:length(selected), function(i) {
             res <- logical(length(nms[[i]]))
@@ -472,99 +472,99 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             res
         })
         ret <- unlist(ret)
-
+        
         ## compute selection paths
         #merging for method cycling
         if(!inherits(x, "nc_mboostLSS")){
-          sequences <- lapply(1:length(xs), function(i) {
-              res <- matrix(FALSE, nrow = length(nms[[i]]), ncol = mstop[[i]])
-              rownames(res) <- nms[[i]]
-              for (j in 1:mstop[[i]])
-                  res[xs[[i]][j], j:mstop[[i]]] <- TRUE
-              res
-          })
-
-          if (any(mstop < max(mstop)))
-            stop("simply add the last column to the smaller matrices")
-          ## now merge sequences
-          for (i in 1:ncol(sequences[[1]])) {
-            for (j in 1:length(sequences)) {
-              if (i == 1) {
-                if (j == 1) {
-                  other_params <- rep(FALSE, sum(sapply(sequences, nrow)[-1]))
-                  sequence <- matrix(c(sequences[[i]][, j],
-                                       other_params))
-                } else {
-                  tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                     i]))
-                  other_params <- rep(FALSE, sum(sapply(sequences,
-                                                        nrow)[-(1:j)]))
-                  tmp <- c(tmp, other_params)
-                  sequence <- cbind(sequence, tmp)
+            sequences <- lapply(1:length(xs), function(i) {
+                res <- matrix(FALSE, nrow = length(nms[[i]]), ncol = mstop[[i]])
+                rownames(res) <- nms[[i]]
+                for (j in 1:mstop[[i]])
+                    res[xs[[i]][j], j:mstop[[i]]] <- TRUE
+                res
+            })
+            
+            if (any(mstop < max(mstop)))
+                stop("simply add the last column to the smaller matrices")
+            ## now merge sequences
+            for (i in 1:ncol(sequences[[1]])) {
+                for (j in 1:length(sequences)) {
+                    if (i == 1) {
+                        if (j == 1) {
+                            other_params <- rep(FALSE, sum(sapply(sequences, nrow)[-1]))
+                            sequence <- matrix(c(sequences[[i]][, j],
+                                                 other_params))
+                        } else {
+                            tmp <- unlist(lapply(sequences[1:j], function(x) x[,
+                                                                               i]))
+                            other_params <- rep(FALSE, sum(sapply(sequences,
+                                                                  nrow)[-(1:j)]))
+                            tmp <- c(tmp, other_params)
+                            sequence <- cbind(sequence, tmp)
+                        }
+                    } else {
+                        if (j < length(sequences)) {
+                            tmp <- unlist(c(lapply(sequences[1:j], function(x) x[, i]),
+                                            lapply(sequences[(j+1):length(sequences)],
+                                                   function(x) x[, i - 1])))
+                        } else {
+                            tmp <- unlist(lapply(sequences[1:j], function(x) x[,
+                                                                               i]))
+                        }
+                        sequence <- cbind(sequence, tmp)
+                    }
                 }
-              } else {
-                if (j < length(sequences)) {
-                  tmp <- unlist(c(lapply(sequences[1:j], function(x) x[, i]),
-                                  lapply(sequences[(j+1):length(sequences)],
-                                         function(x) x[, i - 1])))
-                } else {
-                  tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                     i]))
-                }
-                sequence <- cbind(sequence, tmp)
-              }
             }
-          }
         }
         else {
-          sequence <- matrix(FALSE, nrow = p, ncol = mstop[1])
-          rownames(sequence) <- unlist(nms)
-
-          sel <- selected(mod, merge = TRUE)
-
-          for (i in names(mod)) {
-            varnames <- variable.names(mod[[i]])
-            for(j in seq_along(varnames)){
-              pos <- which(names(sel) == i & sel == j)
-              if(length(pos) > 0)
-                sequence[paste(varnames[j], i, sep = "."), min(pos):mstop[1]] <- TRUE
+            sequence <- matrix(FALSE, nrow = p, ncol = mstop[1])
+            rownames(sequence) <- unlist(nms)
+            
+            sel <- selected(mod, merge = TRUE)
+            
+            for (i in names(mod)) {
+                varnames <- variable.names(mod[[i]])
+                for(j in seq_along(varnames)){
+                    pos <- which(names(sel) == i & sel == j)
+                    if(length(pos) > 0)
+                        sequence[paste(varnames[j], i, sep = "."), min(pos):mstop[1]] <- TRUE
+                }
+                
             }
-
-          }
-
+            
         }
-
+        
         colnames(sequence) <- 1:ncol(sequence)
         ret <- list(selected = ret, path = sequence)
         ## was mstop to small?
         attr(ret, "violations") <- ifelse(sum(ret$selected) < q, TRUE, FALSE)
         return(ret)
     }
-
+    
     ret <- run_stabsel(fitter = fit_model, args.fitter = list(),
-                 n = n, p = p, cutoff = cutoff, q = q,
-                 PFER = PFER, folds = folds, B = B, assumption = assumption,
-                 sampling.type = sampling.type, papply = papply,
-                 verbose = verbose, FWER = FWER, eval = eval,
-                 names = unlist(nms), ...)
-
+                       n = n, p = p, cutoff = cutoff, q = q,
+                       PFER = PFER, folds = folds, B = B, assumption = assumption,
+                       sampling.type = sampling.type, papply = papply,
+                       verbose = verbose, FWER = FWER, eval = eval,
+                       names = unlist(nms), ...)
+    
     if (verbose)
         cat("\n")
-
+    
     if (!eval)
         return(ret)
-
+    
     violations <- FALSE
     if (!is.null(attr(ret, "violations")))
         violations <- attr(ret, "violations")
-
+    
     if (any(violations))
         warning(sQuote("mstop"), " too small in ",
                 sum(violations), " of the ", length(violations),
                 " subsampling replicates to select ", sQuote("q"),
                 " base-learners; Increase ", sQuote("mstop"),
                 " bevor applying ", sQuote("stabsel"))
-
+    
     ret$call <- cll
     ret$call[[1]] <- as.name("stabsel")
     class(ret) <- c("stabsel_mboostLSS", "stabsel")
@@ -599,11 +599,11 @@ weighted.sd <- function(x, w, ...) {
 weighted.median <- function (x, w = 1, na.rm = FALSE) {
     if (length(w) == 1)
         w <- rep(w, length(x))
-
+    
     ## remove observations with zero weights
     x <- x[w != 0]
     w <- w[w != 0]
-
+    
     ## remove NAs if na.rm = TRUE
     if (na.rm) {
         keep <- !is.na(x) & !is.na(w)
@@ -613,22 +613,22 @@ weighted.median <- function (x, w = 1, na.rm = FALSE) {
         if (any(is.na(x)) | any(is.na(w)))
             return(NA)
     }
-
+    
     ## sort data and weights
     ind <- order(x)
     x <- x[ind]
     w <- w[ind]
-
+    
     ## first time that fraction of weights is above 0.5
     ind1 <- min(which(cumsum(w)/sum(w) > 0.5))
-
+    
     ## first time that fraction of weights is below 0.5
     ind2 <- ifelse(ind1 == 1, 1, max(which(cumsum(w)/sum(w) <= 0.5)))
-
+    
     ## if sum of weights is an even integer
     if(sum(w) %% 1 == 0 && sum(w) %% 2 == 0)
         return(mean(c(x[ind1], x[ind2])))
-
+    
     ## else return
     return(max(c(x[ind1], x[ind2])))
 }
