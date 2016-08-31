@@ -53,6 +53,7 @@ S3method(cvrisk, mboostLSS)
 S3method(cvrisk, nc_mboostLSS)
 S3method(print, cvriskLSS)
 S3method(plot, cvriskLSS)
+S3method(plot, nc_cvriskLSS)
 S3method(mstop, cvriskLSS)
 
 S3method(stabsel, mboostLSS)

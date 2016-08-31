@@ -4,6 +4,7 @@
 \alias{cvrisk.nc_mboostLSS}
 \alias{make.grid}
 \alias{plot.cvriskLSS}
+\alias{plot.nc_cvriskLSS}
 
 \title{ Cross-Validation }
 \description{
@@ -35,10 +36,14 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
     bootstrap samples.
   }
   \item{grid}{
-    a matrix of stopping parameters the empirical risk is to be
-    evaluated for. Each row represents a parameter combination. The
-    number of columns must be equal to the number of parameters of the
-    GAMLSS family. Per default, \code{make.grid(mstop(object))} is used.
+    a matrix of stopping parameters the empirical risk is to be evaluated for, 
+    if the model was fitted with \code{method = "cyclical"}. Each row represents a 
+    parameter combination. The number of columns must be equal to the number of 
+    parameters of the GAMLSS family. Per default, \code{make.grid(mstop(object))} 
+    is used.
+    Otherwise (i.e. \code{method = "inner"} or \code{method = "outer"}) one 
+    vector of steps to check. Per default all steps up to \code{mstop(object)} 
+    are used.
   }
   \item{papply}{
     (parallel) apply function, defaults to  \code{\link[parallel]{mclapply}}.
@@ -121,6 +126,9 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   additionally shows information on the variability of the risk from
   fold to fold. The heatmap shows only the average risk but in a nicer
   fashion.
+  For the noncyclical fitting methods (i.e. \code{method = "inner"} or 
+  \code{method = "outer"}) the plot function of \code{\link{cvrisk}} from the 
+  packge \code{mboost} is used.
 
   Hofner et al. (2015) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
