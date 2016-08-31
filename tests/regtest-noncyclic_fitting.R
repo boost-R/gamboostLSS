@@ -121,24 +121,28 @@ stopifnot(all.equal(m_co, coef(model)))
 ## check cvrisk for noncyclic models
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 3), method = "outer")
-cvr1 <- cvrisk(model, grid = 1:100)
+cvr1 <- cvrisk(model, grid = 1:50, cv(model.weights(model), B = 5))
 cvr1
+plot(cvr1)
 
 risk(model, merge = TRUE)
 risk(model, merge = FALSE)
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 3), method = "inner")
-cvr2 <- cvrisk(model, grid = 1:100)
+cvr2 <- cvrisk(model, grid = 1:50, cv(model.weights(model), B = 5))
 cvr2
+plot(cvr2)
 
 risk(model, merge = TRUE)
 risk(model, merge = FALSE)
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 3), method = "cycling")
-cvr3 <- cvrisk(model, grid = make.grid(c(mu = 50, sigma = 50)))
+cvr3 <- cvrisk(model, grid = make.grid(c(mu = 25, sigma = 25)), cv(model.weights(model), B = 5))
 cvr3
+plot(cvr3)
+plot(cvr3, type = "lines")
 
 risk(model, merge = TRUE)
 risk(model, merge = FALSE)

@@ -77,7 +77,7 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
     attr(oobrisk, "mstop") <- grid
     attr(oobrisk, "type") <- ifelse(!is.null(attr(folds, "type")),
                                     attr(folds, "type"), "user-defined")
-    class(oobrisk) <- c("nc_cvrisk", "cvrisk")
+    class(oobrisk) <- c("nc_cvriskLSS", "cvrisk")
     oobrisk
 }
 
@@ -93,9 +93,14 @@ risk.nc_mboostLSS <- function(object, merge = FALSE,
 }
 
 
-plot.nc_cvriskLSS <- function(x, ylab = attr(x, "risk"),
-                              xlab = "Number of boosting iterations",
-                              ylim = range(x), main = attr(x, "type"), ...) {
-    mboost:::plot.cvrisk(x, ylab, xlab, ylim, main, ...)
+plot.nc_cvriskLSS <- function(x, type = "lines",
+                              xlab = "Number of boosting iterations", ylab = NULL,
+                              ylim = range(x),
+                              main = attr(x, "type"),
+                              ...) {
+    if (type != "lines")
+        warning("Only ", sQuote('type = "lines"'), " supported for non-cyclical fitting")
+    plot.cvriskLSS(x = x, type = "lines", xlab = xlab, ylab = ylab, 
+                    ylim = ylim, main = main, ...)
 }
 
