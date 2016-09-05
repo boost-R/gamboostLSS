@@ -15,6 +15,8 @@
       }
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
+      \item The (\code{as.families}) interface to incorporate 'gamlss' distributions for \code{gamboostLSS} 
+         models was adapted to allow for other link functions.
     }
   }
   \subsection{Bug-fixes}{

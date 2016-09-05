@@ -1,4 +1,3 @@
-
 ################################################################################
 ### Family wrapper for gamlss families
 
@@ -12,9 +11,10 @@
 gamlss.Families <- function(...)
     as.families(...)
 
-as.families <- function(fname = "NO",
+as.families <- function(fname = "NO", stabilization = c("none", "MAD"),
                         mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                        stabilization = c("none", "MAD")) {
+                        mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
+                        tau.link = NULL) {
     
     ## require gamlss.dist
     if (!requireNamespace("gamlss.dist", quietly = TRUE))
@@ -38,22 +38,27 @@ as.families <- function(fname = "NO",
     npar <- gamlss.fam$nopar
     switch(npar, {
         ## 1 parameter
-        fun <- gamlss1parMu(mu = mu, fname = fname)
+        fun <- gamlss1parMu(mu = mu, fname = fname, mu.link = mu.link)
         warning("For boosting one-parametric families,",
                 " please use the mboost package.")
         if (stabilization != "none")
             warning("Stabilization is ignored for one-parametric families.")
     }, {
         ## 2 parameters
-        fun <- gamlss2parFam(mu = mu, sigma = sigma,
+        fun <- gamlss2parFam(mu = mu, sigma = sigma, mu.link = mu.link, 
+                             sigma.link = sigma.link,
                              stabilization = stabilization, fname = fname)
     }, {
         ## 3 parameters
-        fun <- gamlss3parFam(mu = mu, sigma = sigma, nu = nu,
+        fun <- gamlss3parFam(mu = mu, sigma = sigma, nu = nu, 
+                             mu.link = mu.link, sigma.link = sigma.link, 
+                             nu.link = nu.link,
                              stabilization = stabilization, fname = fname)
     }, {
         ## 4 parameters
         fun <- gamlss4parFam(mu = mu, sigma = sigma, nu = nu, tau = tau,
+                             mu.link = mu.link, sigma.link = sigma.link,
+                             nu.link = nu.link, tau.link = tau.link,
                              stabilization = stabilization, fname = fname)
     })
     fun
@@ -63,9 +68,14 @@ as.families <- function(fname = "NO",
 ################################################################################
 ## 1 parameter
 
-gamlss1parMu <- function(mu = NULL, fname = "EXP") {
+gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
     
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+    ## check if a specific link was provided 
+    if(!is.null(mu.link)) fname_link <- eval(parse(text = paste(fname, 
+                                          "(mu.link = '", mu.link, "')", sep ="")))
+    else fname_link <- fname
+    
+    FAM <- gamlss.dist::as.gamlss.family(fname_link)
     NAMEofFAMILY <- FAM$family
     dfun <- paste("gamlss.dist::d", fname, sep = "")
     pdf <- eval(parse(text = dfun))
@@ -120,7 +130,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
         return(RET)
     }
     
-    Family(ngradient = ngradient, risk = risk, loss = loss,
+    mboost::Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) FAM$mu.linkinv(f), offset = offset,
            name = paste(FAM$family[2], "(mboost family)"))
 }
@@ -129,14 +139,12 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP") {
 ################################################################################
 ## 2 parameters
 
-gamlss2parMu <- function(mu = NULL, sigma = NULL,
-                         stabilization, fname = "NO") {
-    
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+gamlss2parMu <- function(mu = NULL, sigma = NULL, mu.link = NULL, FAM = FAM, 
+                         stabilization = stabilization, fname = "NO") {
+  
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     is.bdfamily  <- "bd" %in% names(formals(pdf))
-    
     
     ## get the loss
     loss <- function(y, f, sigma,  w = 1) {
@@ -197,11 +205,10 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL,
 
 
 gamlss2parSigma <- function(mu = NULL, sigma = NULL,
-                            stabilization, fname = "NO") {
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+                            stabilization = stabilization, fname = "NO", FAM = FAM) {
+
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
-    
     is.bdfamily  <- "bd" %in% names(formals(pdf))
     
     ## get the loss
@@ -256,9 +263,24 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
 }
 
 ## Build the Families object
-gamlss2parFam <- function(mu = NULL, sigma = NULL, stabilization, fname = "NO") {
-    Families(mu = gamlss2parMu(mu = mu, sigma = sigma, stabilization, fname = fname),
-             sigma = gamlss2parSigma(mu = mu, sigma = sigma, stabilization, fname = fname),
+gamlss2parFam <- function(mu = NULL, sigma = NULL, mu.link = mu.link,  
+                          sigma.link = sigma.link, stabilization, fname = "NO") {
+
+  FAM <- gamlss.dist::as.gamlss.family(fname)
+  # check if any link function was set    
+  if(any(!is.null(mu.link), !is.null(sigma.link))){
+    # if some are null, set default
+    if(is.null(mu.link)) mu.link <- FAM$mu.link 
+    if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+    fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
+                        "sigma.link = '", sigma.link, "'",  ")", sep ="")
+    # build family with link
+    FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
+  } 
+        Families(mu = gamlss2parMu(mu = mu, sigma = sigma, FAM = FAM, 
+                                   stabilization = stabilization, fname = fname),
+             sigma = gamlss2parSigma(mu = mu, sigma = sigma, FAM = FAM, 
+                                     stabilization = stabilization, fname = fname),
              qfun = get_qfun(fname),
              name = fname)
 }
@@ -267,10 +289,10 @@ gamlss2parFam <- function(mu = NULL, sigma = NULL, stabilization, fname = "NO") 
 ## 3 parameters
 
 ## sub-family for Mu
-gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
-                         stabilization, fname = "TF") {
+gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL, FAM = FAM,
+                         stabilization = stabilization, fname = "TF") {
     
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -311,9 +333,9 @@ gamlss3parMu <- function(mu = NULL, sigma = NULL, nu = NULL,
 }
 
 
-gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL,
-                            stabilization, fname = "TF") {
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, FAM = FAM,
+                            stabilization = stabilization, fname = "TF") {
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -353,8 +375,8 @@ gamlss3parSigma <- function(mu = NULL, sigma = NULL, nu = NULL,
 }
 
 gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
-                         stabilization, fname = "TF") {
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+                         stabilization = stabilization, fname = "TF", FAM = FAM) {
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -394,10 +416,31 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
 }
 
 ## Build the Families object
-gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, stabilization, fname = "TF") {
-    Families(mu = gamlss3parMu(mu = mu, sigma = sigma, nu = nu, stabilization, fname = fname),
-             sigma = gamlss3parSigma(mu = mu, sigma = sigma, nu = nu, stabilization, fname = fname),
-             nu = gamlss3parNu(mu = mu, sigma = sigma, nu = nu, stabilization, fname = fname),
+gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, 
+                          mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
+                          stabilization = stabilization, fname = "TF") {
+  
+  FAM <- gamlss.dist::as.gamlss.family(fname)
+  # check if any link function was set    
+  if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link))){
+    # if some are null, set default
+    if(is.null(mu.link)) mu.link <- FAM$mu.link 
+    if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+    if(is.null(nu.link)) nu.link <- FAM$nu.link 
+    
+        fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
+                        "sigma.link = '", sigma.link, "',",  
+                        "nu.link = '", nu.link, "')", sep ="")
+    # build family with link
+    FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
+  }   
+  
+  Families(mu = gamlss3parMu(mu = mu, sigma = sigma, nu = nu, 
+                             stabilization = stabilization, fname = fname, FAM = FAM),
+             sigma = gamlss3parSigma(mu = mu, sigma = sigma, nu = nu, 
+                                     stabilization = stabilization, fname = fname, FAM = FAM),
+             nu = gamlss3parNu(mu = mu, sigma = sigma, nu = nu, 
+                               stabilization = stabilization, fname = fname, FAM = FAM),
              qfun = get_qfun(fname),
              name = fname)
 }
@@ -407,9 +450,8 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, stabilization, fna
 ## 4 parameters
 
 gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                         stabilization, fname = "BCPE") {
+                         stabilization = stabilization, fname = "BCPE", FAM = FAM) {
     
-    FAM <- gamlss.dist::as.gamlss.family(fname)
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -419,9 +461,9 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     }
     ## compute the risk
     risk <- function(y, f, w = 1) {
+    ## get the ngradient: mu is linkinv(f)
         sum(w * loss(y = y, f = f, sigma = sigma, nu = nu, tau = tau))
     }
-    ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
         ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau) *
@@ -445,9 +487,9 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 }
 
 
-gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                            stabilization, fname = "BCPE") {
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = FAM,
+                            stabilization = stabilization, fname = "BCPE") {
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -484,9 +526,9 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
            name = paste(FAM$family[2], "2nd parameter (sigma)"))
 }
 
-gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                         stabilization, fname = "BCPE") {
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = FAM,
+                         stabilization = stabilization, fname = "BCPE") {
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -525,9 +567,9 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 
 
 
-gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
-                          stabilization, fname = "BCPE") {
-    FAM <- gamlss.dist::as.gamlss.family(fname)
+gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = FAM,
+                          stabilization = stabilization, fname = "BCPE") {
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     
@@ -564,11 +606,38 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
 }
 
 ## Build the Families object
-gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, stabilization, fname = "BCPE") {
-    Families(mu = gamlss4parMu(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
-             sigma = gamlss4parSigma(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
-             nu = gamlss4parNu(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
-             tau = gamlss4parTau(mu = mu, sigma = sigma, nu = nu, tau = tau, stabilization, fname = fname),
+gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, 
+                          mu.link = NULL, sigma.link = NULL, nu.link = NULL, tau.link = NULL, 
+                          stabilization = stabilization, fname = "BCPE") {
+
+  FAM <- gamlss.dist::as.gamlss.family(fname)
+  # check if any link function was set    
+  if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link), 
+         !is.null(tau.link))){
+    # if some are null, set default
+    if(is.null(mu.link)) mu.link <- FAM$mu.link 
+    if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+    if(is.null(nu.link)) nu.link <- FAM$nu.link 
+    if(is.null(tau.link)) tau.link <- FAM$tau.link 
+    
+    
+    fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
+                        "sigma.link = '", sigma.link, "',",  
+                        "nu.link = '", nu.link, "',",
+                        "tau.link = '", tau.link, "')", sep ="")
+    # build family with link
+    FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
+  }   
+  
+    
+    Families(mu = gamlss4parMu(mu = mu, sigma = sigma, nu = nu, tau = tau, 
+                               stabilization = stabilization, fname = fname, FAM = FAM),
+             sigma = gamlss4parSigma(mu = mu, sigma = sigma, nu = nu, tau = tau, 
+                                     stabilization = stabilization, fname = fname, FAM = FAM),
+             nu = gamlss4parNu(mu = mu, sigma = sigma, nu = nu, tau = tau, 
+                               stabilization = stabilization, fname = fname, FAM = FAM),
+             tau = gamlss4parTau(mu = mu, sigma = sigma, nu = nu, tau = tau, 
+                                 stabilization = stabilization, fname = fname, FAM = FAM),
              qfun = get_qfun(fname),
              name = fname)
 }
