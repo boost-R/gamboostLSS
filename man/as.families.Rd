@@ -32,9 +32,10 @@
   \code{\link{glmboostLSS}}.
 }
 \usage{
-as.families(fname = "NO", mu = NULL, sigma = NULL,   nu = NULL, tau = NULL,
-            mu.link = NULL, sigma.link = NULL,  nu.link = NULL, tau.link = NULL,
-            stabilization = c("none", "MAD"))
+as.families(fname = "NO", stabilization = c("none", "MAD"),
+            mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
+            mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
+            tau.link = NULL)
 
 ## a wrapper to as.families:
 gamlss.Families(...)
