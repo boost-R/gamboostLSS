@@ -11,7 +11,7 @@
 gamlss.Families <- function(...)
     as.families(...)
 
-as.families <- function(fname = "NO", stabilization = c("none", "MAD"),
+as.families <- function(fname = "NO", stabilization = c("none", "MAD", "L2"),
                         mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
                         mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
                         tau.link = NULL) {

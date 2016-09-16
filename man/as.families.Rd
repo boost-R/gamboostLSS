@@ -32,7 +32,7 @@
   \code{\link{glmboostLSS}}.
 }
 \usage{
-as.families(fname = "NO", stabilization = c("none", "MAD"),
+as.families(fname = "NO", stabilization = c("none", "MAD", "L2"),
             mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
             mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
             tau.link = NULL)

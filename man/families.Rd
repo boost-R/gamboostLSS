@@ -62,40 +62,40 @@
 
 # Gaussian distribution
 GaussianLSS(mu = NULL, sigma = NULL,
-            stabilization = c("none", "MAD"))
+            stabilization = c("none", "MAD", "L2"))
 
 # Student's t-distribution
 StudentTLSS(mu = NULL, sigma = NULL, df = NULL,
-            stabilization = c("none", "MAD"))
+            stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Families for continuous non-negative response
 
 # Gamma distribution
 GammaLSS(mu = NULL, sigma = NULL,
-         stabilization = c("none", "MAD"))
+         stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Families for fractions and bounded continuous response
 
 # Beta distribution
 BetaLSS(mu = NULL, phi = NULL,
-        stabilization = c("none", "MAD"))
+        stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Families for count data
 
 # Negative binomial distribution
 NBinomialLSS(mu = NULL, sigma = NULL,
-             stabilization = c("none", "MAD"))
+             stabilization = c("none", "MAD", "L2"))
 
 # Zero-inflated Poisson distribution
 ZIPoLSS(mu = NULL, sigma = NULL,
-        stabilization = c("none", "MAD"))
+        stabilization = c("none", "MAD", "L2"))
 
 # Zero-inflated negative binomial distribution
 ZINBLSS(mu = NULL, sigma = NULL, nu = NULL,
-        stabilization = c("none", "MAD"))
+        stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Families for survival models (accelerated failure time
@@ -103,15 +103,15 @@ ZINBLSS(mu = NULL, sigma = NULL, nu = NULL,
 
 # Log-normal distribution
 LogNormalLSS(mu = NULL, sigma = NULL,
-             stabilization = c("none", "MAD"))
+             stabilization = c("none", "MAD", "L2"))
 
 # Log-logistic distribution
 LogLogLSS(mu = NULL, sigma = NULL,
-          stabilization = c("none", "MAD"))
+          stabilization = c("none", "MAD", "L2"))
 
 # Weibull distribution
 WeibullLSS(mu = NULL, sigma = NULL,
-           stabilization = c("none", "MAD"))
+           stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Constructor function for new GAMLSS distributions
@@ -130,8 +130,8 @@ Families(..., qfun = NULL, name = NULL)
   \item{df}{ offset value for df. }
   \item{nu}{ offset value for nu. }
   \item{stabilization}{ governs if the negative gradient should be
-    standardized in each boosting step. It can be either "none" or
-    "MAD". See also Details below.
+    standardized in each boosting step. It can be either "none", 
+    "MAD" or "L2". See also Details below.
   }
 }
 \details{
@@ -183,8 +183,8 @@ Families(..., qfun = NULL, name = NULL)
   negative gradients one can use the argument \code{stabilization} of
   the families. If \code{stabilization = "MAD"}, the negative gradient
   is divided by its (weighted) median absolute deviation \deqn{median_i
-  (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et
-  al. (2015) for details.
+  (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et 
+  al. (2015) for details. An alternative is \code{stabilization = "L2"}, where the gradient is divided by its (weighted) mean L2 norm. This results in negative gradient vectors (and hence also updates) of similar size for each distribution parameter, but also for every boosting iteration.  
 
 }
 \value{

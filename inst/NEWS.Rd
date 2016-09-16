@@ -17,6 +17,8 @@
          models.
       \item The (\code{as.families}) interface to incorporate 'gamlss' distributions for \code{gamboostLSS} 
          models was adapted to allow for other link functions.
+     \item Added option \code{stabilization = "L2"}  to use the mean L2 norm of 
+	the negative gradient to make the updated for the different distribution parameters comparable. 
     }
   }
   \subsection{Bug-fixes}{

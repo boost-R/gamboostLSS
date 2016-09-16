@@ -166,11 +166,17 @@ stabilize_ngradient <- function(ngr, w = 1, stabilization) {
         div <- ifelse(div < 0.0001, 0.0001, div)
         ngr <- ngr / div
     }
+    if (stabilization == "L2") {
+      div <- sqrt(weighted.mean(ngr^2, w =w,  na.rm = TRUE))
+      div <- ifelse(div < 1e-04, 1e-04, div)
+      div <- ifelse(div > 1e+04, 1e+04, div)
+      ngr <- ngr / div
+    }
     ngr
 }
 
 
-check_stabilization <- function(stabilization = c("none", "MAD")) {
+check_stabilization <- function(stabilization = c("none", "MAD", "L2")) {
     stabilization <- match.arg(stabilization)
     ## check if old stabilization interface is used and issue a warning
     if (getOption("gamboostLSS_stab_ngrad")) {

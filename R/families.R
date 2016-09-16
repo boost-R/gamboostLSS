@@ -101,7 +101,7 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL, stabilization) {
 
 
 NBinomialLSS <- function(mu = NULL, sigma = NULL,
-                         stabilization = c("none", "MAD")) {
+                         stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(mu) && mu <= 0))
         stop(sQuote("sigma"), " and ", sQuote("mu"),
              " must be greater than zero")
@@ -242,7 +242,7 @@ StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
 
 
 StudentTLSS <- function(mu = NULL, sigma = NULL, df = NULL,
-                        stabilization = c("none", "MAD")) {
+                        stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(df) && df <= 0))
         stop(sQuote("sigma"), " and ", sQuote("df"),
              " must be greater than zero")
@@ -351,7 +351,7 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL, stabilization){
 }
 
 LogNormalLSS <- function(mu = NULL, sigma = NULL,
-                         stabilization = c("none", "MAD")) {
+                         stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -458,7 +458,7 @@ LogLogSigma <- function (mu = NULL, sigma = NULL, stabilization){
 }
 
 LogLogLSS <- function(mu = NULL, sigma = NULL,
-                      stabilization = c("none", "MAD")) {
+                      stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -560,7 +560,7 @@ WeibullSigma <- function (mu = NULL, sigma = NULL, stabilization){
 }
 
 WeibullLSS <- function(mu = NULL, sigma = NULL,
-                       stabilization = c("none", "MAD")) {
+                       stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -629,7 +629,7 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL, stabilization){
 
 
 GaussianLSS <- function(mu = NULL, sigma = NULL,
-                        stabilization = c("none", "MAD")) {
+                        stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -720,7 +720,7 @@ GammaSigma <- function(mu = NULL, sigma = NULL, stabilization) {
 }
 
 GammaLSS <- function (mu = NULL, sigma = NULL,
-                      stabilization = c("none", "MAD")) {
+                      stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     if ((!is.null(mu) && mu <= 0))
@@ -842,7 +842,7 @@ BetaPhi <- function(mu = NULL, phi = NULL, stabilization){
 
 # families object for new distribution
 BetaLSS <- function (mu = NULL, phi = NULL,
-                     stabilization = c("none", "MAD")) {
+                     stabilization = c("none", "MAD", "L2")) {
     stabilization <- check_stabilization(stabilization)
     Families(mu = BetaMu(mu = mu, phi = phi, stabilization = stabilization),
              phi = BetaPhi(mu = mu, phi = phi, stabilization = stabilization),
@@ -860,7 +860,7 @@ qBeta <- function(p, mu = 0, phi = 1, lower.tail = TRUE, log.p = FALSE) {
 
 # Zero-inflated Poisson model
 ZIPoLSS <- function(mu = NULL, sigma = NULL,
-                    stabilization = c("none", "MAD")) {
+                    stabilization = c("none", "MAD", "L2")) {
     fam <- as.families(fname = "ZIP", mu = mu, sigma = sigma, stabilization = stabilization)
     
     fam$mu@name <- "Zero-inflated Poisson model: count data component"
@@ -871,7 +871,7 @@ ZIPoLSS <- function(mu = NULL, sigma = NULL,
 
 # Zero-inflated negative binomial model
 ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL,
-                    stabilization = c("none", "MAD")) {
+                    stabilization = c("none", "MAD", "L2")) {
     fam <- as.families(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu, stabilization = stabilization)
     
     fam$mu@name <- "Zero-inflated negative binomial model: location parameter for count data component"
