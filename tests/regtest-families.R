@@ -57,6 +57,61 @@ model <- glmboostLSS(y ~ x1 + x2, families = StudentTLSS(mu = res[1], sigma =
 model[100]
 coef(model)
 
+### check as families
+
+### Gaussian: two different ways
+model <- glmboostLSS(y ~ x1 + x2, families = as.families("NO"),
+                     data = data,
+                     control = boost_control(mstop = 10), center = TRUE)
+
+model2 <- glmboostLSS(y ~ x1 + x2, families = GaussianLSS(),
+                     data = data,
+                     control = boost_control(mstop = 10), center = TRUE)
+
+coef(model, off2int = TRUE)  # as.families("NO")
+coef(model2, off2int = TRUE) # GaussianLSS()
+
+### change link function inside as.families()
+model2 <- glmboostLSS(abs(y) ~ x1 + x2, families = as.families("NO", mu.link = "log"),
+                     data = data,
+                     control = boost_control(mstop = 10), center = TRUE)
+coef(model2)
+
+
+model3 <- glmboostLSS(abs(y)/(max(y)+.01) ~ x1 + x2, families = as.families("BE", mu.link = "logit",
+                                                                            sigma.link = "log"),
+                      data = data,
+                      control = boost_control(mstop = 10), center = TRUE)
+coef(model3)
+
+
+model4 <- glmboostLSS(y ~ x1 + x2, families = as.families("TF", mu.link = "identity",
+                                                          sigma.link = "log", 
+                                                          nu.link = "log"),
+                      data = data,
+                      control = boost_control(mstop = 10), center = TRUE)
+coef(model4)
+
+### Additionally use stabilization
+
+model4 <- glmboostLSS(y ~ x1 + x2, families = as.families("TF", mu.link = "identity",
+                                                          sigma.link = "log", 
+                                                          nu.link = "log", 
+                                                          stabilization = "L2"),
+                      data = data,
+                      control = boost_control(mstop = 10), center = TRUE)
+coef(model4)
+
+
+model4 <- glmboostLSS(y ~ x1 + x2, families = as.families("TF", mu.link = "identity",
+                                                          sigma.link = "log", 
+                                                          nu.link = "log", 
+                                                          stabilization = "MAD"),
+                      data = data,
+                      control = boost_control(mstop = 10), center = TRUE)
+coef(model4)
+
+
 ### check survival families
 
 x1 <- runif(1000)

@@ -29,7 +29,7 @@ stopifnot(all.equal(selected(model),
                     list(mu = mboost::selected(model[[1]]),
                          sigma = mboost::selected(model[[2]]))))
 
-# If the families argument is not specified explicitly in mboostLSSone gets an
+# If the families argument is not specified explicitly in mboostLSS one gets an
 # error in cvrisk.mboostLSS() (spotted by Almond Stöcker).
 # (https://github.com/boost-R/gamboostLSS/issues/9)
 set.seed(1907)
@@ -67,4 +67,4 @@ m4 <- glmboost(ymat ~ x + z, data = data, family = as.families("BI"))
 round(data.frame(BB_gamlss = coef(m1),
                  BI_gamlss = coef(m2),
                  BB_gamboostLSS = coef(m3, off2int = TRUE, parameter = "mu"),
-                 BI_gamboostLSS = coef(m4, off2int = TRUE, parameter = "mu")), 3)
+                 BI_gamboostLSS = coef(m4, off2int = TRUE)), 3)
