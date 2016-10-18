@@ -1,6 +1,17 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+
+\section{Changes in gamboostLSS version 1.2-2 (2016-10-18)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item Updated \file{inst/CITATION} due to release of JSS tutorial paper.
+      \item Updated URL in \file{DESCRIPTION}.
+    }
+  }
+ }
+
+
 \section{Changes in gamboostLSS version 1.2-1 (2016-03-11)}{
   \subsection{User-visible changes}{
     \itemize{

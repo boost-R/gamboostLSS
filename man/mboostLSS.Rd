@@ -67,7 +67,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
   the information provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2015).
+  \code{\link{gamboostLSS}} see Hofner et al. (2016).
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
   distribution parameters of a GAMLSS -- a linear boosting model is
@@ -120,9 +120,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   extract information.
 }
 \references{
-B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
+B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
 Model Building and Variable Selection in the GAMLSS Framework.
-Journal of Statistical Software. Accepted for publication.
+Journal of Statistical Software, 74(1), 1-31.
 
 Available as \code{vignette("gamboostLSS_Tutorial")}.
 

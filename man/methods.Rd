@@ -190,7 +190,7 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 }
 \details{
   These functions can be used to extract details from fitted models. For
-  a tutorial with worked examples see Hofner et al. (2015).
+  a tutorial with worked examples see Hofner et al. (2016).
 
   \code{print} shows a dense representation of the model fit.
 
@@ -250,10 +250,9 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
 }
 
 \references{
-
-B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
+B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
 Model Building and Variable Selection in the GAMLSS Framework.
-Journal of Statistical Software. Accepted for publication.
+Journal of Statistical Software, 74(1), 1-31.
 
 Available as \code{vignette("gamboostLSS_Tutorial")}.
 

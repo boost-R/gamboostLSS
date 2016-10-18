@@ -24,19 +24,28 @@ citEntry(
 citEntry(
   entry="Article",
   title = "{gamboostLSS}: An {R} Package for Model Building and Variable Selection in the {GAMLSS} Framework",
-  author   =  personList(as.person("Benjamin Hofner"),
-                         as.person("Andreas Mayr"),
-                         as.person("Matthias Schmid")),
-  journal  = "Journal of Statistical Software",
-  year	   = "2015",
-  note     = "Accepted.",
+  author       = c(person(given = "Benjamin",
+                          family = "Hofner",
+                          email = "Benjamin.Hofner@pei.de"),
+                   person(given = "Andreas",
+                          family = "Mayr",
+                          email = "andreas.mayr@fau.de"),
+                   person(given = "Matthias",
+                          family = "Schmid",
+                          email = "matthias.schmid@imbie.uni-bonn.de")),
+  journal      = "Journal of Statistical Software",
+  year         = "2016",
+  volume       = "74",
+  number       = "1",
+  pages        = "1--31",
+  doi          = "10.18637/jss.v074.i01",
   header   = "To cite the package and the tutorial in publications use:",
   textVersion =
-    paste("Hofner, B., A. Mayr, and M. Schmid (2015).",
-          "gamboostLSS: An R Package for Model Building and Variable Selection in the GAMLSS Framework.",
-          "Journal of Statistical Software. Accepted.")
+  paste("Benjamin Hofner, Andreas Mayr, Matthias Schmid (2016).",
+        "gamboostLSS: An R Package for Model Building and Variable Selection in the GAMLSS Framework.",
+        "Journal of Statistical Software, 74(1), 1-31.",
+        "doi:10.18637/jss.v074.i01")
 )
-
 
 citEntry(
   entry="Article",
