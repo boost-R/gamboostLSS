@@ -13,11 +13,11 @@ citEntry(
 		      as.person("Matthias Schmid")),
   year = year,
   note = vers,
-  url = "http://CRAN.R-project.org/package=gamboostLSS",
+  url = "https://CRAN.R-project.org/package=gamboostLSS",
   textVersion =
   paste("B. Hofner, A. Mayr, N. Fenske and M. Schmid (", year,
 	"). gamboostLSS: Boosting Methods for GAMLSS Models, ",
-	txt_vers, ", http://CRAN.R-project.org/package=gamboostLSS", ".",
+	txt_vers, ", https://CRAN.R-project.org/package=gamboostLSS", ".",
 	sep="")
 )
 

@@ -82,7 +82,7 @@
 
   Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2015).
   mboost: Model-based boosting. R package version 2.4-2.
-  \url{http://cran.r-project.org/package=mboost}
+  \url{https://CRAN.R-project.org/package=mboost}
 }
 \keyword{ package }
 
