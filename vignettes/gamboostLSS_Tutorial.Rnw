@@ -89,7 +89,7 @@ if (!file.exists("cvrisk"))
 \Plainauthor{Benjamin Hofner, Andreas Mayr, Matthias Schmid}
 
 \Abstract{ \emph{This vignette is a slightly modified version of
-    \citet{Hofner:gamboostLSS:2015} which was accepted for publication in the
+    \citet{Hofner:gamboostLSS:2015} which appeared in the
     \textbf{Journal of Statistical Software}. Please cite that article when
     using the package \pkg{gamboostLSS} in your work.}\\[1em]
 
