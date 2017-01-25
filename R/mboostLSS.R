@@ -74,241 +74,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL,
                           fun = mboost, funchar = "mboost", call = NULL,
                           method, ...){
-    
-    if(method == "cycling")
-        iBoost_cycling <- function(niter) {
-            
-            start <- sapply(fit, mstop)
-            mvals <- vector("list", length(niter))
-            for (j in 1:length(niter)){
-                mvals[[j]] <- rep(start[j] + niter[j], max(niter))
-                if (niter[j] > 0)
-                    mvals[[j]][1:niter[j]] <- (start[j] + 1):(start[j] + niter[j])
-            }
-            
-            ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
-            
-            for (i in 1:max(niter)){
-                for (j in mods){
-                    ## update value of nuisance parameters
-                    ## use response(fitted()) as this is much quicker than fitted(, type = response)
-                    for (k in mods[-j])
-                        assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
-                               environment(get("ngradient", environment(fit[[j]]$subset))))
-                    ## update value of u, i.e. compute ngradient with new nuisance parameters
-                    
-                    ENV[[j]][["u"]] <- ENV[[j]][["ngradient"]](ENV[[j]][["y"]], ENV[[j]][["fit"]],
-                                                               ENV[[j]][["weights"]])
-                    # same as:
-                    # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
-                    
-                    ## update j-th component to "m-th" boosting step
-                    fit[[j]][mvals[[j]][i]]
-                }
-                if (trace){
-                    firstRun <- firstRun
-                    ## which is the current risk? rev() needed to get the last
-                    ## list element with maximum length
-                    whichRisk <- names(which.max(rev(lapply(lapply(fit, function(x) x$risk()), length))))
-                    do_trace(current = max(sapply(mvals, function(x) x[i])),
-                             mstart = ifelse(firstRun, 0, max(start)),
-                             mstop = ifelse(firstRun, max(niter) + 1, max(niter)),
-                             risk = fit[[whichRisk]]$risk())
-                }
-            }
-            return(TRUE)
-        }
-    if(method == "outer")
-        iBoost_outer <- function(niter){
-            
-            #this is the case for boosting from the beginning
-            if(is.null(attr(fit, "combined_risk")) | niter == 0){
-                combined_risk <- vapply(fit, risk, numeric(1))
-            }
-            
-            best <- which(names(fit) == tail(names(combined_risk), 1))
-            
-            
-            
-            ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
-            
-            for (i in seq_len(niter)){
-                
-                ## update value of nuisance parameters
-                ## use response(fitted()) as this is much quicker than fitted(, type = response)
-                for( k in mods[-best]){
-                    assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])),
-                           environment(get("ngradient", environment(fit[[k]]$subset))))
-                    
-                    #evalq(u <- ngradient(y, fit, weights), ENV[[k]])
-                    ENV[[k]][["u"]] <- ENV[[k]][["ngradient"]](ENV[[k]][["y"]],
-                                                               ENV[[k]][["fit"]],
-                                                               ENV[[k]][["weights"]])
-                }
-                
-                if (funchar == "glmboost") {
-                    lik_risks <- list()
-                    coefs <- list()
-                    
-                    for(i in mods){
-                        coefs[[i]] <- evalq(environment(get("fit1"))[["est"]](u)/
-                                                environment(get("fit1"))[["sxtx"]], envir = ENV[[i]])
-                        
-                        all_fitted <- sweep(environment(ENV[[i]][["fit1"]])[["X"]], 2, 
-                                            coefs[[i]] ,`*`)
-                        
-                        lik_risks[[i]] <- sapply(1:ncol(all_fitted), function(j) 
-                            ENV[[i]][["triskfct"]](ENV[[i]][["y"]], 
-                                                   ENV[[i]][["fit"]] + nu[i] * all_fitted[,j]))
-                    }
-                    
-                    #do a mboost step per hand
-                    best <- which.min(vapply(lik_risks, min, 
-                                             FUN.VALUE = numeric(1), ...))
-                    
-                    ENV[[best]]$all_fitted <- all_fitted
-                    ENV[[best]]$lik_risks <- lik_risks
-                    ENV[[best]]$best <- best
-                    ENV[[best]]$coefs <- coefs
-                    
-                    evalq({
-                        xs <- which.min(lik_risks[[best]])
-                        basses <- list(model = c(coef = coefs[[best]][xs],
-                                                 xselect = xs,
-                                                 p = length(coefs[[best]])),
-                                       fitted = function() {
-                                           return(coefs[[best]][xs] * environment(get("fit1"))[["X"]][, xs, drop = FALSE])
-                                       })
-                        class(basses) <- c("bm_cwlin", "bm_lin", "bm")
-                        fit <- fit + nu * basses$fitted()
-                        u <- get("ngradient")(get("y"), fit, weights)
-                        mrisk[(mstop + 1)] <- get("triskfct")(get("y"), fit)
-                        ens[[(mstop + 1)]] <- basses
-                        xselect[(mstop + 1)] <- xs
-                        nuisance[[(mstop +1)]] <- family@nuisance()
-                        mstop <- mstop + 1}, 
-                        envir <- ENV[[best]])
-                }
-                
-                #all other baselearner
-                else{
-                    risks <- list()
-                    for( i in mods){
-                        risks[[i]] <- evalq({
-                            ss_new <- lapply(get("blfit", envir = environment(get("basefit"))), 
-                                             function(x) x(u))
-                            sapply(ss_new, function(x) get("riskfct")(get("y"), fit + nu * x$fitted(), weights))
-                        }, envir = ENV[[i]])
-                    }
-                    
-                    best <- which.min(vapply(risks, min, 
-                                             FUN.VALUE = numeric(1)))
-                    
-                    evalq({
-                        ss <- lapply(get("blfit", envir = environment(get("basefit"))), 
-                                     function(x) x(u))
-                        xselect[mstop + 1] <- which.min(sapply(ss, function(x) 
-                            get("riskfct")(get("y"), fit + nu * x$fitted(), weights)))
-                        fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
-                        u <- get("ngradient")(get("y"), fit, weights)
-                        mrisk[(mstop + 1)] <- get("triskfct")(get("y"), fit)
-                        ens[[(mstop + 1)]] <- ss[[tail(xselect, 1)]]
-                        nuisance[[(mstop + 1)]] <- family@nuisance()
-                        mstop <- mstop + 1}, 
-                        envir = ENV[[best]])
-                    
-                }
-                
-                combined_risk[(length(combined_risk) + 1)] <- tail(risk(fit[[best]]), 1)
-                names(combined_risk)[length(combined_risk)] <- names(fit)[best]
-                
-                if (trace){
-                    do_trace(current = length(combined_risk[combined_risk != 0]),
-                             mstart = ifelse(firstRun, length(fit) + 1, 
-                                             length(combined_risk[combined_risk != 0])),
-                             mstop = ifelse(firstRun, niter - length(fit), niter),
-                             risk = combined_risk[combined_risk != 0])
-                }
-            }
-            combined_risk  <<- combined_risk
-            return(TRUE)
-        }
-    if(method == "inner" )
-        iBoost_inner <- function(niter){
-            
-            
-            #this is the case for boosting from the beginning
-            if(is.null(attr(fit, "combined_risk")) | niter == 0){
-                combined_risk <- vapply(fit, risk, numeric(1))
-            }
-            
-            best <- which(names(fit) == tail(names(combined_risk), 1))
-            
-            
-            
-            ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
-            
-            for (i in seq_len(niter)){
-                
-                ## update value of nuisance parameters
-                ## use response(fitted()) as this is much quicker than fitted(, type = response)
-                for( k in mods[-best]){
-                    assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])),
-                           environment(get("ngradient", environment(fit[[k]]$subset))))
-                }
-                
-                risks <- numeric(length(fit))
-                for(b  in 1:length(fit)){
-                    st <- mstop(fit[[b]])
-                    fit[[b]][st + 1]
-                    #risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
-                    risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], 
-                                                      ENV[[b]][["fit"]],
-                                                      ENV[[b]][["weights"]])
-                    fit[[b]][st]
-                    
-                    ## fit[[b]][st] is not enough to reduce the model back to beginning, so
-                    ## so all these values have to be reduced, so that they are calculated 
-                    ## correctly the next time
-                    evalq({xselect <- xselect[1:mstop];
-                    mrisk <- mrisk[1:mstop];
-                    ens <- ens[1:mstop];
-                    nuisance <- nuisance[1:mstop]},
-                    environment(fit[[b]]$subset))
-                }
-                
-                
-                
-                best <- which.min(risks)
-                
-                ## update value of u, i.e. compute ngradient with new nuisance parameters
-                ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], 
-                                                                 ENV[[best]][["fit"]],
-                                                                 ENV[[best]][["weights"]])
-                
-                # same as:
-                # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
-                
-                
-                ## update selected component by 1
-                fit[[best]][mstop(fit[[best]]) + 1]
-                
-                
-                combined_risk[(length(combined_risk) + 1)] <- tail(risk(fit[[best]]), 1)
-                names(combined_risk)[length(combined_risk)] <- names(fit)[best]
-                
-                if (trace){
-                    do_trace(current = length(combined_risk[combined_risk != 0]),
-                             mstart = ifelse(firstRun, length(fit) + 1, 
-                                             length(combined_risk[combined_risk != 0])),
-                             mstop = ifelse(firstRun, niter - length(fit), niter),
-                             risk = combined_risk[combined_risk != 0])
-                }
-                combined_risk  <<- combined_risk
-            }
-            return(TRUE)
-        }
-    
+
     if (length(families) == 0)
         stop(sQuote("families"), " not specified")
     
@@ -414,28 +180,199 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                  mstop = max(mstop),
                  risk = fit[[length(fit)]]$risk())
     
-    #select the correct fitting method    
-    if (method == "cycling") {
-        if (any(mstop > 1)){
-            firstRun <- TRUE
-            ## actually go for initial mstop iterations!
-            tmp <- iBoost_cycling(mstop - 1)
+    iBoost <- function(niter, method) {
+      
+      if (method %in% c("inner", "outer")) {
+        ### noncyclical fitting ###
+        
+        #this is the case for boosting from the beginning
+        if (is.null(attr(fit, "combined_risk")) | niter == 0) {
+          combined_risk <- vapply(fit, risk, numeric(1))
         }
+        
+        best <- which(names(fit) == tail(names(combined_risk), 1))
+      } else {
+        ### cyclical fitting ###
+        start <- sapply(fit, mstop)
+        mvals <- vector("list", length(niter))
+        for (j in 1:length(niter)) {
+          mvals[[j]] <- rep(start[j] + niter[j], max(niter))
+          if (niter[j] > 0)
+            mvals[[j]][1:niter[j]] <- (start[j] + 1):(start[j] + niter[j])
+        }
+      }
+      
+      ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
+      ## main loop starts here ##
+      for (i in 1:max(niter)){
+        if (method %in% c("inner", "outer")) {
+          ### noncyclical fitting ###
+          
+          ## update value of nuisance parameters
+          ## use response(fitted()) as this is much quicker than fitted(, type = response)
+          for( k in mods[-best]) {
+            assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])), environment(get("ngradient", environment(fit[[k]]$subset))))
+            if (method == "outer") 
+              ENV[[k]][["u"]] <- ENV[[k]][["ngradient"]](ENV[[k]][["y"]], ENV[[k]][["fit"]], ENV[[k]][["weights"]])
+          }
+          
+          ## noncyclical inner method ##
+          if (method == "inner") {
+            risks <- numeric(length(fit))
+            for(b  in 1:length(fit)){
+              st <- mstop(fit[[b]])
+              fit[[b]][st + 1]
+              #risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
+              risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], ENV[[b]][["fit"]], ENV[[b]][["weights"]])
+              fit[[b]][st]
+              
+              ## fit[[b]][st] is not enough to reduce the model back to beginning, so
+              ## so all these values have to be reduced, so that they are calculated 
+              ## correctly the next time
+              evalq({
+                      xselect <- xselect[1:mstop];
+                      mrisk <- mrisk[1:mstop];
+                      ens <- ens[1:mstop];
+                      nuisance <- nuisance[1:mstop]},
+                    environment(fit[[b]]$subset))
+            }
+            
+            best <- which.min(risks)
+            
+            ## update value of u, i.e. compute ngradient with new nuisance parameters
+            ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], ENV[[best]][["fit"]], ENV[[best]][["weights"]])
+            
+            ## update selected component by 1
+            fit[[best]][mstop(fit[[best]]) + 1]
+            
+          } else {
+            ## noncylical outer method ##
+            if (funchar == "glmboost") {
+              lik_risks <- list()
+              coefs <- list()
+              
+              for (i in mods) {
+                  coefs[[i]] <- evalq(environment(get("fit1"))[["est"]](u) / environment(get("fit1"))[["sxtx"]], envir = ENV[[i]])
+                
+                  all_fitted <- sweep(environment(ENV[[i]][["fit1"]])[["X"]], 2, coefs[[i]] ,`*`)
+                
+                lik_risks[[i]] <- sapply(1:ncol(all_fitted), 
+                                        function(j) ENV[[i]][["triskfct"]](ENV[[i]][["y"]], ENV[[i]][["fit"]] + nu[i] * all_fitted[,j]))
+              }
+              
+              #do a mboost step per hand
+              best <- which.min(vapply(lik_risks, min, FUN.VALUE = numeric(1), ...))
+              
+              ENV[[best]]$all_fitted <- all_fitted
+              ENV[[best]]$lik_risks <- lik_risks
+              ENV[[best]]$best <- best
+              ENV[[best]]$coefs <- coefs
+              
+              evalq({
+                xs <- which.min(lik_risks[[best]])
+                basses <- list(model = c(coef = coefs[[best]][xs],
+                  xselect = xs,
+                  p = length(coefs[[best]])),
+                  fitted = function() {
+                    return(coefs[[best]][xs] * environment(get("fit1"))[["X"]][, xs, drop = FALSE])
+                  })
+                class(basses) <- c("bm_cwlin", "bm_lin", "bm")
+                fit <- fit + nu * basses$fitted()
+                u <- get("ngradient")(get("y"), fit, weights)
+                mrisk[(mstop + 1)] <- get("triskfct")(get("y"), fit)
+                ens[[(mstop + 1)]] <- basses
+                xselect[(mstop + 1)] <- xs
+                nuisance[[(mstop +1)]] <- family@nuisance()
+                mstop <- mstop + 1}, 
+                envir <- ENV[[best]])
+            }
+            
+            #all other baselearner
+            else{
+              risks <- list()
+              for( i in mods){
+                 risks[[i]] <- evalq({ss_new <- lapply(get("blfit", envir = environment(get("basefit"))), 
+                    function(x) x(u))
+                  sapply(ss_new, function(x) get("riskfct")(get("y"), fit + nu * x$fitted(), weights))
+                }, envir = ENV[[i]])
+              }
+              
+              best <- which.min(vapply(risks, min, 
+                FUN.VALUE = numeric(1)))
+              
+              evalq({
+                ss <- lapply(get("blfit", envir = environment(get("basefit"))), 
+                  function(x) x(u))
+                xselect[mstop + 1] <- which.min(sapply(ss, function(x) 
+                  get("riskfct")(get("y"), fit + nu * x$fitted(), weights)))
+                fit <- fit + nu * ss[[tail(xselect, 1)]]$fitted()
+                u <- get("ngradient")(get("y"), fit, weights)
+                mrisk[(mstop + 1)] <- get("triskfct")(get("y"), fit)
+                ens[[(mstop + 1)]] <- ss[[tail(xselect, 1)]]
+                nuisance[[(mstop + 1)]] <- family@nuisance()
+                mstop <- mstop + 1}, 
+                envir = ENV[[best]])
+              
+            }
+          }
+          
+          ## update risk list
+          combined_risk[(length(combined_risk) + 1)] <- tail(risk(fit[[best]]), 1)
+          names(combined_risk)[length(combined_risk)] <- names(fit)[best]
+          combined_risk  <<- combined_risk
+          
+        } else {
+          ### cyclical fitting ### 
+          for (j in mods){
+            ## update value of nuisance parameters
+            ## use response(fitted()) as this is much quicker than fitted(, type = response)
+            for (k in mods[-j])
+              assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
+                environment(get("ngradient", environment(fit[[j]]$subset))))
+            ## update value of u, i.e. compute ngradient with new nuisance parameters
+            
+            ENV[[j]][["u"]] <- ENV[[j]][["ngradient"]](ENV[[j]][["y"]], ENV[[j]][["fit"]],
+              ENV[[j]][["weights"]])
+            # same as:
+            # evalq(u <- ngradient(y, fit, weights), environment(fit[[j]]$subset))
+            
+            ## update j-th component to "m-th" boosting step
+            fit[[j]][mvals[[j]][i]]
+          }
+        }
+        
+        if (trace){
+          if (method %in% c("inner", "outer")) {
+            do_trace(current = length(combined_risk[combined_risk != 0]),
+              mstart = ifelse(firstRun, length(fit) + 1, 
+                length(combined_risk[combined_risk != 0])),
+              mstop = ifelse(firstRun, niter - length(fit), niter),
+              risk = combined_risk[combined_risk != 0])
+          } else {
+            ## which is the current risk? rev() needed to get the last
+            ## list element with maximum length
+            whichRisk <- names(which.max(rev(lapply(lapply(fit, function(x) x$risk()), length))))
+            do_trace(current = max(sapply(mvals, function(x) x[i])),
+              mstart = ifelse(firstRun, 0, max(start)),
+              mstop = ifelse(firstRun, max(niter) + 1, max(niter)),
+              risk = fit[[whichRisk]]$risk())
+          }
+          
+        }
+      }
+      return(TRUE)
     }
     
-    else {
-        if (mstop >= length(fit)){
-            firstRun <- TRUE
-            combined_risk <- NULL
-            tmp <- ifelse(method == "inner", 
-                          iBoost_inner(mstop - length(fit)),
-                          iBoost_outer(mstop - length(fit)))
-        }
-    }
+    firstRun <- any(mstop > 1) & method == "cycling" | mstop >= length(fit) & method != "cycling"
+    #number of steps in initialization
+    red <- ifelse(method == "cycling", 1, length(fit))
+      
+    if (firstRun)
+      tmp <- iBoost(mstop - red, method = method)
     
     firstRun <- FALSE
     
-    class(fit) <- c(paste(funchar, "LSS", sep=""), "mboostLSS")
+    class(fit) <- c(paste0(funchar, "LSS"), "mboostLSS")
     if(method != "cycling"){
         class(fit) <- c("nc_mboostLSS", class(fit))
     }
@@ -494,7 +431,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 ## set negative values to 0
                 ## (only applicable if some parameters do not need to be touched
                 inc <- ifelse(i - minStart > 0, i - minStart, 0)
-                tmp <- iBoost_cycling(inc)
+                tmp <- iBoost(inc, method = method)
             }
             
             mstop <<- i
@@ -559,16 +496,9 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             
             ## now increase models (when necessary)
             else if (niter > 0){
-                if (method == "inner") {
-                    tmp <- iBoost_inner(niter)
-                }
-                else {
-                    tmp <- iBoost_outer(niter)
-                }
-                
-                
+              tmp <- iBoost(niter, method = method)
             }
-            
+        
             mstop <<- i
         }
     }
