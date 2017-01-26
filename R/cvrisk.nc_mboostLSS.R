@@ -99,7 +99,7 @@ plot.nc_cvriskLSS <- function(x, type = "lines",
                               main = attr(x, "type"),
                               ...) {
     if (type != "lines")
-        warning("Only ", sQuote('type = "lines"'), " supported for non-cyclical fitting")
+        warning("Only ", sQuote('type = "lines"'), " supported for noncyclical fitting")
     plot.cvriskLSS(x = x, type = "lines", xlab = xlab, ylab = ylab, 
                     ylim = ylim, main = main, ...)
 }

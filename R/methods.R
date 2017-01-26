@@ -453,8 +453,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             if (nsel >= q)
                 break
         }
-        #this changes nothing for method = "cycling" but fixes mstop for
-        #method = "inner" or "outer"
+        #this changes nothing for method = "cyclic" but fixes mstop for method = "noncyclic"
         mstop <- check(mstop, "mstop", names(x))
         ## complete paths
         if (any(sapply(xs, length) < mstop)) {
@@ -474,7 +473,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
         ret <- unlist(ret)
         
         ## compute selection paths
-        #merging for method cycling
+        #merging for method cyclic
         if(!inherits(x, "nc_mboostLSS")){
             sequences <- lapply(1:length(xs), function(i) {
                 res <- matrix(FALSE, nrow = length(nms[[i]]), ncol = mstop[[i]])

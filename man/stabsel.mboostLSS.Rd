@@ -127,7 +127,7 @@ dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 ### linear model with y ~ . for both components: 400 boosting iterations
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
                      control = boost_control(mstop = 400),
-                     center = TRUE, method = "inner")
+                     center = TRUE, method = "noncyclic")
 
 \donttest{### Do not test the following code per default on CRAN as it takes some time to run:
 
