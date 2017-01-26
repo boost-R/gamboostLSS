@@ -75,6 +75,7 @@ citEntry(
     paste("Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016).",
           "Stability selection for component-wise gradient boosting in multiple dimensions.",
           "arXiv preprint arXiv:1611.10171.")
+)
 
 
 citFooter('\nUse ', sQuote('toBibtex(citation("gamboostLSS"))'), ' to extract BibTeX references.')
