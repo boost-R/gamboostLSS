@@ -218,8 +218,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           for(b  in 1:length(fit)){
             st <- mstop(fit[[b]])
             fit[[b]][st + 1]
-            #risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
-            risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], ENV[[b]][["fit"]], ENV[[b]][["weights"]])
+            risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
+            #risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], ENV[[b]][["fit"]], ENV[[b]][["weights"]])
             fit[[b]][st]
             
             ## fit[[b]][st] is not enough to reduce the model back to beginning, so
@@ -236,7 +236,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           best <- which.min(risks)
           
           ## update value of u, i.e. compute ngradient with new nuisance parameters
-          ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], ENV[[best]][["fit"]], ENV[[best]][["weights"]])
+          evalq({u = ngradient(y, fit, weights)}, ENV[[best]])
+          #ENV[[best]][["u"]] <- ENV[[best]][["ngradient"]](ENV[[best]][["y"]], ENV[[best]][["fit"]], ENV[[best]][["weights"]])
           
           ## update selected component by 1
           fit[[best]][mstop(fit[[best]]) + 1]
