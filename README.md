@@ -20,7 +20,8 @@ shape).
 For installation instructions see below.
 
 Instructions on how to use `gamboostLSS` can be found here:
-- [gamboostLSS tutorial](http://arxiv.org/pdf/1407.1774v1); This is apreliminary version currently under review.
+- [gamboostLSS tutorial](https://www.jstatsoft.org/article/view/v074i01).
+
 
 ## Issues & Feature Requests
 
