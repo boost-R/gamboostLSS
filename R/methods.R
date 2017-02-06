@@ -35,9 +35,11 @@ risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...
     lo <- length(unique(mstop(object)))
     if (merge) {
         get_rsk <- function(i, object) {
-            mmo <- max(mstop(object))
+            mmo <- max(mstop(object)) + 1
             rsk <- object[[i]]$risk()
             if (length(rsk) != mmo) {
+                if (length(rsk) > mmo)
+                  stop("risk cannot contain more entries than mstop")
                 rsk <- c(rsk, rep(NA, mmo - length(rsk)))
             }
             rsk
