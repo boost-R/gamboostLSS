@@ -107,15 +107,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     
     mstop <- mstoparg <- control$mstop
-    control$mstop <- 1
-    if (method == "cyclic") {
+    control$mstop <- 0
+    if (method == "cyclic")
         mstop <- check(mstop, "mstop", names(families))
-    } else {
-        #check mstop for noncyclic fitting method
-        if (length(mstop) != 1 | mstop %% 1 != 0 | mstop < length(families))
-            stop(sQuote("mstop"), " has to be an integer larger than ", 
-                 length(families))
-    }
+
     
     nu <- control$nu
     nu <- check(nu, "nu", names(families))
@@ -290,11 +285,9 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
     
     firstRun <- any(mstop > 1 & method == "cyclic" | mstop >= length(fit) & method != "cyclic")
-    #number of steps in initialization
-    red <- ifelse(method == "cyclic", 1, length(fit))
       
     if (firstRun)
-      tmp <- iBoost(mstop - red, method = method)
+      tmp <- iBoost(mstop, method = method)
     
     firstRun <- FALSE
     
