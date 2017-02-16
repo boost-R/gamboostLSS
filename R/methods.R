@@ -1,7 +1,7 @@
 ## Methods
 
 "[.mboostLSS" <- function(x, i, return = TRUE, ...) {
-    stopifnot((length(i) == 1 | length(i) == length(x)) && i > 0)
+    stopifnot(length(i) == 1 | length(i) == length(x))
     attr(x, "subset")(i)
     if (return) return(x)
     invisible(NULL)
@@ -35,9 +35,11 @@ risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...
     lo <- length(unique(mstop(object)))
     if (merge) {
         get_rsk <- function(i, object) {
-            mmo <- max(mstop(object))
-            rsk <- object[[i]]$risk()
+          mmo <- max(mstop(object)) + 1
+          rsk <- object[[i]]$risk()
             if (length(rsk) != mmo) {
+              if (length(rsk) > mmo)
+                stop("risk cannot contain more entries than mstop")
                 rsk <- c(rsk, rep(NA, mmo - length(rsk)))
             }
             rsk

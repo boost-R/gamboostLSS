@@ -25,7 +25,7 @@ as.families <- function(fname = "NO", stabilization = c("none", "MAD", "L2"),
     
     if (inherits(fname, "gamlss.family"))
         fname <- fname$family[1]
-    
+
     if (mode(fname) != "character" && mode(fname) != "name")
         fname <- as.character(substitute(fname))
     
@@ -466,8 +466,12 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     }
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
+      if (FAM$type == "Mixed") {
+        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
+      } else {
         ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau) *
             FAM$mu.dr(eta = f)
+      }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -506,8 +510,12 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM 
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
+      if (FAM$type == "Mixed") {
+        ngr <- FAM$dldm(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
+      } else {
         ngr <-  FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu,
                          tau = tau) * FAM$sigma.dr(eta = f)
+      }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -545,8 +553,12 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = F
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
+      if (FAM$type == "Mixed") {
+        ngr <- FAM$dldv(y = y, nu = FAM$nu.linkinv(f), tau = tau) * FAM$nu.dr(eta = f)
+      } else {
         ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f),
                         tau = tau) * FAM$nu.dr(eta = f)
+      }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -585,8 +597,12 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = 
     }
     ## get the ngradient
     ngradient <- function(y, f, w = 1) {
-        ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
+        if (FAM$type == "Mixed") {
+          ngr <- FAM$dldt(y = y, nu = nu, tau =  FAM$tau.linkinv(f)) * FAM$tau.dr(eta = f)
+        } else {
+          ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
                         nu = nu) * FAM$tau.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }

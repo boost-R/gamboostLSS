@@ -90,3 +90,36 @@ plot(cvr1)
 
 risk(model, merge = TRUE)
 risk(model, merge = FALSE)
+
+
+## test that mstop = 0 is possible
+compare_models <- function (m1, m2) {
+  stopifnot(all.equal(coef(m1), coef(m2)))
+  stopifnot(all.equal(predict(m1), predict(m2)))
+  stopifnot(all.equal(fitted(m1), fitted(m2)))
+  stopifnot(all.equal(selected(m1), selected(m2)))
+  stopifnot(all.equal(risk(m1), risk(m2)))
+  ## remove obvious differences from objects
+  m1$control <- m2$control <- NULL
+  m1$call <- m2$call <- NULL
+  if (!all.equal(m1, m2))
+    stop("Objects of offset model + 1 step and model with 1 step not identical")
+  invisible(NULL)
+}
+
+# set up models
+mod <- glmboostLSS(y ~ ., data = dat, method = "noncyclic", control = boost_control(mstop = 0))
+mod2 <- glmboostLSS(y ~ ., data = dat, method = "noncyclic",  control = boost_control(mstop = 1))
+mod3 <- glmboostLSS(y ~ ., data = dat, method = "noncyclic", control = boost_control(mstop = 1))
+
+lapply(coef(mod), function(x) stopifnot(is.null(x)))
+
+mstop(mod3) <- 0
+mapply(compare_models, m1 = mod, m2 = mod3)
+
+mstop(mod) <- 1
+mapply(compare_models, m1 = mod, m2 = mod2)
+
+mstop(mod3) <- 1
+mapply(compare_models, m1 = mod, m2 = mod3)
+

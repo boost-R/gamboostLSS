@@ -212,8 +212,9 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
           risks <- numeric(length(fit))
           for(b  in 1:length(fit)){
             st <- mstop(fit[[b]])
-            fit[[b]][st + 1]
-            risks[b] <- evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
+            mstop(fit[[b]]) = st + 1
+            risks[b] <- tail(risk(fit[[b]]), 1)
+            #evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
             #risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], ENV[[b]][["fit"]], ENV[[b]][["weights"]])
             fit[[b]][st]
             
@@ -284,12 +285,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
       return(TRUE)
     }
     
-    firstRun <- any(mstop > 1 & method == "cyclic" | mstop >= length(fit) & method != "cyclic")
-      
-    if (firstRun)
+    if (any(mstop > 0))
       tmp <- iBoost(mstop, method = method)
-    
-    firstRun <- FALSE
     
     class(fit) <- c(paste0(funchar, "LSS"), "mboostLSS")
     if(method != "cyclic"){
@@ -332,10 +329,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 
                 ## remove additional boosting iterations from environments
                 lapply(fit[msf > minStart], function(obj){
-                    evalq({xselect <- xselect[1:mstop];
-                    mrisk <- mrisk[1:mstop];
-                    ens <- ens[1:mstop];
-                    nuisance <- nuisance[1:mstop]},
+                    evalq({xselect <- xselect[seq_len(mstop)];
+                    mrisk <- mrisk[seq_len(mstop + 1)];
+                    ens <- ens[seq_len(mstop)];
+                    nuisance <- nuisance[seq_len(mstop)]},
                     environment(obj$subset))
                 })
                 
@@ -358,11 +355,6 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     } 
     else {
         attr(fit, "subset") <- function(i) {
-            if(i < length(fit)){
-                warning(paste("Minimal number of iterations:", length(fit), 
-                              "(at least one iteration for each distribution parameter)"))
-                i <- length(fit)
-            }
             msf <- sum(mstop(fit))
             niter <- i - msf
             
@@ -373,14 +365,15 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             ## reduce models first (when necessary)
             if (niter < 0 ){
                 cf <- class(fit)
+                d = length(fit)
                 class(fit) <- "list" ## needed to use [] operator for lists
                 
                 #cat("processed parameters: ", paste(names(fit[msf > minStart]),
                 #                                    collapse = ", "), "\n")
                 
                 #reduce the combined risk values
-                combined_risk <<- attr(fit, "combined_risk")()[1:i]
-                new_stop_value <- table(names(attr(fit, "combined_risk")()))
+                combined_risk <<- attr(fit, "combined_risk")()[seq_len(i + d)]
+                new_stop_value <- table(names(attr(fit, "combined_risk")())) - 1
                 
                 
                 for(o in names(new_stop_value)){

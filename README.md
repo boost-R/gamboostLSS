@@ -20,7 +20,7 @@ shape).
 For installation instructions see below.
 
 Instructions on how to use `gamboostLSS` can be found here:
-- [gamboostLSS tutorial](http://arxiv.org/pdf/1407.1774v1); This is a preliminary version currently under review.
+- [gamboostLSS tutorial](https://www.jstatsoft.org/article/view/v074i01).
 
 Details on the noncyclical fitting method can be found here:
 - [noncyclical fitting](https://arxiv.org/abs/1611.10171); This is a preleminary version currently under review.
