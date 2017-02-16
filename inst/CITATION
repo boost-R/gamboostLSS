@@ -60,7 +60,7 @@ citEntry(
 
 
 citEntry(
-  entry= "Article",
+  entry= "TechReport",
   title = "Stability selection for component-wise gradient boosting in multiple dimensions",
   author   =  personList(as.person("Janek Thomas"),
                          as.person("Andreas Mayr"),
