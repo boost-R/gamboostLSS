@@ -382,10 +382,10 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 
                 ## remove additional boosting iterations from environments
                 lapply(fit, function(obj){
-                    evalq({xselect <- xselect[1:mstop];
-                    mrisk <- mrisk[1:mstop];
-                    ens <- ens[1:mstop];
-                    nuisance <- nuisance[1:mstop]},
+                  evalq({xselect <- xselect[seq_len(mstop)];
+                  mrisk <- mrisk[seq_len(mstop + 1)];
+                  ens <- ens[seq_len(mstop)];
+                  nuisance <- nuisance[seq_len(mstop)]},
                     environment(obj$subset))
                 })
                 
