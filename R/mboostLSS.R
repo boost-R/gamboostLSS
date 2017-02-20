@@ -170,16 +170,13 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                                       control=control, weights = w,
                                       ...))
     }
-    if (trace)
-        do_trace(current = 1, mstart = 0,
-                 mstop = max(mstop),
-                 risk = fit[[length(fit)]]$risk())
-    
+
     iBoost <- function(niter, method) {
+      
+      start <- sapply(fit, mstop)
       
       if (method == "noncyclic") {
         ### noncyclical fitting ###
-        
         #this is the case for boosting from the beginning
         if (is.null(attr(fit, "combined_risk")) | niter == 0) {
           combined_risk <- vapply(fit, risk, numeric(1))
@@ -188,7 +185,6 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         best <- which(names(fit) == tail(names(combined_risk), 1))
       } else {
         ### cyclical fitting ###
-        start <- sapply(fit, mstop)
         mvals <- vector("list", length(niter))
         for (j in 1:length(niter)) {
           mvals[[j]] <- rep(start[j] + niter[j], max(niter))
@@ -265,19 +261,16 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         
         if (trace){
           if (method == "noncyclic") {
-            do_trace(current = length(combined_risk[combined_risk != 0]),
-              mstart = ifelse(firstRun, length(fit) + 1, 
-                length(combined_risk[combined_risk != 0])),
-              mstop = ifelse(firstRun, niter - length(fit), niter),
-              risk = combined_risk[combined_risk != 0])
+            do_trace(current = length(combined_risk) - length(fit), mstart = sum(start), 
+              risk = combined_risk[-(1:length(fit))], mstop = niter)
           } else {
             ## which is the current risk? rev() needed to get the last
             ## list element with maximum length
-            whichRisk <- names(which.max(rev(lapply(lapply(fit, function(x) x$risk()), length))))
+            whichRisk <- names(which.max(rev(lapply(fit, function(x) length(risk(x))))))
             do_trace(current = max(sapply(mvals, function(x) x[i])),
-              mstart = ifelse(firstRun, 0, max(start)),
-              mstop = ifelse(firstRun, max(niter) + 1, max(niter)),
-              risk = fit[[whichRisk]]$risk())
+              mstart = max(start),
+              mstop = max(niter),
+              risk = risk(fit[[whichRisk]])[-1])
           }
           
         }
