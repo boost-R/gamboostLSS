@@ -69,6 +69,7 @@ citEntry(
 			 as.person("Adam Smith"),
                          as.person("Benjamin Hofner")),
   year	   = "2016",
+  institution = "ArXiv",
   header   = "To cite the noncyclical fitting method of 'gamboostLSS' use:",
   url = "https://arxiv.org/abs/1611.10171",
   textVersion =
