@@ -174,6 +174,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     iBoost <- function(niter, method) {
         
         start <- sapply(fit, mstop)
+        # initialize combined_risk
+        combined_risk <- NA
         
         if (method == "noncyclic") {
             ### noncyclical fitting ###
