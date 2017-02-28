@@ -18,13 +18,17 @@
 }
 \usage{
 mboostLSS(formula, data = list(), families = GaussianLSS(),
-          control = boost_control(), weights = NULL, method = c("cyclic", "noncyclic"), ...)
+          control = boost_control(), weights = NULL, 
+          method = c("cyclic", "noncyclic"), ...)
 glmboostLSS(formula, data = list(), families = GaussianLSS(),
-            control = boost_control(), weights = NULL, method = c("cyclic", "noncyclic"), ...)
+            control = boost_control(), weights = NULL, 
+            method = c("cyclic", "noncyclic"), ...)
 gamboostLSS(formula, data = list(), families = GaussianLSS(),
-            control = boost_control(), weights = NULL, method = c("cyclic", "noncyclic"), ...)
+            control = boost_control(), weights = NULL, 
+            method = c("cyclic", "noncyclic"), ...)
 blackboostLSS(formula, data = list(), families = GaussianLSS(),
-              control = boost_control(), weights = NULL,method = c("cyclic", "noncyclic"), ...)
+              control = boost_control(), weights = NULL,
+              method = c("cyclic", "noncyclic"), ...)
 
 ## fit function:
 mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
@@ -153,7 +157,8 @@ Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization,
 prediction and model fitting. Statistical Science, 22(4), 477--505.
 
 Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
-Stability selection for component-wise gradient boosting in multiple dimensions. arXiv preprint arXiv:1611.10171.
+Stability selection for component-wise gradient boosting in multiple dimensions. 
+arXiv preprint arXiv:1611.10171.
 }
 
 \seealso{
