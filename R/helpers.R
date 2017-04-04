@@ -119,20 +119,20 @@ rescale_weights <- function(w) {
 
 ## helper function in a modified version based on mboost_2.2-3
 ## print trace of boosting iterations
-do_trace <- function(current, mstart, risk,
-                     linebreak = options("width")$width / 2, mstop = 1000) {
-    current <- current - mstart
+do_trace <- function(current, risk, mstart,
+                     linebreak = round(options("width")$width / 2), mstop = 1000) {
+    
+    current <- current - mstart  
+  
     if (current != mstop) {
-        if ((current - 1) %/% linebreak == (current - 1) / linebreak) {
+        if (current %% linebreak == 1) {
             mchr <- formatC(current + mstart, format = "d",
                             width = nchar(mstop) + 1, big.mark = "'")
             cat(paste("[", mchr, "] ",sep = ""))
-        } else {
-            if ((current %/% linebreak != current / linebreak)) {
-                cat(".")
-            } else {
-                cat(" -- risk:", risk[current + mstart], "\n")
-            }
+        }
+        cat(".")
+        if (current %% linebreak == 0) {
+          cat(" -- risk:", risk[current + mstart], "\n")
         }
     } else {
         cat("\nFinal risk:", risk[current + mstart], "\n")

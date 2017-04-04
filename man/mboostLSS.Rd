@@ -18,13 +18,17 @@
 }
 \usage{
 mboostLSS(formula, data = list(), families = GaussianLSS(),
-          control = boost_control(), weights = NULL, method = c("cycling", "inner", "outer"), ...)
+          control = boost_control(), weights = NULL, 
+          method = c("cyclic", "noncyclic"), ...)
 glmboostLSS(formula, data = list(), families = GaussianLSS(),
-            control = boost_control(), weights = NULL, method = c("cycling", "inner", "outer"), ...)
+            control = boost_control(), weights = NULL, 
+            method = c("cyclic", "noncyclic"), ...)
 gamboostLSS(formula, data = list(), families = GaussianLSS(),
-            control = boost_control(), weights = NULL, method = c("cycling", "inner", "outer"), ...)
+            control = boost_control(), weights = NULL, 
+            method = c("cyclic", "noncyclic"), ...)
 blackboostLSS(formula, data = list(), families = GaussianLSS(),
-              control = boost_control(), weights = NULL,method = c("cycling", "inner", "outer"), ...)
+              control = boost_control(), weights = NULL,
+              method = c("cyclic", "noncyclic"), ...)
 
 ## fit function:
 mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
@@ -58,9 +62,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   \item{call}{ used to forward the call from \code{mboostLSS},
     \code{glmboostLSS}, \code{gamboostLSS} and \code{blackboostLSS}.
     This argument should not be directly specified by users!}
-  \item{method}{ fitting method, currently three methods are supported:
-  \code{"cycling"}, \code{"inner"} and \code{"outer"}. The latter two require a
-  one dimensional \code{mstop} value.}
+  \item{method}{ fitting method, currently two methods are supported:
+  \code{"cyclic"} and \code{"noncycli"}. The latter two requires a one dimensional \code{mstop} 
+    value.}
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
     passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
@@ -99,7 +103,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   function without \code{LSS}. For further possible arguments see
   these functions as well as \code{\link{mboost_fit}}.
 
-  For \code{method = "cycling"} it is possible to specify one or
+  For \code{method = "cyclic"} it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one single value, this
   value is used for all distribution parameters of the GAMLSS model. 
@@ -113,12 +117,11 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
   more-dimensional stopping, one can specify, e.g., \code{mstop =
     list(mu = 100, sigma = 200)} (see examples).
-  If \code{method} is set to \code{"inner"} or \code{"outer"}, \code{mstop} has
+  If \code{method} is set to \code{"noncyclic"}, \code{mstop} has
   to be a one dimensional integer. Instead of cycling through all distribution 
-  parameters, in each iteration only the best baselearner is used. For 
-  \code{"inner"} one baselearner of every parameter is selected via RSS, the 
-  distribution parameter is then chosen via the loss. For \code{"outer"} the
-  selection is solely based on the (outer) loss.
+  parameters, in each iteration only the best baselearner is used. One baselearner of every 
+  parameter is selected via RSS, the distribution parameter is then chosen via the loss.
+  For details on the noncyclic fitting method see Thomas et. al. (2016).
 
   To (potentially) stabilize the model estimation by standardizing the
   negative gradients one can use the argument \code{stabilization} of
@@ -152,6 +155,10 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554.
 
 Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization,
 prediction and model fitting. Statistical Science, 22(4), 477--505.
+
+Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
+Stability selection for component-wise gradient boosting in multiple dimensions. 
+arXiv preprint arXiv:1611.10171.
 }
 
 \seealso{
