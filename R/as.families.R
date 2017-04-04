@@ -25,7 +25,7 @@ as.families <- function(fname = "NO", stabilization = c("none", "MAD", "L2"),
     
     if (inherits(fname, "gamlss.family"))
         fname <- fname$family[1]
-
+    
     if (mode(fname) != "character" && mode(fname) != "name")
         fname <- as.character(substitute(fname))
     
@@ -72,7 +72,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
     
     ## check if a specific link was provided 
     if(!is.null(mu.link)) fname_link <- eval(parse(text = paste(fname, 
-                                          "(mu.link = '", mu.link, "')", sep ="")))
+                                                                "(mu.link = '", mu.link, "')", sep ="")))
     else fname_link <- fname
     
     FAM <- gamlss.dist::as.gamlss.family(fname_link)
@@ -131,8 +131,8 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
     }
     
     mboost::Family(ngradient = ngradient, risk = risk, loss = loss,
-           response = function(f) FAM$mu.linkinv(f), offset = offset,
-           name = paste(FAM$family[2], "(mboost family)"))
+                   response = function(f) FAM$mu.linkinv(f), offset = offset,
+                   name = paste(FAM$family[2], "(mboost family)"))
 }
 
 
@@ -141,7 +141,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
 
 gamlss2parMu <- function(mu = NULL, sigma = NULL, mu.link = NULL, FAM = FAM, 
                          stabilization = stabilization, fname = "NO") {
-  
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     is.bdfamily  <- "bd" %in% names(formals(pdf))
@@ -206,7 +206,7 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, mu.link = NULL, FAM = FAM,
 
 gamlss2parSigma <- function(mu = NULL, sigma = NULL,
                             stabilization = stabilization, fname = "NO", FAM = FAM) {
-
+    
     NAMEofFAMILY <- FAM$family
     pdf <- get_pdf(fname)
     is.bdfamily  <- "bd" %in% names(formals(pdf))
@@ -265,20 +265,20 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
 ## Build the Families object
 gamlss2parFam <- function(mu = NULL, sigma = NULL, mu.link = mu.link,  
                           sigma.link = sigma.link, stabilization, fname = "NO") {
-
-  FAM <- gamlss.dist::as.gamlss.family(fname)
-  # check if any link function was set    
-  if(any(!is.null(mu.link), !is.null(sigma.link))){
-    # if some are null, set default
-    if(is.null(mu.link)) mu.link <- FAM$mu.link 
-    if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
-    fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
-                        "sigma.link = '", sigma.link, "'",  ")", sep ="")
-    # build family with link
-    FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
-  } 
-        Families(mu = gamlss2parMu(mu = mu, sigma = sigma, FAM = FAM, 
-                                   stabilization = stabilization, fname = fname),
+    
+    FAM <- gamlss.dist::as.gamlss.family(fname)
+    # check if any link function was set    
+    if(any(!is.null(mu.link), !is.null(sigma.link))){
+        # if some are null, set default
+        if(is.null(mu.link)) mu.link <- FAM$mu.link 
+        if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+        fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
+                            "sigma.link = '", sigma.link, "'",  ")", sep ="")
+        # build family with link
+        FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
+    } 
+    Families(mu = gamlss2parMu(mu = mu, sigma = sigma, FAM = FAM, 
+                               stabilization = stabilization, fname = fname),
              sigma = gamlss2parSigma(mu = mu, sigma = sigma, FAM = FAM, 
                                      stabilization = stabilization, fname = fname),
              qfun = get_qfun(fname),
@@ -419,24 +419,24 @@ gamlss3parNu <- function(mu = NULL, sigma = NULL, nu = NULL,
 gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL, 
                           mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
                           stabilization = stabilization, fname = "TF") {
-  
-  FAM <- gamlss.dist::as.gamlss.family(fname)
-  # check if any link function was set    
-  if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link))){
-    # if some are null, set default
-    if(is.null(mu.link)) mu.link <- FAM$mu.link 
-    if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
-    if(is.null(nu.link)) nu.link <- FAM$nu.link 
     
+    FAM <- gamlss.dist::as.gamlss.family(fname)
+    # check if any link function was set    
+    if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link))){
+        # if some are null, set default
+        if(is.null(mu.link)) mu.link <- FAM$mu.link 
+        if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+        if(is.null(nu.link)) nu.link <- FAM$nu.link 
+        
         fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
-                        "sigma.link = '", sigma.link, "',",  
-                        "nu.link = '", nu.link, "')", sep ="")
-    # build family with link
-    FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
-  }   
-  
-  Families(mu = gamlss3parMu(mu = mu, sigma = sigma, nu = nu, 
-                             stabilization = stabilization, fname = fname, FAM = FAM),
+                            "sigma.link = '", sigma.link, "',",  
+                            "nu.link = '", nu.link, "')", sep ="")
+        # build family with link
+        FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
+    }   
+    
+    Families(mu = gamlss3parMu(mu = mu, sigma = sigma, nu = nu, 
+                               stabilization = stabilization, fname = fname, FAM = FAM),
              sigma = gamlss3parSigma(mu = mu, sigma = sigma, nu = nu, 
                                      stabilization = stabilization, fname = fname, FAM = FAM),
              nu = gamlss3parNu(mu = mu, sigma = sigma, nu = nu, 
@@ -461,17 +461,17 @@ gamlss4parMu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     }
     ## compute the risk
     risk <- function(y, f, w = 1) {
-    ## get the ngradient: mu is linkinv(f)
+        ## get the ngradient: mu is linkinv(f)
         sum(w * loss(y = y, f = f, sigma = sigma, nu = nu, tau = tau))
     }
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-      if (FAM$type == "Mixed") {
-        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
-      } else {
-        ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau) *
-            FAM$mu.dr(eta = f)
-      }
+        if (FAM$type == "Mixed") {
+            ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)
+        } else {
+            ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, nu = nu, tau = tau) *
+                FAM$mu.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -510,12 +510,12 @@ gamlss4parSigma <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM 
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-      if (FAM$type == "Mixed") {
-        ngr <- FAM$dldm(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
-      } else {
-        ngr <-  FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu,
-                         tau = tau) * FAM$sigma.dr(eta = f)
-      }
+        if (FAM$type == "Mixed") {
+            ngr <- FAM$dldm(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
+        } else {
+            ngr <-  FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), nu = nu,
+                             tau = tau) * FAM$sigma.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -553,12 +553,12 @@ gamlss4parNu <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = F
     ## get the ngradient: sigma is linkinv(f)
     ## we need dl/deta = dl/dsigma*dsigma/deta
     ngradient <- function(y, f, w = 1) {
-      if (FAM$type == "Mixed") {
-        ngr <- FAM$dldv(y = y, nu = FAM$nu.linkinv(f), tau = tau) * FAM$nu.dr(eta = f)
-      } else {
-        ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f),
-                        tau = tau) * FAM$nu.dr(eta = f)
-      }
+        if (FAM$type == "Mixed") {
+            ngr <- FAM$dldv(y = y, nu = FAM$nu.linkinv(f), tau = tau) * FAM$nu.dr(eta = f)
+        } else {
+            ngr <- FAM$dldv(y = y, mu = mu, sigma = sigma, nu = FAM$nu.linkinv(f),
+                            tau = tau) * FAM$nu.dr(eta = f)
+        }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
     }
@@ -598,10 +598,10 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = 
     ## get the ngradient
     ngradient <- function(y, f, w = 1) {
         if (FAM$type == "Mixed") {
-          ngr <- FAM$dldt(y = y, nu = nu, tau =  FAM$tau.linkinv(f)) * FAM$tau.dr(eta = f)
+            ngr <- FAM$dldt(y = y, nu = nu, tau =  FAM$tau.linkinv(f)) * FAM$tau.dr(eta = f)
         } else {
-          ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
-                        nu = nu) * FAM$tau.dr(eta = f)
+            ngr <- FAM$dldt(y = y, mu = mu, sigma = sigma, tau = FAM$tau.linkinv(f),
+                            nu = nu) * FAM$tau.dr(eta = f)
         }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         ngr
@@ -625,26 +625,26 @@ gamlss4parTau <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, FAM = 
 gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL, 
                           mu.link = NULL, sigma.link = NULL, nu.link = NULL, tau.link = NULL, 
                           stabilization = stabilization, fname = "BCPE") {
-
-  FAM <- gamlss.dist::as.gamlss.family(fname)
-  # check if any link function was set    
-  if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link), 
-         !is.null(tau.link))){
-    # if some are null, set default
-    if(is.null(mu.link)) mu.link <- FAM$mu.link 
-    if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
-    if(is.null(nu.link)) nu.link <- FAM$nu.link 
-    if(is.null(tau.link)) tau.link <- FAM$tau.link 
     
+    FAM <- gamlss.dist::as.gamlss.family(fname)
+    # check if any link function was set    
+    if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link), 
+           !is.null(tau.link))){
+        # if some are null, set default
+        if(is.null(mu.link)) mu.link <- FAM$mu.link 
+        if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+        if(is.null(nu.link)) nu.link <- FAM$nu.link 
+        if(is.null(tau.link)) tau.link <- FAM$tau.link 
+        
+        
+        fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
+                            "sigma.link = '", sigma.link, "',",  
+                            "nu.link = '", nu.link, "',",
+                            "tau.link = '", tau.link, "')", sep ="")
+        # build family with link
+        FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
+    }   
     
-    fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
-                        "sigma.link = '", sigma.link, "',",  
-                        "nu.link = '", nu.link, "',",
-                        "tau.link = '", tau.link, "')", sep ="")
-    # build family with link
-    FAM <- gamlss.dist::as.gamlss.family(eval(parse(text = fname_link)))
-  }   
-  
     
     Families(mu = gamlss4parMu(mu = mu, sigma = sigma, nu = nu, tau = tau, 
                                stabilization = stabilization, fname = fname, FAM = FAM),
