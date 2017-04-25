@@ -31,6 +31,8 @@
   \subsection{Miscellaneous}{
     \itemize{
       \item Added Janek Thomas as new author.
+      \item Updated \file{inst/CITATION} due to release of JSS tutorial paper.
+      \item Updated URL in \file{DESCRIPTION}.
     }
   }
 }
