@@ -5,7 +5,6 @@
 \alias{gamboostLSS}
 \alias{mboostLSS_fit}
 
-
 \title{
   Fitting GAMLSS by Boosting
 }
@@ -63,7 +62,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
     \code{glmboostLSS}, \code{gamboostLSS} and \code{blackboostLSS}.
     This argument should not be directly specified by users!}
   \item{method}{ fitting method, currently two methods are supported:
-  \code{"cyclic"} and \code{"noncycli"}. The latter two requires a one dimensional \code{mstop} 
+  \code{"cyclic"} and \code{"noncyclic"}. The latter two requires a one dimensional \code{mstop} 
     value.}
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
@@ -75,7 +74,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
   the information provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2015).
+  \code{\link{gamboostLSS}} see Hofner et al. (2016).
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
   distribution parameters of a GAMLSS -- a linear boosting model is
@@ -106,7 +105,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   For \code{method = "cyclic"} it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
   \code{\link{boost_control}}. In the case of one single value, this
-  value is used for all distribution parameters of the GAMLSS model. 
+  value is used for all distribution parameters of the GAMLSS model.
   Alternatively, a (named) vector or a (named) list with separate values
   for each component can be used to specify a seperate value for each
   parameter of the GAMLSS model. The names of the list must correspond
@@ -117,6 +116,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
   more-dimensional stopping, one can specify, e.g., \code{mstop =
     list(mu = 100, sigma = 200)} (see examples).
+
   If \code{method} is set to \code{"noncyclic"}, \code{mstop} has
   to be a one dimensional integer. Instead of cycling through all distribution 
   parameters, in each iteration only the best baselearner is used. One baselearner of every 
@@ -133,9 +133,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   extract information.
 }
 \references{
-B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
+B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
 Model Building and Variable Selection in the GAMLSS Framework.
-Journal of Statistical Software. Accepted for publication.
+Journal of Statistical Software, 74(1), 1-31.
 
 Available as \code{vignette("gamboostLSS_Tutorial")}.
 

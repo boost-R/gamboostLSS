@@ -184,7 +184,7 @@ Families(..., qfun = NULL, name = NULL)
   the families. If \code{stabilization = "MAD"}, the negative gradient
   is divided by its (weighted) median absolute deviation \deqn{median_i
   (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et 
-  al. (2015) for details. An alternative is \code{stabilization = "L2"}, where the gradient is divided by its (weighted) mean L2 norm. This results in negative gradient vectors (and hence also updates) of similar size for each distribution parameter, but also for every boosting iteration.  
+  al. (2016) for details. An alternative is \code{stabilization = "L2"}, where the gradient is divided by its (weighted) mean L2 norm. This results in negative gradient vectors (and hence also updates) of similar size for each distribution parameter, but also for every boosting iteration.  
 
 }
 \value{
@@ -197,9 +197,9 @@ Families(..., qfun = NULL, name = NULL)
 }
 
 \references{
-  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Journal of Statistical Software. Accepted for publication.
+  Journal of Statistical Software, 74(1), 1-31.
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
 

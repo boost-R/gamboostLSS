@@ -49,9 +49,9 @@
 }
 \references{
 
-  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Journal of Statistical Software. Accepted for publication.
+  Journal of Statistical Software, 74(1), 1-31.
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
 
@@ -82,7 +82,7 @@
 
   Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2015).
   mboost: Model-based boosting. R package version 2.4-2.
-  \url{http://cran.r-project.org/package=mboost}
+  \url{https://CRAN.R-project.org/package=mboost}
 }
 \keyword{ package }
 

@@ -71,7 +71,7 @@ as.families <- function(fname = "NO", stabilization = c("none", "MAD", "L2"),
 gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
     
     ## check if a specific link was provided 
-    if(!is.null(mu.link)) fname_link <- eval(parse(text = paste(fname, 
+    if (!is.null(mu.link)) fname_link <- eval(parse(text = paste(fname, 
                                                                 "(mu.link = '", mu.link, "')", sep ="")))
     else fname_link <- fname
     
@@ -84,8 +84,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
     
     ## get the loss
     loss <- function(y, f, w = 1) {
-        if(is.bdfamily) 
-        {
+        if (is.bdfamily) {
             bd <- rowSums(y)
             y <- y[,1]
             return( -pdf(x = y, mu = FAM$mu.linkinv(f), log = TRUE, bd = bd))
@@ -100,14 +99,12 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        if(is.bdfamily) 
-        {
+        if (is.bdfamily) {
             if (!is.matrix(y)) stop("y should be a matrix for this family")
             bd <- rowSums(y)
             y <- y[,1]
             ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f), bd = bd) * FAM$mu.dr(eta = f)
-        }
-        else{
+        } else {
             ngr <- FAM$dldm(y = y, mu = FAM$mu.linkinv(f)) * FAM$mu.dr(eta = f)  
         }
         return(ngr)
@@ -118,8 +115,7 @@ gamlss1parMu <- function(mu = NULL, fname = "EXP", mu.link = mu.link) {
         if (!is.null(mu)) {
             RET <- FAM$mu.linkfun(mu)
         } else {
-            if(is.bdfamily) 
-            {
+            if (is.bdfamily) {
                 if (!is.matrix(y)) stop("y should be a matrix for this family")
                 bd <- rowSums(y)
                 y <- y[,1]
@@ -148,8 +144,7 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, mu.link = NULL, FAM = FAM,
     
     ## get the loss
     loss <- function(y, f, sigma,  w = 1) {
-        if(is.bdfamily) 
-        {
+        if (is.bdfamily) {
             #if (!is.matrix(y)) stop("y should be a matrix for this family")
             bd <- rowSums(y)
             y <- y[,1]
@@ -167,14 +162,12 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, mu.link = NULL, FAM = FAM,
     ## get the ngradient: mu is linkinv(f)
     ## we need dl/deta = dl/dmu*dmu/deta
     ngradient <- function(y, f, w = 1) {
-        if(is.bdfamily) 
-        {
+        if (is.bdfamily) {
             if (!is.matrix(y)) stop("y should be a matrix for this family")
             bd <- rowSums(y)
             y <- y[,1]
             ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma, bd = bd) * FAM$mu.dr(eta = f)
-        }
-        else{
+        } else {
             ngr <-  FAM$dldm(y = y, mu = FAM$mu.linkinv(f), sigma = sigma) * FAM$mu.dr(eta = f)  
         }
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
@@ -186,8 +179,7 @@ gamlss2parMu <- function(mu = NULL, sigma = NULL, mu.link = NULL, FAM = FAM,
         if (!is.null(mu)) {
             RET <- FAM$mu.linkfun(mu)
         } else {
-            if(is.bdfamily) 
-            {
+            if (is.bdfamily) {
                 if (!is.matrix(y)) stop("y should be a matrix for this family")
                 bd <- rowSums(y)
                 y <- y[,1]
@@ -214,8 +206,7 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
     ## get the loss
     loss <- function(y, f, w = 1, mu ) {
         # check if bd exists in this family
-        if(is.bdfamily) 
-        {
+        if (is.bdfamily) {
             bd <- rowSums(y)
             y <- y[,1]
             return( -pdf(x = y, mu = mu, sigma = FAM$sigma.linkinv(f), log = TRUE, bd = bd))
@@ -233,15 +224,14 @@ gamlss2parSigma <- function(mu = NULL, sigma = NULL,
     ngradient <- function(y, f, w = 1) {
         
         # check if bd exists in this family
-        if(is.bdfamily) 
-        {
+        if (is.bdfamily) {
             if (!is.matrix(y)) stop("y should be a matrix for this family")
             bd <- rowSums(y)
             y <- y[,1]
             ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f), bd = bd) * FAM$sigma.dr(eta = f)
             
-        }
-        else{ ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
+        } else { 
+	    ngr <- FAM$dldd(y = y, mu = mu, sigma = FAM$sigma.linkinv(f)) * FAM$sigma.dr(eta = f)
         }
         
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
@@ -268,10 +258,10 @@ gamlss2parFam <- function(mu = NULL, sigma = NULL, mu.link = mu.link,
     
     FAM <- gamlss.dist::as.gamlss.family(fname)
     # check if any link function was set    
-    if(any(!is.null(mu.link), !is.null(sigma.link))){
+    if (any(!is.null(mu.link), !is.null(sigma.link))) {
         # if some are null, set default
-        if(is.null(mu.link)) mu.link <- FAM$mu.link 
-        if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+        if (is.null(mu.link)) mu.link <- FAM$mu.link 
+        if (is.null(sigma.link)) sigma.link <- FAM$sigma.link 
         fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
                             "sigma.link = '", sigma.link, "'",  ")", sep ="")
         # build family with link
@@ -424,9 +414,9 @@ gamlss3parFam <- function(mu = NULL, sigma = NULL, nu = NULL,
     # check if any link function was set    
     if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link))){
         # if some are null, set default
-        if(is.null(mu.link)) mu.link <- FAM$mu.link 
-        if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
-        if(is.null(nu.link)) nu.link <- FAM$nu.link 
+        if (is.null(mu.link)) mu.link <- FAM$mu.link 
+        if (is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+        if (is.null(nu.link)) nu.link <- FAM$nu.link 
         
         fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 
                             "sigma.link = '", sigma.link, "',",  
@@ -628,13 +618,13 @@ gamlss4parFam <- function(mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
     
     FAM <- gamlss.dist::as.gamlss.family(fname)
     # check if any link function was set    
-    if(any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link), 
-           !is.null(tau.link))){
+    if (any(!is.null(mu.link), !is.null(sigma.link), !is.null(nu.link), 
+           !is.null(tau.link))) {
         # if some are null, set default
-        if(is.null(mu.link)) mu.link <- FAM$mu.link 
-        if(is.null(sigma.link)) sigma.link <- FAM$sigma.link 
-        if(is.null(nu.link)) nu.link <- FAM$nu.link 
-        if(is.null(tau.link)) tau.link <- FAM$tau.link 
+        if (is.null(mu.link)) mu.link <- FAM$mu.link 
+        if (is.null(sigma.link)) sigma.link <- FAM$sigma.link 
+        if (is.null(nu.link)) nu.link <- FAM$nu.link 
+        if (is.null(tau.link)) tau.link <- FAM$tau.link 
         
         
         fname_link <- paste("gamlss.dist::",fname, "(mu.link = '", mu.link, "', ", 

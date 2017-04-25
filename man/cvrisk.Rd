@@ -134,7 +134,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   
   For the \code{method = "noncyclic"} only the line plot for exists.
 
-  Hofner et al. (2015) provide a detailed description of
+  Hofner et al. (2016) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
   worked example.
 }
@@ -145,9 +145,9 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   \code{print} methods are available as well as an \code{mstop} method.
 }
 \references{
-  B. Hofner, A. Mayr, M. Schmid (2015). gamboostLSS: An R Package for
+  B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
   Model Building and Variable Selection in the GAMLSS Framework.
-  Journal of Statistical Software. Accepted for publication.
+  Journal of Statistical Software, 74(1), 1-31.
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
 }
