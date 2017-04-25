@@ -9,6 +9,7 @@
 
 language: r
 sudo: required
+dist: trusty
 
 ## change directory before installation 
 ## as R packages are not available elsewise
