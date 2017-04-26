@@ -8,7 +8,7 @@ Maintainer: Benjamin Hofner <benjamin.hofner@pei.de>
 Description: Boosting models for fitting generalized additive models for
   location, shape and scale ('GAMLSS') to potentially high dimensional
   data.
-Depends: R (>= 2.10.0), mboost (>= 2.3-0), stabs (>= 0.5-0), parallel
+Depends: R (>= 2.10.0), mboost (>= 2.8-0), stabs (>= 0.5-0), parallel
 Imports: graphics, grDevices, stats, utils
 Suggests: gamlss, gamlss.dist, survival, BayesX, R2BayesX
 LazyLoad: yes
