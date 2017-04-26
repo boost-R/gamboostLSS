@@ -1,37 +1,52 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 1.5-0 (2016-yy-zz)}{
+\section{Changes in gamboostLSS version 2.0-0 (2017-yy-zz)}{
   \subsection{User-visible changes}{
     \itemize{
-      \item Added new non-cyclic fitting \code{method}s for \code{gamboostLSS} models:
-      \itemize{
-        \item \code{method = "cycling"} is the standard approach which was also
-           used previously.
-        \item \code{method = "inner"} and \code{"outer"} provide two new
-           non-cyclic algorithms. For details see XXX.
-        \item Non-cyclic methods allow faster cross-validation and better results
-           for stability selection (see below).
-      }
+      \item Added new argument \code{method} which can be used to specify different
+        model fitting algorithms:
+        \itemize{
+          \item \code{method = "cyclic"} is the standard approach which was also
+             used previously.
+          \item \code{method = "noncyclic"} provides a new non-cyclic algorithm. 
+        }
+        The \code{noncyclic} method allow faster cross-validation and better results
+        for stability selection (see below). For details see 
+           
+             Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
+             Stability selection for component-wise gradient boosting in multiple dimensions. 
+             Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
+  
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
-      \item The (\code{as.families}) interface to incorporate 'gamlss' distributions for \code{gamboostLSS} 
-         models was adapted to allow for other link functions.
-     \item Added option \code{stabilization = "L2"}  to use the mean L2 norm of 
-	the negative gradient to make the updated for the different distribution parameters comparable. 
+      \item Models can now be fitted with zero steps (i.e., models containing only 
+        the offset). This change was mainly realized with the release of mboost 2.8-0.
+        This closes issue \href{https://github.com/boost-R/gamboostLSS/issues/22}{#22}.
+      \item The \code{as.families} interface to incorporate \pkg{gamlss} distributions 
+         for \code{gamboostLSS} models was adapted to allow for other link functions.
+     \item Added option \code{stabilization = "L2"}  to use the average L2 norm of 
+	     the negative gradient to make the updates for the different distribution 
+	     parameters comparable. 
     }
   }
   \subsection{Bug-fixes}{
     \itemize{
-      \item Fixed \code{as.families("BB")} and \code{as.families("BI")}, which is actually an mboost family
-        Closes issue
+      \item Fixed \code{as.families("BB")} and \code{as.families("BI")}, which is 
+        actually an \pkg{mboost} family. Closes issue
         \href{https://github.com/boost-R/gamboostLSS/issues/12}{#12}.
+      \item Fixed \code{as.families} for 4-parametric \code{"Mixed"}-type families
+        (e.g. \code{as.families("BEOI")} and \code{as.families("BEINF")}). 
+        Closes issue
+        \href{https://github.com/boost-R/gamboostLSS/issues/28}{#28}.
     }
   }
   \subsection{Miscellaneous}{
     \itemize{
       \item Added Janek Thomas as new author.
-      \item Updated \file{inst/CITATION} due to release of JSS tutorial paper.
+      \item Updated \file{inst/CITATION} due to release of JSS tutorial paper and 
+        added new noncyclic fitting paper (also to manuals). 
+        The latter closes issue \href{https://github.com/boost-R/gamboostLSS/issues/27}{#27}.
       \item Updated URL in \file{DESCRIPTION}.
     }
   }
