@@ -24,7 +24,7 @@
     ../relative/path/to/R-devel/bin/R
 
   Run
-    install.packages(c("gamlss", "BayesX", "gamlss.dist", "mboost", "R2BayesX"))
+    install.packages(c("gamlss", "gamlss.dist", "mboost", "BayesX", "R2BayesX"))
 
   Quit R and run
    ../relative/path/to/R-devel/bin/R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
