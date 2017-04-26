@@ -1,16 +1,41 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-
-\section{Changes in gamboostLSS version 1.2-2 (2016-10-18)}{
+\section{Changes in gamboostLSS version 1.5-0 (2016-yy-zz)}{
+  \subsection{User-visible changes}{
+    \itemize{
+      \item Added new non-cyclic fitting \code{method}s for \code{gamboostLSS} models:
+      \itemize{
+        \item \code{method = "cycling"} is the standard approach which was also
+           used previously.
+        \item \code{method = "inner"} and \code{"outer"} provide two new
+           non-cyclic algorithms. For details see XXX.
+        \item Non-cyclic methods allow faster cross-validation and better results
+           for stability selection (see below).
+      }
+      \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
+         models.
+      \item The (\code{as.families}) interface to incorporate 'gamlss' distributions for \code{gamboostLSS} 
+         models was adapted to allow for other link functions.
+     \item Added option \code{stabilization = "L2"}  to use the mean L2 norm of 
+	the negative gradient to make the updated for the different distribution parameters comparable. 
+    }
+  }
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item Fixed \code{as.families("BB")} and \code{as.families("BI")}, which is actually an mboost family
+        Closes issue
+        \href{https://github.com/boost-R/gamboostLSS/issues/12}{#12}.
+    }
+  }
   \subsection{Miscellaneous}{
     \itemize{
+      \item Added Janek Thomas as new author.
       \item Updated \file{inst/CITATION} due to release of JSS tutorial paper.
       \item Updated URL in \file{DESCRIPTION}.
     }
   }
- }
-
+}
 
 \section{Changes in gamboostLSS version 1.2-1 (2016-03-11)}{
   \subsection{User-visible changes}{

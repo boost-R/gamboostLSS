@@ -1,4 +1,5 @@
 import("mboost")
+importFrom("stabs", "stabsel", "subsample", "run_stabsel")
 import("parallel")
 
 importFrom("graphics", "axis", "box", "lines", "plot", "points")
@@ -16,6 +17,8 @@ export(glmboostLSS,
        model.weights,
        PI, predint, plot.predint,
        make.grid, cvrisk.mboostLSS,
+       selected, selected.mboostLSS, selected.stabsel_mboostLSS,
+       stabsel.mboostLSS,
        Families,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
@@ -37,6 +40,7 @@ S3method("[", mboostLSS)
 S3method(print, mboostLSS)
 S3method(selected, mboostLSS)
 S3method(risk, mboostLSS)
+S3method(risk, nc_mboostLSS)
 S3method(summary, mboostLSS)
 
 S3method(mstop, oobag)
@@ -46,9 +50,14 @@ S3method(model.weights, default)
 S3method(model.weights, mboostLSS)
 
 S3method(cvrisk, mboostLSS)
+S3method(cvrisk, nc_mboostLSS)
 S3method(print, cvriskLSS)
 S3method(plot, cvriskLSS)
+S3method(plot, nc_cvriskLSS)
 S3method(mstop, cvriskLSS)
+
+S3method(stabsel, mboostLSS)
+S3method(selected, stabsel_mboostLSS)
 
 S3method(coef, mboostLSS)
 S3method(coef, glmboostLSS)

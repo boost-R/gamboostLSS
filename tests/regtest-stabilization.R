@@ -36,6 +36,7 @@ stopifnot(all.equal(coef(m3), coef(m2)))
 
 ## check if everything is handled correctly
 GaussianLSS(stabilization = "MAD")
+GaussianLSS(stabilization = "L2")
 GaussianLSS(stabilization = "none")
 res <- try(GaussianLSS(stabilization = "test"), silent = TRUE)
 res
@@ -56,11 +57,17 @@ for (i in 1:length(FAMILIES)) {
     m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
                          families = FAMILIES[[i]](stabilization = "MAD"),
                          data=dat)
+    m_L2 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                         families = FAMILIES[[i]](stabilization = "L2"),
+                         data=dat)
+    
     stopifnot(tail(risk(m_none, merge = TRUE), 1) != tail(risk(m_MAD, merge = TRUE), 1))
     cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
-        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+        tail(risk(m_MAD, merge = TRUE), 1), 
+        '\n  stabilization = "L2":', 
+        tail(risk(m_L2, merge = TRUE), 1), "\n")
 }
 
 ## check as.families interface for 2:4 parametric families
@@ -75,10 +82,15 @@ for (i in 1:length(FAMILIES)) {
     m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
                          families = as.families(FAMILIES[[i]], stabilization = "MAD"),
                          data=dat)
+    m_L2 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                         families = as.families(FAMILIES[[i]], stabilization = "L2"),
+                         data=dat)
     cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
-        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+        tail(risk(m_MAD, merge = TRUE), 1), 
+        '\n  stabilization = "L2":', 
+        tail(risk(m_L2, merge = TRUE), 1), "\n")
 }
 
 FAMILIES <- list("BCT")
@@ -92,13 +104,23 @@ for (i in 1:length(FAMILIES)) {
                              families = as.families(FAMILIES[[i]], stabilization = "MAD"),
                              data=dat), silent = TRUE)
     if (inherits(m_MAD, "try-error")) {
-        warning("BCT cannot be fitted with stabilization", immediate. = TRUE)
+        warning("BCT cannot be fitted with stabilization = 'MAD'", immediate. = TRUE)
         break
+    }
+    
+    m_L2 <- try(glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                             families = as.families(FAMILIES[[i]], stabilization = "L2"),
+                             data=dat), silent = TRUE)
+    if (inherits(m_L2, "try-error")) {
+      warning("BCT cannot be fitted with stabilization = 'L2'", immediate. = TRUE)
+      break
     }
     cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
-        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+        tail(risk(m_MAD, merge = TRUE), 1), 
+        '\n  stabilization = "L2":', 
+        tail(risk(m_L2, merge = TRUE), 1), "\n")
 }
 
 ## check survival families
@@ -119,13 +141,23 @@ for (i in 1:length(FAMILIES)) {
                              data=dat), silent = TRUE)
 
     if (inherits(m_MAD, "try-error")) {
-        warning(families[i], "cannot be fitted with stabilization", immediate. = TRUE)
+        warning(families[i], " cannot be fitted with stabilization = 'MAD'", immediate. = TRUE)
         break
     }
-    cat('Risks:\n  stabilization = "none":',
+    m_L2 <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
+                             families = FAMILIES[[i]](stabilization = "L2"),
+                             data=dat), silent = TRUE)
+    
+    if (inherits(m_L2, "try-error")) {
+      warning(families[i], " cannot be fitted with stabilization = 'L2'", immediate. = TRUE)
+      break
+    }
+        cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
-        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+        tail(risk(m_MAD, merge = TRUE), 1), 
+        '\n  stabilization = "L2":', 
+        tail(risk(m_L2, merge = TRUE), 1), "\n")
 }
 
 ## check count data
@@ -141,8 +173,14 @@ for (i in 1:length(FAMILIES)) {
     m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
                          families = FAMILIES[[i]](stabilization = "MAD"),
                          data=dat)
+    m_L2 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
+                         families = FAMILIES[[i]](stabilization = "L2"),
+                         data=dat)
+    
     cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
-        tail(risk(m_MAD, merge = TRUE), 1), "\n")
+        tail(risk(m_MAD, merge = TRUE), 1), 
+        '\n  stabilization = "L2":', 
+        tail(risk(m_L2, merge = TRUE), 1), "\n")
 }

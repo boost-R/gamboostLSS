@@ -32,8 +32,10 @@
   \code{\link{glmboostLSS}}.
 }
 \usage{
-as.families(fname = "NO", mu = NULL, sigma = NULL,
-            nu = NULL, tau = NULL, stabilization = c("none", "MAD"))
+as.families(fname = "NO", stabilization = c("none", "MAD", "L2"),
+            mu = NULL, sigma = NULL, nu = NULL, tau = NULL,
+            mu.link = NULL, sigma.link = NULL, nu.link = NULL, 
+            tau.link = NULL)
 
 ## a wrapper to as.families:
 gamlss.Families(...)
@@ -51,6 +53,10 @@ gamlss.Families(...)
   \item{sigma}{possible offset value for parameter \code{sigma}.}
   \item{nu}{possible offset value for parameter \code{nu}.}
   \item{tau}{possible offset value for parameter \code{tau}.}
+  \item{mu.link}{different link function for parameter \code{mu}.}
+  \item{sigma.link}{different link function for parameter \code{sigma}.}
+  \item{nu.link}{different link function for parameter \code{nu}.}
+  \item{tau.link}{different link function for parameter \code{tau}.}
   \item{stabilization}{ governs if the negative gradient should be
     standardized in each boosting step. It can be either "none" or
     "MAD". For details see \code{\link{Families}}.
@@ -67,6 +73,9 @@ gamlss.Families(...)
   corresponding \code{mboost}-like sub-families and the final
   \code{families} object, which can be then used with the fitting
   functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}}.
+  
+  If no different link functions are specified, the standard links for the
+  corresponding family in \code{gamlss.dist} are applied. 
 
   To extract the necessary information regarding partial derivatives
   (for the \code{ngradient} - see \code{\link{Family}} for details) and

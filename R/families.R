@@ -8,7 +8,7 @@ Families <- function(..., qfun = NULL, name = NULL) {
     check <- sapply(RET, function(x){
         bdy <- body(x@response)
         (length(x@response(c(-1,0,1))) != 3 && class(bdy) != "call" &&
-         length(bdy) == 1 && is.na(bdy))
+            length(bdy) == 1 && is.na(bdy))
     })
     if (any(check))
         stop("response function not specified in families for:\n\t",
@@ -48,7 +48,7 @@ NBinomialMu <- function(mu = NULL, sigma = NULL, stabilization) {
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, offset = offset, risk = risk, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
@@ -64,14 +64,14 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL, stabilization) {
     # this family boosts sigma therefore f is sigma
     loss <- function(mu, y, f)
         -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) * f +
-          y * log(mu) - (y + exp(f)) * log(mu + exp(f)))
+              y * log(mu) - (y + exp(f)) * log(mu + exp(f)))
     risk <- function(y, f, w = 1){
         RET <- sum(w * loss(y = y, f = f, mu = mu))
         return(RET)
     }
     ngradient <- function(y, f, w = 1) {       # f is sigma !
         ngr <- exp(f)*(digamma(y +exp(f)) - digamma(exp(f)) + log(exp(f)) + 1 -
-                       log(mu +exp(f)) - (exp(f) + y)/(mu +exp(f)))
+                           log(mu +exp(f)) - (exp(f) + y)/(mu +exp(f)))
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         return(ngr)
     }
@@ -87,7 +87,7 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL, stabilization) {
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, offset = offset, risk = risk, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
@@ -101,7 +101,7 @@ NBinomialSigma <- function(mu = NULL, sigma = NULL, stabilization) {
 
 
 NBinomialLSS <- function(mu = NULL, sigma = NULL,
-                         stabilization = c("none", "MAD")) {
+                         stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(mu) && mu <= 0))
         stop(sQuote("sigma"), " and ", sQuote("mu"),
              " must be greater than zero")
@@ -127,7 +127,7 @@ qNBinomial <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
 StudentTMu <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
     loss <- function(df, sigma,y, f){
         -1 * (lgamma((df+1)/2) - log(sigma) - lgamma(1/2) - lgamma(df/2) - 0.5 *
-              log(df) - (df+1)/2 * log(1 + (y-f)^2 / (df * sigma^2)))
+                  log(df) - (df+1)/2 * log(1 + (y-f)^2 / (df * sigma^2)))
     }
     risk <- function(y, f, w = 1){
         sum(w * loss(y = y, f = f, df = df, sigma = sigma))
@@ -136,8 +136,8 @@ StudentTMu <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
         ngr <- (df+1)*(y-f)/(df*sigma^2 +(y-f)^2)
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         return(ngr)
-     }
-
+    }
+    
     offset <- function(y, w){
         if (!is.null(mu)){
             RET <- mu
@@ -150,7 +150,7 @@ StudentTMu <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            offset=offset,
            response = function(f) f,
@@ -164,7 +164,7 @@ StudentTMu <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
 StudentTSigma <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
     loss <- function(df, mu, y, f){
         -1 * (lgamma((df+1)/2) - f - lgamma(1/2) - lgamma(df/2) - 0.5 * log(df) -
-              (df+1)/2 * log(1 + (y-mu)^2 / (df * exp(2 * f))))
+                  (df+1)/2 * log(1 + (y-mu)^2 / (df * exp(2 * f))))
     }
     risk <- function(y, f, w = 1){
         sum(w * loss(y = y, f = f, df = df, mu = mu))
@@ -188,7 +188,7 @@ StudentTSigma <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            offset=offset,
            response = function(f) exp(f),
@@ -202,7 +202,7 @@ StudentTSigma <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
 StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
     loss <- function(sigma, mu,y, f){
         -1 * (lgamma((exp(f)+1)/2) - log(sigma) - lgamma(1/2) - lgamma(exp(f)/2) -
-              0.5*f - (exp(f)+1)/2 * log(1 + (y-mu)^2 / (exp(f)*sigma^2)))
+                  0.5*f - (exp(f)+1)/2 * log(1 + (y-mu)^2 / (exp(f)*sigma^2)))
     }
     risk <- function(y, f, w = 1){
         sum(w * loss(y = y, f = f, sigma = sigma, mu = mu))
@@ -210,7 +210,7 @@ StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
     ngradient <- function(y, f, w = 1) {
         ngr <- exp(f)/2 * (digamma((exp(f)+1)/2)-digamma(exp(f)/2)) - 0.5 -
             (exp(f)/2 * log(1+ (y-mu)^2/(exp(f)*sigma^2)) -
-             (y-mu)^2/(sigma^2 + (y-mu)^2/exp(f)) * (exp(-f) +1)/2 )
+                 (y-mu)^2/(sigma^2 + (y-mu)^2/exp(f)) * (exp(-f) +1)/2 )
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         return(ngr)
     }
@@ -228,7 +228,7 @@ StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            offset=offset,
            response = function(f) exp(f),
@@ -242,7 +242,7 @@ StudentTDf <- function(mu = NULL, sigma = NULL, df = NULL, stabilization) {
 
 
 StudentTLSS <- function(mu = NULL, sigma = NULL, df = NULL,
-                        stabilization = c("none", "MAD")) {
+                        stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0) || (!is.null(df) && df <= 0))
         stop(sQuote("sigma"), " and ", sQuote("df"),
              " must be greater than zero")
@@ -298,7 +298,7 @@ LogNormalMu <- function (mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, offset = offset, loss = loss,
            response = function(f) f,
            check_y = function(y) {
@@ -339,7 +339,7 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, offset = offset, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
@@ -351,7 +351,7 @@ LogNormalSigma <- function(mu = NULL, sigma = NULL, stabilization){
 }
 
 LogNormalLSS <- function(mu = NULL, sigma = NULL,
-                         stabilization = c("none", "MAD")) {
+                         stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -374,17 +374,17 @@ LogLogMu <- function (mu = NULL, sigma = NULL, stabilization){
     loss <- function(sigma, y, f) {
         logfw <- function(pred)
             dlogis(pred, log = TRUE)
-            #pred - 2 * (1 + exp(pred))
+        #pred - 2 * (1 + exp(pred))
         logSw <- function(pred)
             plogis(pred, lower.tail = FALSE, log.p = TRUE)
-            #1/(1 + exp(pred))
+        #1/(1 + exp(pred))
         eta <- (log(y[,1]) - f)/sigma
         -y[,2] * (logfw(eta) - log(sigma)) - (1 - y[,2]) * logSw(eta)
     }
-
+    
     risk <- function(y, f, w = 1)
         sum(w * loss(y = y, f = f, sigma = sigma))
-
+    
     ngradient <- function(y, f, w = 1) {
         eta <- (log(y[,1]) - f)/sigma
         nom <- (exp(-eta) + 1)
@@ -403,8 +403,8 @@ LogLogMu <- function (mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
-
+    
+    
     Family(ngradient = ngradient, risk = risk, offset = offset, loss = loss,
            response = function(f) f,
            check_y = function(y) {
@@ -419,10 +419,10 @@ LogLogSigma <- function (mu = NULL, sigma = NULL, stabilization){
     loss <- function(mu, y, f) {
         logfw <- function(pred)
             dlogis(pred, log = TRUE)
-            #exp(pred)/(1 + exp(pred))^2
+        #exp(pred)/(1 + exp(pred))^2
         logSw <- function(pred)
             pnorm(pred, lower.tail = FALSE, log.p = TRUE)
-            #1/(1 + exp(pred))
+        #1/(1 + exp(pred))
         eta <- (log(y[,1]) - mu)/exp(f)
         -y[,2] * (logfw(eta) - f) - (1 - y[,2]) * logSw(eta)
     }
@@ -446,7 +446,7 @@ LogLogSigma <- function (mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, offset = offset, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
@@ -458,13 +458,13 @@ LogLogSigma <- function (mu = NULL, sigma = NULL, stabilization){
 }
 
 LogLogLSS <- function(mu = NULL, sigma = NULL,
-                      stabilization = c("none", "MAD")) {
+                      stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
     Families(mu = LogLogMu(mu = mu, sigma = sigma, stabilization = stabilization),
              sigma = LogLogSigma(mu = mu, sigma = sigma, stabilization = stabilization),
-#             qfun = qLogLog,
+             #             qfun = qLogLog,
              name = "Log-Log")
 }
 
@@ -506,7 +506,7 @@ WeibullMu <- function (mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, offset = offset, loss = loss,
            response = function(f) f,
            check_y = function(y) {
@@ -526,7 +526,7 @@ WeibullSigma <- function (mu = NULL, sigma = NULL, stabilization){
             -exp(pred)
         eta <- (log(y[,1]) - mu)/exp(f)
         -y[,2] * (logfw(eta) - f) - (1 - y[,2]) * logSw(eta)
-        }
+    }
     risk <- function(y, f, w = 1)
         sum(w * loss(y = y, f = f, mu = mu))
     ngradient <- function(y, f, w = 1) {
@@ -548,7 +548,7 @@ WeibullSigma <- function (mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, offset = offset, loss = loss,
            response = function(f) exp(f),
            check_y = function(y) {
@@ -560,7 +560,7 @@ WeibullSigma <- function (mu = NULL, sigma = NULL, stabilization){
 }
 
 WeibullLSS <- function(mu = NULL, sigma = NULL,
-                       stabilization = c("none", "MAD")) {
+                       stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -577,7 +577,7 @@ qWeibull <- function(p, mu = 1, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
 
 
 GaussianMu  <- function(mu = NULL, sigma = NULL, stabilization){
-
+    
     loss <- function(sigma, y, f) -dnorm(x=y, mean=f, sd=sigma, log=TRUE)
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, sigma = sigma))
@@ -587,7 +587,7 @@ GaussianMu  <- function(mu = NULL, sigma = NULL, stabilization){
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         return(ngr)
     }
-
+    
     offset <- function(y, w){
         if (!is.null(mu)){
             RET <- mu
@@ -596,14 +596,14 @@ GaussianMu  <- function(mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) f, offset=offset,
            name = "Normal distribution: mu(id link)")
 }
 
 GaussianSigma  <- function(mu = NULL, sigma = NULL, stabilization){
-
+    
     loss <-  function(y, f, mu) - dnorm(x=y, mean=mu, sd=exp(f), log=TRUE)
     risk <- function(y, f, w = 1) {
         sum(w * loss(y = y, f = f, mu = mu))
@@ -621,7 +621,7 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL, stabilization){
         }
         return(RET)
     }
-
+    
     Family(ngradient = ngradient, risk = risk, loss = loss,
            response = function(f) exp(f), offset=offset,
            name = "Normal distribution: sigma (log link)")
@@ -629,7 +629,7 @@ GaussianSigma  <- function(mu = NULL, sigma = NULL, stabilization){
 
 
 GaussianLSS <- function(mu = NULL, sigma = NULL,
-                        stabilization = c("none", "MAD")) {
+                        stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     stabilization <- check_stabilization(stabilization)
@@ -665,7 +665,7 @@ GammaMu <-function (mu = NULL, sigma = NULL, stabilization) {
             if (is.null(sigma))
                 sigma <<- mean(y)^2/(var(y))
             RET <- optimize(risk, interval = c(0, max(y^2, na.rm = TRUE)),
-            y = y, w = w)$minimum
+                            y = y, w = w)$minimum
         }
         return(RET)
     }
@@ -703,7 +703,7 @@ GammaSigma <- function(mu = NULL, sigma = NULL, stabilization) {
             if (is.null(mu))
                 mu <<- mean(y)
             RET <- optimize(risk, interval = c(0, max(y, na.rm = TRUE)),
-            y = y, w = w)$minimum
+                            y = y, w = w)$minimum
         }
         return(RET)
     }
@@ -720,7 +720,7 @@ GammaSigma <- function(mu = NULL, sigma = NULL, stabilization) {
 }
 
 GammaLSS <- function (mu = NULL, sigma = NULL,
-                      stabilization = c("none", "MAD")) {
+                      stabilization = c("none", "MAD", "L2")) {
     if ((!is.null(sigma) && sigma <= 0))
         stop(sQuote("sigma"), " must be greater than zero")
     if ((!is.null(mu) && mu <= 0))
@@ -743,13 +743,13 @@ qGamma <- function(p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) {
 
 
 BetaMu <- function(mu = NULL, phi = NULL, stabilization){
-
+    
     # loss is negative log-Likelihood, f is the parameter to be fitted with
     # logit link -> exp(f) = mu
     loss <- function(phi, y, f) {
         - 1 * (lgamma(phi) - lgamma(plogis(f) * phi) -
-              lgamma((1 - plogis(f)) * phi) + (plogis(f) * phi - 1) * log(y) +
-              ((1 - plogis(f)) * phi - 1) * log(1 - y))
+                   lgamma((1 - plogis(f)) * phi) + (plogis(f) * phi - 1) * log(y) +
+                   ((1 - plogis(f)) * phi - 1) * log(1 - y))
     }
     # risk is sum of loss
     risk <- function(y, f, w = 1) {
@@ -769,11 +769,11 @@ BetaMu <- function(mu = NULL, phi = NULL, stabilization){
         }
         else {
             if (is.null(phi))
-               phi <<-  mean(y) * (1 - mean(y)) /var(y) - 1
+                phi <<-  mean(y) * (1 - mean(y)) /var(y) - 1
             ### look for starting value of f = qlogis(mu) in "interval"
             ### i.e. mu ranges from 0.000001 to 0.999999
             RET <- optimize(risk, interval = c(qlogis(0.000001), qlogis(0.999999)), y = y,
-                w = w)$minimum
+                            w = w)$minimum
         }
         return(RET)
     }
@@ -792,14 +792,14 @@ BetaMu <- function(mu = NULL, phi = NULL, stabilization){
 
 # Sub-Family for phi
 BetaPhi <- function(mu = NULL, phi = NULL, stabilization){
-
+    
     # loss is negative log-Likelihood, f is the parameter to be fitted with
     # log-link: exp(f) = phi
     loss <- function(mu, y, f) {
         #y <- (y * (length(y) - 1) + 0.5)/length(y)
         -1 * (lgamma(exp(f)) - lgamma(mu * exp(f)) -
-              lgamma((1 - mu) * exp(f)) + (mu * exp(f) - 1) * log(y) +
-              ((1 - mu) * exp(f) - 1) * log(1 - y))
+                  lgamma((1 - mu) * exp(f)) + (mu * exp(f) - 1) * log(y) +
+                  ((1 - mu) * exp(f) - 1) * log(1 - y))
     }
     # risk is sum of loss
     risk <- function(y, f, w = 1) {
@@ -809,7 +809,7 @@ BetaPhi <- function(mu = NULL, phi = NULL, stabilization){
     ngradient <- function(y, f, w = 1) {
         #y <- (y * (length(y) - 1) + 0.5)/length(y)
         ngr <- +1 * exp(f) * (mu * (qlogis(y) - (digamma(mu * exp(f)) - digamma((1 - mu) * exp(f)))) +
-              digamma(exp(f)) - digamma((1 - mu) * exp(f)) + log(1 - y))
+                                  digamma(exp(f)) - digamma((1 - mu) * exp(f)) + log(1 - y))
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
         return(ngr)
     }
@@ -823,7 +823,7 @@ BetaPhi <- function(mu = NULL, phi = NULL, stabilization){
             ### look for starting value of f = log(phi) in "interval"
             ### i.e. phi possibly ranges from 1e-10 to 1e10
             RET <- optimize(risk, interval = c(log(1e-10), log(1e10)),
-                y = y, w = w)$minimum
+                            y = y, w = w)$minimum
         }
         return(RET)
     }
@@ -842,7 +842,7 @@ BetaPhi <- function(mu = NULL, phi = NULL, stabilization){
 
 # families object for new distribution
 BetaLSS <- function (mu = NULL, phi = NULL,
-                     stabilization = c("none", "MAD")) {
+                     stabilization = c("none", "MAD", "L2")) {
     stabilization <- check_stabilization(stabilization)
     Families(mu = BetaMu(mu = mu, phi = phi, stabilization = stabilization),
              phi = BetaPhi(mu = mu, phi = phi, stabilization = stabilization),
@@ -860,23 +860,23 @@ qBeta <- function(p, mu = 0, phi = 1, lower.tail = TRUE, log.p = FALSE) {
 
 # Zero-inflated Poisson model
 ZIPoLSS <- function(mu = NULL, sigma = NULL,
-                    stabilization = c("none", "MAD")) {
+                    stabilization = c("none", "MAD", "L2")) {
     fam <- as.families(fname = "ZIP", mu = mu, sigma = sigma, stabilization = stabilization)
-
+    
     fam$mu@name <- "Zero-inflated Poisson model: count data component"
     fam$sigma@name <- "Zero-inflated Poisson model: zero component"
-
+    
     fam
 }
 
 # Zero-inflated negative binomial model
 ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL,
-                    stabilization = c("none", "MAD")) {
+                    stabilization = c("none", "MAD", "L2")) {
     fam <- as.families(fname = "ZINBI", mu = mu, sigma = sigma, nu = nu, stabilization = stabilization)
-
+    
     fam$mu@name <- "Zero-inflated negative binomial model: location parameter for count data component"
     fam$sigma@name <- "Zero-inflated negative binomial model: scale parameter for count data component"
     fam$nu@name <- "Zero-inflated negative binomial model: zero component"
-
+    
     fam
 }

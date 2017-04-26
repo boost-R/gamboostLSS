@@ -2,6 +2,7 @@
 # Bugfixes
 
 require("gamboostLSS")
+require("gamlss")
 
 ## subset method was missing if initial mstop = 1
 set.seed(1907)
@@ -28,8 +29,7 @@ stopifnot(all.equal(selected(model),
                     list(mu = mboost::selected(model[[1]]),
                          sigma = mboost::selected(model[[2]]))))
 
-
-# If the families argument is not specified explicitly in mboostLSSone gets an
+# If the families argument is not specified explicitly in mboostLSS one gets an
 # error in cvrisk.mboostLSS() (spotted by Almond Stöcker).
 # (https://github.com/boost-R/gamboostLSS/issues/9)
 set.seed(1907)
@@ -47,3 +47,24 @@ cvr <- try(cvrisk(model, folds = cv(model.weights(model), B=3), trace=FALSE),
            silent = TRUE)
 if (inherits(cvr, "try-error"))
     stop("cvrisk does not work if no family was (explicitly) chosen")
+
+
+# Make sure that gamlss.dist::BB and gamlss.dist::BI work (spotted by F. Scheipl)
+# (https://github.com/boost-R/gamboostLSS/issues/12)
+set.seed(123)
+n <- 100
+x <- rnorm(n)
+z <- rnorm(n)
+data <- data.frame(y = rbinom(n, p = plogis(x + z), size = 60), x = x, z= z)
+data$ymat <- with(data, cbind(success = data$y, fail = 60 - data$y))
+
+m1 <- gamlss(ymat ~ x + z, data = data, family = BB)
+m2 <- gamlss(ymat ~ x + z, data = data, family = BI)
+# same with boosting
+m3 <- glmboostLSS(ymat ~ x + z, data = data, families = as.families("BB"))
+m4 <- glmboost(ymat ~ x + z, data = data, family = as.families("BI"))
+
+round(data.frame(BB_gamlss = coef(m1),
+                 BI_gamlss = coef(m2),
+                 BB_gamboostLSS = coef(m3, off2int = TRUE, parameter = "mu"),
+                 BI_gamboostLSS = coef(m4, off2int = TRUE)), 3)
