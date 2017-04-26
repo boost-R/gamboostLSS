@@ -47,7 +47,7 @@ risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...
         RES <- sapply(parameter, get_rsk,
                       object = object)
         RES <- as.vector(t(RES))
-        names(RES) <- rep(names(parameter), mstop(object)[1])
+        names(RES) <- rep(names(parameter), mstop(object)[1] + 1)
         ## drop unwanted NAs
         if (lo != 1)
             RES <- RES[!is.na(RES)]
