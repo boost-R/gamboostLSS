@@ -136,7 +136,8 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
 
   Hofner et al. (2016) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
-  worked example.
+  worked example. Thomas et al. (2016) compare cross-validation for the
+  the cyclic and non-cyclic boosting approach and provide worked examples.
 }
 \value{
   An object of class \code{cvriskLSS} (when \code{fun} wasn't
@@ -150,6 +151,10 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   Journal of Statistical Software, 74(1), 1-31.
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
+  
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
+  Stability selection for component-wise gradient boosting in multiple dimensions. 
+  Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
 }
 \seealso{
   \code{\link{cvrisk.mboost}} and \code{\link{cv}} (both in package

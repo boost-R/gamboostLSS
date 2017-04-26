@@ -74,7 +74,10 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
   the information provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2016).
+  \code{\link{gamboostLSS}} see Hofner et al. (2016). Thomas et al. (2016) 
+  developed a novel non-cyclic approach to fit gamboostLSS models. This approach
+  is suitable for the combination with \code{\link{stabsel}} and speeds up
+  model tuning via \code{\link{cvrisk}} (see also below).
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
   distribution parameters of a GAMLSS -- a linear boosting model is
@@ -158,7 +161,7 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
 
 Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
 Stability selection for component-wise gradient boosting in multiple dimensions. 
-arXiv preprint arXiv:1611.10171.
+Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
 }
 
 \seealso{
