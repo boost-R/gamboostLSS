@@ -17,14 +17,14 @@ shape).
 
 ## Using gamboostLSS
 
-For installation instructions see below.
+- For installation instructions see below. 
 
-Instructions on how to use `gamboostLSS` can be found here:
-- [gamboostLSS tutorial](https://www.jstatsoft.org/article/view/v074i01).
+- Instructions on how to use `gamboostLSS` can be found in the 
+  [gamboostLSS tutorial](https://www.jstatsoft.org/article/view/v074i01).
 
-Details on the noncyclical fitting method can be found here:
-- [noncyclical fitting](https://arxiv.org/abs/1611.10171); This is a preliminary version currently under review.
-
+- Details on the noncyclical fitting method can be found in the technical report
+  on [noncyclical fitting and stability selection form gamboostLSS](https://arxiv.org/abs/1611.10171); This is a preliminary version currently under review.
+  
 ## Issues & Feature Requests
 
 For issues, bugs, feature requests etc. please use the [GitHub Issues](https://github.com/boost-R/gamboostLSS/issues).
