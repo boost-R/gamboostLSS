@@ -144,6 +144,12 @@ do_trace <- function(current, risk, mstart,
 check_y_family <- function(y, family)
     family@check_y(y)
 
+## check function for response matrix as in FDboost
+check_y_family_matrix <- function(y, family){
+  family@check_y(as.vector(y)) ## convert matrix to vector
+  y
+}
+
 ################################################################################
 # sapply function that differentiates between data.frames and (numeric) vectors
 myApply <- function(X, FUN, ...) {
