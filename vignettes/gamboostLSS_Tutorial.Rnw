@@ -61,7 +61,7 @@ if (all(is.na(pd))){
 
 ## for the exact reproduction of the plots R2BayesX >= 0.3.2 is needed
 suppressWarnings(if (!require("R2BayesX"))
-                     install.packages("R2BayesX"))
+                     install.packages("R2BayesX", repos = repos))
 
 ## remove (possibly) altered versions of "india" from working environment
 suppressWarnings(rm("india"))
