@@ -97,6 +97,8 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
     #merge is different for noncyclical fitting
     if (merge) {
         if (inherits(object, "nc_mboostLSS")){
+            
+## <FIXME> What should this return? At least when one parameter was never selected this is broken (and also the next lines)
             RET <- names(attr(object, "combined_risk")())
             
             for(p in names(parameter)){
@@ -104,6 +106,7 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
             }
             RET <- as.numeric(RET)
             names(RET) <- names(attr(object, "combined_risk")())
+## </FIXME>            
             return(RET)
         }
         else {
@@ -413,13 +416,11 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             stop(sQuote("mstop"), " has to be an integer larger than ",
                  length(x))
         }
-        mstop_min <- length(x)
     }
     else {
         if (is.null(mstop))
             mstop <- mstop(x)
         mstop <- check(mstop, "mstop", names(x))
-        mstop_min <- 1
     }
     
     if (length(unique(mstop)) != 1)
@@ -429,39 +430,43 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
     if (verbose)
         cat("Run stabsel ")
     
-    ## set mstop = 1 to speed things up
-    x <- update(x, weights = model.weights(x), mstop = mstop_min)
+    ## set mstop = 0 to speed things up
+    x <- update(x, weights = model.weights(x), mstop = 0)
     
     ## define the fitting function (args.fitfun is not used but needed for
     ## compatibility with run_stabsel
     fit_model <- function(i, folds, q, args.fitfun) {
         if (verbose)
             cat(".")
-        ## start by fitting 1 step in each component
-        mod <- update(x, weights = folds[, i], mstop = mstop_min)
+        ## start by setting up model on subset and fit first q iterations
+        mod <- update(x, weights = folds[, i], mstop = q)
         ## make sure dispatch works correctly
         class(mod) <- class(x)
         xs <- selected(mod)
         nsel <- length(mod)
         ## now update model until we obtain q different base-learners altogether
-        for (m in mstop_min:max(mstop)) {
+        for (m in (q+1):max(mstop)) {
             if (nsel >= q)
                 break
-            
             mstop(mod) <- m
             xs <- selected(mod)
             nsel <- sum(sapply(xs, function(selection)
                 length(unique(selection))))
-            if (nsel >= q)
-                break
         }
         #this changes nothing for method = "cyclic" but fixes mstop for method = "noncyclic"
         mstop <- check(mstop, "mstop", names(x))
         ## complete paths
         if (any(sapply(xs, length) < mstop)) {
             for (j in 1:length(xs)) {
+                
+## <FIXME> What happens if component j was never selected, i.e. xs[[j]] = NULL?
+## Can we use NA as proposed? We need to see what happens later.
+                if (is.null(xs[[j]]))
+                    xs[[j]][1] <- NA
                 start <- length(xs[[j]]) + 1
                 xs[[j]][start:mstop[j]] <- xs[[j]][1]
+## </FIXME>   
+                
             }
         }
         
@@ -484,9 +489,13 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                     res[xs[[i]][j], j:mstop[[i]]] <- TRUE
                 res
             })
-            
+
+## <FIXME> What is this error message about? No user will know what you mean. Please fix coding issue and remove stop() or 
+## provide a relevant error message.            
             if (any(mstop < max(mstop)))
                 stop("simply add the last column to the smaller matrices")
+## </FIXME>
+            
             ## now merge sequences
             for (i in 1:ncol(sequences[[1]])) {
                 for (j in 1:length(sequences)) {
@@ -496,8 +505,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                             sequence <- matrix(c(sequences[[i]][, j],
                                                  other_params))
                         } else {
-                            tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                               i]))
+                            tmp <- unlist(lapply(sequences[1:j], function(x) x[, i]))
                             other_params <- rep(FALSE, sum(sapply(sequences,
                                                                   nrow)[-(1:j)]))
                             tmp <- c(tmp, other_params)
@@ -509,8 +517,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                                             lapply(sequences[(j+1):length(sequences)],
                                                    function(x) x[, i - 1])))
                         } else {
-                            tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                               i]))
+                            tmp <- unlist(lapply(sequences[1:j], function(x) x[, i]))
                         }
                         sequence <- cbind(sequence, tmp)
                     }
