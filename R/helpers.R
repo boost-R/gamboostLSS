@@ -194,3 +194,34 @@ check_stabilization <- function(stabilization = c("none", "MAD", "L2")) {
     }
     stabilization
 }
+
+
+################################################################################
+
+# check timeformula for FDboost 
+# timeformula is named list with names according to distribution parameters of families
+# timeformula: the formula for expansion of the effects along t for functional response y(t)
+# families: specify the response distribution; see, e.g., mboostLSS_fit() 
+check_timeformula <- function(timeformula, families){
+  
+  # timeformula is named list 
+  if (is.list(timeformula)){
+    if (!all(names(timeformula) %in% names(families)) ||
+        length(unique(names(timeformula))) != length(names(families)))
+      stop(sQuote("timeformula"), " can be either a one-sided formula or a named list",
+           " of timeformulas with same names as ",  sQuote("families"), ".")
+  } else {
+    # timeformula is only one formula -> set up named list 
+    tmp <- vector("list", length = length(families))
+    names(tmp) <- names(families)
+    for (i in 1:length(tmp))
+      tmp[i] <- list(timeformula)
+    timeformula <- tmp
+  }
+  
+  timeformula
+  
+}
+
+
+

@@ -73,8 +73,7 @@ blackboostLSS <- function(formula, data = list(), families = GaussianLSS(),
 mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                           control = boost_control(), weights = NULL,
                           fun = mboost, funchar = "mboost", call = NULL,
-                          method, 
-                          timeformula = NULL, ...){
+                          method, ...){
 
     if (length(families) == 0)
         stop(sQuote("families"), " not specified")
@@ -146,22 +145,16 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     ## set up timeformula for FDboost 
     if (funchar == "FDboost"){
       
-      ## deal with argument timeformula in case of FDboost()
-      if (is.list(timeformula)){
-        if (!all(names(timeformula) %in% names(families)) ||
-            length(unique(names(timeformula))) != length(names(families)))
-          stop(sQuote("timeformula"), " can be either a one-sided formula or a named list",
-               " of timeformulas with same names as ",  sQuote("families"), ".")
-      } else {
-        tmp <- vector("list", length = length(families))
-        names(tmp) <- names(families)
-        for (i in 1:length(tmp))
-          tmp[i] <- list(timeformula)
-        timeformula <- tmp
-      }
+      # get timeformula from dots 
+      dots <- list(...)
+      timeformula <- dots$timeformula
+      dots$timeformula <- NULL
       
+      # deal with argument timeformula in case of FDboost()
+      # timeformula is named list with names according to 
+      # distribution parameters of families
+      timeformula <- check_timeformula(timeformula, families)
     }
-
 
     fit <- vector("list", length = length(families))
     names(fit) <- names(families)
@@ -210,13 +203,13 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                                         control = control, weights = w,
                                         ...))
         }else{
-          fit[[j]] <- do.call(fun, list(formula[[names(families)[[j]]]],
+          fit[[j]] <- do.call(fun, c(list(formula[[names(families)[[j]]]],
                                         timeformula = timeformula[[names(families)[[j]]]],
                                         data = data, family = families[[j]],
                                         control = control, weights = w, 
                                         # always use scalar offset, as offsets are treated within the Family
-                                        offset = "scalar",
-                                        ...))
+                                        offset = "scalar"), 
+                                     dots))
         }
 
     }
