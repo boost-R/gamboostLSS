@@ -56,7 +56,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
     more details see \code{\link{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }
   \item{method}{ fitting method, currently two methods are supported:
-  \code{"cyclic"} Mayr et al., 2012) and \code{"noncyclic"} 
+  \code{"cyclic"} (see Mayr et al., 2012) and \code{"noncyclic"} 
    (algorithm with inner loss of Thomas et al., 2016). 
   The latter requires a one dimensional \code{mstop} value.}
   \item{fun}{ fit function. Either \code{\link{mboost}},

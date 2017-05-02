@@ -3,9 +3,9 @@ gamboostLSS
 
 [![Build Status (Linux)](https://travis-ci.org/boost-R/gamboostLSS.svg?branch=master)](https://travis-ci.org/boost-R/gamboostLSS) 
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/373t0tvx5v1i5ooq/branch/master?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss-s2whe/branch/master)
-[![CRAN Status Badge](http://www.r-pkg.org/badges/version/gamboostLSS)](http://cran.r-project.org/package=gamboostLSS)
+[![CRAN Status Badge](http://www.r-pkg.org/badges/version/gamboostLSS)](https://CRAN.R-project.org/package=gamboostLSS)
 [![Coverage Status](https://coveralls.io/repos/github/boost-R/gamboostLSS/badge.svg?branch=master)](https://coveralls.io/github/boost-R/gamboostLSS?branch=master)
-[![](http://cranlogs.r-pkg.org/badges/gamboostLSS)](http://cran.rstudio.com/web/packages/gamboostLSS/index.html)
+[![](http://cranlogs.r-pkg.org/badges/gamboostLSS)](https://CRAN.R-project.org/package=gamboostLSS)
 
 `gamboostLSS` implements boosting algorithms for fitting generalized linear,
 additive and interaction models for to potentially high-dimensional data.
