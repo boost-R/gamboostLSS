@@ -158,13 +158,13 @@ for( i in 1:500)
 dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 10),
+                     control = boost_control(mstop = 20),
                      center = TRUE, method = "cyclic")
 selected(model) # ok (at least in principle)
 selected(model, merge = TRUE) # ok
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 10),
+                     control = boost_control(mstop = 20),
                      center = TRUE, method = "noncyclic")
 selected(model) # ok (at least in principle)
 selected(model, merge = TRUE) ## BROKEN
