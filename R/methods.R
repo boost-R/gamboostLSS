@@ -366,16 +366,22 @@ summary.mboostLSS <- function(object, ...) {
         }
     }
     
-    cat("Selection frequencies:\n")
-    for (i in 1:length(object)) {
-        cat("Parameter ", names(object)[i], ":\n", sep = "")
-        nm <- variable.names(object[[i]])
-        selprob <- tabulate(selected(object[[i]]), nbins = length(nm)) /
-            length(selected(object[[i]]))
-        names(selprob) <- names(nm)
-        selprob <- sort(selprob, decreasing = TRUE)
-        selprob <- selprob[selprob > 0]
-        print(selprob)
+    if (!all(is_null <- sapply(selected(object), is.null))) {
+        cat("Selection frequencies:\n")
+        for (i in 1:length(object)) {
+            cat("Parameter ", names(object)[i], ":\n", sep = "")
+            if (is_null[i]){
+                print(NULL)
+                next
+            }
+            nm <- variable.names(object[[i]])
+            selprob <- tabulate(selected(object[[i]]), nbins = length(nm)) /
+                length(selected(object[[i]]))
+            names(selprob) <- names(nm)
+            selprob <- sort(selprob, decreasing = TRUE)
+            selprob <- selprob[selprob > 0]
+            print(selprob)
+        }
     }
     invisible(object)
 }
