@@ -139,16 +139,25 @@ do_trace <- function(current, risk, mstart,
     }
 }
 
-## helper function copied from mboost_2.2-3
-### check measurement scale of response for some losses
-check_y_family <- function(y, family)
-    family@check_y(y)
-
-## check function for response matrix as in FDboost
-check_y_family_matrix <- function(y, family){
-  family@check_y(as.vector(y)) ## convert matrix to vector
-  y
+## helper function copied from mboost_2.2-3; changed for gamboostLSS 
+## check measurement scale of response for some losses
+check_y_family <- function(y, family, allow_matrix = FALSE){
+  
+  if(is.null(dim((y)))) allow_matrix <- FALSE 
+  
+  if(!allow_matrix){
+    
+    return(family@check_y(y)) ## check response as it is
+    
+  }else{
+    
+    tmp <- family@check_y(as.vector(y)) ## convert matrix to vector for check
+    y <- matrix(tmp, ncol = ncol(y), nrow = nrow(y)) ## convert back to matrix 
+    return(y)
+  }
+  
 }
+  
 
 ################################################################################
 # sapply function that differentiates between data.frames and (numeric) vectors

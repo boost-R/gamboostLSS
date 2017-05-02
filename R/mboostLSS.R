@@ -165,19 +165,13 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     names(offset) <- names(families)
     for (j in mods){
         if (!is.list(response)) {
-            response <- if(funchar != "FDboost"){
-              check_y_family(response, families[[j]])
-            } else {
-              check_y_family_matrix(response, families[[j]])
-            }
-            offset[[j]] <- families[[j]]@offset(y = c(response), w = weights)
+          response <- check_y_family(response, families[[j]], 
+                                     allow_matrix = (funchar == "FDboost"))
+          offset[[j]] <- families[[j]]@offset(y = c(response), w = weights)
         } else {
-            response[[j]] <- if(funchar != "FDboost"){ 
-              check_y_family(response[[j]], families[[j]])
-            } else {
-              check_y_family_matrix(response[[j]], families[[j]])
-            }
-            offset[[j]] <- families[[j]]@offset(y = c(response[[j]]), w = weights)
+          response[[j]] <- check_y_family(response[[j]], families[[j]], 
+                                          allow_matrix = (funchar == "FDboost"))
+          offset[[j]] <- families[[j]]@offset(y = c(response[[j]]), w = weights)
         }
         for (k in mods){
             for (l in mods){
