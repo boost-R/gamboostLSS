@@ -1,3 +1,4 @@
+require("gamboostLSS")
 ### Data generating process:
 set.seed(1907)
 x1 <- rnorm(500)

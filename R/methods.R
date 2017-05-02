@@ -98,15 +98,16 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
     if (merge) {
         if (inherits(object, "nc_mboostLSS")){
             
-## <FIXME> What should this return? At least when one parameter was never selected this is broken (and also the next lines)
-            RET <- names(attr(object, "combined_risk")())
+            #get the names of parameter selected in each iteration (drop initial offset risk values)
+            RET <- names(attr(object, "combined_risk")())[-seq_along(parameter)]
+            names(RET) <- RET #set the names of the vector as we will overwrite the values.
             
+            #overwrite names in the vector with the selected BLs in the correct order
             for(p in names(parameter)){
                 RET[RET == p] <- object[[p]]$xselect()
             }
-            RET <- as.numeric(RET)
-            names(RET) <- names(attr(object, "combined_risk")())
-## </FIXME>            
+            mode(RET) = "numeric" #ensure numeric values -> as.numeric drops the names
+         
             return(RET)
         }
         else {
