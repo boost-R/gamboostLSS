@@ -1,11 +1,22 @@
 gamboostLSS
 ===========
 
-[![Build Status (Linux)](https://travis-ci.org/boost-R/gamboostLSS.svg?branch=devel)](https://travis-ci.org/boost-R/gamboostLSS) 
+[![Build Status (Linux)](https://travis-ci.org/boost-R/gamboostLSS.svg?branch=devel)](https://travis-ci.org/boost-R/gamboostLSS)
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/373t0tvx5v1i5ooq/branch/devel?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss-s2whe/branch/devel)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/gamboostLSS)](http://cran.r-project.org/package=gamboostLSS)
 [![Coverage Status](https://coveralls.io/repos/github/boost-R/gamboostLSS/badge.svg?branch=devel)](https://coveralls.io/github/boost-R/gamboostLSS?branch=devel)
 [![](http://cranlogs.r-pkg.org/badges/gamboostLSS)](http://cran.rstudio.com/web/packages/gamboostLSS/index.html)
+
+
+## Note
+
+This is the version of `gamboostLSS` which was used for the Statistics & Computation submission.
+It is currently not further developed, but required to keep our experiments reproducible.
+Based on the results in the [paper]((https://arxiv.org/abs/1611.10171)), the `methode = "outer"` variant is not further developed.
+Only use this version if you want to reproduce the experiments in the above mentioned paper.
+Otherwise use the [developement](https://github.com/boost-R/gamboostLSS/tree/devel) or [stable](https://github.com/boost-R/gamboostLSS/tree/master) version of the package.
+
+
 
 `gamboostLSS` implements boosting algorithms for fitting generalized linear,
 additive and interaction models for to potentially high-dimensional data.
@@ -20,7 +31,10 @@ shape).
 For installation instructions see below.
 
 Instructions on how to use `gamboostLSS` can be found here:
-- [gamboostLSS tutorial](http://arxiv.org/pdf/1407.1774v1); This is apreliminary version currently under review.
+- [gamboostLSS tutorial](https://www.jstatsoft.org/article/view/v074i01).
+
+Details on the noncyclical fitting method can be found here:
+- [noncyclical fitting](https://arxiv.org/abs/1611.10171); This is a preleminary version currently under review.
 
 ## Issues & Feature Requests
 
@@ -28,7 +42,7 @@ For issues, bugs, feature requests etc. please use the [GitHub Issues](https://g
 
 ## Installation
 
-- Current version (from CRAN): 
+- Current version (from CRAN):
   ```
   install.packages("gamboostLSS")
   ```
