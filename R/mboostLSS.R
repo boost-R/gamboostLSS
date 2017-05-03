@@ -183,7 +183,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             if (is.null(attr(fit, "combined_risk")) | niter == 0) {
                 combined_risk <- vapply(fit, risk, numeric(1))
             } else {
-               combined_risk <- attr(fit, "combined_risk")()
+                combined_risk <- attr(fit, "combined_risk")()
             }
 
             best <- which(names(fit) == tail(names(combined_risk), 1))
