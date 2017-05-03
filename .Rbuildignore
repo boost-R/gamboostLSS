@@ -8,4 +8,5 @@ copy_Rout_to_Routsave.R
 vignettes/gamboostLSS_Tutorial.tex
 vignettes/auto
 vignettes/graphics
+vignettes/fig-crossvalidation.pdf
 checks.R
