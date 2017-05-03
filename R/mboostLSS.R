@@ -186,8 +186,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     for (j in mods){
         ## update value of nuisance parameters in families
         for (k in mods[-j]){
-            if (!is.null(fit[[k]]))
-                assign(names(fit)[k], families[[k]]@response(mboost:::fitted.mboost(fit[[k]])),
+            if (!is.null(fit[[k]])) ## use fitted.mboost() as fitted.FDboost() returns a matrix  
+                assign(names(fit)[k], families[[k]]@response(fitted.mboost(fit[[k]])),
                        environment(families[[j]]@ngradient))
         }
         ## use appropriate nu for the model
@@ -243,7 +243,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 ## update value of nuisance parameters
                 ## use response(fitted()) as this is much quicker than fitted(, type = response)
                 for( k in mods[-best]) {
-                    assign(names(fit)[best], families[[best]]@response(mboost:::fitted.mboost(fit[[best]])),
+                  ## use fitted.mboost() as fitted.FDboost() returns a matrix
+                    assign(names(fit)[best], families[[best]]@response(fitted.mboost(fit[[best]])),
                            environment(get("ngradient", environment(fit[[k]]$subset))))
                 }
 
@@ -287,8 +288,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 for (j in mods){
                     ## update value of nuisance parameters
                     ## use response(fitted()) as this is much quicker than fitted(, type = response)
-                    for (k in mods[-j])
-                        assign(names(fit)[k], families[[k]]@response(mboost:::fitted.mboost(fit[[k]])),
+                    for (k in mods[-j]) ## use fitted.mboost() as fitted.FDboost() returns a matrix
+                        assign(names(fit)[k], families[[k]]@response(fitted.mboost(fit[[k]])),
                                environment(get("ngradient", environment(fit[[j]]$subset))))
                     ## update value of u, i.e. compute ngradient with new nuisance parameters
 
@@ -428,7 +429,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
                 for(j in names(new_stop_value)){
                     for( k in setdiff(names(new_stop_value), j)){
-                        assign(k, families[[k]]@response(mboost:::fitted.mboost(fit[[k]])),
+                        assign(k, families[[k]]@response(fitted.mboost(fit[[k]])),
                                environment(get("ngradient", environment(fit[[j]]$subset))))
                     }
                 }
