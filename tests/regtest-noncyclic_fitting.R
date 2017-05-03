@@ -172,9 +172,9 @@ selected(model, merge = TRUE) ## BROKEN
 
 ## Check merged risk for reducing mstop to 0, and increasing it again does not contain an NA
 stopifnot(all(!is.na(risk(model, merge = TRUE))))
-mstop(model) = 0
+mstop(model) <- 0
 stopifnot(all(!is.na(risk(model, merge = TRUE))))
-mstop(model) = 10
+mstop(model) <- 10
 stopifnot(all(!is.na(risk(model, merge = TRUE))))
 
 
