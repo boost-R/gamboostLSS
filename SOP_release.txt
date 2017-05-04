@@ -28,6 +28,19 @@
 
   Quit R and run
    ../relative/path/to/R-devel/bin/R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
+   
+  Removing cvrisk results to reduce package size
+  ----------------------------------------------
+  
+  1) Add eval = FALSE to chunks <<cvrisk>>, <<load_cvrisk>>, <<crossvalidation>>, 
+     <<check_initial_assignement>> and <<subset>>
+  2) Add \includegraphics{fig-crossvalidation.pdf} after chunk <<crossvalidation>>
+  3) Replace chunk <<mstop>> with
+\begin{Sinput}
+R> mstop(cvr)
+   mu sigma 
+ 1269    84 
+\end{Sinput}
 
 
   Making a release
@@ -78,5 +91,5 @@
        R CMD buildCRAN --resave-data --compact-vignettes patch && R CMD check --as-cran gamboostLSS_XXX.tar.gz
 
     To use the script copy it to R RHOME (< enter this in the console) /bin and make it executable.
-
+    
     Use web form at http://xmpalantir.wu.ac.at/cransubmit/.
