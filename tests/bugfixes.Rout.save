@@ -1,7 +1,7 @@
 
-R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -23,7 +23,7 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.6-0. See 'package?mboost' and 'news(package  = "mboost")'
+This is mboost 2.8-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -32,6 +32,24 @@ Attaching package: 'gamboostLSS'
 The following object is masked from 'package:stats':
 
     model.weights
+
+> require("gamlss")
+Loading required package: gamlss
+Loading required package: splines
+Loading required package: gamlss.data
+Loading required package: gamlss.dist
+Loading required package: MASS
+
+Attaching package: 'gamlss.dist'
+
+The following object is masked from 'package:mboost':
+
+    Family
+
+Loading required package: nlme
+ **********   GAMLSS Version 5.0-1  ********** 
+For more on GAMLSS look at http://www.gamlss.org/
+Type gamlssNews() to see new features/changes/bug fixes.
 
 > 
 > ## subset method was missing if initial mstop = 1
@@ -81,8 +99,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 +                     list(mu = mboost::selected(model[[1]]),
 +                          sigma = mboost::selected(model[[2]]))))
 > 
-> 
-> # If the families argument is not specified explicitly in mboostLSSone gets an
+> # If the families argument is not specified explicitly in mboostLSS one gets an
 > # error in cvrisk.mboostLSS() (spotted by Almond Stöcker).
 > # (https://github.com/boost-R/gamboostLSS/issues/9)
 > set.seed(1907)
@@ -104,6 +121,41 @@ In make.grid(mstop(object)) :
 > if (inherits(cvr, "try-error"))
 +     stop("cvrisk does not work if no family was (explicitly) chosen")
 > 
+> 
+> # Make sure that gamlss.dist::BB and gamlss.dist::BI work (spotted by F. Scheipl)
+> # (https://github.com/boost-R/gamboostLSS/issues/12)
+> set.seed(123)
+> n <- 100
+> x <- rnorm(n)
+> z <- rnorm(n)
+> data <- data.frame(y = rbinom(n, p = plogis(x + z), size = 60), x = x, z= z)
+> data$ymat <- with(data, cbind(success = data$y, fail = 60 - data$y))
+> 
+> m1 <- gamlss(ymat ~ x + z, data = data, family = BB)
+GAMLSS-RS iteration 1: Global Deviance = 699.795 
+GAMLSS-RS iteration 2: Global Deviance = 534.6991 
+GAMLSS-RS iteration 3: Global Deviance = 517.8675 
+GAMLSS-RS iteration 4: Global Deviance = 517.8664 
+GAMLSS-RS iteration 5: Global Deviance = 517.8664 
+> m2 <- gamlss(ymat ~ x + z, data = data, family = BI)
+GAMLSS-RS iteration 1: Global Deviance = 517.8684 
+GAMLSS-RS iteration 2: Global Deviance = 517.8684 
+> # same with boosting
+> m3 <- glmboostLSS(ymat ~ x + z, data = data, families = as.families("BB"))
+> m4 <- glmboost(ymat ~ x + z, data = data, family = as.families("BI"))
+Warning message:
+In as.families("BI") :
+  For boosting one-parametric families, please use the mboost package.
+> 
+> round(data.frame(BB_gamlss = coef(m1),
++                  BI_gamlss = coef(m2),
++                  BB_gamboostLSS = coef(m3, off2int = TRUE, parameter = "mu"),
++                  BI_gamboostLSS = coef(m4, off2int = TRUE)), 3)
+            BB_gamlss BI_gamlss BB_gamboostLSS BI_gamboostLSS
+(Intercept)    -0.014    -0.014         -0.006         -0.014
+x               1.009     1.009          0.964          1.009
+z               0.965     0.965          0.925          0.965
+> 
 > proc.time()
    user  system elapsed 
-  1.989   0.104   2.296 
+   4.39    0.29    5.03 
