@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 2.0-0 (2017-yy-zz)}{
+\section{Changes in gamboostLSS version 2.0-0 (2017-05-05)}{
   \subsection{User-visible changes}{
     \itemize{
       \item Added new fitting algorithm which can be used via the argument 
@@ -46,7 +46,7 @@
     \itemize{
       \item Added Janek Thomas as new author.
       \item Updated \file{inst/CITATION} due to release of JSS tutorial paper and 
-        added new noncyclic fitting paper (also to manuals). 
+        added new noncyclical fitting paper (also to manuals). 
         The latter closes issue \href{https://github.com/boost-R/gamboostLSS/issues/27}{#27}.
       \item Updated URL in \file{DESCRIPTION}.
       \item Adapt \code{mboostLSS_fit()} such that it can be called by \code{FDboost::FDboostLSS()}.
