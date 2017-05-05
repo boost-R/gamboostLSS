@@ -48,6 +48,7 @@
         added new noncyclic fitting paper (also to manuals). 
         The latter closes issue \href{https://github.com/boost-R/gamboostLSS/issues/27}{#27}.
       \item Updated URL in \file{DESCRIPTION}.
+      \item Adapt \code{mboostLSS_fit()} such that it can be called by \code{FDboost::FDboostLSS()}.
     }
   }
 }
