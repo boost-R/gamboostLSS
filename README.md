@@ -22,9 +22,14 @@ shape).
 - Instructions on how to use `gamboostLSS` can be found in the 
   [gamboostLSS tutorial](https://www.jstatsoft.org/article/view/v074i01).
 
-- Details on the noncyclical fitting method can be found in the technical report
-  on [noncyclical fitting and stability selection form gamboostLSS](https://arxiv.org/abs/1611.10171); This is a preliminary version currently under review.
-  
+- Details on the noncyclical fitting method can be found in 
+
+    Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+    Gradient boosting for distributional regression - faster tuning and improved 
+    variable selection via noncyclical updates. 
+    Accepted for publication in *Statistics and Computing*. 
+    Preliminary version: [ArXiv 1611.10171](http://arxiv.org/abs/1611.10171).
+
 ## Issues & Feature Requests
 
 For issues, bugs, feature requests etc. please use the [GitHub Issues](https://github.com/boost-R/gamboostLSS/issues).

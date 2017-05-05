@@ -69,7 +69,7 @@
 \details{
 
   Stability selection is to be preferably used with non-cyclic \code{\link{gamboostLSS}} 
-  models, as proposed by Thomas et al. (2016). In this publication, the combination 
+  models, as proposed by Thomas et al. (2017). In this publication, the combination 
   of package \pkg{gamboostLSS} with stability selection was devoloped and is 
   investigated in depth. 
   
@@ -106,10 +106,11 @@
   control: another look at stability selection. \emph{Journal of the Royal
   Statistical Society, Series B}, \bold{75}, 55--80.
   
-  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
-  Stability selection for component-wise gradient boosting in multiple dimensions. 
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  Accepted for publication in \emph{Statistics and Computing}.\cr
   Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
-
 }
 \seealso{
   \code{\link[stabs]{stabsel}} and

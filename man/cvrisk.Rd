@@ -136,7 +136,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
 
   Hofner et al. (2016) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
-  worked example. Thomas et al. (2016) compare cross-validation for the
+  worked example. Thomas et al. (2017) compare cross-validation for the
   the cyclic and non-cyclic boosting approach and provide worked examples.
 }
 \value{
@@ -152,8 +152,10 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
   
-  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
-  Stability selection for component-wise gradient boosting in multiple dimensions. 
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  Accepted for publication in \emph{Statistics and Computing}.\cr
   Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
 }
 \seealso{

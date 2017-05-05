@@ -4,20 +4,21 @@
 \section{Changes in gamboostLSS version 2.0-0 (2017-yy-zz)}{
   \subsection{User-visible changes}{
     \itemize{
-      \item Added new argument \code{method} which can be used to specify different
-        model fitting algorithms:
+      \item Added new fitting algorithm which can be used via the argument 
+        \code{method}:
         \itemize{
           \item \code{method = "cyclic"} is the standard approach which was also
              used previously.
-          \item \code{method = "noncyclic"} provides a new non-cyclic algorithm. 
+          \item \code{method = "noncyclic"} provides a new non-cyclical algorithm. 
         }
-        The \code{noncyclic} method allow faster cross-validation and better results
+        The \code{"noncyclic"} method allow faster cross-validation and better results
         for stability selection (see below). For details see 
            
-             Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
-             Stability selection for component-wise gradient boosting in multiple dimensions. 
-             Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
-  
+        Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+        Gradient boosting for distributional regression - faster tuning and improved 
+        variable selection via noncyclical updates. 
+        Accepted for publication in \emph{Statistics and Computing}.\cr
+        Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
       \item Models can now be fitted with zero steps (i.e., models containing only 
