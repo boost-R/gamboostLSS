@@ -49,7 +49,7 @@
 \author{
   Benjamin Hofner, Andreas Mayr, Nora Fenske, Janek Thomas, Matthias Schmid
 
-  Maintainer:  Benjamin Hofner <benjamin.hofner@fau.de>
+  Maintainer:  Benjamin Hofner <benjamin.hofner@pei.de>
 }
 \references{
 
