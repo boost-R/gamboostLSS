@@ -140,9 +140,13 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
 }
 \value{
-  An object of class \code{mboostLSS} with corresponding methods to
+  An object of class \code{mboostLSS} or \code{nc_mboostLSS} (inheriting from 
+  class \code{mboostLSS}) for models fitted with \code{method = "cyclic"}
+  and \code{method = "non-cyclic"}, respectively, with corresponding methods to
   extract information. A \code{mboostLSS} model object is a named list 
   with one list entry for each modelled distribution parameter. 
+  Special "subclasses" inheriting from \code{mboostLSS} exist for each of the 
+  model-types (with the same name as the function, e.g., \code{gamboostLSS}).
 }
 \references{
 B. Hofner, A. Mayr, M. Schmid (2016). gamboostLSS: An R Package for
