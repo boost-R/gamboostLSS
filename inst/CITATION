@@ -79,12 +79,13 @@ citEntry(
                          as.person("Benjamin Hofner")),
   year	   = "2017",
   journal  = "{Statistics and Computing}",
-  note     = "Accepted",
+  note     = "Online First",
+  doi      = "10.1007/s11222-017-9754-6"
   header   = "To cite the noncyclical fitting method of 'gamboostLSS' use:",
   textVersion =
     paste("Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017).",
           "Gradient boosting for distributional regression - faster tuning and improved variable selection via noncyclical updates.",
-          "Statistics and Computing. Accepted.")
+          "Statistics and Computing. Online First. DOI 10.1007/s11222-017-9754-6")
 )
 
 

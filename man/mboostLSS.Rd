@@ -172,11 +172,12 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554.
 Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization,
 prediction and model fitting. Statistical Science, 22(4), 477--505.
 
-Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
-Gradient boosting for distributional regression - faster tuning and improved 
-variable selection via noncyclical updates. 
-Accepted for publication in \emph{Statistics and Computing}.\cr
-Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  \emph{Statistics and Computing}. Online First. 
+  DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
+  (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
 }
 
 \seealso{

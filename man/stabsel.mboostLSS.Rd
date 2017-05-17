@@ -109,8 +109,9 @@
   Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
   Gradient boosting for distributional regression - faster tuning and improved 
   variable selection via noncyclical updates. 
-  Accepted for publication in \emph{Statistics and Computing}.\cr
-  Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
+  \emph{Statistics and Computing}. Online First. 
+  DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
+  (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
 }
 \seealso{
   \code{\link[stabs]{stabsel}} and
