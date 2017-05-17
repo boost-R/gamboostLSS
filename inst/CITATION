@@ -80,7 +80,7 @@ citEntry(
   year	   = "2017",
   journal  = "{Statistics and Computing}",
   note     = "Online First",
-  doi      = "10.1007/s11222-017-9754-6"
+  doi      = "10.1007/s11222-017-9754-6",
   header   = "To cite the noncyclical fitting method of 'gamboostLSS' use:",
   textVersion =
     paste("Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017).",
