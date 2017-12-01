@@ -1,4 +1,1081 @@
-commit 73b484b0b606df5cdaaaef2cf2287b3a8f2f0521
+commit e787f1fdf9ac20584685c2569a534081ad67a15e
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release gamboostLSS 2.0-0
+
+commit d903d34da5ed1cbef1be1914d3f1e4628ed0baba
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated release SOPs to reflect new repository structure
+
+commit 54dbcd9d9664078798b455586f37477e63b13248
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated check results
+
+commit 8b7001081b225aca47563683d32a3685c6c55987
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Also update inst/CITATION
+
+commit 8c0d47564d2a477105f3287251c978fea54ac678
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated maintainer's email address
+
+commit b259544ad6accd0874e31c42b288d0380179ef25
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated reference to Thomas et al (2017). Closes #45
+
+commit 2de0e6c9944fd24c54fd365216f91e5508a9ff8c
+Merge: 2599aed 8333592
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge pull request #38 from sbrockhaus/master
+
+commit 833359289f9b9946353caf3b3f06faa08ba43582
+Merge: ef96def 2599aed
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    Merge remote-tracking branch 'upstream/master'
+
+commit ef96defb1708701433c62ce39ddab4fdfaa5cebd
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    report in NEWS that mboostLSS_fit() is adapted for FDboostLSS()
+
+commit 2599aed3de6884b9fc2cca45879477ebf5b5ca1f
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated SOPs for CRAN upload regarding vignette
+
+commit 658599c7add6cfefb24bee0653ae6dfc1cccef25
+Merge: 88449e3 36aee6e
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge pull request #44 from boost-R/fix_stabsel_plot
+
+commit 95c79f2d97ec02ed8c88adfadabcf37b56f525ea
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    use fitted.mboost() as fitted.FDboost() returns matrix
+
+commit 36aee6ed2de9cef84f9d79c83429764fadf542e5
+Author: ja-thomas <ja-thomas@users.noreply.github.com>
+
+    Update mboostLSS.R
+
+commit ecc63ed3afd5ce7e022d533a81ecacea1172f7c6
+Author: ja-thomas <ja-thomas@users.noreply.github.com>
+
+    Update regtest-noncyclic_fitting.R
+
+commit 71ad6e9dbcb48dbc5486655ca59021956edb90c8
+Author: Janek <janek.thomas@web.de>
+
+    add additional test
+
+commit fa8bcd32b2beb40471fe15157c366531eb2e1c45
+Author: Janek <janek.thomas@web.de>
+
+    fix stabsel plot
+
+commit d1dbb32bc42664bdc123dbb7e2029bc62259308f
+Merge: e04a6c4 88449e3
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    Merge remote-tracking branch 'upstream/master'
+
+commit e04a6c4a7370cfd14bd2f68321d143cdfb33383c
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    fix computation of offset
+
+commit 88449e33822f9b197147c3eee7fef07aa70890f8
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    check results of stabsel
+
+commit cf6ae9c669674a3d3e3e069d26bd00a06e2c9003
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    fix summary. closes #43.
+
+commit 57117da7d03effb1b788d3f7f1daba7da782eb9b
+Merge: b66755c 1e606c7
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge pull request #41 from boost-R/fix_selected
+
+commit fe83199db8aa4b4199be0e30b5f8efb0a9ffce46
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    new argument allow_matrix = FALSE in check_y_family() to allow for matrix response
+
+commit 6243369c152d5191c85ac5c3e670f2b1f321b82e
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    argument timeformula into dots, check_timeformula into helpers
+
+commit 1e606c72e9db6776a87b17e89291e744280665ec
+Author: Janek <janek.thomas@web.de>
+
+    fix selected and adapt tests
+
+commit bc826eae98b81915baef6ee1341bc2838c04c088
+Merge: cac3809 b66755c
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    solve conflict in manual
+
+commit b66755c06da6a6e130eede3dae1956b8a3cce149
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated tests
+
+commit f78a0aad44c3a657859d807ee73fada011f1cd73
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    More tests
+
+commit d7a21ad784c561d734d33f3306ba1f13e82418bc
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Started fixing stabsel (see <FIXME> for open issues)
+
+commit ccb833f17f62354f2de873a966b8008f733e26e4
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update Readme
+
+commit 90cede61fc295c81063f00c62167dffefcaa5c63
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Add reverse dependency checks
+
+commit 3084a39a834c628a056557c2432130c7d6f45784
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    make sure the repository is set
+
+commit 1f66eba5a0673726d9b04d042d2190653513bb30
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Fixes typo
+
+commit 9c8cc8a17b703c0c286b910fcc6fc2a8825943de
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    give more details in manual
+
+commit cac3809d1d7586416d39c7c3fec0d77b48b675d2
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    give more details in manual
+
+commit a16eb633de9b6999698b012e0bc8fe86a704f6e3
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    adapt mboostLSS_fit() such that it works with FDboost to get FDboostLSS
+
+commit 814c60d90e56aaeec91a7d1ea110e073d5440376
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated NEWS.Rd
+
+commit c2db923cf84db32e6e89db644ee7ef4d684d35e8
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    cosmetics
+
+commit 8ef6fb1f9de3e7d3fa848f4b185afa1629cf5c54
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    package now requires mboost >= 2.8-0
+
+commit e29d8d1c63b42aff4cefd948562e99eaf5fcd3bf
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated readme
+
+commit abf76529b23d2897d7f141eff3c3e0d225c0f68d
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    risk(, merge = TRUE) did not correct for new offset risk. Fixes #37
+
+commit 6ab3cc0cef24648c65414c8aea4db8cc5b4aad31
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    cosmetics
+
+commit 87dc35acaa93f9ec70a8e97ae5a09014ee654caa
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated references and really refer to Thomas et al in the manuals
+
+commit 9e4238441ce7adbedadfdb226e402b70b3df9382
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated DESCIPTION
+
+commit c88eaa08f07c5d1a9cdb7f287224842169bdfec9
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    revert unwanted changes in README
+
+commit 3602b027644ea9e52af63efdd119a10885d19a11
+Merge: b0263d8 59566be
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge pull request #36 from boost-R/devel
+
+commit 59566be7abd6d4004e4739774732f6afa5bc5dd8
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Use trusty distribution on travis
+
+commit af370568e8c0a7158564b5af81b8288f2080f9c2
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update NEWS.Rd
+
+commit 880294c5978d11251b68999e9700c8a39a7a8f84
+Merge: 8dc9450 b0263d8
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge recent changes from master branch to devel
+
+commit 8dc9450b2288f42add3cc33b39e3284654a7637e
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    changed order of suggested packages
+
+commit 0ae4dc73b7ee837ce1cf41b095cc2b581f8ef60b
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    typo
+
+commit ce94c7b8fe65c799b34dddfc45d2662bc1832458
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    re-indent code
+
+commit bb9a1da0f489f2f3be5d9bfbe9eb7fabfd15849e
+Merge: 4f21eb6 6309410
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge pull request #31 from boost-R/refactor_noncyc
+
+commit 6309410fc4538f1a4bac3e15c673185bc9c78d06
+Author: Janek <janek.thomas@web.de>
+
+    initialize combined_risk in subset
+
+commit 4c2d159f4ecfbddba851eda3e85a3ab67d42e1f0
+Author: Janek <janek.thomas@web.de>
+
+    remove notes
+
+commit 86ebeb2a55e37c727d7443a192895bb313d15e87
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    initialize combined risk
+
+commit 019666251f6e372511293f513245b72d36186769
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    reindent lines
+
+commit 50ddb7b036f82b3abeb071d597407beae12634e5
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    shorten \usage lines wider than 90 characters
+
+commit de4be0dec1c1e9b0fe7205ad9feb7521cb01a73b
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    make appveyor use github packages
+
+commit b0263d8e8d1272f6d066103be6aa195875991b5d
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    make appveyor use github packages
+
+commit 5b5190d7256f57a85feddd62959648f77fee271d
+Author: Janek <janek.thomas@web.de>
+
+    fix citation... again
+
+commit 0dd7fe31853b29db050f3fba30f275abd4d0eb51
+Author: Janek <janek.thomas@web.de>
+
+    fix trace
+
+commit 4f21eb6b32d17fb91e7aa2e9df573bdd976e14f7
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update DESCRIPTION
+
+commit b41a55627245ca5b9526bdbeafec55bb32c52a2a
+Author: Janek <janek.thomas@web.de>
+
+    fix citation
+
+commit f6b551c828643a16e4e18625c4e4433f3191e748
+Author: Janek <janek.thomas@web.de>
+
+    fix subset increase from zero
+
+commit f76606c86576472def047946a97ad3bea50b3a08
+Merge: 7e061b4 d675d3d
+Author: Janek <janek.thomas@web.de>
+
+    mstop=0
+
+commit 7e061b49534ebca65365e7c9fa977cc9bb23baed
+Author: Janek <janek.thomas@web.de>
+
+    fix risk
+
+commit 17c9674d59d4907014b6d304e7c1813b3331ef3b
+Author: Janek <janek.thomas@web.de>
+
+    start with mstop=0
+
+commit d675d3dd2e18f2ad4fc662e10038d5a6d1e5cea3
+Author: mayrandy <andreas.mayr@fau.de>
+
+    fix tutorial issue #32 also for devel
+
+commit 691048a4c7752faee57f8cb86741fbdceba9310a
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Make risk work again (Fixes #32)
+
+commit 0218d4efcc07eec8091f74b388e3b4343a26b248
+Author: mayrandy <andreas.mayr@fau.de>
+
+    make mixed type 4-parametric families work, fixes #28
+
+commit 4a2d2349b7b2f3a9bfe8c6c171c482c7cc5a3876
+Author: mayrandy <andreas.mayr@fau.de>
+
+    update README
+
+commit 371267b3da8a4896ef8bb150cac9925fd7dedd87
+Author: Janek <janek.thomas@web.de>
+
+    stop destroying the CITATION file...
+
+commit f22530c035f332de281315718ee172a4c7c75f91
+Author: Janek <janek.thomas@web.de>
+
+    missing , -.-
+
+commit 942b6317f6463720e472b0c71531a29bb852364b
+Author: Janek <janek.thomas@web.de>
+
+    cleanup
+
+commit 9585836295cd2a8761a92e798ae5a0254acf845e
+Author: Janek <janek.thomas@web.de>
+
+    slight speed improvements
+
+commit ec4b3f356c5ea1e194edcdba3a60a56fcfc3b4e9
+Author: Janek <janek.thomas@web.de>
+
+    Readme
+
+commit 993167f528f4b187b383f4eccd5650a37d5064b8
+Author: Janek <janek.thomas@web.de>
+
+    citation
+
+commit 34891bda05346e525f15f6c2e6deae43ff9d2b9a
+Author: Janek <janek.thomas@web.de>
+
+    remove outer version, rename inner to noncyclical
+
+commit c865ee7caad15c035b4d52ddb40bb61ffd44f6c9
+Author: Janek <janek.thomas@web.de>
+
+    refactor noncyc fitting
+
+commit 7f542a51fc12bd7b6ac1d2f186594f4ce7c98383
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Include official tutoral paper in README.md
+
+commit 94cd3e45fae059592f85c853f083a577cc24eaaa
+Author: mayrandy <andreas.mayr@fau.de>
+
+    incorporate JSS reference in vignette
+
+commit cb5c07f8c0f4b49ceed0610195b210e8c20fa580
+Author: mayrandy <andreas.mayr@fau.de>
+
+    update ULRs using canonical form
+
+commit 4f2f392ea81e1e6c2e36c76b1395ad74ec769c44
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Update citations for JSS paper and CRAN update
+
+commit 0d94a467398e0964662ac7c82f2e58b64f5f1bc9
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Adding some tests
+
+commit 32f0e6d621ef5bf441ccb0abb258c762fc927ad7
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Include new option stabilization = "L2" which divides ngradient through mean(ngr^2).
+
+commit f7a32e3e25d463c20655060a6762968bdf622c6b
+Author: mayrandy <andreas.mayr@fau.de>
+
+    re-order arguments in rd file
+
+commit a981957a7f0d01f806a7ef3a0244dcdbd6cb4938
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Include different links in as.families(), see #25
+
+commit 4619cfe889679f9b7009ab193e514499cda77050
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Do not use plot.cvrisk from mboost but plot.cvriskLSS(..., type = "line")
+    fixed some typoes etc.
+
+commit ba403b17c316d790f7331f0ece6103ce6f1f9dd0
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    merged changes from #18 to devel
+
+commit eb4e59aca44a9f98f4b3afd3b996252115068502
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    reindent lines
+
+commit 4abbee41c80a53ec17a5c44d6c785ae49b3f4fb3
+Merge: 2321180 e377769
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge pull request #20 from boost-R/mstop_nc_fit
+
+commit e377769df5f515917b34bef16bf249f5fb6aec53
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    use correct syntax; closes #19
+
+commit 73ca5bc3c891355f9d01b21435814a9493020979
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Update families.R
+
+commit e64737dc9320d5020aabe61d3dbc6cd39ab4ee74
+Author: Janek <janek.thomas@web.de>
+
+    change mstop definition for noncyclical fitting
+
+commit 23211807854e2c5ae4d96179416d792336182ca8
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added test and close #12
+
+commit 109daf34aba93ff1821bb29df5c480348b99d2b3
+Author: mayrandy <andreas.mayr@fau.de>
+
+    Update as.families.R
+
+commit e4b7cd07060fa34f9fdecd415565f012b2794f47
+Merge: 84e7740 8e9083a
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merge branch 'devel' of https://github.com/boost-R/gamboostLSS into devel
+
+commit 84e7740683bf6a40da3229cd0e2334990eb36853
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Increased version to 1.5-0
+    Changed sequence of authors
+
+commit b810261ca6968eba945c1a4a22a23e68fd873ba0
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit 8e9083a8b9d6baa8d9b97980e4a97d24067f84f3
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit 21b6e197ba14c011ccfcf2abc26734b7274d6dc7
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added tests for cvrisk and risk
+
+commit ecfe9d22b818d440d1174a0015bb2cdb817ac51c
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    fixed coverage badge
+
+commit 82683adb416a44fca3a194836c292b22de2c6eb0
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Readme in devel branch supposed to show devel stats
+
+commit bb3dc5e99ba719f6cf2ad7dedae6e61ca9d84799
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated README.md
+
+commit df49b82334ae34588dd43d4084e400adecab9989
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated README.md
+
+commit d303e4b276f025477557ac8e15ec6c426562a581
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated travis-ci and appveyor
+
+commit 7a9baad69ca73f9d994746d8f5b9ef5e330ee431
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed .travis.yml
+    Updated .Rbuildignore
+
+commit a82f782cdb5df7c0ca49ec8c1e38e73f9d402e80
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed .travis.yml
+    Updated .Rbuildignore
+
+commit 62d1cfeb765f23e65a1b4b3c3d4d999799a396d2
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated travis-ci and appveyor
+
+commit 9f50b4377aaaf1bfb24761aa8d03bdd23bbeddf5
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Moved patch/ to parent directory
+
+commit aab749b8104d7de448217e3c0697cbc8d0835e14
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Moved pkg/ to parent folder
+
+commit 530dafd8fd814437f5ad697408b1419ddeceb22c
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated NEWS.md
+
+commit f0f1c060e98c1bf376094089a184d4c1be380551
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    added Janek as author
+
+commit 19626ead366e06b973553620525509560141b29e
+Author: mayrandy <andreas.mayr@fau.de>
+
+    fix error in manual
+
+commit 4d2455196c712f6163acd3e6672b00c8afe676e2
+Merge: 6f6aa6d 97e8f86
+Author: ja-thomas <ja-thomas@users.noreply.github.com>
+
+    Merge pull request #14 from fabian-s/fix-stabsel-for-listdata
+
+commit 97e8f86da75512da45e02a1bf85645d90f72a69e
+Author: fabian-s <fabian.scheipl@googlemail.com>
+
+    make stabsel work for list-shaped <data> coming from FDboost: use `<model>[[1]]$ydim` instead of `dim(attr(<model>, "data"))`
+
+commit 0ef3caf74db0d92158b058b1d6e9ae98158bef26
+Author: fabian-s <fabian.scheipl@googlemail.com>
+
+    make stabsel work fpr list-shaped <data>: use `<model>[[1]]$ydim` instead of `dim(attr(<model>, "data"))`
+
+commit 6f6aa6dacae4aa5e79250b3865b0856c6c21c6f8
+Author: janek <janek.thomas@web.de>
+
+    help file for stabsel, closes #11
+
+commit b6f80aeb4ad1b1e43306f1f09a4e79381084c556
+Author: janek <janek.thomas@web.de>
+
+    fixed issue #10
+
+commit 7fbb813a8ddd19aba2c39fe4b823ca79e40dbc9f
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 0f6f5e528281e943fbe4016b15df3f9565267d5d
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update repository to boost-R
+
+commit 9cab89468aca9f35ac56e542401c3512cffa155b
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merged gamboostLSS 1.2-1 to pkg
+
+commit bf344e5dcd36eb34eb312f0980838615b3d77842
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    gamboostLSS 1.2-1 on its way to CRAN
+
+commit 1486382e5c226ab743756bbe5379a818d1c7c230
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated .Rout.save files
+
+commit 2c552a9a61c8befccbb28ebec102a473a7e7c0a4
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Cleanup
+
+commit 082c25cda9627b5e4074357da9f36dba4b11228c
+Merge: 1464e83 d9667c6
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merge branch 'master' of github.com:hofnerb/gamboostLSS
+
+commit 1464e83e50ff921f2b15baf4e8e69b2d87892034
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merge changes from patch to pkg
+
+commit 11548528476620626780709bf1df8b3016ab76f1
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Release candidate 1.2-1
+
+commit a28230488ccf390979fc3674a7a36c867341909f
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed bug in cvrisk when no families are specified. Closes #9
+
+commit 8b93bdc1f8ae2131dcdaf89726fd754dd43f763a
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added gamboostLSS_intern to NAMESPACE and patch/...
+
+commit d9667c60ecbd5189b6cc57d1be161ddadc00a646
+Merge: 7daead6 bfa9727
+Author: janek <janek.thomas@web.de>
+
+    Merge branch 'noncyclical_fitting'
+
+commit bfa97275fd5cc896167ceec9bbbd49a65713d6b1
+Author: janek <janek.thomas@web.de>
+
+    replaced = with <-
+
+commit 7daead622a6abcca16b88549e4ced3ebf9dc8e96
+Merge: 07747d1 becee65
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merge branch 'master' of github.com:hofnerb/gamboostLSS
+
+commit 07747d1882bebd2e2bd71c1586c44de3b3610330
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added gamboostLSS_intern to make FDboost happy
+
+commit becee653b8a8f467e1578877356b649c69d12170
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit 9dbbb204883ec3b15091d66f1f9f4eaa6d20e2c8
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit c0c634c957291a96b7af6ada3ea684af2e6507d8
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit 9d7202f5503f18f45bb4531c9db8382be2aeb114
+Author: janek <janek.thomas@web.de>
+
+    fixed missing match.arg in mboostLSS
+
+commit ae00aaa56dc27c8d4c7cd649d53816b2323581ae
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    AppVeyor
+
+commit 38634d2b5cb030f7a7fd1a178e23f81a78d57204
+Author: janek <janek.thomas@web.de>
+
+    added selected merge, and stabsel for nc fitting
+
+commit 4c0942b343bd4c4280f5a5efc58fe3e0f71cd0ab
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    also modified test for pkg/
+
+commit 3cec7e04e6bd92a1353e6068b302fb1a84cc1571
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Modified test as stabilized WeibullLSS cannot be fitted to the simulated data
+
+commit 355a0a89cb399ed3dc14a2076c629386e61c36a0
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated .Rout.save files
+
+commit 7b320a72eda720c858565cdb7b303053abc9564d
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    AppVeyor: try to make artefacts available
+
+commit 592dd9ad4d35082c1fcc997cadae9e3c6bc67625
+Author: janek <janek.thomas@web.de>
+
+    fixed bug for outer fitting, where u was not updated
+
+commit 8d1798c63f136278bf9016e723f9d14fabbcb4c7
+Author: janek <janek.thomas@web.de>
+
+    fixed wrong definition again, names are confusing...
+
+commit e26ccc01ba9af8ad0810c42d1b732665268afa0e
+Author: janek <janek.thomas@web.de>
+
+    fixed wrong definition of Iboost inner and outer
+
+commit d76bb85be5122d4010c9d17e99f231a990296e3e
+Author: janek <janek.thomas@web.de>
+
+    new tests, model reduction for inner still not correctly working
+
+commit df0c35bc9226081c5eb24eb1445a3a271408bd40
+Author: janek <janek.thomas@web.de>
+
+    moved fitting function to method call, which uses different iBoost variants
+
+commit b9bd78cd2b8fcfbc62a8274521edb4b99569b46e
+Author: janek <janek.thomas@web.de>
+
+    fixed bug with oobrisk but no weights
+
+commit 50773ef27a93f1f1c706147ba594a1ad14492d26
+Author: janek <janek.thomas@web.de>
+
+    added gammboost outer loss functionality
+
+commit f6db804758da48a1f7d58d9bd8e83c5d822ee5f8
+Author: janek <janek.thomas@web.de>
+
+    outer loss fitting with bols
+
+commit 2149e2f293e12ba0e1241dee21dcf954e0fab376
+Author: janek <janek.thomas@web.de>
+
+    experimental fitting with outer loss
+
+commit 89d0535bd08f98e64f2485b8c9bfc0b39de40084
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Improve output of print and summary for models (closes #7)
+
+commit e833780fc0a7f67dafc6150e1320959dc2b5fb1a
+Author: janek <janek.thomas@web.de>
+
+    second fix for wrong oob weights
+
+commit 729391a47bba44934e1301e1fd37a99a5a9a463a
+Author: janek <janek.thomas@web.de>
+
+    fixed bug, where the subset function startet with wrong nuisence update
+
+commit e5422ba15c16f37082b34086730dfd7427cd86e1
+Merge: a5a9267 daa7a4a
+Author: janek <janek.thomas@web.de>
+
+    Merge branch 'master' of https://github.com/hofnerb/gamboostLSS into noncyclical_fitting
+
+commit a5a92676b41790ae9194f21827e5908f4ecd4b3a
+Author: janek <janek.thomas@web.de>
+
+    test for oob fitting bug
+
+commit 033800421678f35501edc0b479af0f1734e3e6de
+Author: janek <janek.thomas@web.de>
+
+    fixed bug where oob weights where used to fit the model
+
+commit 95fd89d4f1e2dee4a8aceb298de03a469004a375
+Author: janek <janek.thomas@web.de>
+
+    added test function for nc fitting
+
+commit 9e9077fa57b772b015e90883594314b9b5db3ae0
+Author: janek <janek.thomas@web.de>
+
+    fixed error in combined_risk init
+
+commit 0b3c4b477fc08c826d9749e2f6fddda883ff7a37
+Author: janek <janek.thomas@web.de>
+
+    fixed error in check for minimal mstop value
+
+commit daa7a4a64eedc8d2688cbb4c759289e0b4e7436a
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 800174b8d10e0b51149d880d3da6ffd836001f2c
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update .travis.yml
+
+commit a0ac809b13e468d519aa146a0d4d0288a9caf44a
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit a44080732e9b30d7339b925348ad9f7ba1297991
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update .travis.yml
+
+commit 2212a38178c321c1669afb81bfccff6460846355
+Author: janek <janek.thomas@web.de>
+
+    fixed bug that cv_risk.nc couldn't use combined_risk
+
+commit ade28506f863b91fc6f997ede33237f6e0693cce
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit 3130ea497a548c0867d229e06ddb0bdc17e16209
+Merge: 68ddb5b 326e2db
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merge branch 'AppVeyor' of github.com:hofnerb/gamboostLSS into AppVeyor
+
+commit 68ddb5bd52b5425ac71faa309e2dce83ab8c5f21
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Added missing )
+
+commit 326e2dbe971daea3c4ac1cb48198447f73de840c
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 0d4b24239d714448dcd189140b719473228ca032
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit c660e9ecc78dd06b35f43d8a049f30b4e9ba50f8
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit bd4082b7e481e851658cf974a7671db65c67cd03
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit cc9ec9fca122257175a5c2cd2d6a8added1b4fee
+Author: janek <janek.thomas@web.de>
+
+    fixed trace function for cycling = TRUE
+
+commit 09fda11bb0ddeeb7d31b55c0b036cf8c051fad46
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit f5616d8f4e7528a1f11c95da612312de4a22509a
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 58eb2230d8876ba700e68a3601d8032369b5b31c
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 1b7c5490565d8a9be5bd62604bb5d35647ab6844
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 93421b24ab0814ca5ebf47ac3fa7ccb1acbd2db3
+Author: janek <janek.thomas@web.de>
+
+    added documentation for new parameter for cycling/noncycling algorithm
+
+commit 62d0615d5254b40f8197280e60f22e862695afd9
+Author: janek <janek.thomas@web.de>
+
+    moved cyclical fitting to mboostLSS, glmboostLSS.. etc.
+
+commit dee063f63209f982d815030cd1491165ac61a234
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit df05ae5d7e51a2dc3dde547e3a472c1f3274f137
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit dc70cea2481b5d3c0c1d09b9300b36b377248afe
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit b05e951c7236129530e13028bb544f772e57adf1
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 9c60e09b9097e1a692c56f48eae20b479d5e13ed
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit d4372f9079d070b3b154aa0133ed947ef801f634
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 72887f057ec34cad2e01dbe9a05f3e1a26e974ea
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 5955acc1fc6c2d43bf7b41218f08c73296627200
+Author: janek <janek.thomas@web.de>
+
+    added nc functions to namespace and aliased them in rd files
+
+commit 48f163c24307422db45b79016b081459ca3127e7
+Author: janek <janek.thomas@web.de>
+
+    added nc_mboostLSS as class in nc_mboostLSS_fit
+
+commit 9522320b2165be0bad6cd9734220cfd6e930a6e7
+Author: janek <janek.thomas@web.de>
+
+    added nc_mboostLSS and nc_blackboostLSS
+
+commit 101a30530585425038f45bb47b53938306ef8609
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 2fe6f316dd028998de926589b4d63d39733c7766
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 604b4f4db5d8dbeb41d8ff74bddc7ade5d74b245
+Author: janek <janek.thomas@web.de>
+
+    moved new alternative fitting algorithm to this branch
+
+commit 9132bf94510e1f902c32396be850043ecdc58f45
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 6a477b30723663658579f1e168003ec050d36829
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 8867fb9690a731080ab7c053182e92b0bc5f2266
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit a676e856ee015cb60e89f2ccef8a2d74f6d75d3f
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 10c6ba28345bc89e19c4d6e0d3f38c82fc24fd41
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 07e6346b1b0a6fea0daedf83cae51fcb7410f5ad
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update appveyor.yml
+
+commit 7915e605413ff8d29113f058f65939a52bf66676
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    make code consistent by always using response(fitted()); close #5
+
+commit 1bfc50e434ab81775a809e5446594db056cdb95e
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Experimental version of AppVeyor for multiple folders
+
+commit 4a57c766bbacd92312300ba5abba5fd9ea1e95d8
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Update README.md
+
+commit 5ea9292df17e31cc7e09dc2e63267fa1088fc787
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Experimental version of .travis.yml (5)
+
+commit 20b3f462651282df21bee9344bc3c44726ccc5e7
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Experimental version of .travis.yml (4)
+
+commit 94a32b081f2be2f8cb9fe9c62ec122d81b10e659
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Experimental version of .travis.yml (3)
+
+commit f08e24445a42cbf167941631af2c9b577e7a05db
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Experimental version of .travis.yml (2)
+
+commit 8fd062a832a806454ad90a0be06320ee58d3e825
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Experimental version of .travis.yml
+
+commit e57b086f5a1a6d6b67045cce927869a521d764a2
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Updated .travis.yml to make vignette compilation possible
+
+commit 669efbbce96f282399845c23d67e64562e089097
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Merged latest release to pkg/
+
+commit 573a5de3782bb996b493dc41121f67d09afe20db
+Author: Benjamin Hofner <benjamin.hofner@fau.de>
+
+    Fixed inst/CITATION
+
+commit 39204d00c6538d575539275130bbd77e2a2e4254
 Author: Benjamin Hofner <benjamin.hofner@fau.de>
 
     Release version 1.2-0

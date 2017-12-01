@@ -1,7 +1,7 @@
 
-R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -23,7 +23,7 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.6-0. See 'package?mboost' and 'news(package  = "mboost")'
+This is mboost 2.8-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -47,7 +47,7 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 4.3-8  ********** 
+ **********   GAMLSS Version 5.0-1  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -232,6 +232,155 @@ attr(,"offset")
 [1] 0.7357846
 
 > 
+> ### check as families
+> 
+> ### Gaussian: two different ways
+> model <- glmboostLSS(y ~ x1 + x2, families = as.families("NO"),
++                      data = data,
++                      control = boost_control(mstop = 10), center = TRUE)
+> 
+> model2 <- glmboostLSS(y ~ x1 + x2, families = GaussianLSS(),
++                      data = data,
++                      control = boost_control(mstop = 10), center = TRUE)
+> 
+> coef(model, off2int = TRUE)  # as.families("NO")
+$mu
+(Intercept)          x2 
+ 0.04778256 -0.13022745 
+
+$sigma
+(Intercept)          x1          x2 
+  1.0141654  -0.1381848   1.3859472 
+
+> coef(model2, off2int = TRUE) # GaussianLSS()
+$mu
+(Intercept)          x2 
+ 0.04778256 -0.13022745 
+
+$sigma
+(Intercept)          x1          x2 
+  1.0141654  -0.1381848   1.3859472 
+
+> 
+> ### change link function inside as.families()
+> model2 <- glmboostLSS(abs(y) ~ x1 + x2, families = as.families("NO", mu.link = "log"),
++                      data = data,
++                      control = boost_control(mstop = 10), center = TRUE)
+> coef(model2)
+$mu
+(Intercept)          x2 
+ -0.5210051   1.0517957 
+attr(,"offset")
+[1] 1.248357
+
+$sigma
+(Intercept)          x2 
+ -0.7673921   1.2107247 
+attr(,"offset")
+[1] 1.539722
+
+> 
+> 
+> model3 <- glmboostLSS(abs(y)/(max(y)+.01) ~ x1 + x2, families = as.families("BE", mu.link = "logit",
++                                                                             sigma.link = "log"),
++                       data = data,
++                       control = boost_control(mstop = 10), center = TRUE)
+> coef(model3)
+$mu
+(Intercept)          x2 
+ -0.2137522   0.7177991 
+attr(,"offset")
+[1] -2.931116
+
+$sigma
+(Intercept)          x2 
+-0.68253369  0.09271978 
+attr(,"offset")
+[1] -0.6931472
+
+> 
+> 
+> model4 <- glmboostLSS(y ~ x1 + x2, families = as.families("TF", mu.link = "identity",
++                                                           sigma.link = "log", 
++                                                           nu.link = "log"),
++                       data = data,
++                       control = boost_control(mstop = 10), center = TRUE)
+> coef(model4)
+$mu
+(Intercept)          x2 
+ 0.05795847 -0.11700550 
+attr(,"offset")
+[1] -0.01672538
+
+$sigma
+(Intercept)          x2 
+ -0.6968961   1.0374093 
+attr(,"offset")
+[1] 1.761574
+
+$nu
+(Intercept)          x2 
+  0.0572190  -0.1155127 
+attr(,"offset")
+[1] 2.302585
+
+> 
+> ### Additionally use stabilization
+> 
+> model4 <- glmboostLSS(y ~ x1 + x2, families = as.families("TF", mu.link = "identity",
++                                                           sigma.link = "log", 
++                                                           nu.link = "log", 
++                                                           stabilization = "L2"),
++                       data = data,
++                       control = boost_control(mstop = 10), center = TRUE)
+> coef(model4)
+$mu
+(Intercept)          x2 
+  0.4233792  -0.8547101 
+attr(,"offset")
+[1] -0.01672538
+
+$sigma
+(Intercept)          x2 
+ -0.6004438   0.8826834 
+attr(,"offset")
+[1] 1.761574
+
+$nu
+(Intercept)          x2 
+  0.2748352  -0.5548323 
+attr(,"offset")
+[1] 2.302585
+
+> 
+> 
+> model4 <- glmboostLSS(y ~ x1 + x2, families = as.families("TF", mu.link = "identity",
++                                                           sigma.link = "log", 
++                                                           nu.link = "log", 
++                                                           stabilization = "MAD"),
++                       data = data,
++                       control = boost_control(mstop = 10), center = TRUE)
+> coef(model4)
+$mu
+(Intercept)          x2 
+   1.146445   -2.314422 
+attr(,"offset")
+[1] -0.01672538
+
+$sigma
+(Intercept)          x1          x2 
+  -1.586238   -0.701680    2.484648 
+attr(,"offset")
+[1] 1.761574
+
+$nu
+(Intercept)          x1          x2 
+ -0.5822664   3.5450017  -1.0655973 
+attr(,"offset")
+[1] 2.302585
+
+> 
+> 
 > ### check survival families
 > 
 > x1 <- runif(1000)
@@ -280,9 +429,9 @@ Loglik(model)= -6051   Loglik(intercept only)= -6199.6
 n= 1000 
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogNormalLSS(),
 +                      control = boost_control(trace = TRUE), center = TRUE)
-[   1] ...................................... -- risk: 1552.695 
-[  41] ...................................... -- risk: 1543.948 
-[  81] ..................
+[   1] ........................................ -- risk: 1552.695 
+[  41] ........................................ -- risk: 1543.948 
+[  81] ...................
 Final risk: 1543.569 
 > stopifnot(sum(abs(coef(model, off2int = TRUE)[[1]] - c(3, 1, 2, 0)))
 +           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
@@ -309,18 +458,18 @@ Loglik(model)= -6681.6   Loglik(intercept only)= -6721.9
 n= 1000 
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3, families = LogLogLSS(),
 +                      control = boost_control(trace = TRUE), center = TRUE)
-[   1] ...................................... -- risk: 2246.758 
-[  41] ...................................... -- risk: 2240.168 
-[  81] ..................
+[   1] ........................................ -- risk: 2246.758 
+[  41] ........................................ -- risk: 2240.168 
+[  81] ...................
 Final risk: 2238.548 
 > model[350]
-[ 101] ...................................... -- risk: 2236.777 
-[ 141] ...................................... -- risk: 2235.907 
-[ 181] ...................................... -- risk: 2235.422 
-[ 221] ...................................... -- risk: 2235.153 
-[ 261] ...................................... -- risk: 2235.003 
-[ 301] ...................................... -- risk: 2234.92 
-[ 341] ........
+[ 101] ........................................ -- risk: 2236.777 
+[ 141] ........................................ -- risk: 2235.907 
+[ 181] ........................................ -- risk: 2235.422 
+[ 221] ........................................ -- risk: 2235.153 
+[ 261] ........................................ -- risk: 2235.003 
+[ 301] ........................................ -- risk: 2234.92 
+[ 341] .........
 Final risk: 2234.906 
 
 	 LSS Models fitted via Model-based Boosting
@@ -380,16 +529,16 @@ n= 1000
 > model <- glmboostLSS(Surv(time, status) ~ x1 + x2 + x3,
 +                      families = WeibullLSS(),
 +                      control = boost_control(trace = TRUE), center = TRUE)
-[   1] ...................................... -- risk: 2134.384 
-[  41] ...................................... -- risk: 1904.389 
-[  81] ..................
+[   1] ........................................ -- risk: 2134.384 
+[  41] ........................................ -- risk: 1904.389 
+[  81] ...................
 Final risk: 1858.757 
 > model[300]
-[ 101] ...................................... -- risk: 1804.158 
-[ 141] ...................................... -- risk: 1782.137 
-[ 181] ...................................... -- risk: 1775.546 
-[ 221] ...................................... -- risk: 1773.984 
-[ 261] ......................................
+[ 101] ........................................ -- risk: 1804.158 
+[ 141] ........................................ -- risk: 1782.137 
+[ 181] ........................................ -- risk: 1775.546 
+[ 221] ........................................ -- risk: 1773.984 
+[ 261] .......................................
 Final risk: 1773.656 
 
 	 LSS Models fitted via Model-based Boosting
@@ -506,4 +655,4 @@ Error in Families(mu = NBinomialMu2(mu = mu, sigma = sigma), sigma = NBinomialSi
 > 
 > proc.time()
    user  system elapsed 
-  7.791   0.111   8.166 
+  10.04    0.18   10.25 

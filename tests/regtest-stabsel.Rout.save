@@ -1,0 +1,101 @@
+
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> require("gamboostLSS")
+Loading required package: gamboostLSS
+Loading required package: mboost
+Loading required package: parallel
+Loading required package: stabs
+This is mboost 2.8-0. See 'package?mboost' and 'news(package  = "mboost")'
+for a complete list of changes.
+
+
+Attaching package: 'gamboostLSS'
+
+The following object is masked from 'package:stats':
+
+    model.weights
+
+> ### Data generating process:
+> set.seed(1907)
+> x1 <- rnorm(500)
+> x2 <- rnorm(500)
+> x3 <- rnorm(500)
+> x4 <- rnorm(500)
+> x5 <- rnorm(500)
+> x6 <- rnorm(500)
+> mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+> sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+> y <- numeric(500)
+> for( i in 1:500)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 10),
++                      center = TRUE, method = "cyclic")
+> s1 <- stabsel(model, q = 5, PFER = 1, B = 10) ## warning is expected
+Run stabsel ....................
+Warning message:
+In stabsel.mboostLSS(model, q = 5, PFER = 1, B = 10) :
+  'mstop' too small in 13 of the 20 subsampling replicates to select 'q' base-learners; Increase 'mstop' bevor applying 'stabsel'
+> plot(s1)
+> plot(s1, type = "paths")
+> 
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 10),
++                      center = TRUE, method = "noncyclic")
+> s2 <- stabsel(model, q = 5, PFER = 1, B = 10) ## warning is expected
+Run stabsel ....................
+Warning message:
+In stabsel.mboostLSS(model, q = 5, PFER = 1, B = 10) :
+  'mstop' too small in 20 of the 20 subsampling replicates to select 'q' base-learners; Increase 'mstop' bevor applying 'stabsel'
+> plot(s2)
+> plot(s2, type = "paths")
+> 
+> ## with informative sigma:
+> sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 + 1 * x6)
+> y <- numeric(500)
+> for( i in 1:500)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 10),
++                      center = TRUE, method = "cyclic")
+> s3 <- stabsel(model, q = 5, PFER = 1, B = 10) ## warning is expected
+Run stabsel ....................
+Warning message:
+In stabsel.mboostLSS(model, q = 5, PFER = 1, B = 10) :
+  'mstop' too small in 19 of the 20 subsampling replicates to select 'q' base-learners; Increase 'mstop' bevor applying 'stabsel'
+> plot(s3)
+> plot(s3, type = "paths")
+> 
+> model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
++                      control = boost_control(mstop = 10),
++                      center = TRUE, method = "noncyclic")
+> s4 <- stabsel(model, q = 5, PFER = 1, B = 10) ## warning is expected
+Run stabsel ....................
+Warning message:
+In stabsel.mboostLSS(model, q = 5, PFER = 1, B = 10) :
+  'mstop' too small in 20 of the 20 subsampling replicates to select 'q' base-learners; Increase 'mstop' bevor applying 'stabsel'
+> plot(s4)
+> plot(s4, type = "paths")
+> 
+> proc.time()
+   user  system elapsed 
+   5.49    0.20    5.91 

@@ -14,23 +14,28 @@
 \usage{
 \method{cvrisk}{mboostLSS}(object, folds = cv(model.weights(object)),
        grid = make.grid(mstop(object)), papply = mclapply,
-       trace = TRUE, fun = NULL, ...)
+       trace = TRUE, mc.preschedule = FALSE, fun = NULL, ...)
 
 make.grid(max, length.out = 10, min = NULL, log = TRUE,
           dense_mu_grid = TRUE)
+          
+\method{cvrisk}{nc_mboostLSS}(object, folds = cv(model.weights(object)),
+       grid = 1:sum(mstop(object)), papply = mclapply,
+       trace = TRUE, mc.preschedule = FALSE, fun = NULL, ...)          
 
 \method{plot}{cvriskLSS}(x, type = c("heatmap", "lines"),
      xlab = NULL, ylab = NULL, ylim = range(x),
      main = attr(x, "type"), ...)
      
-\method{plot}{nc_cvriskLSS}(x, type = "lines",
-     xlab = "Number of boosting iterations", ylab = NULL,
+\method{plot}{nc_cvriskLSS}(x, xlab = "Number of boosting iterations", ylab = NULL,
      ylim = range(x), main = attr(x, "type"), ...)
 }
 
 \arguments{
   \item{object}{
-    an object of class \code{mboostLSS}, i.e., a boosted GAMLSS model.
+    an object of class \code{mboostLSS} (i.e., a boosted GAMLSS model with 
+    \code{method = "cyclic"}) or class \code{nc_mboostLSS} (i.e., a boosted
+    GAMLSS model with \code{method = "noncyclic"})
   }
   \item{folds}{
     a weight matrix with number of rows equal to the number of
@@ -59,6 +64,10 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   \item{trace}{
     should status information beein printed during cross-validation?
     Default: \code{TRUE}.
+  }
+  \item{mc.preschedule}{
+    preschedule tasks if are parallelized using \code{\link{mclapply}}
+    (default: \code{FALSE})? For details see \code{\link{mclapply}}.
   }
   \item{fun}{
     if \code{fun} is NULL, the out-of-sample risk is returned. \code{fun},
@@ -96,8 +105,8 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
     computational costs. For details see examples.
   }
   \item{x}{
-    an object of class \code{cvriskLSS}, which results from running
-    \code{cvrisk}.
+    an object of class \code{cvriskLSS} (cyclic fitting) or \code{nc_cvriskLSS}
+    (non-cyclic fitting), which results from running \code{cvrisk}.
   }
   \item{type}{
     should \code{"lines"} or a \code{"heatmap"} (default) be plotted?
@@ -132,16 +141,17 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   fold to fold. The heatmap shows only the average risk but in a nicer
   fashion.
   
-  For the \code{method = "noncyclic"} only the line plot for exists.
+  For the \code{method = "noncyclic"} only the line plot exists.
 
   Hofner et al. (2016) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
-  worked example. Thomas et al. (2016) compare cross-validation for the
+  worked example. Thomas et al. (2017) compare cross-validation for the
   the cyclic and non-cyclic boosting approach and provide worked examples.
 }
 \value{
-  An object of class \code{cvriskLSS} (when \code{fun} wasn't
-  specified), basically a matrix containing estimates of the empirical
+  An object of class \code{cvriskLSS} or \code{nc_cvriskLSS} for cyclic and
+  non-cyclic fitting, respectively, (when \code{fun} wasn't specified); 
+  Basically a matrix containing estimates of the empirical
   risk for a varying number of bootstrap iterations. \code{plot} and
   \code{print} methods are available as well as an \code{mstop} method.
 }
@@ -152,9 +162,12 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
   
-  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
-  Stability selection for component-wise gradient boosting in multiple dimensions. 
-  Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  \emph{Statistics and Computing}. Online First. 
+  DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
+  (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
 }
 \seealso{
   \code{\link{cvrisk.mboost}} and \code{\link{cv}} (both in package

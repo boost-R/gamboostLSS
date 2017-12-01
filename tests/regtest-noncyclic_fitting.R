@@ -158,14 +158,23 @@ for( i in 1:500)
 dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 10),
+                     control = boost_control(mstop = 20),
                      center = TRUE, method = "cyclic")
 selected(model) # ok (at least in principle)
 selected(model, merge = TRUE) # ok
 
 model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                     control = boost_control(mstop = 10),
+                     control = boost_control(mstop = 20),
                      center = TRUE, method = "noncyclic")
 selected(model) # ok (at least in principle)
 selected(model, merge = TRUE) ## BROKEN
+
+
+## Check merged risk for reducing mstop to 0, and increasing it again does not contain an NA
+stopifnot(all(!is.na(risk(model, merge = TRUE))))
+mstop(model) <- 0
+stopifnot(all(!is.na(risk(model, merge = TRUE))))
+mstop(model) <- 10
+stopifnot(all(!is.na(risk(model, merge = TRUE))))
+
 

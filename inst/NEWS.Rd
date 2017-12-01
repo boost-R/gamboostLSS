@@ -1,23 +1,25 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 2.0-0 (2017-yy-zz)}{
+\section{Changes in gamboostLSS version 2.0-0 (2017-05-05)}{
   \subsection{User-visible changes}{
     \itemize{
-      \item Added new argument \code{method} which can be used to specify different
-        model fitting algorithms:
+      \item Added new fitting algorithm which can be used via the argument 
+        \code{method}:
         \itemize{
           \item \code{method = "cyclic"} is the standard approach which was also
              used previously.
-          \item \code{method = "noncyclic"} provides a new non-cyclic algorithm. 
+          \item \code{method = "noncyclic"} provides a new non-cyclical algorithm. 
         }
-        The \code{noncyclic} method allow faster cross-validation and better results
+        The \code{"noncyclic"} method allow faster cross-validation and better results
         for stability selection (see below). For details see 
            
-             Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016), 
-             Stability selection for component-wise gradient boosting in multiple dimensions. 
-             Preliminary version: \url{http://arxiv.org/abs/1611.10171}.
-  
+        Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+        Gradient boosting for distributional regression - faster tuning and improved 
+        variable selection via noncyclical updates. 
+        \emph{Statistics and Computing}. Online First. 
+        DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
+        (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
       \item Models can now be fitted with zero steps (i.e., models containing only 
@@ -45,9 +47,10 @@
     \itemize{
       \item Added Janek Thomas as new author.
       \item Updated \file{inst/CITATION} due to release of JSS tutorial paper and 
-        added new noncyclic fitting paper (also to manuals). 
+        added new noncyclical fitting paper (also to manuals). 
         The latter closes issue \href{https://github.com/boost-R/gamboostLSS/issues/27}{#27}.
       \item Updated URL in \file{DESCRIPTION}.
+      \item Adapt \code{mboostLSS_fit()} such that it can be called by \code{FDboost::FDboostLSS()}.
     }
   }
 }

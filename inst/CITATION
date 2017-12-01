@@ -69,23 +69,24 @@ citEntry(
 
 
 citEntry(
-  entry= "TechReport",
-  title = "Stability selection for component-wise gradient boosting in multiple dimensions",
+  entry= "Article",
+  title = "Gradient boosting for distributional regression - faster tuning and improved variable selection via noncyclical updates",
   author   =  personList(as.person("Janek Thomas"),
                          as.person("Andreas Mayr"),
 			             as.person("Bernd Bischl"),
 			             as.person("Matthias Schmid"),
 			             as.person("Adam Smith"),
                          as.person("Benjamin Hofner")),
-  year	   = "2016",
-  institution = "ArXiv",
+  year	   = "2017",
+  journal  = "{Statistics and Computing}",
+  note     = "Online First",
+  doi      = "10.1007/s11222-017-9754-6",
   header   = "To cite the noncyclical fitting method of 'gamboostLSS' use:",
-  url = "https://arxiv.org/abs/1611.10171",
   textVersion =
-    paste("Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2016).",
-          "Stability selection for component-wise gradient boosting in multiple dimensions.",
-          "arXiv preprint arXiv:1611.10171.")
+    paste("Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017).",
+          "Gradient boosting for distributional regression - faster tuning and improved variable selection via noncyclical updates.",
+          "Statistics and Computing. Online First. DOI 10.1007/s11222-017-9754-6")
 )
 
 
-citFooter('\nUse ', sQuote('toBibtex(citation("gamboostLSS"))'), ' to extract BibTeX references.')
+citFooter('\nUse ', sQuote('toBibtex(citation("gamboostLSS"))'), ' to extract BibTeX references.\n')

@@ -122,15 +122,39 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     trace <- control$trace
     control$trace <- FALSE
 
+    ## generate adequate model weights 
     w <- weights
+    
     if (is.null(weights)){
-        if (!is.list(response)) {
-            weights <- rep.int(1, NROW(response))
-        } else {
-            weights <- rep.int(1, NROW(response[[1]]))
-        }
+      if (!is.list(response)) {
+        weights <- rep.int(1, NROW(response))
+        # expand weights if the response is a matrix (functional response)
+        if(funchar == "FDboost" && !is.null(dim(response)) && !any(dim(response) == 1))
+          weights <- rep.int(weights, ncol(response))
+        
+      } else {
+        weights <- rep.int(1, NROW(response[[1]]))
+        # expand weights if the response is a matrix (functional response)
+        if(funchar == "FDboost" && !is.null(dim(response[[1]])) && !any(dim(response[[1]]) == 1))
+          weights <- rep.int(weights, ncol(response[[1]]))
+      }
     }
+    
     weights <- rescale_weights(weights)
+    
+    ## set up timeformula for FDboost 
+    if (funchar == "FDboost"){
+      
+      # get timeformula from dots 
+      dots <- list(...)
+      timeformula <- dots$timeformula
+      dots$timeformula <- NULL
+      
+      # deal with argument timeformula in case of FDboost()
+      # timeformula is named list with names according to 
+      # distribution parameters of families
+      timeformula <- check_timeformula(timeformula, families)
+    }
 
     fit <- vector("list", length = length(families))
     names(fit) <- names(families)
@@ -141,11 +165,15 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     names(offset) <- names(families)
     for (j in mods){
         if (!is.list(response)) {
-            response <- check_y_family(response, families[[j]])
-            offset[[j]] <- families[[j]]@offset(y = response, w = weights)
+          response <- check_y_family(response, families[[j]], 
+                                     allow_matrix = (funchar == "FDboost"))
+          offset[[j]] <- families[[j]]@offset(y = if(funchar != "FDboost") response else c(response), 
+                                              w = weights)
         } else {
-            response[[j]] <- check_y_family(response[[j]], families[[j]])
-            offset[[j]] <- families[[j]]@offset(y = response[[j]], w = weights)
+          response[[j]] <- check_y_family(response[[j]], families[[j]], 
+                                          allow_matrix = (funchar == "FDboost"))
+          offset[[j]] <- families[[j]]@offset(y = if(funchar != "FDboost") response[[j]] else c(response[[j]]), 
+                                              w = weights)
         }
         for (k in mods){
             for (l in mods){
@@ -158,17 +186,28 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     for (j in mods){
         ## update value of nuisance parameters in families
         for (k in mods[-j]){
-            if (!is.null(fit[[k]]))
-                assign(names(fit)[k], fitted(fit[[k]], type = "response"),
+            if (!is.null(fit[[k]])) ## use fitted.mboost() as fitted.FDboost() returns a matrix  
+                assign(names(fit)[k], families[[k]]@response(fitted.mboost(fit[[k]])),
                        environment(families[[j]]@ngradient))
         }
         ## use appropriate nu for the model
         control$nu <- nu[[j]]
         ## <FIXME> Do we need to recompute ngradient?
-        fit[[j]] <- do.call(fun, list(formula[[names(families)[[j]]]],
-                                      data = data, family = families[[j]],
-                                      control=control, weights = w,
-                                      ...))
+        if(funchar != "FDboost"){
+          fit[[j]] <- do.call(fun, list(formula[[names(families)[[j]]]],
+                                        data = data, family = families[[j]],
+                                        control = control, weights = w,
+                                        ...))
+        }else{
+          fit[[j]] <- do.call(fun, c(list(formula[[names(families)[[j]]]],
+                                        timeformula = timeformula[[names(families)[[j]]]],
+                                        data = data, family = families[[j]],
+                                        control = control, weights = w, 
+                                        # always use scalar offset, as offsets are treated within the Family
+                                        offset = "scalar"), 
+                                     dots))
+        }
+
     }
 
     iBoost <- function(niter, method) {
@@ -182,6 +221,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
             # this is the case for boosting from the beginning
             if (is.null(attr(fit, "combined_risk")) | niter == 0) {
                 combined_risk <- vapply(fit, risk, numeric(1))
+            } else {
+                combined_risk <- attr(fit, "combined_risk")()
             }
 
             best <- which(names(fit) == tail(names(combined_risk), 1))
@@ -204,7 +245,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 ## update value of nuisance parameters
                 ## use response(fitted()) as this is much quicker than fitted(, type = response)
                 for( k in mods[-best]) {
-                    assign(names(fit)[best], families[[best]]@response(fitted(fit[[best]])),
+                  ## use fitted.mboost() as fitted.FDboost() returns a matrix
+                    assign(names(fit)[best], families[[best]]@response(fitted.mboost(fit[[best]])),
                            environment(get("ngradient", environment(fit[[k]]$subset))))
                 }
 
@@ -248,8 +290,8 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 for (j in mods){
                     ## update value of nuisance parameters
                     ## use response(fitted()) as this is much quicker than fitted(, type = response)
-                    for (k in mods[-j])
-                        assign(names(fit)[k], families[[k]]@response(fitted(fit[[k]])),
+                    for (k in mods[-j]) ## use fitted.mboost() as fitted.FDboost() returns a matrix
+                        assign(names(fit)[k], families[[k]]@response(fitted.mboost(fit[[k]])),
                                environment(get("ngradient", environment(fit[[j]]$subset))))
                     ## update value of u, i.e. compute ngradient with new nuisance parameters
 
@@ -389,7 +431,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 ENV <- lapply(mods, function(j) environment(fit[[j]]$subset))
                 for(j in names(new_stop_value)){
                     for( k in setdiff(names(new_stop_value), j)){
-                        assign(k, families[[k]]@response(fitted(fit[[k]])),
+                        assign(k, families[[k]]@response(fitted.mboost(fit[[k]])),
                                environment(get("ngradient", environment(fit[[j]]$subset))))
                     }
                 }
@@ -438,11 +480,22 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
         ## re-use user specified offset only
         ## (since it depends on weights otherwise)
         ## this is achieved via a re-evaluation of the families argument
-        mboostLSS_fit(formula = formula, data = data,
-                      families = eval(call[["families"]]), weights = weights,
-                      control = control, fun = fun, funchar = funchar,
-                      call = call, oobweights = oobweights,
-                      method = method)
+        
+        if(funchar != "FDboost"){
+          mboostLSS_fit(formula = formula, data = data,
+                        families = eval(call[["families"]]), weights = weights,
+                        control = control, fun = fun, funchar = funchar,
+                        call = call, oobweights = oobweights,
+                        method = method)
+        }else{
+          mboostLSS_fit(formula = formula, data = data,
+                        families = eval(call[["families"]]), weights = weights,
+                        control = control, fun = fun, funchar = funchar,
+                        call = call, oobweights = oobweights,
+                        method = method, 
+                        timeformula = timeformula[[names(families)[[j]]]])
+        }
+        
     }
     attr(fit, "control") <- control
     attr(fit, "call") <- call

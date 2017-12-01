@@ -7,8 +7,6 @@
   Update ChangeLog
   ------------------
 
-  Go to patch/pkg directory of project:
-
     git log abba..HEAD --pretty=short > ChangeLog
 
 
@@ -28,6 +26,19 @@
 
   Quit R and run
    ../relative/path/to/R-devel/bin/R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
+   
+  Removing cvrisk results from vignette to reduce package size
+  ------------------------------------------------------------
+  
+  1) Add eval = FALSE to chunks <<cvrisk>>, <<load_cvrisk>>, <<crossvalidation>>, 
+     <<check_initial_assignement>> and <<subset>>
+  2) Add \includegraphics{fig-crossvalidation.pdf} after chunk <<crossvalidation>>
+  3) Replace chunk <<mstop>> with
+\begin{Sinput}
+R> mstop(cvr)
+   mu sigma 
+ 1269    84 
+\end{Sinput}
 
 
   Making a release
@@ -35,9 +46,9 @@
 
     Increase patch or minor level in DESCRIPTION
     Update Date: field in DESCRIPTION
-    Update NEWS
-
-    R CMD build --resave-data --compact-vignettes [[pkg OR patch]] &&
+    Update inst/NEWS.Rd
+    
+    R CMD build --resave-data --compact-vignettes . &&
         R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
 
     Run check with R-devel
@@ -45,18 +56,12 @@
 
     If differences to .Rout.save occure:
        - Copy new .Rout files to .Rout.save [1,2]:
-
-       	    Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=FALSE"
-         or
-            Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=FALSE"
-
+       	    Rscript copy_Rout_to_Routsave.R "vignettes=FALSE"
+     
        - Update vignette .Rout.save files if necessary [1,2]:
+            Rscript copy_Rout_to_Routsave.R "vignettes=TRUE"
 
-            Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=TRUE"
-	or
-            Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=TRUE"
-
-	 [1] For details see
+         [1] For details see
              http://r.789695.n4.nabble.com/Generate-Rout-save-files-for-vignettes-td4652752.html
          [2] NOTE: Reference output should be produced without having the --timings option set.
 
@@ -69,14 +74,17 @@
 
     Commit changes
 
-    Update ChangeLog (see above)
+    Update ChangeLog (see above) and amend previous commit
+    
+    Remove cvrisk results to reduce package size (see above) but do NOT COMMIT these changes to github.
 
     Now  build package without test folder to be submitted to CRAN
-
-       R CMD buildCRAN --resave-data --compact-vignettes pkg && R CMD check --as-cran gamboostLSS_XXX.tar.gz
-    or
-       R CMD buildCRAN --resave-data --compact-vignettes patch && R CMD check --as-cran gamboostLSS_XXX.tar.gz
-
+       R CMD buildCRAN --resave-data --compact-vignettes . && R CMD check --as-cran gamboostLSS_XXX.tar.gz
     To use the script copy it to R RHOME (< enter this in the console) /bin and make it executable.
-
+    
+    Alternatively do the following:
+        mv .RbuildignoreCRAN .Rbuildignore
+        R CMD build --resave-data --compact-vignettes . && R CMD check --as-cran --run-donttest gamboostLSS_XXX.tar.gz
+        git checkout -- .RbuildignoreCRAN .Rbuildignore
+    
     Use web form at http://xmpalantir.wu.ac.at/cransubmit/.
