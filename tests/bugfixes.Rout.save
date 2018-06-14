@@ -1,5 +1,5 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
 Copyright (C) 2017 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
@@ -23,7 +23,7 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.8-0. See 'package?mboost' and 'news(package  = "mboost")'
+This is mboost 2.9-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -33,6 +33,8 @@ The following object is masked from 'package:stats':
 
     model.weights
 
+Warning message:
+package 'stabs' was built under R version 3.4.4 
 > require("gamlss")
 Loading required package: gamlss
 Loading required package: splines
@@ -47,10 +49,14 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 5.0-1  ********** 
+ **********   GAMLSS Version 5.1-0  ********** 
 For more on GAMLSS look at http://www.gamlss.org/
 Type gamlssNews() to see new features/changes/bug fixes.
 
+Warning messages:
+1: package 'gamlss' was built under R version 3.4.4 
+2: package 'gamlss.data' was built under R version 3.4.4 
+3: package 'gamlss.dist' was built under R version 3.4.4 
 > 
 > ## subset method was missing if initial mstop = 1
 > set.seed(1907)
@@ -158,4 +164,4 @@ z               0.965     0.965          0.925          0.965
 > 
 > proc.time()
    user  system elapsed 
-   4.39    0.29    5.03 
+   6.45    0.18    7.05 

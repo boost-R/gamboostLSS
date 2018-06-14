@@ -1,5 +1,5 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
 Copyright (C) 2017 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
@@ -23,7 +23,7 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.8-0. See 'package?mboost' and 'news(package  = "mboost")'
+This is mboost 2.9-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -33,6 +33,8 @@ The following object is masked from 'package:stats':
 
     model.weights
 
+Warning message:
+package 'stabs' was built under R version 3.4.4 
 > 
 > ## simulate Gaussian data
 > set.seed(0804)
@@ -268,6 +270,8 @@ The following object is masked from 'package:mboost':
 
     Family
 
+Warning message:
+package 'gamlss.dist' was built under R version 3.4.4 
 > dat$y <- rBCT(1000, mu = 100, sigma = 0.1, nu = 0, tau = 2)
 > for (i in 1:length(FAMILIES)) {
 +     m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
@@ -386,4 +390,4 @@ Risks:
 > 
 > proc.time()
    user  system elapsed 
-  23.72    0.23   24.03 
+  29.32    0.28   29.67 

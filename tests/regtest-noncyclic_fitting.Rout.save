@@ -1,5 +1,5 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
 Copyright (C) 2017 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
@@ -20,7 +20,7 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.8-0. See 'package?mboost' and 'news(package  = "mboost")'
+This is mboost 2.9-0. See 'package?mboost' and 'news(package  = "mboost")'
 for a complete list of changes.
 
 
@@ -30,6 +30,8 @@ The following object is masked from 'package:stats':
 
     model.weights
 
+Warning message:
+package 'stabs' was built under R version 3.4.4 
 > 
 > ###negbin dist, linear###
 > 
@@ -345,4 +347,4 @@ $sigma
 > 
 > proc.time()
    user  system elapsed 
-   8.43    0.23    8.75 
+   9.82    0.17   10.06 
