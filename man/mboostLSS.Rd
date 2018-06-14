@@ -17,7 +17,7 @@
   al., 2012). 
   (b) The noncyclic algorithm selects in each step the update of a base-learner 
   for the distribution parameter that best fits the negative gradient 
-  (algorithm with inner loss of Thomas et al., 2017). 
+  (algorithm with inner loss of Thomas et al., 2018). 
   
 }
 \usage{
@@ -57,7 +57,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   \item{weights}{ a numeric vector of weights (optional). }
   \item{method}{ fitting method, currently two methods are supported:
   \code{"cyclic"} (see Mayr et al., 2012) and \code{"noncyclic"} 
-   (algorithm with inner loss of Thomas et al., 2017). 
+   (algorithm with inner loss of Thomas et al., 2018). 
   The latter requires a one dimensional \code{mstop} value.}
   \item{fun}{ fit function. Either \code{\link{mboost}},
     \code{\link{glmboost}}, \code{\link{gamboost}} or
@@ -80,7 +80,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
   the information provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2016). Thomas et al. (2017) 
+  \code{\link{gamboostLSS}} see Hofner et al. (2016). Thomas et al. (2018) 
   developed a novel non-cyclic approach to fit gamboostLSS models. This approach
   is suitable for the combination with \code{\link{stabsel}} and speeds up
   model tuning via \code{\link{cvrisk}} (see also below).
@@ -131,8 +131,8 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   to be a one dimensional integer. Instead of cycling through all distribution 
   parameters, in each iteration only the best base-learner is used. One base-learner of every 
   parameter is selected via RSS, the distribution parameter is then chosen via the loss 
-  (in Thomas et. al. (2017) called inner loss). 
-  For details on the noncyclic fitting method see Thomas et. al. (2017). 
+  (in Thomas et. al., 2018, called inner loss). 
+  For details on the noncyclic fitting method see Thomas et. al. (2018). 
 
   To (potentially) stabilize the model estimation by standardizing the
   negative gradients one can use the argument \code{stabilization} of
@@ -172,10 +172,10 @@ Statistical Society, Series C (Applied Statistics), 54, 507-554.
 Buehlmann, P. and Hothorn, T. (2007), Boosting algorithms: Regularization,
 prediction and model fitting. Statistical Science, 22(4), 477--505.
 
-  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2018), 
   Gradient boosting for distributional regression - faster tuning and improved 
   variable selection via noncyclical updates. 
-  \emph{Statistics and Computing}. Online First. 
+  \emph{Statistics and Computing}. 28: 673-687. 
   DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
   (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
 }

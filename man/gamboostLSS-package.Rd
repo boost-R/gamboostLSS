@@ -15,7 +15,7 @@
   additive models for location, scale and shape). For information on
   GAMLSS theory see Rigby and Stasinopoulos (2005), or the information
   provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2015). Thomas et al. (2017) 
+  \code{\link{gamboostLSS}} see Hofner et al. (2015). Thomas et al. (2018) 
   developed a novel non-cyclic approach to fit \code{\link{gamboostLSS}} models. 
   This approach is suitable for the combination with \code{\link{stabsel}} and 
   speeds up model tuning via \code{\link{cvrisk}}. 
@@ -88,10 +88,10 @@
   mboost: Model-based boosting. R package version 2.4-2.
   \url{https://CRAN.R-project.org/package=mboost}
   
-  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2018), 
   Gradient boosting for distributional regression - faster tuning and improved 
   variable selection via noncyclical updates. 
-  \emph{Statistics and Computing}. Online First. 
+  \emph{Statistics and Computing}. 28: 673-687. 
   DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
   (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
 }
