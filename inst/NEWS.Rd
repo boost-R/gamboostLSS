@@ -1,6 +1,18 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 2.0-1 (2018-06-14)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Export plot functions, streamlined interface of cvrisk and updated manuals.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/46}{#46}.}
+      \item{Export \code{predict.mboostLSS} to make \pkg{betaboost} happy.}
+      \item{Updated reference for Thomas et al. 
+        Closes issues \href{https://github.com/boost-R/gamboostLSS/issues/47}{#47}.}
+    }
+  }
+}
+
 \section{Changes in gamboostLSS version 2.0-0 (2017-05-05)}{
   \subsection{User-visible changes}{
     \itemize{

@@ -1,4 +1,75 @@
-commit e787f1fdf9ac20584685c2569a534081ad67a15e
+commit cd7944efd0b9660cc273d0d120891b9d88b216b0
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release gamboostLSS 2.0-1
+
+commit 1cb93d2b89db47090470741e251fbb5766ae59f3
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update .Rout.save
+
+commit a462d46caca91fe1869c8c6d82c379df469647f2
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated Thomas et al to final reference. Closes #47 once more.
+
+commit 00145b64e3df3ca2ca59ecdad2fbf739c7040e13
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    fix merge conflict
+
+commit 6af980e94b1d594f9a3a26bff13fc38e54aac742
+Merge: 09af4f0 13e9b2d
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Merge branch 'master' of https://github.com/boost-R/gamboostLSS
+
+commit 09af4f04ebf66aa66b2712c1f9838aca10af99be
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    export predict.mboostLSS
+
+commit 13e9b2d094e952382e52f97613ad5b5ce94604f0
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    fix citation
+
+commit 780e8abaf1970eaf3c3aaf6576fce55b49e32680
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    README
+
+commit 6d385df8f5d82ab0834e79792b986a1e8a75fd78
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update reference for non-cyclic boosting (closes #47)
+
+commit 70a30c47e9c6e6112a1b31cd5f871a9356c7541c
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update DESCRIPTION
+
+commit 3449299f6b2c848d1ceb854dfd46cccbbe59fcd5
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated further manuals regarding various classes of results
+
+commit c962e3b4766f43e562fa03a2e94cd95ecb4994a4
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    updated cvrisk manual (closes #46)
+
+commit 7f0b37cdb917d558f97595f6effd8a22839a86ad
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    streamlined interfaces of cvrisk
+
+commit 8750ae0652bf71fe21ade698de01fe13404347e1
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    export various plot functions and cvrisk (see #46)
+
+commit 95b48b944ab9c139abc5520a889f66d2a49d9307
 Author: Benjamin Hofner <benjamin.hofner@pei.de>
 
     Release gamboostLSS 2.0-0
