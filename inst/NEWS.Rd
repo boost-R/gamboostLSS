@@ -1,6 +1,16 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 2.0-2 (2018-06-xx)}{
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item{Initialize \code{combined_risk} in \code{mboostLSS_fit} to avoid writing 
+        (and overwriting) the combined risk in the global environment.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/49}{#49}.}
+    }
+  }
+}
+
 \section{Changes in gamboostLSS version 2.0-1 (2018-06-14)}{
   \subsection{Miscellaneous}{
     \itemize{

@@ -107,6 +107,7 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
     }
 
     mstop <- mstoparg <- control$mstop
+    combined_risk <- NA
     control$mstop <- 0
     if (method == "cyclic")
         mstop <- check(mstop, "mstop", names(families))
