@@ -235,7 +235,7 @@ PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
              "base-learners of one numeric variable")
     
     pred_vars <- lapply(x, extract, what = "variable.names")
-    pred_vars <- unique(unlist(pred_vars))
+    pred_vars <- unique(trimws(unlist(strsplit(unlist(pred_vars), ",")))) # fixing bug #55
     if ("(Intercept)" %in% pred_vars)
         pred_vars <- pred_vars[pred_vars != "(Intercept)"]
     

@@ -108,3 +108,19 @@ if (length(risk(model_0, merge = TRUE)) != length_0)
     stop("Combined risk overwritten by new model. Scoping error.")
 if (length(risk(model_1, merge = TRUE)) != length_1)
     stop("Combined risk overwritten by new model. Scoping error.")
+
+# fix predint when multiple variables are included within a single baselearner #55
+# (https://github.com/boost-R/gamboostLSS/issues/55)
+
+set.seed(7)
+data <- data.frame(x1 = runif(400, -1, 1),
+                   x2 = runif(400, -1, 1),
+                   x3 = runif(400, -1, 1),
+                   x4 = runif(400, -1, 1))
+data$y <- rnorm(400, 4 * data$x1 + 2 * data$x3)
+
+gb <- gamboostLSS(y ~ btree(x1, x2, x3, x4), data = data, method = "noncyclic", control = boost_control(mstop = 10))
+p <- predint(gb, which = "x1")
+
+
+
