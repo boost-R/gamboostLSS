@@ -252,9 +252,9 @@ newStudentTMu  <- function(mu, df){
     }
 
     # use the Family constructor of mboost
-    Family(ngradient = ngradient, risk = risk, loss = loss,
-           response = function(f) f,
-           name = "new Student's t-distribution: mu (id link)")
+    mboost::Family(ngradient = ngradient, risk = risk, loss = loss,
+                   response = function(f) f,
+                   name = "new Student's t-distribution: mu (id link)")
 }
 
 ## sub-Family for df
@@ -279,9 +279,9 @@ newStudentTDf <- function(mu, df){
                    (y - mu)^2 / (1 + (y - mu)^2 / exp(f)) * (exp(-f) + 1)/2)
     }
     # use the Family constructor of mboost
-    Family(ngradient = ngradient, risk = risk, loss = loss,
-           response = function(f) exp(f),
-           name = "Student's t-distribution: df (log link)")
+    mboost::Family(ngradient = ngradient, risk = risk, loss = loss,
+                   response = function(f) exp(f),
+                   name = "Student's t-distribution: df (log link)")
 }
 
 ## families object for new distribution

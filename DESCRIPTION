@@ -20,3 +20,4 @@ LazyLoad: yes
 LazyData: yes
 License: GPL-2
 URL: For source code, development versions and issue tracker see https://github.com/boost-R/gamboostLSS
+RoxygenNote: 6.1.1
