@@ -1,6 +1,6 @@
 
-R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -23,9 +23,6 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.9-0. See 'package?mboost' and 'news(package  = "mboost")'
-for a complete list of changes.
-
 
 Attaching package: 'gamboostLSS'
 
@@ -33,8 +30,6 @@ The following object is masked from 'package:stats':
 
     model.weights
 
-Warning message:
-package 'stabs' was built under R version 3.4.4 
 > 
 > ## simulate Gaussian data
 > set.seed(0804)
@@ -120,6 +115,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
+<bytecode: 0x0000000022c0ee00>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -146,6 +142,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
+<bytecode: 0x0000000022c0ee00>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -172,6 +169,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
+<bytecode: 0x0000000022c0ee00>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -270,8 +268,6 @@ The following object is masked from 'package:mboost':
 
     Family
 
-Warning message:
-package 'gamlss.dist' was built under R version 3.4.4 
 > dat$y <- rBCT(1000, mu = 100, sigma = 0.1, nu = 0, tau = 2)
 > for (i in 1:length(FAMILIES)) {
 +     m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
@@ -344,12 +340,21 @@ Loading required package: survival
 LogNormalLSS 
 
 Risks:
-  stabilization = "none": 385.8235 
-  stabilization = "MAD": 385.5457 
-  stabilization = "L2": 387.9062 
+  stabilization = "none": 341.8219 
+  stabilization = "MAD": 341.7978 
+  stabilization = "L2": 342.3934 
 WeibullLSS 
 
-Warning: WeibullLSS cannot be fitted with stabilization = 'MAD'
+Risks:
+  stabilization = "none": 3610.826 
+  stabilization = "MAD": 705.8757 
+  stabilization = "L2": 599.4504 
+LogLogLSS 
+
+Risks:
+  stabilization = "none": 522.9556 
+  stabilization = "MAD": 538.4426 
+  stabilization = "L2": 518.0424 
 > 
 > ## check count data
 > dat$y <- rnbinom(1000, size=10, mu=5)
@@ -390,4 +395,4 @@ Risks:
 > 
 > proc.time()
    user  system elapsed 
-  29.32    0.28   29.67 
+  16.59    0.07   16.68 

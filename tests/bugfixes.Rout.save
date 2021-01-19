@@ -1,6 +1,6 @@
 
-R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -23,9 +23,6 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.9-0. See 'package?mboost' and 'news(package  = "mboost")'
-for a complete list of changes.
-
 
 Attaching package: 'gamboostLSS'
 
@@ -33,12 +30,17 @@ The following object is masked from 'package:stats':
 
     model.weights
 
-Warning message:
-package 'stabs' was built under R version 3.4.4 
 > require("gamlss")
 Loading required package: gamlss
 Loading required package: splines
 Loading required package: gamlss.data
+
+Attaching package: 'gamlss.data'
+
+The following object is masked from 'package:datasets':
+
+    sleep
+
 Loading required package: gamlss.dist
 Loading required package: MASS
 
@@ -49,14 +51,10 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 5.1-0  ********** 
-For more on GAMLSS look at http://www.gamlss.org/
+ **********   GAMLSS Version 5.2-0  ********** 
+For more on GAMLSS look at https://www.gamlss.com/
 Type gamlssNews() to see new features/changes/bug fixes.
 
-Warning messages:
-1: package 'gamlss' was built under R version 3.4.4 
-2: package 'gamlss.data' was built under R version 3.4.4 
-3: package 'gamlss.dist' was built under R version 3.4.4 
 > 
 > ## subset method was missing if initial mstop = 1
 > set.seed(1907)
@@ -162,6 +160,62 @@ In as.families("BI") :
 x               1.009     1.009          0.964          1.009
 z               0.965     0.965          0.925          0.965
 > 
+> 
+> ## make sure that combined_risk is not written to the global environment 
+> ## (and thus replaced if another model is fitted)
+> set.seed(1907)
+> x1 <- rnorm(1000)
+> x2 <- rnorm(1000)
+> x3 <- rnorm(1000)
+> x4 <- rnorm(1000)
+> x5 <- rnorm(1000)
+> x6 <- rnorm(1000)
+> mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+> sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+> y <- numeric(1000)
+> for( i in 1:1000)
++     y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+> dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+> 
+> model_0 <- mboostLSS(x1 ~ ., families = GaussianLSS(), data = dat, 
++                      control = boost_control(mstop = 30),method = "noncyclic")
+> length_0 <- length(risk(model_0, merge = TRUE))
+> if (length_0 != 32)
++     stop("combined risk not correct.")
+> 
+> model_1 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat, 
++                        control = boost_control(mstop = 20), method = "noncyclic")
+> length_1 <- length(risk(model_1, merge = TRUE))
+> if (length_1 != 22)
++     stop("combined risk not correct.")
+> if (length(risk(model_0, merge = TRUE)) != length_0)
++     stop("Combined risk overwritten by new model. Scoping error.")
+> 
+> model_2 <- mboostLSS(x1 ~ ., families = GaussianLSS(), data = dat, 
++                      control = boost_control(mstop = 11),method = "cyclic")
+> if (length(risk(model_2, merge = TRUE)) != 24)
++     stop("combined risk not correct.")
+> if (length(risk(model_0, merge = TRUE)) != length_0)
++     stop("Combined risk overwritten by new model. Scoping error.")
+> if (length(risk(model_1, merge = TRUE)) != length_1)
++     stop("Combined risk overwritten by new model. Scoping error.")
+> 
+> # fix predint when multiple variables are included within a single baselearner #55
+> # (https://github.com/boost-R/gamboostLSS/issues/55)
+> 
+> set.seed(7)
+> data <- data.frame(x1 = runif(400, -1, 1),
++                    x2 = runif(400, -1, 1),
++                    x3 = runif(400, -1, 1),
++                    x4 = runif(400, -1, 1))
+> data$y <- rnorm(400, 4 * data$x1 + 2 * data$x3)
+> 
+> gb <- gamboostLSS(y ~ btree(x1, x2, x3, x4), data = data, method = "noncyclic", control = boost_control(mstop = 10))
+> p <- predint(gb, which = "x1")
+> 
+> 
+> 
+> 
 > proc.time()
    user  system elapsed 
-   6.45    0.18    7.05 
+   2.14    0.20    2.32 

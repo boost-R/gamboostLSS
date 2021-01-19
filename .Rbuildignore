@@ -6,6 +6,7 @@ SOP_release.txt
 buildCRAN
 checks.R
 copy_Rout_to_Routsave.R
+tests/Rplots.pdf
 vignettes/gamboostLSS_Tutorial.tex
 vignettes/auto
 vignettes/graphics

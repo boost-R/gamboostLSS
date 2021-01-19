@@ -1,6 +1,6 @@
 
-R version 3.4.3 (2017-11-30) -- "Kite-Eating Tree"
-Copyright (C) 2017 The R Foundation for Statistical Computing
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -23,9 +23,6 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.9-0. See 'package?mboost' and 'news(package  = "mboost")'
-for a complete list of changes.
-
 
 Attaching package: 'gamboostLSS'
 
@@ -33,12 +30,17 @@ The following object is masked from 'package:stats':
 
     model.weights
 
-Warning message:
-package 'stabs' was built under R version 3.4.4 
 > require("gamlss")
 Loading required package: gamlss
 Loading required package: splines
 Loading required package: gamlss.data
+
+Attaching package: 'gamlss.data'
+
+The following object is masked from 'package:datasets':
+
+    sleep
+
 Loading required package: gamlss.dist
 Loading required package: MASS
 
@@ -49,14 +51,10 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 5.1-0  ********** 
-For more on GAMLSS look at http://www.gamlss.org/
+ **********   GAMLSS Version 5.2-0  ********** 
+For more on GAMLSS look at https://www.gamlss.com/
 Type gamlssNews() to see new features/changes/bug fixes.
 
-Warning messages:
-1: package 'gamlss' was built under R version 3.4.4 
-2: package 'gamlss.data' was built under R version 3.4.4 
-3: package 'gamlss.dist' was built under R version 3.4.4 
 > 
 > set.seed(1907)
 > n <- 5000
@@ -327,4 +325,4 @@ Final risk: 13810.99
 > 
 > proc.time()
    user  system elapsed 
-   8.19    0.26    8.43 
+   3.90    0.14    4.00 
