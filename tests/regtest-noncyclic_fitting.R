@@ -94,15 +94,15 @@ risk(model, merge = FALSE)
 
 ## test that mstop = 0 is possible
 compare_models <- function (m1, m2) {
-  stopifnot(all.equal(coef(m1), coef(m2)))
-  stopifnot(all.equal(predict(m1), predict(m2)))
-  stopifnot(all.equal(fitted(m1), fitted(m2)))
-  stopifnot(all.equal(selected(m1), selected(m2)))
-  stopifnot(all.equal(risk(m1), risk(m2)))
+  stopifnot(all.equal(coef(m1), coef(m2), check.environment=FALSE))
+  stopifnot(all.equal(predict(m1), predict(m2), check.environment=FALSE))
+  stopifnot(all.equal(fitted(m1), fitted(m2), check.environment=FALSE))
+  stopifnot(all.equal(selected(m1), selected(m2), check.environment=FALSE))
+  stopifnot(all.equal(risk(m1), risk(m2), check.environment=FALSE))
   ## remove obvious differences from objects
   m1$control <- m2$control <- NULL
   m1$call <- m2$call <- NULL
-  if (!all.equal(m1, m2))
+  if (!all.equal(m1, m2, check.environment=FALSE))
     stop("Objects of offset model + 1 step and model with 1 step not identical")
   invisible(NULL)
 }
