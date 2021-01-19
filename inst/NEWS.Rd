@@ -41,7 +41,7 @@
         variable selection via noncyclical updates. 
         \emph{Statistics and Computing}. Online First. 
         DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
-        (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
+        (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
       \item Models can now be fitted with zero steps (i.e., models containing only 

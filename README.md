@@ -28,7 +28,7 @@ shape).
     Gradient boosting for distributional regression - faster tuning and improved 
     variable selection via noncyclical updates. 
     *Statistics and Computing*. 28: 673-687. DOI [10.1007/s11222-017-9754-6](http://dx.doi.org/10.1007/s11222-017-9754-6).
-    (Preliminary version: [ArXiv 1611.10171](http://arxiv.org/abs/1611.10171)).
+    (Preliminary version: [ArXiv 1611.10171](https://arxiv.org/abs/1611.10171)).
 
 ## Issues & Feature Requests
 

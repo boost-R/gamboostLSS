@@ -167,7 +167,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   variable selection via noncyclical updates. 
   \emph{Statistics and Computing}. 28: 673-687. 
   DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
-  (Preliminary version: \url{http://arxiv.org/abs/1611.10171}).
+  (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
 }
 \seealso{
   \code{\link{cvrisk.mboost}} and \code{\link{cv}} (both in package
