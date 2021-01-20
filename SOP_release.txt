@@ -35,7 +35,7 @@
     Update Date: field in DESCRIPTION
     Update inst/NEWS.Rd
     
-    R CMD build --resave-data --compact-vignettes . &&
+    R CMD build --resave-data --compact-vignettes="gs+qpdf" gamboostLSS &&
         R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
 
     Run check with R-devel
@@ -70,7 +70,8 @@
     
         mv vignettes/gamboostLSS_Tutorial_CRAN.Rnw vignettes/gamboostLSS_Tutorial.Rnw
         mv .RbuildignoreCRAN .Rbuildignore
-        R CMD build --resave-data --compact-vignettes . && R CMD check --as-cran --run-donttest gamboostLSS_XXX.tar.gz
+        cd ..
+        R CMD build --resave-data --compact-vignettes="gs+qpdf" gamboostLSS && R CMD check --as-cran --run-donttest gamboostLSS_XXX.tar.gz
         git checkout -- .RbuildignoreCRAN .Rbuildignore vignettes/gamboostLSS_Tutorial_CRAN.Rnw vignettes/gamboostLSS_Tutorial.Rnw
     
     Use web form at http://xmpalantir.wu.ac.at/cransubmit/.

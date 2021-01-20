@@ -1,6 +1,14 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 2.0-3 (2021-01-20)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Minor changes to make CRAN happy.}
+    }
+  }
+}
+
 \section{Changes in gamboostLSS version 2.0-2 (2021-01-19)}{
   \subsection{Bug-fixes}{
     \itemize{

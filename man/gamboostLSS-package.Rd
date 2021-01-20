@@ -14,7 +14,7 @@
   This package uses boosting algorithms for fitting GAMLSS (generalized
   additive models for location, scale and shape). For information on
   GAMLSS theory see Rigby and Stasinopoulos (2005), or the information
-  provided at \url{http://gamlss.org}. For a tutorial on
+  provided at \url{http://gamlss.com}. For a tutorial on
   \code{\link{gamboostLSS}} see Hofner et al. (2015). Thomas et al. (2018) 
   developed a novel non-cyclic approach to fit \code{\link{gamboostLSS}} models. 
   This approach is suitable for the combination with \code{\link{stabsel}} and 
