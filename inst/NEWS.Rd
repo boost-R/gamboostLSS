@@ -1,6 +1,13 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 2.0-5 (2021-01-20)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Added www and a / after the URLs to make CRAN happy.}
+    }
+  }
+}
 
 \section{Changes in gamboostLSS version 2.0-4 (2021-01-20)}{
   \subsection{Miscellaneous}{
