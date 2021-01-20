@@ -79,7 +79,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 \details{
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005) or
-  the information provided at \url{http://gamlss.com}. For a tutorial on
+  the information provided at \url{https://gamlss.com}. For a tutorial on
   \code{\link{gamboostLSS}} see Hofner et al. (2016). Thomas et al. (2018) 
   developed a novel non-cyclic approach to fit gamboostLSS models. This approach
   is suitable for the combination with \code{\link{stabsel}} and speeds up
