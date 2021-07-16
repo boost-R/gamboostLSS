@@ -98,7 +98,7 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
 cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
                              grid = make.grid(mstop(object)),
                              papply = mclapply, trace = TRUE,
-                             fun = NULL, ...) {
+                             mc.preschedule = FALSE, fun = NULL, ...) {
     
     weights <- model.weights(object)
     if (any(weights == 0))
@@ -191,9 +191,17 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     
     OOBweights <- matrix(rep(weights, ncol(folds)), ncol = ncol(folds))
     OOBweights[folds > 0] <- 0
-    oobrisk <- papply(1:ncol(folds),
-                      function(i) dummyfct(i, weights = folds[, i],
-                                           oobweights = OOBweights[, i]), ...)
+    if (all.equal(papply, mclapply) == TRUE) {
+        oobrisk <- papply(1:ncol(folds),
+                          function(i) dummyfct(i, weights = folds[, i],
+                                               oobweights = OOBweights[, i]),
+                          mc.preschedule = mc.preschedule, ...)
+    } else {
+        oobrisk <- papply(1:ncol(folds),
+                          function(i) dummyfct(i, weights = folds[, i],
+                                               oobweights = OOBweights[, i]), 
+                          ...)
+    }
     ## get errors if mclapply is used
     if (any(idx <- sapply(oobrisk, is.character)))
         stop(sapply(oobrisk[idx], function(x) x))

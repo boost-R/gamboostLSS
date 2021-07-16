@@ -8,6 +8,7 @@
 
 \alias{risk}
 \alias{risk.mboostLSS}
+\alias{risk.nc_mboostLSS}
 
 \alias{[.mboostLSS}
 
