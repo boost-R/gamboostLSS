@@ -255,9 +255,9 @@ mboostLSS_fit <- function(formula, data = list(), families = GaussianLSS(),
                 for(b  in 1:length(fit)){
                     st <- mstop(fit[[b]])
                     mstop(fit[[b]]) = st + 1
-                    risks[b] <- tail(risk(fit[[b]]), 1)
+                    #risks[b] <- tail(risk(fit[[b]]), 1)
                     #evalq({riskfct(y, fit, weights)}, envir = ENV[[b]])
-                    #risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], ENV[[b]][["fit"]], ENV[[b]][["weights"]])
+                    risks[b] <- ENV[[b]][["riskfct"]](ENV[[b]][["y"]], ENV[[b]][["fit"]], ENV[[b]][["weights"]])
                     fit[[b]][st]
 
                     ## fit[[b]][st] is not enough to reduce the model back to beginning, so
