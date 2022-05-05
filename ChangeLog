@@ -1,4 +1,99 @@
-commit cd7944efd0b9660cc273d0d120891b9d88b216b0
+commit 8971e393713fe873e764ff8c659718f51378b71a
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release gamboostLSS 2.0-6
+
+commit 276770e46647683c794d01ba100473bae699432c
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update cvrisk.nc_mboostLSS.R
+
+commit 6cf9cb8e2f3a5c6861c10cef443013b3b99eea25
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Update cvrisk.R
+
+commit d3225c431bd18d240d63e95c9f531ccac107771c
+Author: Andreas Mayr <mayr@uni-bonn.de>
+
+    Try again...
+
+commit a898c9746fdd24f1e29e4e3d8657be769b6cb2f4
+Author: Andreas Mayr <mayr@uni-bonn.de>
+
+    Update mboostLSS.R
+
+commit 7c756897d4a2cd89c8c3d2c764ae3fe7c77bce70
+Author: Andreas Mayr <mayr@uni-bonn.de>
+
+    fix issue of oobag risk in non-cyclical fitting
+
+commit 7792951d2984f289ed7e530befa42a2a4cb04d1d
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release gamboostLSS 2.0-5
+
+commit 753f22dde4128cf586ea604938bdc95821140e15
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Relase gamboostLSS 2.0-4
+
+commit dff2d2c78378dd102e73bea249c631947b98aa4c
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release gamboostLSS 2.0-3
+
+commit 3a70423c519e0e7a4fb9c60f5a8caa4d58d9317f
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release gamboostLSS 2.0-2
+
+commit 14dddb703d9ca8cb914efe74c6caae258e276bf1
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Replaced DOI references with \doi
+
+commit dcd64622bcd76095a81779279c6ae66bf66ff6ff
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Fixed CRAN checks
+
+commit db087e7a86999f17b85981b38dfdfb5dc324dfc0
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Updated hyperlink to https
+
+commit bbe656b4e16fdc16f8ceb449404283561dac64e2
+Author: mayrandy <mayr@uni-bonn.de>
+
+    Fixing Family problem, closes #53
+
+commit ad864dd82c8a757b8e1b2a383a212c9c331190b0
+Author: mayrandy <mayr@uni-bonn.de>
+
+    Bugfix. Closes #55
+
+commit 4989474e42ea74fe7e56e2faa37fa980d9faad9d
+Author: sbrockhaus <sarah.brockhaus@stat.uni-muenchen.de>
+
+    Fix stabsel.mboostLSS for models fitted with FDboostLSS. Closes #51
+
+commit f97c8906fc9d78e05cb28823789b12cd31c06fdc
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Avoid building the vignette twice
+
+commit b871cbfe019dac19e8989ce847fd5e4274a8c4aa
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Initialize combined_risk in mboostLSS_fit to avoid writing (and overwriting) the combined risk in the global environment. Closes #49.
+
+commit ac3af5c8998a3995415e87b3dc05329f52cb6b0b
+Author: Hofner <hofbe@ad.pei.de>
+
+    Duplicated vignette with some modifications to reduce package size; used for CRAN only
+
+commit 120fef64eba3cafdcce1fddc06ed6855cc1bf0f9
 Author: Benjamin Hofner <benjamin.hofner@pei.de>
 
     Release gamboostLSS 2.0-1

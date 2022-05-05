@@ -1,6 +1,15 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
+\section{Changes in gamboostLSS version 2.0-6 (2022-05-05)}{
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item{Fixed minor bug in \code{cvrisk}}
+      \item{Fixed minor bug with out-of-bag risk for non-cyclical fitting.}
+    }
+  }
+}
+
 \section{Changes in gamboostLSS version 2.0-5 (2021-01-20)}{
   \subsection{Miscellaneous}{
     \itemize{
