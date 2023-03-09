@@ -1,4 +1,11 @@
-commit 8971e393713fe873e764ff8c659718f51378b71a
+commit 8b734570565aa6c65070321b56f73b16273ba433
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release version 2.0-7
+    - Fixed S3 argument mismatch
+    - Updated CITATION file to reflect current guidance on how to cite in packages
+
+commit 4084658ba3a8bcc1830656e03f4ba22ac7771822
 Author: Benjamin Hofner <benjamin.hofner@pei.de>
 
     Release gamboostLSS 2.0-6

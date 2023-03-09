@@ -57,7 +57,7 @@ get_qfun <- function(x, ...)
     UseMethod("get_qfun")
 
 ## extract family name from a gamboostLSS model (used in plot_PI)
-get_qfun.mboostLSS <- function(x) {
+get_qfun.mboostLSS <- function(x, ...) {
     qfun <- attr(attr(x, "families"), "qfun")
     if (is.null(qfun))
         stop("Currently not implemented for this family")
@@ -66,7 +66,7 @@ get_qfun.mboostLSS <- function(x) {
 
 ## obtain pdf from gamlss.dist or global environment
 ## (needed in as.families)
-get_qfun.character <- function(x) {
+get_qfun.character <- function(x, ...) {
     qfun <- paste("gamlss.dist::q", x, sep = "")
     pdf <- try(eval(parse(text = qfun)), silent = TRUE)
     if (inherits(pdf, "try-error")) {

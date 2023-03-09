@@ -4,13 +4,13 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("{R} package version", meta$Version)
 txt_vers <- paste("R package version", meta$Version)
 
-citEntry(
-  entry="Manual",
+bibentry(
+  bibtype ="Manual",
   title = "{gamboostLSS}: Boosting Methods for {GAMLSS} Models",
-  author = personList(as.person("Benjamin Hofner"),
-		      as.person("Andreas Mayr"),
-		      as.person("Nora Fenske"),
-		      as.person("Matthias Schmid")),
+  author = c(person("Benjamin", "Hofner"),
+		         person("Andreas", "Mayr"),
+		         person("Nora", "Fenske"),
+		         person("Matthias", "Schmid")),
   year = year,
   note = vers,
   url = "https://CRAN.R-project.org/package=gamboostLSS",
@@ -21,8 +21,8 @@ citEntry(
 	sep="")
 )
 
-citEntry(
-  entry="Article",
+bibentry(
+  bibtype ="Article",
   title = "{gamboostLSS}: An {R} Package for Model Building and Variable Selection in the {GAMLSS} Framework",
   author       = c(person(given = "Benjamin",
                           family = "Hofner",
@@ -47,14 +47,14 @@ citEntry(
         "doi:10.18637/jss.v074.i01")
 )
 
-citEntry(
-  entry="Article",
+bibentry(
+  bibtype ="Article",
   title = "Generalized additive models for location, scale and shape for high-dimensional data - a flexible approach based on boosting",
-  author   =  personList(as.person("Andreas Mayr"),
-                         as.person("Nora Fenske"),
-                         as.person("Benjamin Hofner"),
-                         as.person("Thomas Kneib"),
-                         as.person("Matthias Schmid")),
+  author   =  c(person("Andreas", "Mayr"),
+                person("Nora", "Fenske"),
+                person("Benjamin", "Hofner"),
+                person("Thomas", "Kneib"),
+                person("Matthias", "Schmid")),
   journal  = "Journal of the Royal Statistical Society, Series C - Applied Statistics",
   year	   = "2012",
   volume   =  "61",
@@ -68,15 +68,15 @@ citEntry(
 )
 
 
-citEntry(
-  entry= "Article",
+bibentry(
+  bibtype = "Article",
   title = "Gradient boosting for distributional regression - faster tuning and improved variable selection via noncyclical updates",
-  author   =  personList(as.person("Janek Thomas"),
-                         as.person("Andreas Mayr"),
-			             as.person("Bernd Bischl"),
-			             as.person("Matthias Schmid"),
-			             as.person("Adam Smith"),
-                         as.person("Benjamin Hofner")),
+  author   =  c(person("Janek", "Thomas"),
+                person("Andreas", "Mayr"),
+			          person("Bernd", "Bischl"),
+			          person("Matthias", "Schmid"),
+			          person("Adam", "Smith"),
+                person("Benjamin", "Hofner")),
   year	   = "2018",
   journal  = "{Statistics and Computing}",
   volume   = "28",
