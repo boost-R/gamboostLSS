@@ -7,36 +7,23 @@
 # USAGE:
 #   Use
 #     ## To copy test output
-#     Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=FALSE"
+#     Rscript copy_Rout_to_Routsave.R "vignettes=FALSE"
 #     ## To copy vignette output
-#     Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=TRUE"
-#
-#   or use
-#     ## To copy test output
-#     Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=FALSE"
-#     ## To copy vignette output
-#     Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=TRUE"
+#     Rscript copy_Rout_to_Routsave.R "vignettes=TRUE"
 #
 ################################################################################
 
 ## Get command line arguments
 args <- commandArgs(TRUE)
-if (length(args) > 2)
-    stop("specify (at maximum) two arguments (i.e., which and vignettes)")
+if (length(args) > 1)
+    stop("specify (at maximum) one argument (i.e., vignettes)")
 eval(parse(text=args))
-if (length(args) == 0) {
+if (length(args) == 0)
     vignettes <- FALSE
-    path <- "pkg"
-}
-
-if (is.null(path))
-    path <- "pkg"
-
-if (is.null(vignettes))
-    vignettes <- FALSE
-
+    
 which <- "gamboostLSS"
-check_path <- "gamboostLSS.Rcheck/"
+path <- "."
+check_path <- "../gamboostLSS.Rcheck/"
 
 ################################################################################
 ## Copy output of test files
