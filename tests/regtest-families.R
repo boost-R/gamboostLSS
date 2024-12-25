@@ -198,7 +198,7 @@ model <- glmboostLSS(y ~ ., data = x,
 model2 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
                      families = DirichletLSS(K=3),
                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
-# Check non-cyclical
+# Check noncyclical
 model3 <- glmboostLSS(y ~ ., data = x,
                      families = DirichletLSS(K=3),
                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1), method = "noncyclic")
@@ -237,7 +237,7 @@ coef(model5[200])
 modstabs <- stabsel(model, cutoff = 0.9, PFER = 5)
 modstabs
 
-# Check error message for Dirichlet family
+# Check for correct error message for Dirichlet family
 try(glmboostLSS(y ~ ., data = x,
             families = DirichletLSS(),
             control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1)))
