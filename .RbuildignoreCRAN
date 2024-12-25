@@ -4,9 +4,13 @@
 ^.*\.yml$
 SOP_release.txt
 buildCRAN
+checks.R
+copy_Rout_to_Routsave.R
 tests/.*\.Rout\.save$
 tests/Examples
+tests/Rplots.pdf
 vignettes/gamboostLSS_Tutorial.tex
 vignettes/auto
 vignettes/graphics
 vignettes/.*\.Rout\.save$
+vignettes/cvrisk

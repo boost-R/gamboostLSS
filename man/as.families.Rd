@@ -92,7 +92,7 @@ gamlss.Families(...)
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
   lists of available distributions are provided at
-  \url{http://gamlss.org}. For more on details boosting GAMLSS see Mayr
+  \url{https://www.gamlss.com/}. For more on details boosting GAMLSS see Mayr
   et al. (2012). Hofner et al. (2016) provides a worked example and more
   details on \code{as.families}.
 

@@ -1088,7 +1088,7 @@ Now we use the dense grid for cross-validation (or subsampling to be more
 precise). The computation of the cross-validated risk using \code{cvrisk()}
 takes more than one hour on a 64-bit Ubuntu machine using 2 cores.
 
-<<cvrisk, eval = TRUE, results = hide>>=
+<<cvrisk, eval = FALSE, results = hide>>=
 cores <- ifelse(grepl("linux|apple", R.Version()$platform), 2, 1)
 if (!file.exists("cvrisk/cvr_india.Rda")) {
     set.seed(1907)
@@ -1108,7 +1108,7 @@ addressing multiple cores from \proglang{R}, on Windows we use only one core
 whereas on Unix-based systems two cores are used. We then load the pre-computed
 results of the cross-validated risk:
 
-<<load_cvrisk, echo = TRUE, results = hide>>=
+<<load_cvrisk, echo = TRUE, results = hide, eval = FALSE>>=
 load("cvrisk/cvr_india.Rda")
 @
 \vspace{-2em} \hfill $\vardiamond$
@@ -1164,9 +1164,10 @@ plot(cvr)
 \setkeys{Gin}{width = 0.5\textwidth}
 \begin{figure}[h!]
   \centering
-<<crossvalidation, fig = true, results = hide, echo = false>>=
+<<crossvalidation, fig = true, results = hide, echo = false, eval = FALSE>>=
 <<crossvalidation_code>>
 @
+\includegraphics{fig-crossvalidation.pdf}
 \caption{Cross-validated risk. Darker color represents higher predictive risks.
   The optimal combination of stopping iterations is indicated by dashed red
   lines.}\label{fig:cvr}
@@ -1177,11 +1178,13 @@ should re-run the cross-validation procedure with different \code{max} values
 for the grid and/or more grid points. This is not the case here
 (Figure~\ref{fig:cvr}). To extract the optimal stopping iteration one can now
 use
-<<mstop>>=
-mstop(cvr)
-@
+\begin{Sinput}
+R> mstop(cvr)
+   mu sigma 
+ 1269    84 
+\end{Sinput}
 
-<<check_initial_assignement, echo = FALSE, results = hide>>=
+<<check_initial_assignement, echo = FALSE, results = hide, eval = FALSE>>=
 ## for the purpose of the tutorial we started already with the optimal number of
 ## boosting steps. Check if this is really true:
 if (!isTRUE(all.equal(mstop(mod), mstop(cvr))))
@@ -1191,7 +1194,7 @@ if (!isTRUE(all.equal(mstop(mod), mstop(cvr))))
 To use the optimal model, i.e., the model with the iteration number from the
 cross-validation, we set the model to these values:
 
-<<subset, results = hide>>=
+<<subset, results = hide, eval = FALSE>>=
 mstop(mod) <- mstop(cvr)
 @
 
