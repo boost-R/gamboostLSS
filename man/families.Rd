@@ -118,13 +118,7 @@ WeibullLSS(mu = NULL, sigma = NULL,
            
 ############################################################
 # Family for Dirichlet regression models
-
-DirichletLSS(K = NULL, a1=NULL, a2=NULL, a3=NULL, a4=NULL, a5=NULL, a6=NULL, a7=NULL, a8=NULL, a9=NULL,
-           
-           m1=NULL, m2=NULL, m3=NULL, m4=NULL, m5=NULL, m6=NULL, m7=NULL, m8=NULL, m9=NULL,
-           
-           s1=NULL, s2=NULL, s3=NULL, s4=NULL, s5=NULL, s6=NULL, s7=NULL, s8=NULL, s9=NULL,
-           ...)
+DirichletLSS(K = NULL)
 
 ############################################################
 # Constructor function for new GAMLSS distributions
@@ -146,6 +140,7 @@ Families(..., qfun = NULL, name = NULL)
     standardized in each boosting step. It can be either "none", 
     "MAD" or "L2". See also Details below.
   }
+  \item{K}{An integer specifying the number of categories in the Dirichlet distribution. This must be provided.}
 }
 \details{
 
@@ -177,8 +172,9 @@ Families(..., qfun = NULL, name = NULL)
   Here, \code{DirichletAlpha} corresponds to the distributional parameters in
   the Dirichlet distribution which are dependent on the number of categories 
   in the respective compositional data (that is, proportions, amounts or rates.)
-  The number of categories in the data set (K) has to be specified manually
-  in the beginning of the fitting process of the model.
+  The number of categories, thereby distributional parameters in the data set
+  (K) has to be specified manually in the beginning of the fitting process
+  of the model.
 
   The \code{Families} function can be used to implements a new GAMLSS
   distribution which can be used for fitting by \code{\link{mboostLSS}}.
