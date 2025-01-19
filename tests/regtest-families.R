@@ -173,8 +173,6 @@ stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
 stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.4)
 
 # Check Dirichlet family
-require("DirichletReg")
-
 n <- 150
 p <- 10
 
@@ -187,9 +185,10 @@ a2 <- exp(2*x[,4] + 2*x[,5] - x[,6])
 a3 <- exp(1.5*x[,7] -  1.5*x[,8] + x[,9])
 A <- cbind(a1,a2,a3)
 
-y <- rdirichlet(nrow(A),A)
+y <- DirichletReg::rdirichlet(nrow(A),A)
 
 colnames(y) <- c("y1","y2","y3")
+
 
 # Check cyclical 
 model <- glmboostLSS(y ~ ., data = x,
@@ -210,7 +209,7 @@ model[300]
 model2[300]
 model3[300]
 model4[300]
-coef(model[200], off2int = TRUE)
+coef(model, off2int = TRUE)
 
 # Check gamboostLSS for Dirichlet family
 x.train <- matrix(rnorm(p * n, 0,1), n)
@@ -222,7 +221,7 @@ a3.train <- exp(cos(x.train[,3]))
 
 A <- cbind(a1.train,a2.train,a3.train)
 
-y.train <- rdirichlet(nrow(A),A)
+y.train <- DirichletReg::rdirichlet(nrow(A),A)
 
 x <- paste(c(paste("bbs(X", 1:p, ")", sep = "")), collapse = "+")
 form <- as.formula((paste("y.train ~",  x)))
