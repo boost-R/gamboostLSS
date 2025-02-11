@@ -890,22 +890,20 @@ DirichletAlpha <- function(k = NULL, K = NULL, stabilization) {
   
   # Loss function
   loss <- function(y, f) {
-    # Create appropriate response matrix for the current k
-    # Directly create an empty list for A's components
-    A_list <- vector("list", length(arg) - 1)  # Exclude "y"
+    # Initialize A as NULL
+    A <- NULL  
     
-    # Fill the list with values from the global environment
-    for (i in seq_along(A_list)) {
-      param_name <- arg[i + 1]  # Skip "y" (first element)
-      if (param_name == "f") {
-        A_list[[i]] <- exp(f)  # Replace the correct column with exp(f)
-      } else {
-        A_list[[i]] <- get(param_name, envir = parent.frame())  # Fetch parameter value
-      }
-    }
-    
-    # Convert to a matrix
-    A <- do.call(cbind, A_list)
+    # Dynamically create the R expression to build response matrix A
+    eval(parse(text = paste0(
+      # Start by defining the assignment to A using cbind
+      "A <- cbind(", 
+      # Replace current response "f" with "exp(f)" in the arguments
+      gsub("f", "exp(f)", 
+           # Dynamically generate the list of arguments for the other distributional parameters a1, a2, ..., f
+           paste0(grep("a|f", arg, value = TRUE), collapse = ",")), 
+      # Close the cbind function
+      ")"
+    )))
     
     # Compute the loss function
     result <- - (lgamma(rowSums(A)) - rowSums(lgamma(A)) + rowSums((A - 1) * log(y)))
@@ -914,22 +912,20 @@ DirichletAlpha <- function(k = NULL, K = NULL, stabilization) {
   
   # Negative gradient function
   ngradient <- function(y, f, w = 1) {
-    # Create appropriate response matrix for the current k
-    # Directly create an empty list for A's components
-    A_list <- vector("list", length(arg) - 1)  # Exclude "y"
+    # Initialize A as NULL
+    A <- NULL  
     
-    # Fill the list with values from the global environment
-    for (i in seq_along(A_list)) {
-      param_name <- arg[i + 1]  # Skip "y" (first element)
-      if (param_name == "f") {
-        A_list[[i]] <- exp(f)  # Replace the correct column with exp(f)
-      } else {
-        A_list[[i]] <- get(param_name, envir = parent.frame())  # Fetch parameter value
-      }
-    }
-    
-    # Convert to a matrix
-    A <- do.call(cbind, A_list)
+    # Dynamically create the R expression to build response matrix A
+    eval(parse(text = paste0(
+      # Start by defining the assignment to A using cbind
+      "A <- cbind(", 
+      # Replace current response "f" with "exp(f)" in the arguments
+      gsub("f", "exp(f)", 
+           # Dynamically generate the list of arguments for the other distributional parameters a1, a2, ..., f
+           paste0(grep("a|f", arg, value = TRUE), collapse = ",")), 
+      # Close the cbind function
+      ")"
+    )))
     
     # Compute the negative gradient vector
     ngr <- A[, k] * (digamma(rowSums(A)) - digamma(A[, k]) + log(y[, k]))
