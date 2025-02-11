@@ -192,17 +192,17 @@ colnames(y) <- c("y1","y2","y3")
 
 # Check cyclical 
 model <- glmboostLSS(y ~ ., data = x,
-                     families = DirichletLSS(K=3),
+                     families = DirichletLSS(K=3, stabilization = "none"),
                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
 model2 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
-                     families = DirichletLSS(K=3),
+                     families = DirichletLSS(K=3, stabilization = "none"),
                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
 # Check noncyclical
 model3 <- glmboostLSS(y ~ ., data = x,
-                     families = DirichletLSS(K=3),
+                     families = DirichletLSS(K=3, stabilization = "none"),
                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1), method = "noncyclic")
 model4 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
-                     families = DirichletLSS(K=3),
+                     families = DirichletLSS(K=3, stabilization = "none"),
                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1), method = "noncyclic")
 
 model[300]
@@ -210,6 +210,17 @@ model2[300]
 model3[300]
 model4[300]
 coef(model, off2int = TRUE)
+
+# Check stabilization for Dirichlet family
+model1.5 <- glmboostLSS(y ~ ., data = x,
+                     families = DirichletLSS(K=3, stabilization = "MAD"),
+                     control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
+model2.5 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
+                      families = DirichletLSS(K=3, stabilization = "L2"),
+                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
+model1.5[300]
+model2.5[300]
+coef(model1.5, off2int = TRUE)
 
 # Check gamboostLSS for Dirichlet family
 x.train <- matrix(rnorm(p * n, 0,1), n)
@@ -227,7 +238,7 @@ x <- paste(c(paste("bbs(X", 1:p, ")", sep = "")), collapse = "+")
 form <- as.formula((paste("y.train ~",  x)))
 
 model5 <- gamboostLSS(form, data = x.train,
-                     families = DirichletLSS(K = 3),
+                     families = DirichletLSS(K = 3, stabilization = "none"),
                      control = boost_control(trace = TRUE, mstop = 500, nu = 0.1), method = 'noncyclic')
 model5[300]
 coef(model5[200])
