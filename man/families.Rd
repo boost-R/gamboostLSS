@@ -118,7 +118,7 @@ WeibullLSS(mu = NULL, sigma = NULL,
            
 ############################################################
 # Family for Dirichlet regression models
-DirichletLSS(K = NULL)
+DirichletLSS(K = NULL, stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Constructor function for new GAMLSS distributions
