@@ -883,30 +883,57 @@ ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL,
 
 ###
 # Dirichtlet LSS Family
-DirichletAlpha <- function(k = NULL, K = NULL) {
+DirichletAlpha <- function(k = NULL, K = NULL, stabilization) {
   # Generate argument names dynamically
   arg <- c("y", paste0("a", 1:K))
-  arg[arg == paste0("a", k)] <- "f"  # Replace the parameter for `k` with `f`
+  arg[arg == paste0("a", k)] <- "f"  # Replace the current distributional parameter for `k` with `f`
   
   # Loss function
   loss <- function(y, f) {
-    A <- NULL  
-    eval(parse(text = paste0("A <- cbind(", 
-                             gsub("f", "exp(f)", 
-                                  paste0(grep("a|f", arg, value = TRUE), collapse = ",")), 
-                             ")")))
+    # Create appropriate response matrix for the current k
+    # Directly create an empty list for A's components
+    A_list <- vector("list", length(arg) - 1)  # Exclude "y"
+    
+    # Fill the list with values from the global environment
+    for (i in seq_along(A_list)) {
+      param_name <- arg[i + 1]  # Skip "y" (first element)
+      if (param_name == "f") {
+        A_list[[i]] <- exp(f)  # Replace the correct column with exp(f)
+      } else {
+        A_list[[i]] <- get(param_name, envir = parent.frame())  # Fetch parameter value
+      }
+    }
+    
+    # Convert to a matrix
+    A <- do.call(cbind, A_list)
+    
+    # Compute the loss function
     result <- - (lgamma(rowSums(A)) - rowSums(lgamma(A)) + rowSums((A - 1) * log(y)))
     return(result)
   }
   
   # Negative gradient function
   ngradient <- function(y, f, w = 1) {
-    A <- NULL  
-    eval(parse(text = paste0("A <- cbind(", 
-                             gsub("f", "exp(f)", 
-                                  paste0(grep("a|f", arg, value = TRUE), collapse = ",")), 
-                             ")")))
+    # Create appropriate response matrix for the current k
+    # Directly create an empty list for A's components
+    A_list <- vector("list", length(arg) - 1)  # Exclude "y"
+    
+    # Fill the list with values from the global environment
+    for (i in seq_along(A_list)) {
+      param_name <- arg[i + 1]  # Skip "y" (first element)
+      if (param_name == "f") {
+        A_list[[i]] <- exp(f)  # Replace the correct column with exp(f)
+      } else {
+        A_list[[i]] <- get(param_name, envir = parent.frame())  # Fetch parameter value
+      }
+    }
+    
+    # Convert to a matrix
+    A <- do.call(cbind, A_list)
+    
+    # Compute the negative gradient vector
     ngr <- A[, k] * (digamma(rowSums(A)) - digamma(A[, k]) + log(y[, k]))
+    ngr <- stabilize_ngradient(ngr, w, stabilization)
     return(ngr)
   }
   
@@ -917,7 +944,8 @@ DirichletAlpha <- function(k = NULL, K = NULL) {
   
   # Offset function
   offset <- function(y, w) {
-    RET <- min(y[, k])
+    RET <- w * y[, k]
+    RET <- min(RET)
     return(RET)
   }
   
@@ -933,18 +961,26 @@ DirichletAlpha <- function(k = NULL, K = NULL) {
 }
 
 
-DirichletLSS <- function(K = NULL) {
-  # Check if K is specified
+DirichletLSS <- function(K = NULL, stabilization = c("none", "MAD", "L2")) {
+  # Check if number of categories in the data set K is specified
   if (is.null(K)) {
     stop("Number of categories 'K' must be specified.")
   }
   
-  # Construct the family string dynamically
-  fam <- paste(sapply(1:K, function(k) {
-    paste0("a", k, " = DirichletAlpha(k = ", k, ", K = K)")
-  }), collapse = ",")
+  stabilization <- check_stabilization(stabilization)
   
-  # Dynamically evaluate and return the Families object
-  eval(parse(text = paste0("Families(", fam, ")")))
+  # Create a named list of DirichletAlpha() for each distributional parameter in K
+  fam <- setNames(
+    lapply(1:K, function(k) DirichletAlpha(k = k, K = K, stabilization = stabilization)), 
+    paste0("a", 1:K)
+  )
+  
+  # Assign Families name
+  fam$name = "DIRLSS"
+  
+  # Pass the named list as arguments to Families() 
+  fam <- do.call(Families, fam)
+  
+  fam
 }
 
