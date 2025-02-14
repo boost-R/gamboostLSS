@@ -41,7 +41,7 @@
     distributions of the selection probabilities and simultaneous
     selection probabilities. Only applicable for
     \code{sampling.type = "SS"}. For \code{sampling.type = "MB"} we
-    always use code{"none"}.}
+    always use \code{"none"}.}
   \item{sampling.type}{ use sampling scheme of of Shah & Samworth
     (2013), i.e., with complementarty pairs (\code{sampling.type = "SS"}),
     or the original sampling scheme of Meinshausen & Buehlmann (2010).}
@@ -68,8 +68,13 @@
 }
 \details{
 
-  For details see \code{\link[stabs]{stabsel}} in package \pkg{stabs}
-  and Hofner et al. (2014).
+  Stability selection is to be preferably used with non-cyclic \code{\link{gamboostLSS}} 
+  models, as proposed by Thomas et al. (2018). In this publication, the combination 
+  of package \pkg{gamboostLSS} with stability selection was devoloped and is 
+  investigated in depth. 
+  
+  For details on stability selection see \code{\link[stabs]{stabsel}} in package 
+  \pkg{stabs} and Hofner et al. (2014).
 
 }
 \value{
@@ -89,10 +94,9 @@
 }
 \references{
 
-  B. Hofner, L. Boccuto and M. Goeker (2014),
+  B. Hofner, L. Boccuto and M. Goeker (2015),
   Controlling false discoveries in high-dimensional situations: Boosting
-  with stability selection. \emph{Technical Report}, arXiv:1411.1285.\cr
-  \url{http://arxiv.org/abs/1411.1285}.
+  with stability selection. \emph{BMC Bioinformatics}, \bold{16:144}.
 
   N. Meinshausen and P. Buehlmann (2010), Stability selection.
   \emph{Journal of the Royal Statistical Society, Series B},
@@ -101,7 +105,13 @@
   R.D. Shah and R.J. Samworth (2013), Variable selection with error
   control: another look at stability selection. \emph{Journal of the Royal
   Statistical Society, Series B}, \bold{75}, 55--80.
-
+  
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2018), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  \emph{Statistics and Computing}. 28: 673-687. 
+  \doi{10.1007/s11222-017-9754-6}\cr
+  (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
 }
 \seealso{
   \code{\link[stabs]{stabsel}} and

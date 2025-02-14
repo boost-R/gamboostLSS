@@ -172,6 +172,85 @@ stopifnot(sum(abs(coef(model, off2int = TRUE, which ="")[[1]] - c(3, 1, 2, 0)))
           < sum(abs(coef(m1) - c(3, 1, 2, 0))))
 stopifnot(sum(abs(coef(model, off2int = TRUE)[[2]] - c(0.2, 0, 0, 0))) < 0.4)
 
+# Check Dirichlet family
+n <- 150
+p <- 10
+
+x <- matrix(runif(p * n, 0,1), n)
+
+x <- data.frame(x)
+
+a1 <- exp(2.5*x[,1] - x[,2] + 3*x[,3]) 
+a2 <- exp(2*x[,4] + 2*x[,5] - x[,6])
+a3 <- exp(1.5*x[,7] -  1.5*x[,8] + x[,9])
+A <- cbind(a1,a2,a3)
+
+y <- DirichletReg::rdirichlet(nrow(A),A)
+
+colnames(y) <- c("y1","y2","y3")
+
+
+# Check cyclical 
+model <- glmboostLSS(y ~ ., data = x,
+                     families = DirichletLSS(K=3, stabilization = "none"),
+                     control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
+model2 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
+                     families = DirichletLSS(K=3, stabilization = "none"),
+                     control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
+# Check noncyclical
+model3 <- glmboostLSS(y ~ ., data = x,
+                     families = DirichletLSS(K=3, stabilization = "none"),
+                     control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1), method = "noncyclic")
+model4 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
+                     families = DirichletLSS(K=3, stabilization = "none"),
+                     control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1), method = "noncyclic")
+
+model[300]
+model2[300]
+model3[300]
+model4[300]
+coef(model, off2int = TRUE)
+
+# Check stabilization for Dirichlet family
+model1.5 <- glmboostLSS(y ~ ., data = x,
+                     families = DirichletLSS(K=3, stabilization = "MAD"),
+                     control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
+model2.5 <- glmboostLSS(y ~ X1 + X2 + X3, data = x,
+                      families = DirichletLSS(K=3, stabilization = "L2"),
+                      control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1))
+model1.5[300]
+model2.5[300]
+coef(model1.5, off2int = TRUE)
+
+# Check gamboostLSS for Dirichlet family
+x.train <- matrix(rnorm(p * n, 0,1), n)
+x.train <- data.frame(x.train)
+
+a1.train <- exp(x.train[,1]**2) 
+a2.train <- exp(2*tanh(3*x.train[,2]))
+a3.train <- exp(cos(x.train[,3]))
+
+A <- cbind(a1.train,a2.train,a3.train)
+
+y.train <- DirichletReg::rdirichlet(nrow(A),A)
+
+x <- paste(c(paste("bbs(X", 1:p, ")", sep = "")), collapse = "+")
+form <- as.formula((paste("y.train ~",  x)))
+
+model5 <- gamboostLSS(form, data = x.train,
+                     families = DirichletLSS(K = 3, stabilization = "none"),
+                     control = boost_control(trace = TRUE, mstop = 500, nu = 0.1), method = 'noncyclic')
+model5[300]
+coef(model5[200])
+
+# Check stabsel for Dirichlet family
+modstabs <- stabsel(model, cutoff = 0.9, PFER = 5)
+modstabs
+
+# Check for correct error message for Dirichlet family
+try(glmboostLSS(y ~ ., data = x,
+            families = DirichletLSS(),
+            control = boost_control(trace = TRUE, mstop = 1000, nu = 0.1)))
 
 ### Check that "families"-object contains a response function
 NBinomialMu2 <- function(...){
