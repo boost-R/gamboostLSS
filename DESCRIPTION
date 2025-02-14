@@ -15,16 +15,8 @@ Description: Boosting models for fitting generalized additive models for
   data.
 Depends: R (>= 2.10.0), mboost (>= 2.8-0), stabs (>= 0.5-0), parallel
 Imports: graphics, grDevices, stats, utils
-Suggests: 
-    gamlss,
-    gamlss.dist,
-    survival,
-    BayesX,
-    R2BayesX,
-    testthat (>= 3.0.0),
-    DirichletReg
+Suggests: gamlss, gamlss.dist, survival, BayesX, R2BayesX, DirichletReg
 LazyLoad: yes
 LazyData: yes
 License: GPL-2
 URL: For source code, development versions and issue tracker see https://github.com/boost-R/gamboostLSS
-Config/testthat/edition: 3
