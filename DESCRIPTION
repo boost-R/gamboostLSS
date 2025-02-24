@@ -1,8 +1,8 @@
 Package: gamboostLSS
 Type: Package
 Title: Boosting Methods for 'GAMLSS'
-Version: 2.0-7
-Date: 2023-03-09
+Version: 2.1-0
+Date: 2025-02-14
 Authors@R: c(person("Benjamin", "Hofner", role = c("aut", "cre"),
 	            email = "benjamin.hofner@pei.de", 
 	            comment = c(ORCID = "0000-0003-2810-3186")),
@@ -19,4 +19,4 @@ Suggests: gamlss, gamlss.dist, survival, BayesX, R2BayesX, DirichletReg
 LazyLoad: yes
 LazyData: yes
 License: GPL-2
-URL: For source code, development versions and issue tracker see https://github.com/boost-R/gamboostLSS
+URL: https://github.com/boost-R/gamboostLSS

@@ -181,16 +181,16 @@ Families(..., qfun = NULL, name = NULL)
   Thereby, the function builds a list of sub-families, one for each
   distribution parameter. The sub-families themselves are objects of the
   class \code{boost_family}, and can be constructed via the function
-  \code{\link[mboost]{Family}} of the \code{mboost} Package.
+  \code{\link[mboost]{Family}} of the \pkg{mboost} Package.
 
-  Arguments to be passed to \code{Family}: The \code{loss} for every
+  Arguments to be passed to \code{\link[mboost]{Family}}: The \code{loss} for every
   distribution parameter (contained in objects of class
   \code{boost_family}) is the negative log-likelihood of the
   corresponding distribution. The \code{ngradient} is the negative
   partial derivative of the loss function with respect to the
   distribution parameter. For a two-parameter distribution (e.g. mu and
   sigma), the user therefore has to specify two sub-families with
-  \code{\link{Family}}. The \code{loss} is basically the same function
+  \code{\link[mboost]{Family}}. The \code{loss} is basically the same function
   for both paramters, only \code{ngradient} differs. Both sub-families
   are passed to the \code{Families} constructor, which returns an object
   of the class \code{families}.
@@ -200,7 +200,10 @@ Families(..., qfun = NULL, name = NULL)
   the families. If \code{stabilization = "MAD"}, the negative gradient
   is divided by its (weighted) median absolute deviation \deqn{median_i
   (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et 
-  al. (2016) for details. An alternative is \code{stabilization = "L2"}, where the gradient is divided by its (weighted) mean L2 norm. This results in negative gradient vectors (and hence also updates) of similar size for each distribution parameter, but also for every boosting iteration.  
+  al. (2016) for details. An alternative is \code{stabilization = "L2"}, 
+  where the gradient is divided by its (weighted) mean L2 norm. This 
+  results in negative gradient vectors (and hence also updates) of similar 
+  size for each distribution parameter, but also for every boosting iteration.  
 
 }
 \value{

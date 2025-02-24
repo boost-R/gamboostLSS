@@ -1,7 +1,7 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64 (64-bit)
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -115,7 +115,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
-<bytecode: 0x0000000022c0ee00>
+<bytecode: 0x000002cd6f764658>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -142,7 +142,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
-<bytecode: 0x0000000022c0ee00>
+<bytecode: 0x000002cd6f764658>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -169,7 +169,7 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
-<bytecode: 0x0000000022c0ee00>
+<bytecode: 0x000002cd6f764658>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -260,7 +260,6 @@ Risks:
 > FAMILIES <- list("BCT")
 > require("gamlss.dist")
 Loading required package: gamlss.dist
-Loading required package: MASS
 
 Attaching package: 'gamlss.dist'
 
@@ -389,10 +388,10 @@ Risks:
   stabilization = "MAD": 2401.002 
   stabilization = "L2": 2393.06 
 Risks:
-  stabilization = "none": 2366.661 
-  stabilization = "MAD": 2363.148 
-  stabilization = "L2": 2364.33 
+  stabilization = "none": 2366.663 
+  stabilization = "MAD": 2362.5 
+  stabilization = "L2": 2364.284 
 > 
 > proc.time()
    user  system elapsed 
-  16.59    0.07   16.68 
+  16.76    0.35   17.17 

@@ -78,7 +78,7 @@ gamlss.Families(...)
   corresponding family in \code{gamlss.dist} are applied. 
 
   To extract the necessary information regarding partial derivatives
-  (for the \code{ngradient} - see \code{\link{Family}} for details) and
+  (for the \code{ngradient} - see \code{\link[mboost]{Family}} for details) and
   the log-likelihood (for the \code{loss}) the \code{gamlss.dist}
   package is loaded. If the package is not installed yet, this will
   prompt an error message.
@@ -87,8 +87,8 @@ gamlss.Families(...)
   \code{gamlss2parSigma}, ... , \code{gamlss4parTau} are called
   internally to construct the sub-families. For one-parametric
   distributions, the function will prompt a warning and returns a
-  \code{\link{mboost}} family, which can be then used by the fitting
-  functions of the \code{\link{mboost}} package.
+  \code{mboost} family, which can be then used by the fitting
+  functions of the \code{mboost} package.
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
   lists of available distributions are provided at

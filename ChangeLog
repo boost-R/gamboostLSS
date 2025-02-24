@@ -1,4 +1,69 @@
-commit 8b734570565aa6c65070321b56f73b16273ba433
+commit 5251561e08f440ddf2609974152c958d7eb27682
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Release version 2.1-0
+
+commit 252b898131dbffc6d209edfe7079ee1611fea3c0
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    Remove testthat from suggests as it is not needed.
+
+commit 07630044af0656708779d97d195bbf381a4a8d4e
+Author: unknown <michael.balzer@tutanota.com>
+
+    fix errors
+
+commit 440eb0219c7c34965bc7155e60d301d393eabf52
+Author: unknown <michael.balzer@tutanota.com>
+
+    fix notes in checks
+
+commit 6c84ccfc32db2eafee9583500585c845ba143892
+Author: unknown <michael.balzer@tutanota.com>
+
+    adjust families, add comments, add tests
+
+commit 7be33372541bb10f3218a65faa5297969291576b
+Author: unknown <michael.balzer@tutanota.com>
+
+    run R checks, update documentation, remove notes
+
+commit e556174a9beaa21d8b24b53df849fe53f7625eb7
+Author: unknown <michael.balzer@tutanota.com>
+
+    fix typos
+
+commit c742077620195f1317df588ebe2a048743b6b19b
+Author: unknown <michael.balzer@tutanota.com>
+
+    delete
+
+commit 8b409f8558ac5659216a0633c4ece51ce8a66d53
+Author: unknown <michael.balzer@tutanota.com>
+
+    implement Dirichlet family
+
+commit 6d67d4f6d4a266dc7a762cda4952fc9196fe2025
+Author: Benjamin Hofner <benjamin.hofner@pei.de>
+
+    fixed minor issue in stabsel manual
+
+commit c1a6350de181a3cf829231f6878d841e64c85a79
+Author: amayr <mayr@uni-bonn.de>
+
+    fix error message
+
+commit 28d9008024f2f1c9bcb6452228c501da1a00fc46
+Author: Andreas Mayr <mayr@uni-bonn.de>
+
+    fix typo in Error message
+
+commit b085c81223649bd8c5a75092fe40ea6edff06510
+Author: Andreas Mayr <mayr@uni-bonn.de>
+
+    extend warning for censored families
+
+commit 1dc1ee75d1854e9dd9cd2e29f262768865d214f6
 Author: Benjamin Hofner <benjamin.hofner@pei.de>
 
     Release version 2.0-7

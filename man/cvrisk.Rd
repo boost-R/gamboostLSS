@@ -41,7 +41,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
     a weight matrix with number of rows equal to the number of
     observations. The number of columns corresponds to the number of
     cross-validation runs. Can be computed using function
-    \code{\link{cv}} from package \pkg{mboost} and defaults to 25
+    \code{\link[mboost]{cv}} from package \pkg{mboost} and defaults to 25
     bootstrap samples.
   }
   \item{grid}{
@@ -130,7 +130,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   for different stopping parameters \code{mstop} are computed by
   this function which can be utilized to choose an appropriate
   number of boosting iterations to be applied. For details see
-  \code{\link{cvrisk.mboost}}.
+  \code{\link[mboost]{cvrisk.mboost}}.
 
   \code{make.grid} eases the creation of an equidistand, integer-valued
   grids, which can be used with \code{cvrisk}. Per default, the grid is
@@ -170,7 +170,7 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
 }
 \seealso{
-  \code{\link{cvrisk.mboost}} and \code{\link{cv}} (both in package
+  \code{\link[mboost]{cvrisk.mboost}} and \code{\link[mboost]{cv}} (both in package
   \pkg{mboost})
 }
 \examples{

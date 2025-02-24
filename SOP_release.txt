@@ -63,15 +63,15 @@
 
     Update ChangeLog (see above) and amend previous commit
     
-    Remove cvrisk results to reduce package size (see above) but do NOT COMMIT these changes to github.
-
-    Now  build package without test folder to be submitted to CRAN
+    Now  build package without test folder to be submitted to CRAN. 
+    Remove cvrisk results to reduce package size (see below) but do NOT COMMIT these changes to github.
     Therefore, do the following:
     
         mv vignettes/gamboostLSS_Tutorial_CRAN.Rnw vignettes/gamboostLSS_Tutorial.Rnw
         mv .RbuildignoreCRAN .Rbuildignore
         cd ..
         R CMD build --resave-data --compact-vignettes="gs+qpdf" gamboostLSS && R CMD check --as-cran --run-donttest gamboostLSS_XXX.tar.gz
+        cd gamboostLSS
         git checkout -- .RbuildignoreCRAN .Rbuildignore vignettes/gamboostLSS_Tutorial_CRAN.Rnw vignettes/gamboostLSS_Tutorial.Rnw
     
     Use web form at http://xmpalantir.wu.ac.at/cransubmit/.

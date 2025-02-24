@@ -17,7 +17,7 @@
   provided at \url{https://www.gamlss.com/}. For a tutorial on
   \code{\link{gamboostLSS}} see Hofner et al. (2015). Thomas et al. (2018) 
   developed a novel non-cyclic approach to fit \code{\link{gamboostLSS}} models. 
-  This approach is suitable for the combination with \code{\link{stabsel}} and 
+  This approach is suitable for the combination with \code{\link[mboost]{stabsel}} and 
   speeds up model tuning via \code{\link{cvrisk}}. 
  
 
@@ -32,7 +32,7 @@
   \code{\link{gamboostLSS}} (for smooth effects) depend on their
   analogous companions \code{\link[mboost]{glmboost}} and
   \code{\link[mboost]{gamboost}} for generalized additive models
-  (contained in package \code{\link{mboost}}, see Hothorn et al. 2010,
+  (contained in package \code{mboost}, see Hothorn et al. 2010,
   2015) and are similar in their usage.
 
   The package includes some pre-defined GAMLSS distributions, but the
@@ -103,7 +103,7 @@
   fitting. Available distributions (families) are documented here:
   \code{\link{Families}}.
 
-  See also the \code{\link{mboost}} package for more on model-based boosting, or
+  See also the \code{mboost} package for more on model-based boosting, or
   the \code{\link[gamlss]{gamlss}} package for the original GAMLSS
   algorithms provided by Rigby and Stasinopoulos.
 }

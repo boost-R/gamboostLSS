@@ -42,7 +42,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
 \arguments{
   \item{formula}{ a symbolic description of the model to be fit. See
-    \code{\link{mboost}} for details. If \code{formula} is a single formula,
+    \code{\link[mboost]{mboost}} for details. If \code{formula} is a single formula,
     the same formula is used for all distribution parameters. \code{formula}
     can also be a (named) list, where each list element corresponds
     to one distribution parameter of the GAMLSS distribution. The names must be
@@ -53,15 +53,15 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
     specified by the user (see \code{\link{Families}} for details). Per
     default, we use the two-parametric \code{\link{GaussianLSS}} family.}
   \item{control}{ a list of parameters controlling the algorithm. For
-    more details see \code{\link{boost_control}}. }
+    more details see \code{\link[mboost]{boost_control}}. }
   \item{weights}{ a numeric vector of weights (optional). }
   \item{method}{ fitting method, currently two methods are supported:
   \code{"cyclic"} (see Mayr et al., 2012) and \code{"noncyclic"} 
    (algorithm with inner loss of Thomas et al., 2018). 
   The latter requires a one dimensional \code{mstop} value.}
-  \item{fun}{ fit function. Either \code{\link{mboost}},
-    \code{\link{glmboost}}, \code{\link{gamboost}} or
-    \code{\link{blackboost}}. Specified directly via the corresponding LSS
+  \item{fun}{ fit function. Either \code{\link[mboost]{mboost}},
+    \code{\link[mboost]{glmboost}}, \code{\link[mboost]{gamboost}} or
+    \code{\link[mboost]{blackboost}}. Specified directly via the corresponding LSS
     function. E.g. \code{gamboostLSS()} calls
     \code{mboostLSS_fit(..., fun = gamboost)}. }
   \item{funchar}{ character representation of fit function. Either \code{"mboost"},
@@ -72,9 +72,9 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
     This argument should not be directly specified by users!}
   \item{\dots}{Further arguments to be passed to \code{mboostLSS_fit}.
     In  \code{mboostLSS_fit}, \code{\dots} represent further arguments to be
-    passed to \code{\link{mboost}} and \code{\link{mboost_fit}}. So
-    \code{\dots} can be all arguments of \code{mboostLSS_fit} and
-    \code{mboost_fit}. }
+    passed to \code{\link[mboost]{mboost}} and \code{\link[mboost]{mboost_fit}}. So
+    \code{\dots} can be all arguments of \code{mboostLSS_fit}and
+    \code{\link[mboost]{mboost_fit}}. }
 }
 \details{
 
@@ -82,7 +82,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   the information provided at \url{https://www.gamlss.com/}. For a tutorial on
   \code{\link{gamboostLSS}} see Hofner et al. (2016). Thomas et al. (2018) 
   developed a novel non-cyclic approach to fit gamboostLSS models. This approach
-  is suitable for the combination with \code{\link{stabsel}} and speeds up
+  is suitable for the combination with \code{\link[mboost]{stabsel}} and speeds up
   model tuning via \code{\link{cvrisk}} (see also below).
 
   \code{glmboostLSS} uses \code{\link[mboost]{glmboost}} to fit the
@@ -107,14 +107,14 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
 
   \code{mboostLSS}, \code{glmboostLSS}, \code{gamboostLSS} and
   \code{blackboostLSS} all call \code{mboostLSS_fit} while \code{fun} is
-  the corresponding \code{\link{mboost}} function, i.e., the same
+  the corresponding \pkg{mboost} function, i.e., the same
   function without \code{LSS}. For further possible arguments see
-  these functions as well as \code{\link{mboost_fit}}. 
+  these functions as well as \code{\link[mboost]{mboost_fit}}. 
   Note that \code{mboostLSS_fit} is usually not called directly by the user. 
 
   For \code{method = "cyclic"} it is possible to specify one or
   multiple \code{mstop} and \code{nu} values via
-  \code{\link{boost_control}}. In the case of one single value, this
+  \code{\link[mboost]{boost_control}}. In the case of one single value, this
   value is used for all distribution parameters of the GAMLSS model.
   Alternatively, a (named) vector or a (named) list with separate values
   for each component can be used to specify a separate value for each
@@ -123,7 +123,7 @@ mboostLSS_fit(formula, data = list(), families = GaussianLSS(),
   no names are given, the order of the \code{mstop} or \code{nu} values
   is assumed to be the same as the order of the components in the
   \code{families}. For one-dimensional stopping, the user therefore can
-  specify, e.g., \code{mstop = 100} via \code{\link{boost_control}}. For
+  specify, e.g., \code{mstop = 100} via \code{\link[mboost]{boost_control}}. For
   more-dimensional stopping, one can specify, e.g., \code{mstop =
   list(mu = 100, sigma = 200)} (see examples).
 
@@ -183,8 +183,8 @@ prediction and model fitting. Statistical Science, 22(4), 477--505.
 \seealso{
   \code{\link{Families}} for a documentation of available GAMLSS distributions.
 
-  The underlying boosting functions \code{\link{mboost}}, \code{\link{gamboost}}, \code{\link{glmboost}},
-  \code{\link{blackboost}} are contained in the \code{\link{mboost}} package.
+  The underlying boosting functions \code{\link[mboost]{mboost}}, \code{\link[mboost]{gamboost}}, \code{\link[mboost]{glmboost}},
+  \code{\link[mboost]{blackboost}} are contained in the \pkg{mboost} package.
 
   See for example \code{\link{risk}} or \code{\link{coef}} for methods
   that can be used to extract information from \code{\link{mboostLSS}} objects.

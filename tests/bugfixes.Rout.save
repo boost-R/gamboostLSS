@@ -1,7 +1,7 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64 (64-bit)
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -42,7 +42,6 @@ The following object is masked from 'package:datasets':
     sleep
 
 Loading required package: gamlss.dist
-Loading required package: MASS
 
 Attaching package: 'gamlss.dist'
 
@@ -51,7 +50,7 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 5.2-0  ********** 
+ **********   GAMLSS Version 5.4-22  ********** 
 For more on GAMLSS look at https://www.gamlss.com/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -179,6 +178,11 @@ z               0.965     0.965          0.925          0.965
 > 
 > model_0 <- mboostLSS(x1 ~ ., families = GaussianLSS(), data = dat, 
 +                      control = boost_control(mstop = 30),method = "noncyclic")
+Warning messages:
+1: In .qr.rank.def.warn(r) :
+  matrix is structurally rank deficient; using augmented matrix with additional 8 row(s) of zeros
+2: In .qr.rank.def.warn(r) :
+  matrix is structurally rank deficient; using augmented matrix with additional 8 row(s) of zeros
 > length_0 <- length(risk(model_0, merge = TRUE))
 > if (length_0 != 32)
 +     stop("combined risk not correct.")
@@ -193,6 +197,11 @@ z               0.965     0.965          0.925          0.965
 > 
 > model_2 <- mboostLSS(x1 ~ ., families = GaussianLSS(), data = dat, 
 +                      control = boost_control(mstop = 11),method = "cyclic")
+Warning messages:
+1: In .qr.rank.def.warn(r) :
+  matrix is structurally rank deficient; using augmented matrix with additional 8 row(s) of zeros
+2: In .qr.rank.def.warn(r) :
+  matrix is structurally rank deficient; using augmented matrix with additional 8 row(s) of zeros
 > if (length(risk(model_2, merge = TRUE)) != 24)
 +     stop("combined risk not correct.")
 > if (length(risk(model_0, merge = TRUE)) != length_0)
@@ -218,4 +227,4 @@ z               0.965     0.965          0.925          0.965
 > 
 > proc.time()
    user  system elapsed 
-   2.14    0.20    2.32 
+   1.89    0.14    2.03 

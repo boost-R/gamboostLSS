@@ -1,7 +1,7 @@
 gamboostLSS
 ===========
 
-[![Build Status (Linux)](https://travis-ci.org/boost-R/gamboostLSS.svg?branch=master)](https://travis-ci.org/boost-R/gamboostLSS) 
+[![Build Status (Linux)](https://travis-ci.org/boost-R/gamboostLSS.svg?branch=master)](https://app.travis-ci.com/boost-R/gamboostLSS) 
 [![Build status (Windows)](https://ci.appveyor.com/api/projects/status/373t0tvx5v1i5ooq/branch/master?svg=true)](https://ci.appveyor.com/project/hofnerb/gamboostlss-s2whe/branch/master)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/gamboostLSS)](https://CRAN.R-project.org/package=gamboostLSS)
 [![Coverage Status](https://coveralls.io/repos/github/boost-R/gamboostLSS/badge.svg?branch=master)](https://coveralls.io/github/boost-R/gamboostLSS?branch=master)

@@ -1,7 +1,20 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 2.0-7 (2022-03-09)}{
+\section{Changes in gamboostLSS version 2.1-0 (2025-02-14)}{
+  \subsection{User-visible changes}{
+    \itemize{
+      \item Added new family \code{DirichletLSS} for Dirichlet regression models (implemented by Michael Balzer)
+      }
+  }
+  \subsection{Minor changes:}{
+    \itemize{
+      \item{Improved error messages for families with censored response.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-7 (2023-03-09)}{
   \subsection{Bug-fixes}{
     \itemize{
       \item{Fixed minor bug of argument mismatch in internal S3 function \code{get_qfun}.}
@@ -258,8 +271,8 @@
        (\code{make_grid})
        \item added new function \code{as.families} to include
        \pkg{gamlss} families in \pkg{gamboostLSS}
-       \item added new families \code{BetaLSS}, \code{GammaLSS},
-       \code{GaussianLSS}, \code{ZIPoLSS}, \code{ZINBLSS}
+       \item added new families \code{BetaLSS} (implemented by Florian Wickler), 
+       \code{GammaLSS}, \code{GaussianLSS}, \code{ZIPoLSS}, \code{ZINBLSS}
        \item \code{GaussianLSS} is now the default for \code{families}
        \item added new functions \code{predint()} and
        \code{plot(predint())} to obtain and plot marginal prediction

@@ -1,7 +1,7 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
-Platform: x86_64-w64-mingw32/x64 (64-bit)
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -42,7 +42,6 @@ The following object is masked from 'package:datasets':
     sleep
 
 Loading required package: gamlss.dist
-Loading required package: MASS
 
 Attaching package: 'gamlss.dist'
 
@@ -51,7 +50,7 @@ The following object is masked from 'package:mboost':
     Family
 
 Loading required package: nlme
- **********   GAMLSS Version 5.2-0  ********** 
+ **********   GAMLSS Version 5.4-22  ********** 
 For more on GAMLSS look at https://www.gamlss.com/
 Type gamlssNews() to see new features/changes/bug fixes.
 
@@ -325,4 +324,4 @@ Final risk: 13810.99
 > 
 > proc.time()
    user  system elapsed 
-   3.90    0.14    4.00 
+   3.75    0.17    3.93 

@@ -176,7 +176,7 @@ PI(x, which, pi = 0.9, newdata = NULL, ...)
     a character indicating how the empirical risk should be
     computed for each boosting iteration. Per default \code{risk} is set
     to the risk type specified for model fitting via
-    \code{\link{boost_control}}. For details and alternatives see there.
+    \code{\link[mboost]{boost_control}}. For details and alternatives see there.
   }
   \item{trace}{
     a logical triggering printout of status information during the
