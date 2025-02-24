@@ -94,15 +94,15 @@ risk(model, merge = FALSE)
 
 ## test that mstop = 0 is possible
 compare_models <- function (m1, m2) {
-  stopifnot(all.equal(coef(m1), coef(m2)))
-  stopifnot(all.equal(predict(m1), predict(m2)))
-  stopifnot(all.equal(fitted(m1), fitted(m2)))
-  stopifnot(all.equal(selected(m1), selected(m2)))
-  stopifnot(all.equal(risk(m1), risk(m2)))
+  stopifnot(all.equal(coef(m1), coef(m2), check.environment=FALSE))
+  stopifnot(all.equal(predict(m1), predict(m2), check.environment=FALSE))
+  stopifnot(all.equal(fitted(m1), fitted(m2), check.environment=FALSE))
+  stopifnot(all.equal(selected(m1), selected(m2), check.environment=FALSE))
+  stopifnot(all.equal(risk(m1), risk(m2), check.environment=FALSE))
   ## remove obvious differences from objects
   m1$control <- m2$control <- NULL
   m1$call <- m2$call <- NULL
-  if (!all.equal(m1, m2))
+  if (!all.equal(m1, m2, check.environment=FALSE))
     stop("Objects of offset model + 1 step and model with 1 step not identical")
   invisible(NULL)
 }
@@ -122,4 +122,59 @@ mapply(compare_models, m1 = mod, m2 = mod2)
 
 mstop(mod3) <- 1
 mapply(compare_models, m1 = mod, m2 = mod3)
+
+## check selected
+set.seed(1907)
+x1 <- rnorm(500)
+x2 <- rnorm(500)
+x3 <- rnorm(500)
+x4 <- rnorm(500)
+x5 <- rnorm(500)
+x6 <- rnorm(500)
+mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+y <- numeric(500)
+for( i in 1:500)
+    y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 10),
+                     center = TRUE, method = "cyclic")
+selected(model) # ok (at least in principle)
+selected(model, merge = TRUE) # ok
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 10),
+                     center = TRUE, method = "noncyclic")
+selected(model) # ok (at least in principle)
+selected(model, merge = TRUE) ## BROKEN
+
+## with informative sigma:
+sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 + 1 * x6)
+y <- numeric(500)
+for( i in 1:500)
+    y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 20),
+                     center = TRUE, method = "cyclic")
+selected(model) # ok (at least in principle)
+selected(model, merge = TRUE) # ok
+
+model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
+                     control = boost_control(mstop = 20),
+                     center = TRUE, method = "noncyclic")
+selected(model) # ok (at least in principle)
+selected(model, merge = TRUE) ## BROKEN
+
+
+## Check merged risk for reducing mstop to 0, and increasing it again does not contain an NA
+stopifnot(all(!is.na(risk(model, merge = TRUE))))
+mstop(model) <- 0
+stopifnot(all(!is.na(risk(model, merge = TRUE))))
+mstop(model) <- 10
+stopifnot(all(!is.na(risk(model, merge = TRUE))))
+
 

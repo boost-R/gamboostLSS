@@ -68,3 +68,59 @@ round(data.frame(BB_gamlss = coef(m1),
                  BI_gamlss = coef(m2),
                  BB_gamboostLSS = coef(m3, off2int = TRUE, parameter = "mu"),
                  BI_gamboostLSS = coef(m4, off2int = TRUE)), 3)
+
+
+## make sure that combined_risk is not written to the global environment 
+## (and thus replaced if another model is fitted)
+set.seed(1907)
+x1 <- rnorm(1000)
+x2 <- rnorm(1000)
+x3 <- rnorm(1000)
+x4 <- rnorm(1000)
+x5 <- rnorm(1000)
+x6 <- rnorm(1000)
+mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
+sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
+y <- numeric(1000)
+for( i in 1:1000)
+    y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
+dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
+
+model_0 <- mboostLSS(x1 ~ ., families = GaussianLSS(), data = dat, 
+                     control = boost_control(mstop = 30),method = "noncyclic")
+length_0 <- length(risk(model_0, merge = TRUE))
+if (length_0 != 32)
+    stop("combined risk not correct.")
+
+model_1 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat, 
+                       control = boost_control(mstop = 20), method = "noncyclic")
+length_1 <- length(risk(model_1, merge = TRUE))
+if (length_1 != 22)
+    stop("combined risk not correct.")
+if (length(risk(model_0, merge = TRUE)) != length_0)
+    stop("Combined risk overwritten by new model. Scoping error.")
+
+model_2 <- mboostLSS(x1 ~ ., families = GaussianLSS(), data = dat, 
+                     control = boost_control(mstop = 11),method = "cyclic")
+if (length(risk(model_2, merge = TRUE)) != 24)
+    stop("combined risk not correct.")
+if (length(risk(model_0, merge = TRUE)) != length_0)
+    stop("Combined risk overwritten by new model. Scoping error.")
+if (length(risk(model_1, merge = TRUE)) != length_1)
+    stop("Combined risk overwritten by new model. Scoping error.")
+
+# fix predint when multiple variables are included within a single baselearner #55
+# (https://github.com/boost-R/gamboostLSS/issues/55)
+
+set.seed(7)
+data <- data.frame(x1 = runif(400, -1, 1),
+                   x2 = runif(400, -1, 1),
+                   x3 = runif(400, -1, 1),
+                   x4 = runif(400, -1, 1))
+data$y <- rnorm(400, 4 * data$x1 + 2 * data$x3)
+
+gb <- gamboostLSS(y ~ btree(x1, x2, x3, x4), data = data, method = "noncyclic", control = boost_control(mstop = 10))
+p <- predint(gb, which = "x1")
+
+
+

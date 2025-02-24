@@ -57,7 +57,7 @@ get_qfun <- function(x, ...)
     UseMethod("get_qfun")
 
 ## extract family name from a gamboostLSS model (used in plot_PI)
-get_qfun.mboostLSS <- function(x) {
+get_qfun.mboostLSS <- function(x, ...) {
     qfun <- attr(attr(x, "families"), "qfun")
     if (is.null(qfun))
         stop("Currently not implemented for this family")
@@ -66,7 +66,7 @@ get_qfun.mboostLSS <- function(x) {
 
 ## obtain pdf from gamlss.dist or global environment
 ## (needed in as.families)
-get_qfun.character <- function(x) {
+get_qfun.character <- function(x, ...) {
     qfun <- paste("gamlss.dist::q", x, sep = "")
     pdf <- try(eval(parse(text = qfun)), silent = TRUE)
     if (inherits(pdf, "try-error")) {
@@ -139,10 +139,25 @@ do_trace <- function(current, risk, mstart,
     }
 }
 
-## helper function copied from mboost_2.2-3
-### check measurement scale of response for some losses
-check_y_family <- function(y, family)
-    family@check_y(y)
+## helper function copied from mboost_2.2-3; changed for gamboostLSS 
+## check measurement scale of response for some losses
+check_y_family <- function(y, family, allow_matrix = FALSE){
+  
+  if(is.null(dim((y)))) allow_matrix <- FALSE 
+  
+  if(!allow_matrix){
+    
+    return(family@check_y(y)) ## check response as it is
+    
+  }else{
+    
+    tmp <- family@check_y(as.vector(y)) ## convert matrix to vector for check
+    y <- matrix(tmp, ncol = ncol(y), nrow = nrow(y)) ## convert back to matrix 
+    return(y)
+  }
+  
+}
+  
 
 ################################################################################
 # sapply function that differentiates between data.frames and (numeric) vectors
@@ -188,3 +203,34 @@ check_stabilization <- function(stabilization = c("none", "MAD", "L2")) {
     }
     stabilization
 }
+
+
+################################################################################
+
+# check timeformula for FDboost 
+# timeformula is named list with names according to distribution parameters of families
+# timeformula: the formula for expansion of the effects along t for functional response y(t)
+# families: specify the response distribution; see, e.g., mboostLSS_fit() 
+check_timeformula <- function(timeformula, families){
+  
+  # timeformula is named list 
+  if (is.list(timeformula)){
+    if (!all(names(timeformula) %in% names(families)) ||
+        length(unique(names(timeformula))) != length(names(families)))
+      stop(sQuote("timeformula"), " can be either a one-sided formula or a named list",
+           " of timeformulas with same names as ",  sQuote("families"), ".")
+  } else {
+    # timeformula is only one formula -> set up named list 
+    tmp <- vector("list", length = length(families))
+    names(tmp) <- names(families)
+    for (i in 1:length(tmp))
+      tmp[i] <- list(timeformula)
+    timeformula <- tmp
+  }
+  
+  timeformula
+  
+}
+
+
+

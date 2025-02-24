@@ -43,7 +43,7 @@ cvrisk.nc_mboostLSS <- function(object, folds = cv(model.weights(object)),
     
     OOBweights <- matrix(rep(weights, ncol(folds)), ncol = ncol(folds))
     OOBweights[folds > 0] <- 0
-    if (all.equal(papply, mclapply) == TRUE) {
+    if (identical(papply, mclapply)) {
         oobrisk <- papply(1:ncol(folds),
                           function(i) dummyfct(i = i,
                                                weights = folds[, i],
@@ -93,12 +93,12 @@ risk.nc_mboostLSS <- function(object, merge = FALSE,
 }
 
 
-plot.nc_cvriskLSS <- function(x, type = "lines",
-                              xlab = "Number of boosting iterations", ylab = NULL,
+plot.nc_cvriskLSS <- function(x, xlab = "Number of boosting iterations", ylab = NULL,
                               ylim = range(x),
                               main = attr(x, "type"),
                               ...) {
-    if (type != "lines")
+    dots <- list(...)
+    if ("type" %in% names(dots) && dots$type != "lines")
         warning("Only ", sQuote('type = "lines"'), " supported for noncyclical fitting")
     plot.cvriskLSS(x = x, type = "lines", xlab = xlab, ylab = ylab, 
                     ylim = ylim, main = main, ...)

@@ -14,8 +14,12 @@
   This package uses boosting algorithms for fitting GAMLSS (generalized
   additive models for location, scale and shape). For information on
   GAMLSS theory see Rigby and Stasinopoulos (2005), or the information
-  provided at \url{http://gamlss.org}. For a tutorial on
-  \code{\link{gamboostLSS}} see Hofner et al. (2015).
+  provided at \url{https://www.gamlss.com/}. For a tutorial on
+  \code{\link{gamboostLSS}} see Hofner et al. (2015). Thomas et al. (2018) 
+  developed a novel non-cyclic approach to fit \code{\link{gamboostLSS}} models. 
+  This approach is suitable for the combination with \code{\link[mboost]{stabsel}} and 
+  speeds up model tuning via \code{\link{cvrisk}}. 
+ 
 
   The fitting methods \code{\link{glmboostLSS}} and
   \code{\link{gamboostLSS}}, are alternatives for the algorithms
@@ -28,7 +32,7 @@
   \code{\link{gamboostLSS}} (for smooth effects) depend on their
   analogous companions \code{\link[mboost]{glmboost}} and
   \code{\link[mboost]{gamboost}} for generalized additive models
-  (contained in package \code{\link{mboost}}, see Hothorn et al. 2010,
+  (contained in package \code{mboost}, see Hothorn et al. 2010,
   2015) and are similar in their usage.
 
   The package includes some pre-defined GAMLSS distributions, but the
@@ -45,7 +49,7 @@
 \author{
   Benjamin Hofner, Andreas Mayr, Nora Fenske, Janek Thomas, Matthias Schmid
 
-  Maintainer:  Benjamin Hofner <benjamin.hofner@fau.de>
+  Maintainer:  Benjamin Hofner <benjamin.hofner@pei.de>
 }
 \references{
 
@@ -83,6 +87,13 @@
   Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M. and Hofner, B. (2015).
   mboost: Model-based boosting. R package version 2.4-2.
   \url{https://CRAN.R-project.org/package=mboost}
+  
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2018), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  \emph{Statistics and Computing}. 28: 673-687. 
+  \doi{10.1007/s11222-017-9754-6}\cr
+  (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
 }
 \keyword{ package }
 
@@ -92,7 +103,7 @@
   fitting. Available distributions (families) are documented here:
   \code{\link{Families}}.
 
-  See also the \code{\link{mboost}} package for more on model-based boosting, or
+  See also the \code{mboost} package for more on model-based boosting, or
   the \code{\link[gamlss]{gamlss}} package for the original GAMLSS
   algorithms provided by Rigby and Stasinopoulos.
 }

@@ -880,3 +880,103 @@ ZINBLSS <- function(mu = NULL, sigma = NULL, nu = NULL,
     
     fam
 }
+
+###
+# Dirichtlet LSS Family
+DirichletAlpha <- function(k = NULL, K = NULL, stabilization) {
+  # Generate argument names dynamically
+  arg <- c("y", paste0("a", 1:K))
+  arg[arg == paste0("a", k)] <- "f"  # Replace the current distributional parameter for `k` with `f`
+  
+  # Loss function
+  loss <- function(y, f) {
+    # Initialize A as NULL
+    A <- NULL  
+    
+    # Dynamically create the R expression to build response matrix A
+    eval(parse(text = paste0(
+      # Start by defining the assignment to A using cbind
+      "A <- cbind(", 
+      # Replace current response "f" with "exp(f)" in the arguments
+      gsub("f", "exp(f)", 
+           # Dynamically generate the list of arguments for the other distributional parameters a1, a2, ..., f
+           paste0(grep("a|f", arg, value = TRUE), collapse = ",")), 
+      # Close the cbind function
+      ")"
+    )))
+    
+    # Compute the loss function
+    result <- - (lgamma(rowSums(A)) - rowSums(lgamma(A)) + rowSums((A - 1) * log(y)))
+    return(result)
+  }
+  
+  # Negative gradient function
+  ngradient <- function(y, f, w = 1) {
+    # Initialize A as NULL
+    A <- NULL  
+    
+    # Dynamically create the R expression to build response matrix A
+    eval(parse(text = paste0(
+      # Start by defining the assignment to A using cbind
+      "A <- cbind(", 
+      # Replace current response "f" with "exp(f)" in the arguments
+      gsub("f", "exp(f)", 
+           # Dynamically generate the list of arguments for the other distributional parameters a1, a2, ..., f
+           paste0(grep("a|f", arg, value = TRUE), collapse = ",")), 
+      # Close the cbind function
+      ")"
+    )))
+    
+    # Compute the negative gradient vector
+    ngr <- A[, k] * (digamma(rowSums(A)) - digamma(A[, k]) + log(y[, k]))
+    ngr <- stabilize_ngradient(ngr, w, stabilization)
+    return(ngr)
+  }
+  
+  # Risk function
+  risk <- function(y, f, w = 1) {
+    sum(w * loss(y, f))
+  }
+  
+  # Offset function
+  offset <- function(y, w) {
+    RET <- w * y[, k]
+    RET <- min(RET)
+    return(RET)
+  }
+  
+  # Return Family object
+  Family(
+    ngradient = ngradient,
+    risk = risk,
+    loss = loss,
+    response = function(f) exp(f),
+    offset = offset,
+    name = paste0("Dirichlet Distribution: a", k, " (log link)")
+  )
+}
+
+
+DirichletLSS <- function(K = NULL, stabilization = c("none", "MAD", "L2")) {
+  # Check if number of categories in the data set K is specified
+  if (is.null(K)) {
+    stop("Number of categories 'K' must be specified.")
+  }
+  
+  stabilization <- check_stabilization(stabilization)
+  
+  # Create a named list of DirichletAlpha() for each distributional parameter in K
+  fam <- setNames(
+    lapply(1:K, function(k) DirichletAlpha(k = k, K = K, stabilization = stabilization)), 
+    paste0("a", 1:K)
+  )
+  
+  # Assign Families name
+  fam$name = "DIRLSS"
+  
+  # Pass the named list as arguments to Families() 
+  fam <- do.call(Families, fam)
+  
+  fam
+}
+

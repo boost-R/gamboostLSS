@@ -1,38 +1,142 @@
 \name{NEWS}
 \title{News for Package 'gamboostLSS'}
 
-\section{Changes in gamboostLSS version 1.5-0 (2016-yy-zz)}{
+\section{Changes in gamboostLSS version 2.1-0 (2025-02-14)}{
   \subsection{User-visible changes}{
     \itemize{
-      \item Added new non-cyclic fitting \code{method}s for \code{gamboostLSS} models:
-      \itemize{
-        \item \code{method = "cycling"} is the standard approach which was also
-           used previously.
-        \item \code{method = "inner"} and \code{"outer"} provide two new
-           non-cyclic algorithms. For details see XXX.
-        \item Non-cyclic methods allow faster cross-validation and better results
-           for stability selection (see below).
+      \item Added new family \code{DirichletLSS} for Dirichlet regression models (implemented by Michael Balzer)
       }
+  }
+  \subsection{Minor changes:}{
+    \itemize{
+      \item{Improved error messages for families with censored response.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-7 (2023-03-09)}{
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item{Fixed minor bug of argument mismatch in internal S3 function \code{get_qfun}.}
+      \item{Updated \file{inst/CITATION} file to reflect current guidance on how to cite in packages.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-6 (2022-05-05)}{
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item{Fixed minor bug in \code{cvrisk}.}
+      \item{Fixed minor bug with out-of-bag risk for non-cyclical fitting.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-5 (2021-01-20)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Added www and a / after the URLs to make CRAN happy.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-4 (2021-01-20)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Changed http to https to make CRAN happy, hopefully finally.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-3 (2021-01-20)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Minor changes to make CRAN happy.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-2 (2021-01-19)}{
+  \subsection{Bug-fixes}{
+    \itemize{
+      \item{Initialize \code{combined_risk} in \code{mboostLSS_fit} to avoid writing 
+        (and overwriting) the combined risk in the global environment.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/49}{#49}.}
+      \item{Fixed \code{stabsel.mboostLSS} for models fitted with FDboostLSS.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/51}{#51}.}
+      \item{Code in \file{man/families.Rd} failed.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/53}{#53}.}
+      \item{\code{predint} was not working when multiple variables were included 
+        within a single baselearner.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/55}{#55}.}
+      \item{Fixed CRAN checks regarding \code{all.equal} by adding 
+        \code{check.environment = FALSE}.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-1 (2018-06-14)}{
+  \subsection{Miscellaneous}{
+    \itemize{
+      \item{Export plot functions, streamlined interface of cvrisk and updated manuals.
+        Closes issue \href{https://github.com/boost-R/gamboostLSS/issues/46}{#46}.}
+      \item{Export \code{predict.mboostLSS} to make \pkg{betaboost} happy.}
+      \item{Updated reference for Thomas et al. 
+        Closes issues \href{https://github.com/boost-R/gamboostLSS/issues/47}{#47}.}
+    }
+  }
+}
+
+\section{Changes in gamboostLSS version 2.0-0 (2017-05-05)}{
+  \subsection{User-visible changes}{
+    \itemize{
+      \item Added new fitting algorithm which can be used via the argument 
+        \code{method}:
+        \itemize{
+          \item \code{method = "cyclic"} is the standard approach which was also
+             used previously.
+          \item \code{method = "noncyclic"} provides a new non-cyclical algorithm. 
+        }
+        The \code{"noncyclic"} method allow faster cross-validation and better results
+        for stability selection (see below). For details see 
+           
+        Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2017), 
+        Gradient boosting for distributional regression - faster tuning and improved 
+        variable selection via noncyclical updates. 
+        \emph{Statistics and Computing}. Online First. 
+        DOI \href{http://dx.doi.org/10.1007/s11222-017-9754-6}{10.1007/s11222-017-9754-6}\cr
+        (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
       \item Stability selection (\code{stabsel}) implemented for \code{gamboostLSS} 
          models.
-      \item The (\code{as.families}) interface to incorporate 'gamlss' distributions for \code{gamboostLSS} 
-         models was adapted to allow for other link functions.
-     \item Added option \code{stabilization = "L2"}  to use the mean L2 norm of 
-	the negative gradient to make the updated for the different distribution parameters comparable. 
+      \item Models can now be fitted with zero steps (i.e., models containing only 
+        the offset). This change was mainly realized with the release of mboost 2.8-0.
+        This closes issue \href{https://github.com/boost-R/gamboostLSS/issues/22}{#22}.
+      \item The \code{as.families} interface to incorporate \pkg{gamlss} distributions 
+         for \code{gamboostLSS} models was adapted to allow for other link functions.
+     \item Added option \code{stabilization = "L2"}  to use the average L2 norm of 
+	     the negative gradient to make the updates for the different distribution 
+	     parameters comparable. 
     }
   }
   \subsection{Bug-fixes}{
     \itemize{
-      \item Fixed \code{as.families("BB")} and \code{as.families("BI")}, which is actually an mboost family
-        Closes issue
+      \item Fixed \code{as.families("BB")} and \code{as.families("BI")}, which is 
+        actually an \pkg{mboost} family. Closes issue
         \href{https://github.com/boost-R/gamboostLSS/issues/12}{#12}.
+      \item Fixed \code{as.families} for 4-parametric \code{"Mixed"}-type families
+        (e.g. \code{as.families("BEOI")} and \code{as.families("BEINF")}). 
+        Closes issue
+        \href{https://github.com/boost-R/gamboostLSS/issues/28}{#28}.
     }
   }
   \subsection{Miscellaneous}{
     \itemize{
       \item Added Janek Thomas as new author.
-      \item Updated \file{inst/CITATION} due to release of JSS tutorial paper.
+      \item Updated \file{inst/CITATION} due to release of JSS tutorial paper and 
+        added new noncyclical fitting paper (also to manuals). 
+        The latter closes issue \href{https://github.com/boost-R/gamboostLSS/issues/27}{#27}.
       \item Updated URL in \file{DESCRIPTION}.
+      \item Adapt \code{mboostLSS_fit()} such that it can be called by \code{FDboost::FDboostLSS()}.
     }
   }
 }
@@ -167,8 +271,8 @@
        (\code{make_grid})
        \item added new function \code{as.families} to include
        \pkg{gamlss} families in \pkg{gamboostLSS}
-       \item added new families \code{BetaLSS}, \code{GammaLSS},
-       \code{GaussianLSS}, \code{ZIPoLSS}, \code{ZINBLSS}
+       \item added new families \code{BetaLSS} (implemented by Florian Wickler), 
+       \code{GammaLSS}, \code{GaussianLSS}, \code{ZIPoLSS}, \code{ZINBLSS}
        \item \code{GaussianLSS} is now the default for \code{families}
        \item added new functions \code{predint()} and
        \code{plot(predint())} to obtain and plot marginal prediction

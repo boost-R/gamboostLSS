@@ -7,8 +7,6 @@
   Update ChangeLog
   ------------------
 
-  Go to patch/pkg directory of project:
-
     git log abba..HEAD --pretty=short > ChangeLog
 
 
@@ -24,7 +22,7 @@
     ../relative/path/to/R-devel/bin/R
 
   Run
-    install.packages(c("gamlss", "BayesX", "gamlss.dist", "mboost", "R2BayesX"))
+    install.packages(c("gamlss", "gamlss.dist", "mboost", "BayesX", "R2BayesX"))
 
   Quit R and run
    ../relative/path/to/R-devel/bin/R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
@@ -35,9 +33,9 @@
 
     Increase patch or minor level in DESCRIPTION
     Update Date: field in DESCRIPTION
-    Update NEWS
-
-    R CMD build --resave-data --compact-vignettes [[pkg OR patch]] &&
+    Update inst/NEWS.Rd
+    
+    R CMD build --resave-data --compact-vignettes="gs+qpdf" gamboostLSS &&
         R CMD check --as-cran --run-dontrun --run-donttest gamboostLSS_XXX.tar.gz
 
     Run check with R-devel
@@ -45,18 +43,12 @@
 
     If differences to .Rout.save occure:
        - Copy new .Rout files to .Rout.save [1,2]:
-
-       	    Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=FALSE"
-         or
-            Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=FALSE"
-
+       	    Rscript copy_Rout_to_Routsave.R "vignettes=FALSE"
+     
        - Update vignette .Rout.save files if necessary [1,2]:
+            Rscript copy_Rout_to_Routsave.R "vignettes=TRUE"
 
-            Rscript copy_Rout_to_Routsave.R "path='pkg'" "vignettes=TRUE"
-	or
-            Rscript copy_Rout_to_Routsave.R "path='patch'" "vignettes=TRUE"
-
-	 [1] For details see
+         [1] For details see
              http://r.789695.n4.nabble.com/Generate-Rout-save-files-for-vignettes-td4652752.html
          [2] NOTE: Reference output should be produced without having the --timings option set.
 
@@ -69,14 +61,17 @@
 
     Commit changes
 
-    Update ChangeLog (see above)
-
-    Now  build package without test folder to be submitted to CRAN
-
-       R CMD buildCRAN --resave-data --compact-vignettes pkg && R CMD check --as-cran gamboostLSS_XXX.tar.gz
-    or
-       R CMD buildCRAN --resave-data --compact-vignettes patch && R CMD check --as-cran gamboostLSS_XXX.tar.gz
-
-    To use the script copy it to R RHOME (< enter this in the console) /bin and make it executable.
-
+    Update ChangeLog (see above) and amend previous commit
+    
+    Now  build package without test folder to be submitted to CRAN. 
+    Remove cvrisk results to reduce package size (see below) but do NOT COMMIT these changes to github.
+    Therefore, do the following:
+    
+        mv vignettes/gamboostLSS_Tutorial_CRAN.Rnw vignettes/gamboostLSS_Tutorial.Rnw
+        mv .RbuildignoreCRAN .Rbuildignore
+        cd ..
+        R CMD build --resave-data --compact-vignettes="gs+qpdf" gamboostLSS && R CMD check --as-cran --run-donttest gamboostLSS_XXX.tar.gz
+        cd gamboostLSS
+        git checkout -- .RbuildignoreCRAN .Rbuildignore vignettes/gamboostLSS_Tutorial_CRAN.Rnw vignettes/gamboostLSS_Tutorial.Rnw
+    
     Use web form at http://xmpalantir.wu.ac.at/cransubmit/.
