@@ -51,7 +51,7 @@ This makes it especially useful for complex real-world datasets where variabilit
 * Cross-validation risk vs boosting iterations
 * Demonstrates convergence and optimal stopping point
 
-![Cross Validation Plot](easy_plot.png)
+![Cross Validation Plot](plots/easy_plot.png)
 
 This plot shows the cross-validation risk across boosting iterations.
 The optimal stopping point corresponds to the minimum risk.
@@ -94,7 +94,7 @@ The optimal stopping point corresponds to the minimum risk.
 * Sigma (variance) behavior plots
 * Demonstrates how variance changes with predictors
 
-![Sigma Plot](hard_sigma_plot.png)
+![Sigma Plot](plots/hard_sigma_plot.png)
 
 This plot illustrates how the variance (sigma) changes with predictors,
 highlighting the model’s ability to capture heteroscedasticity.
