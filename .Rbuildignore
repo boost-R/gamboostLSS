@@ -12,3 +12,5 @@ vignettes/auto
 vignettes/graphics
 vignettes/fig-crossvalidation.pdf
 vignettes/gamboostLSS_Tutorial_CRAN.Rnw
+^\.positai$
+^\.claude$
