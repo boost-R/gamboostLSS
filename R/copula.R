@@ -56,7 +56,7 @@
       t <- t1 + t2
       C <- exp(-t^(1/theta))
       
-      return(log(C) + (2/theta - 2) * log(t) + 
+      return(log(C) + (1/theta - 2) * log(t) + 
                log(t1*t2) - log(u1*u2) - log((-log(u1))*(-log(u2))) +
                log(t^(1/theta) + theta - 1)
              )
@@ -70,7 +70,7 @@
       dt_du1 <- -theta * a1^(theta -1) / u1
       
       term_C <- a1^(theta-1) * t^(1/theta - 1) / u1
-      term_t <- (2/theta - 2) * dt_du1 / t
+      term_t <- (1/theta - 2) * dt_du1 / t
       term_a1 <- -(theta - 1) / (a1 * u1)
       term_logu <- -1/u1
       ds_du1 <- (1/theta) * t^(1/theta - 1) * dt_du1
@@ -89,7 +89,7 @@
       ds_theta <- s * (-log(t)/theta^2 + dt_theta/(theta*t))
       
       term_C <- -ds_theta
-      term_t <- -2/theta^2 * log(t) + (2/theta - 2)*dt_theta/t
+      term_t <- -1/theta^2 * log(t) + (1/theta - 2)*dt_theta/t
       term_a <- log(a1) + log(a2)
       term_end <- (ds_theta + 1) / (s + theta -1)
       

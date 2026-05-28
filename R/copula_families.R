@@ -93,7 +93,7 @@ get_dresponse <- function(sub_fam, f){
 CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian",
                            theta = 0, stabilization = c("none", "MAD", "L2")){
   
-  stabilization <- check_stabilization()
+  stabilization <- check_stabilization(stabilization)
   cop <- get_copula(copula)
   
   # Initialize the param start values
@@ -180,17 +180,39 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian",
     })
   }
   
+  loss_theta <- function(y, f){
+    u <- get_u(y)
+    -cop$logdcopula(u$u1, u$u2, exp(f))
+  }
   
+  theta_family <- Family(
+    ngradient = function(y, f, w = 1){
+      u <- get_u(y)
+      theta_val <- exp(f)
+      ngr <- cop$dlogdcopula_theta(u$u1, u$u2, theta_val) * theta_val
+      stabilize_ngradient(ngr, w = w, stabilization)
+    },
+    loss = loss_theta,
+    risk = function(y, f, w = 1) sum(w * loss_theta(y, f)),
+    response = function(f) exp(f),
+    offset = function(y, w) log(theta_cop),
+    check_y = check_copula_response,
+    name = "CopulaFamilies: theta_cop"
+  )
+  
+  fams1 <- lapply(seq_along(pnames1), marginal_family, marginal = marginal1,
+                  pnames = pnames1, slot_names = slot_names1, side = 1)
+  fams2 <- lapply(seq_along(pnames2), marginal_family, marginal = marginal2,
+                  pnames = pnames2, slot_names = slot_names2, side = 2)
+  
+  names(fams1) <- slot_names1
+  names(fams2) <- slot_names2
+  
+  do.call(Families, c(fams1, fams2,
+          list(theta_cop = theta_family,
+               name = paste0("Copula(", copula, "):",
+                             attr(marginal1, "name"), "x",
+                             attr(marginal2, "name")))))
   
 }
-
-
-
-
-
-
-
-
-
-
 
