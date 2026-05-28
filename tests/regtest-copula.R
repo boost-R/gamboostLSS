@@ -91,9 +91,25 @@ stopifnot(max(abs(u - pnorm(c(-1, 0, 1)))) < 1e-10)
 
 # ------------------------------------------------------------------------------
 
+### check CopulaFamilies structure
+fam <- CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = "gaussian",
+                      theta = 0.5)
+# class
+stopifnot(inherits(fam, "families"))
 
+# slots
+stopifnot(all(c("mu1", "sigma1", "mu2", "sigma2", "theta_cop") %in% 
+                names(fam)))
 
+# slots are valid objects
+for (nm in names(fam))
+  stopifnot(inherits(fam[[nm]], "boost_family"))
 
+# check_y takes only matrix
+tryCatch(fam$mu1@check_y(c(1, 2, 3)),
+         error = function(e) cat("check_y non-matrix: OK\n"))
 
+# check_y accepts matrix
+stopifnot(is.matrix(fam$mu1@check_y(cbind(c(1, 2), c(3, 4)))))
 
 
