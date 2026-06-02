@@ -26,3 +26,10 @@ stopifnot(gamboostLSS:::get_marginal_case(GaussianLSS(), ZIPoLSS()) ==
             "continuous_discrete")
 stopifnot(gamboostLSS:::get_marginal_case(ZIPoLSS(), GaussianLSS()) == 
             "discrete_continuous")
+
+### check accuracy of get_marginal_cdf
+y <- c(-2, -1, 0, 1, 2)
+stopifnot(max(abs(gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, list(mu=0, sigma=1)) - pnorm(y))) < 1e-7)
+
+
+
