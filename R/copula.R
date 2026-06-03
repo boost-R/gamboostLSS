@@ -19,8 +19,7 @@
       z1 <- qnorm(u1)
       z2 <- qnorm(u2)
       return(
-        rho / (1 - rho^2) + (z1^2 + z2^2 - 2*rho*z1*z2) * rho / 
-          (1 - rho^2)^2 - z1*z2 / (1 - rho^2)
+        rho / (1 - rho^2) + (z1*z2*(1+rho^2) - rho*(z1^2+z2^2)) / (1 - rho^2)^2
       )
     }
   )
