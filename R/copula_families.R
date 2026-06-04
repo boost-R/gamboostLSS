@@ -38,6 +38,10 @@ get_marginal_cdf <- function(marginal, y, params){
          "log-normal" = plnorm(y, meanlog = params$mu, sdlog = params$sigma),
          "beta" = pbeta(y, shape1 = params$mu * params$phi,
                         shape2 = (1-params$mu) * params$phi),
+         "negative binomial" = pnbinom(y, size = 1/params$sigma, mu = params$mu),
+         "zip" = params$sigma + (1-params$sigma) * ppois(y, lambda = params$mu),
+         "zinbi" = params$nu + (1-params$nu) * 
+           pnbinom(y, size = 1/params$sigma, mu = params$mu),
          stop("Unknown family without cdf: '", fam_name, "'"))
 }
 
@@ -49,13 +53,24 @@ get_marginal_logpdf <- function(marginal, y, params){
   fam_name <- tolower(attr(marginal, "name"))
   
   switch(fam_name,
-         "gaussian" = dnorm(y, mean = params$mu, sd = params$sigma, log = T),
+         "gaussian" = dnorm(y, mean = params$mu, sd = params$sigma, log = TRUE),
          "gamma" = dgamma(y, shape = params$mu^2 / params$sigma^2,
-                          rate = params$mu / params$sigma^2, log = T),
+                          rate = params$mu / params$sigma^2, log = TRUE),
          "log-normal" = dlnorm(y, meanlog = params$mu, sdlog = params$sigma,
-                               log = T),
+                               log = TRUE),
          "beta" = dbeta(y, shape1 = params$mu * params$phi,
-                        shape2 = (1-params$mu) * params$phi, log = T),
+                        shape2 = (1-params$mu) * params$phi, log = TRUE),
+         "negative binomial" = dnbinom(y, size = 1/params$sigma, mu = params$mu,
+                                       log = TRUE),
+         "zip" = ifelse(y == 0, 
+                        log(params$sigma + (1-params$sigma) * 
+                          dpois(y, lambda = params$mu)),
+                        log((1-params$sigma) * 
+                          dpois(y, lambda = params$mu))),
+         "zinbi" = ifelse(y == 0, log(params$nu + (1-params$nu) * 
+                            dnbinom(y, size = 1/params$sigma, mu = params$mu)),
+                          log((1-params$nu) * 
+                            dnbinom(y, size = 1/params$sigma, mu = params$mu))),
          stop("Unknown family without pdf: '", fam_name, "'"))
 }
 
