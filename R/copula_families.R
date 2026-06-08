@@ -104,6 +104,82 @@ continuous_continuous_loglik <- function(y, marginal1, marginal2, params1,
     get_marginal_logpdf(marginal2, y[,2], params2)
 }
 
+# Input:    marginal1, marginal2  - gamboostLSS families-objects
+#           copula                - character e.g. "gaussian"
+#           theta                 - starting value for copula parameter
+#           stabilization         - character e.g. "MAD" 
+# Output:   families-object
+CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
+                           stabilization = c("none", "MAD", "L2")){
+  
+  # Identify the correct copula first 
+  cop <- get_copula(copula)
+  
+  # Identify the case and switch 
+  marginal_case <- get_marginal_case(marginal1, marginal2)
+  loglik <- switch(marginal_case,
+         "continuous_continuous" = continuous_continuous_loglik,
+         "discrete_discrete" = discrete_discrete_loglik)
+  
+  # Use stabilization-method
+  stabilization <- check_stabilization(stabilization)
+  
+  # Extract the names of the marginals
+  params1 <- names(marginal1)
+  params2 <- names(marginal2)
+  
+  # Extract the quantile functions
+  qfun1 <- attr(marginal1, "qfun")
+  qfun2 <- attr(marginal2, "qfun")
+  
+  # closure variables
+  current_params1 <- setNames(vector("list", length(params1)), params1)
+  current_params2 <- setNames(vector("list", length(params2)), params2)
+  
+  # loss functions
+  # marginal 1
+  sub_families1 <- list()
+  for (p in params1){
+    sub_families1[[p]] <- local({
+      param_name <- p
+      loss_p <- function(y, f){
+        current_params1[[param_name]] <- marginal1[[param_name]]@response(f)
+        return(-loglik(y, marginal1, marginal2, current_params1, 
+                              current_params2, copula, theta))
+      }
+      return(loss_p)
+    })
+  }
+  
+  # marginal 2
+  sub_families2 <- list()
+  for (p in params2){
+    sub_families2[[p]] <- local({
+      param_name <- p
+      loss_p <- function(y, f){
+        current_params2[[param_name]] <- marginal2[[param_name]]@response(f)
+        return(-loglik(y, marginal1, marginal2, current_params1, 
+                       current_params2, copula, theta))
+      }
+      return(loss_p)
+    })
+  }
+  
+  # copula
+  loss_theta <- function(y, f){
+    theta_current <- f # no response for dependence param implemented yet
+    return(-loglik(y, marginal1, marginal2, current_params1, 
+                   current_params2, copula, theta_current))
+  }
+}
+
+
+
+
+
+
+
+
 
 
 
