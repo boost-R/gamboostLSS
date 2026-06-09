@@ -136,18 +136,35 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   current_params1 <- setNames(vector("list", length(params1)), params1)
   current_params2 <- setNames(vector("list", length(params2)), params2)
   
-  # loss functions
+  
   # marginal 1
   sub_families1 <- list()
   for (p in params1){
     sub_families1[[p]] <- local({
       param_name <- p
+      
+      # loss 
       loss_p <- function(y, f){
         current_params1[[param_name]] <- marginal1[[param_name]]@response(f)
         return(-loglik(y, marginal1, marginal2, current_params1, 
                               current_params2, copula, theta))
       }
-      return(loss_p)
+      
+      # ngradient
+      ngradient_p <- function(y, f, w=1){NULL}
+      
+      # offset
+      offset_p <- function(y, w){
+        RET <- marginal1[[param_name]]@offset(y[,1], w)
+        current_params1[[param_name]] <<- marginal1[[param_name]]@response(RET)
+        return(RET)
+      }
+      
+      Family(loss = loss_p,
+             ngradient = ngradient_p,
+             offset = offset_p,
+             response = marginal1[[param_name]]@response,
+             name = marginal1[[param_name]]@name)
     })
   }
   
@@ -156,21 +173,65 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   for (p in params2){
     sub_families2[[p]] <- local({
       param_name <- p
+      
+      # loss
       loss_p <- function(y, f){
         current_params2[[param_name]] <- marginal2[[param_name]]@response(f)
         return(-loglik(y, marginal1, marginal2, current_params1, 
                        current_params2, copula, theta))
       }
-      return(loss_p)
+      
+      # ngradient
+      ngradient_p <- function(y, f, w=1){NULL}
+      
+      # offset 
+      offset_p <- function(y, w){
+        RET <- marginal2[[param_name]]@offset(y[,2], w)
+        current_params2[[param_name]] <<- marginal2[[param_name]]@response(RET)
+        return(RET)
+      }
+      
+      Family(loss = loss_p,
+             ngradient = ngradient_p,
+             offset = offset_p,
+             response = marginal2[[param_name]]@response,
+             name = marginal2[[param_name]]@name)
     })
   }
   
   # copula
+  # loss
   loss_theta <- function(y, f){
     theta_current <- f # no response for dependence param implemented yet
     return(-loglik(y, marginal1, marginal2, current_params1, 
                    current_params2, copula, theta_current))
   }
+  
+  # ngradient
+  ngradient_theta <- function(y, f, w=1){
+    NULL
+    }
+  
+  # offset
+  offset_theta <- function(y, w){
+    NULL
+  }
+  # also not possible to implement yet, since we need response-function for 
+  # chosen copula
+  
+  theta_family <- Family(loss = loss_theta,
+         ngradient = ngradient_theta,
+         offset = offset_theta,
+         response = cop$response,
+         name = cop$name
+         )
+  
+  # combine the individual family-objects into one for joint family
+  do.call(Families, c(sub_families1, sub_families2, 
+                      list(theta = theta_family),
+                      list(qfun = NULL, 
+                           name = paste0("Copula Families: ", copula))
+                      ))
 }
 
 
