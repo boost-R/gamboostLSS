@@ -21,6 +21,15 @@
       return(
         rho / (1 - rho^2) + (z1*z2*(1+rho^2) - rho*(z1^2+z2^2)) / (1 - rho^2)^2
       )
+    },
+    pcopula = function(u1, u2, theta){
+      rho <- theta
+      z1 <- qnorm(u1)
+      z2 <- qnorm(u2)
+      sapply(seq_along(u1), function(i)
+      mvtnorm::pmvnorm(lower = c(-Inf, -Inf),
+                              upper = c(z1[i], z2[i]),
+                              corr = matrix(c(1, rho, rho, 1), nrow = 2)))
     }
   )
 }
