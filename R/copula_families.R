@@ -87,21 +87,41 @@ get_marginal_logpdf <- function(marginal, y, params){
 # Input:    y                       - n x 2 matrix of observations
 #           marginal1, marginal2    - families-objects
 #           params1, params2        - named lists of parameter values
-#           copula                  - function(u1, u2, theta) 
+#           copula                  - character, e.g. "gaussian"
 #           theta                   - copula dependence parameter
 # Output:   vector of length n with individual log-likelihood contributions
 continuous_continuous_loglik <- function(y, marginal1, marginal2, params1,
                                          params2, copula, theta){
   
-  cop <- get_copula(copula) # get_copula will be implemented tomorrow in 
-                            # new script along with storing the copula 
-                            # properties for each copula 
+  cop <- get_copula(copula) 
   u1 <- get_marginal_cdf(marginal1, y[,1], params1)
   u2 <- get_marginal_cdf(marginal2, y[,2], params2)
   
   cop$logdcopula(u1, u2, theta) + 
     get_marginal_logpdf(marginal1, y[,1], params1) +
     get_marginal_logpdf(marginal2, y[,2], params2)
+}
+
+# Input:    y                       - n x 2 matrix of observations
+#           marginal1, marginal2    - families-objects
+#           params1, params2        - named lists of parameter values
+#           copula                  - character, e.g. "gaussian" 
+#           theta                   - copula dependence parameter
+# Output:   vector of length n with individual log-likelihood contributions
+discrete_discrete_loglik <- function(y, marginal1, marginal2, params1,
+                                     params2, copula, theta){
+  
+  cop <- get_copula(copula) 
+  u1 <- get_marginal_cdf(marginal1, y[,1], params1)
+  u2 <- get_marginal_cdf(marginal2, y[,2], params2)
+  u1_minus <- get_marginal_cdf(marginal1, y[,1] - 1, params1)
+  u2_minus <- get_marginal_cdf(marginal2, y[,2] - 1, params2)
+  
+  p <- cop$pcopula(u1, u2, theta) - cop$pcopula(u1_minus, u2, theta) -
+    cop$pcopula(u1, u2_minus, theta) + cop$pcopula(u1_minus, u2_minus, theta)
+  
+  p <- pmax(p, 1e-10)
+  return(log(p))
 }
 
 # Input:    marginal1, marginal2  - gamboostLSS families-objects
