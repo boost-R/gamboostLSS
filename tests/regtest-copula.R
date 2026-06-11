@@ -79,3 +79,51 @@ for (p in test_points){
   stopifnot(abs(num_grad_theta - ana_grad_theta) < 1e-5)
 }
 
+### check numerical gradient of continuous_continuous_loglik
+set.seed(42)
+y <- cbind(rlnorm(10), rbeta(10, 5, 1))
+marginal1 <- LogNormalLSS()
+marginal2 <- BetaLSS()
+params1 <- list(mu = 0.25, sigma = 0.95)
+params2 <- list(mu = 0.8, phi = 5)
+copula <- "gaussian"
+theta <- 0.5
+
+eps <- 1e-6
+u1 <- gamboostLSS:::get_marginal_cdf(marginal1, y[,1], params1)
+u2 <- gamboostLSS:::get_marginal_cdf(marginal2, y[,2], params2)
+cop <- gamboostLSS:::get_copula(copula)
+
+num_grad_loglik <- (gamboostLSS:::continuous_continuous_loglik(y, 
+                                                               marginal1,
+                                                               marginal2,
+                                                               params1,
+                                                               params2,
+                                                               copula,
+                                                               theta + eps) - 
+                      gamboostLSS:::continuous_continuous_loglik(y, 
+                                                                 marginal1,
+                                                                 marginal2,
+                                                                 params1,
+                                                                 params2,
+                                                                 copula,
+                                                                 theta - eps)) /
+  (2*eps)
+ana_grad_loglik <- cop$dlogdcopula_theta(u1, u2, theta)
+
+stopifnot(max(abs(num_grad_loglik - ana_grad_loglik)) < 1e-5)
+
+### reference value test for discrete_discrete_loglik 
+y <- cbind(1, 2)
+theta <- 0.5
+stopifnot(abs(gamboostLSS:::discrete_discrete_loglik(y, 
+                                                     NBinomialLSS(),
+                                                     NBinomialLSS(),
+                                                     list(mu=2, sigma=1),
+                                                     list(mu=2, sigma=1),
+                                                     "gaussian", theta) - 
+                (-3.328349)) < 1e-3)  # reference computed manually via 
+                                      # mvtnorm::pmvnorm 
+
+
+
