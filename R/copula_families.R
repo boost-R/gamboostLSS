@@ -6,7 +6,7 @@ get_marginal_type <- function(marginal){
   continuous <- c("gaussian", "gamma", "log-normal", "beta", "student t",
                   "log-log", "weibull")
   discrete <- c("zip", "negative binomial", "zinbi")
-  binary <- c(0)
+  binary <- c("binomial")
   
   if (fam_name %in% continuous) return("continuous")
   if (fam_name %in% discrete) return("discrete")
@@ -124,6 +124,45 @@ discrete_discrete_loglik <- function(y, marginal1, marginal2, params1,
   return(log(p))
 }
 
+# Input:    y                       - n x 2 matrix of observations
+#           marginal1, marginal2    - families-objects
+#           params1, params2        - named lists of parameter values
+#           copula                  - character, e.g. "gaussian" 
+#           theta                   - copula dependence parameter
+# Output:   vector of length n with individual log-likelihood contributions
+binary_continuous_loglik <- function(y, marginal1, marginal2, params1, 
+                                     params2, copula, theta){
+  cop <- get_copula(copula)
+  u1 <- get_marginal_cdf(marginal1, y[,1], params1)
+  u1_minus <- get_marginal_cdf(marginal1, y[,1]-1, params1)
+  u2 <- get_marginal_cdf(marginal2, y[,2], params2)
+  
+  d <- cop$h(u1, u2, theta) - cop$h(u1_minus, u2, theta)
+  d <- pmax(d, 1e-10)
+  return(log(d) + get_marginal_logpdf(marginal2, y[,2], params2))
+  
+}
+
+# Input:    y                       - n x 2 matrix of observations
+#           marginal1, marginal2    - families-objects
+#           params1, params2        - named lists of parameter values
+#           copula                  - character, e.g. "gaussian" 
+#           theta                   - copula dependence parameter
+# Output:   vector of length n with individual log-likelihood contributions
+continuous_binary_loglik <- function(y, marginal1, marginal2, params1, 
+                                     params2, copula, theta){
+  cop <- get_copula(copula)
+  u1 <- get_marginal_cdf(marginal1, y[,1], params1)
+  u2 <- get_marginal_cdf(marginal2, y[,2], params2)
+  u2_minus <- get_marginal_cdf(marginal2, y[,2]-1, params2)
+  
+  d <- cop$h(u2, u1, theta) - cop$h(u2_minus, u1, theta)  
+  d <- pmax(d, 1e-10)
+  return(log(d) + get_marginal_logpdf(marginal1, y[,1], params1))
+  
+}
+
+
 # Input:    marginal1, marginal2  - gamboostLSS families-objects
 #           copula                - character e.g. "gaussian"
 #           theta                 - starting value for copula parameter
@@ -139,7 +178,10 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   marginal_case <- get_marginal_case(marginal1, marginal2)
   loglik <- switch(marginal_case,
          "continuous_continuous" = continuous_continuous_loglik,
-         "discrete_discrete" = discrete_discrete_loglik)
+         "discrete_discrete" = discrete_discrete_loglik,
+         "binary_binary" = discrete_discrete_loglik,
+         "binary_continuous" = binary_continuous_loglik,
+         "continuous_binary" = continuous_binary_loglik)
   
   # Use stabilization-method
   stabilization <- check_stabilization(stabilization)
@@ -155,7 +197,6 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   # closure variables
   current_params1 <- setNames(vector("list", length(params1)), params1)
   current_params2 <- setNames(vector("list", length(params2)), params2)
-  
   
   # marginal 1
   sub_families1 <- list()
@@ -187,6 +228,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
              name = marginal1[[param_name]]@name)
     })
   }
+  names(sub_families1) <- paste0(params1, "1")
   
   # marginal 2
   sub_families2 <- list()
@@ -219,6 +261,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
     })
   }
   
+  names(sub_families2) <- paste0(params2, "2")
   # copula
   # loss
   loss_theta <- function(y, f){
@@ -253,14 +296,4 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
                            name = paste0("Copula Families: ", copula))
                       ))
 }
-
-
-
-
-
-
-
-
-
-
 
