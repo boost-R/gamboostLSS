@@ -125,5 +125,22 @@ stopifnot(abs(gamboostLSS:::discrete_discrete_loglik(y,
                 (-3.328349)) < 1e-3)  # reference computed manually via 
                                       # mvtnorm::pmvnorm 
 
+### check h against numeric derivative of pcopula 
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+eps <- 1e-3
+copula <- "gaussian"
+marginal1 <- GaussianLSS()
+marginal2 <- GaussianLSS()
+params1 <- list(mu = 0, sigma = 1)
+params2 <- list(mu = 0, sigma = 1)
 
+cop <- gamboostLSS:::get_copula(copula)
+u1 <- gamboostLSS:::get_marginal_cdf(marginal1, y[,1], params1)
+u2 <- gamboostLSS:::get_marginal_cdf(marginal2, y[,2], params2)
+
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) /
+  (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(max(abs(num_h - ana_h)) < 1e-3)
 
