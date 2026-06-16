@@ -980,3 +980,49 @@ DirichletLSS <- function(K = NULL, stabilization = c("none", "MAD", "L2")) {
   fam
 }
 
+### 
+# Bernoulli LSS Family
+
+BernoulliLSS <- function(mu = NULL, link = c("probit", "logit", "cloglog"),
+                           stabilization = c("None", "MAD", "L2")){
+  link <- match.arg(link)
+  stabilization <- check_stabilization(stabilization)
+  response <- switch(link, 
+                     "probit" = function(f) pnorm(f),
+                     "logit" = function(f) plogis(f),
+                     "cloglog" = function(f) 1 - exp( -exp(f)))
+  offset <- switch(link, 
+                   "probit" = function(y, w) {
+                     p <- weighted.mean(y, w)
+                     qnorm(p)
+                   },
+                   "logit" = function(y, w) {
+                     p <- weighted.mean(y, w)
+                     qlogis(p)
+                   },
+                   "cloglog" = function(y, w) {
+                     p <- weighted.mean(y, w)
+                     log(-log(1-p))
+                   })
+  
+  mu_family <- Family(
+    loss = function(y, f) NULL,
+    risk = function(y, f) NULL,
+    ngradient = function(y, f, w = 1) NULL,
+    offset = offset,
+    response = response,
+    check_y = function(y){
+      if (any(unique(y) %in% c(0,1) == FALSE))
+        stop("response must be in {0,1}")
+      },
+    name = paste("Bernoulli [", link, " link]: mu")
+  )
+  
+  Families(mu_family,
+           qfun = NULL, # ergänzen 17.06.
+           name = "Bernoulli (", link, ")")
+}  
+  
+  
+  
+  
