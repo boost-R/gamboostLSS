@@ -30,7 +30,14 @@
       mvtnorm::pmvnorm(lower = c(-Inf, -Inf),
                               upper = c(z1[i], z2[i]),
                               corr = matrix(c(1, rho, rho, 1), nrow = 2)))
-    }
+    },
+    h = function(u1, u2, theta){
+      rho <- theta
+      z1 <- qnorm(u1); z2 <- qnorm(u2)
+      pnorm((z1 - rho*z2) / sqrt(1 - rho^2))
+    },
+    response = function(f) tanh(f),
+    name = "Gaussian copula: rho (tanh link)"
   )
 }
 
