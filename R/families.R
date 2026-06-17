@@ -984,7 +984,7 @@ DirichletLSS <- function(K = NULL, stabilization = c("none", "MAD", "L2")) {
 # Bernoulli LSS Family
 
 BernoulliLSS <- function(mu = NULL, link = c("probit", "logit", "cloglog"),
-                           stabilization = c("None", "MAD", "L2")){
+                           stabilization = c("none", "MAD", "L2")){
   link <- match.arg(link)
   stabilization <- check_stabilization(stabilization)
   response <- switch(link, 
@@ -1018,9 +1018,9 @@ BernoulliLSS <- function(mu = NULL, link = c("probit", "logit", "cloglog"),
     name = paste("Bernoulli [", link, " link]: mu")
   )
   
-  Families(mu_family,
-           qfun = NULL, # ergänzen 17.06.
-           name = "Bernoulli (", link, ")")
+  Families(mu = mu_family,
+           qfun = NULL, 
+           name = paste0("Bernoulli (", link, ")"))
 }  
   
   
