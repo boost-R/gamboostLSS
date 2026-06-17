@@ -129,6 +129,7 @@ stopifnot(abs(gamboostLSS:::discrete_discrete_loglik(y,
 set.seed(42)
 y <- cbind(rnorm(10), rnorm(10))
 eps <- 1e-3
+theta <- 0.5
 copula <- "gaussian"
 marginal1 <- GaussianLSS()
 marginal2 <- GaussianLSS()
@@ -144,3 +145,31 @@ num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) /
 ana_h <- cop$h(u1, u2, theta)
 stopifnot(max(abs(num_h - ana_h)) < 1e-3)
 
+
+
+### check binary_continuous_loglik at theta = 0
+y_bc <- cbind(c(0, 1, 0, 1), rnorm(4))
+mu1_val <- 0.3
+params_bin <- list(mu = mu1_val)
+params_norm <- list(mu = 0, sigma = 1)
+
+loglik_bc <- gamboostLSS:::binary_continuous_loglik(
+  y_bc, BernoulliLSS(), GaussianLSS(), params_bin, params_norm, "gaussian", 0)
+
+expected_bc <- log(ifelse(y_bc[,1] == 1, mu1_val, 1 - mu1_val)) + 
+  dnorm(y_bc[,2], log = TRUE)
+
+stopifnot(max(abs(loglik_bc - expected_bc)) < 1e-6)
+
+
+### reference value test for binary_continuous_loglik
+y_ref <- cbind(0, 1)
+ref_val <- gamboostLSS:::binary_continuous_loglik(
+  y_ref, BernoulliLSS(), GaussianLSS(), list(mu = 0.4), list(mu = 0, sigma =1),
+  "gaussian", 0.5)
+
+stopifnot(abs(ref_val - (-2.36596)) < 1e-2)
+
+  
+  
+  
