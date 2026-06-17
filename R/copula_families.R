@@ -6,7 +6,7 @@ get_marginal_type <- function(marginal){
   continuous <- c("gaussian", "gamma", "log-normal", "beta", "student t",
                   "log-log", "weibull")
   discrete <- c("zip", "negative binomial", "zinbi")
-  binary <- c("binomial")
+  binary <- c("bernoulli (probit)", "bernoulli (logit)", "bernoulli (cloglog)")
   
   if (fam_name %in% continuous) return("continuous")
   if (fam_name %in% discrete) return("discrete")
@@ -46,6 +46,9 @@ get_marginal_cdf <- function(marginal, y, params){
          "zip" = params$sigma + (1-params$sigma) * ppois(y, lambda = params$mu),
          "zinbi" = params$nu + (1-params$nu) * 
            pnbinom(y, size = 1/params$sigma, mu = params$mu),
+         "bernoulli (probit)" = ,
+         "bernoulli (logit)" = ,
+         "bernoulli (cloglog)" = ifelse(y<0, 0, ifelse(y<1, 1 - params$mu, 1)),
          stop("Unknown family without cdf: '", fam_name, "'"))
 }
 
