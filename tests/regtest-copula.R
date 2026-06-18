@@ -171,5 +171,29 @@ ref_val <- gamboostLSS:::binary_continuous_loglik(
 stopifnot(abs(ref_val - (-2.36596)) < 1e-2)
 
   
-  
+### test correct naming of sub-family parameters
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(GaussianLSS(),
+                                                       GaussianLSS())),
+                    c("mu1", "sigma1", "mu2", "sigma2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(NBinomialLSS(),
+                                                       NBinomialLSS())),
+                    c("mu1", "sigma1", "mu2", "sigma2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
+  gamboostLSS:::BernoulliLSS(), 
+  gamboostLSS:::BernoulliLSS())),
+  c("mu1", "mu2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
+  gamboostLSS:::BernoulliLSS(), GaussianLSS())),
+  c("mu1", "mu2", "sigma2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
+  GaussianLSS(), gamboostLSS:::BernoulliLSS())),
+  c("mu1", "sigma1", "mu2", "theta")))
+
+
+
+
   
