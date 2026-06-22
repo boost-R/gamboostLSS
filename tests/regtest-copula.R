@@ -47,7 +47,7 @@ stopifnot(is.finite(gamboostLSS:::discrete_discrete_loglik(y,
                                                            list(mu=2, sigma=1), 
                                                            "gaussian", theta)))
 
-### numerical gradient check
+### numerical gradient check of gaussian copula 
 cop <- gamboostLSS:::get_copula("gaussian")
 test_points <- list(
   # standard case - all params non-problematic
@@ -78,6 +78,20 @@ for (p in test_points){
   
   stopifnot(abs(num_grad_theta - ana_grad_theta) < 1e-5)
 }
+
+### check boundary consistency of clayton copula
+cop <- gamboostLSS:::get_copula("clayton")
+u <- c(0.2, 0.5, 0.8)
+stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
+stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
+
+### check h against numeric derivative of pcopula for clayton copula
+eps <- 1e-6
+theta <- 2
+u1 <- 0.4; u2 <- 0.6
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(abs(num_h - ana_h) < 1e-5)
 
 ### check numerical gradient of continuous_continuous_loglik
 set.seed(42)
@@ -125,7 +139,7 @@ stopifnot(abs(gamboostLSS:::discrete_discrete_loglik(y,
                 (-3.328349)) < 1e-3)  # reference computed manually via 
                                       # mvtnorm::pmvnorm 
 
-### check h against numeric derivative of pcopula 
+### check h against numeric derivative of pcopula for gaussian copula
 set.seed(42)
 y <- cbind(rnorm(10), rnorm(10))
 eps <- 1e-3
