@@ -41,10 +41,29 @@
   )
 }
 
+.copula_clayton <- function(){
+  list(
+  pcopula = function(u1, u2, theta){
+    (u1^(-theta) + u2^(-theta) - 1)^(-1/theta)
+  },
+  logdcopula = function(u1, u2, theta){
+    log(theta + 1) - (theta + 1) * (log(u1) + log(u2)) - 
+      (2 + 1/theta) * log(u1^(-theta) + u2^(-theta) - 1)
+  },
+  h = function(u1, u2, theta){
+    u2^(-theta - 1) * (u1^(-theta) + u2^(-theta) - 1)^(-1 - 1/theta)
+  },
+  response = function(f) exp(f),
+  name = "Clayton copula: theta (exp link)"
+)
+}
+
+
 # Input:  copula  - character with copula name
 # Output: copula object 
 get_copula <- function(copula){
   switch(copula,
          "gaussian" = .copula_gaussian(),
+         "clayton" = .copula_clayton(),
          stop("Unknown copula: '", copula, "'"))
 }
