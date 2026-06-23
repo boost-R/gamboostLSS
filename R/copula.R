@@ -58,6 +58,31 @@
 )
 }
 
+.copula_gumbel <- function(){
+  list(
+    pcopula = function(u1, u2, theta){
+      x <- -log(u1); y <- -log(u2)
+      term1 <- x^theta + y^theta
+      exp(-term1^(1/theta))
+    },
+    logdcopula = function(u1, u2, theta){
+      x <- -log(u1); y <- -log(u2)
+      term1 <- x^theta + y^theta
+      term2 <- exp(-term1^(1/theta))
+      log(term2) - log(u1) - log(u2) + (2/theta - 2) * log(term1) +
+        (theta - 1) * log(x * y) + log(1 + (theta - 1) * term1^(-1/theta))
+    },
+    h = function(u1, u2, theta){
+      x <- -log(u1); y <- -log(u2)
+      term1 <- x^theta + y^theta
+      term2 <- exp(-term1^(1/theta))
+      term2 * term1^(1/theta - 1) * y^(theta - 1) / u2
+    },
+    response = function(f) exp(f) + 1,
+    name = "Gumbel copula: theta (exp+1 link)"
+  )
+}
+
 
 # Input:  copula  - character with copula name
 # Output: copula object 
@@ -65,5 +90,6 @@ get_copula <- function(copula){
   switch(copula,
          "gaussian" = .copula_gaussian(),
          "clayton" = .copula_clayton(),
+         "gumbel" = .copula_gumbel(),
          stop("Unknown copula: '", copula, "'"))
 }
