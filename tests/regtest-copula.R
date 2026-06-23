@@ -85,6 +85,7 @@ u <- c(0.2, 0.5, 0.8)
 stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
 stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
 
+
 ### check h against numeric derivative of pcopula for clayton copula
 eps <- 1e-6
 theta <- 2
@@ -92,6 +93,40 @@ u1 <- 0.4; u2 <- 0.6
 num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
 ana_h <- cop$h(u1, u2, theta)
 stopifnot(abs(num_h - ana_h) < 1e-5)
+
+### check boundary consistency of gumbel copula
+cop <- gamboostLSS:::get_copula("gumbel")
+u <- c(0.2, 0.5, 0.8)
+stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
+stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
+
+### check h against numeric derivative of pcopula for gumbel copula
+eps <- 1e-6
+theta <- 2
+u1 <- 0.4; u2 <- 0.6
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(abs(num_h - ana_h) < 1e-5)
+
+### check logdcopula against numerical mixed partial derivative of pcopula 
+eps <- 1e-4
+thetas <- list(gaussian = 0.5, clayton = 2, gumbel = 3)
+test_u12 <- list(c(0.3,0.4), c(0.5, 0.5), c(0.7, 0.2), c(0.1, 0.9))
+
+for (cop_name in names(thetas)){
+  cop <- gamboostLSS:::get_copula(cop_name)
+  theta <- thetas[[cop_name]]
+  for (p in test_u12){
+    u1 <- p[1]; u2 <- p[2]
+    num_c <- (cop$pcopula(u1+eps, u2+eps, theta) - 
+                cop$pcopula(u1+eps, u2-eps, theta) -
+                cop$pcopula(u1-eps, u2+eps, theta) +
+                cop$pcopula(u1-eps, u2-eps, theta)) / (4*eps^2)
+    ana_logc <- cop$logdcopula(u1, u2, theta)
+    stopifnot(abs(num_c - exp(ana_logc)) < 1e-4)
+  }
+}
+
 
 ### check numerical gradient of continuous_continuous_loglik
 set.seed(42)
@@ -158,7 +193,6 @@ num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) /
   (2*eps)
 ana_h <- cop$h(u1, u2, theta)
 stopifnot(max(abs(num_h - ana_h)) < 1e-3)
-
 
 
 ### check binary_continuous_loglik at theta = 0
