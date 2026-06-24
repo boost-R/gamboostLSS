@@ -108,6 +108,20 @@ num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) /
 ana_h <- cop$h(u1, u2, theta)
 stopifnot(abs(num_h - ana_h) < 1e-5)
 
+### check boundary consistency of frank copula
+cop <- gamboostLSS:::get_copula("frank")
+u <- c(0.2, 0.5, 0.8)
+stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
+stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
+
+### check h against numeric derivative of pcopula for frank copula
+eps <- 1e-6
+theta <- 2
+u1 <- 0.4; u2 <- 0.6
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(abs(num_h - ana_h) < 1e-5)
+
 ### check logdcopula against numerical mixed partial derivative of pcopula 
 eps <- 1e-4
 thetas <- list(gaussian = 0.5, clayton = 2, gumbel = 3)
