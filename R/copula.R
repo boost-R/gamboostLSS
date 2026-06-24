@@ -83,6 +83,28 @@
   )
 }
 
+.copula_frank <- function(){
+  list(
+    pcopula = function(u1, u2, theta){
+      term1 <- 1 - exp(-theta*u1)
+      term2 <- 1 - exp(-theta*u2)
+      -1/theta * log(1 - term1 * term2/(1 - exp(-theta)))
+    },
+    logdcopula = function(u1, u2, theta){
+      term1 <- 1 - exp(-theta*u1)
+      term2 <- 1 - exp(-theta*u2)
+      log(theta) + log(1 - exp(-theta)) - theta*(u1+u2) - 2 * 
+        log((1 - exp(-theta)) - term1 * term2)
+    },
+    h = function(u1, u2, theta){
+      (-exp(theta) * (exp(theta*u1) - 1)) / 
+        (exp(theta*u1+theta*u2) - exp(theta*u1+theta) - exp(theta*u2 + theta) +
+        exp(theta))
+    },
+    response = function(f) f,
+    name = "Frank copula: theta (identity link)"
+  )
+}
 
 # Input:  copula  - character with copula name
 # Output: copula object 
@@ -91,5 +113,6 @@ get_copula <- function(copula){
          "gaussian" = .copula_gaussian(),
          "clayton" = .copula_clayton(),
          "gumbel" = .copula_gumbel(),
+         "frank" = .copula_frank(),
          stop("Unknown copula: '", copula, "'"))
 }
