@@ -256,6 +256,23 @@ stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
   c("mu1", "sigma1", "mu2", "theta")))
 
 
-
-
+### check CopulaFamilies copula response/name
+for (cop_name in c("gaussian", "clayton", "gumbel", "frank")){
+  copula_family <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                                copula = cop_name)
+  cop <- gamboostLSS:::get_copula(cop_name)
+  stopifnot(identical(copula_family$theta@name, cop$name))
   
+  # compare responses
+  f_vals <- c(-2, -0.5, 0, 0.5, 2)
+  stopifnot(max(abs(copula_family$theta@response(f_vals) - 
+                      cop$response(f_vals))) < 1e-5)
+}
+
+### check "unknown-copula" case for get_copula
+result <- tryCatch(gamboostLSS:::get_copula("unknown"),
+                   error = function(e) "error")
+stopifnot(identical(result, "error"))
+
+
+
