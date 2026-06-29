@@ -37,6 +37,7 @@
       pnorm((z1 - rho*z2) / sqrt(1 - rho^2))
     },
     response = function(f) tanh(f),
+    dresponse = function(f) 1 - tanh(f)^2,
     name = "Gaussian copula: rho (tanh link)"
   )
 }
