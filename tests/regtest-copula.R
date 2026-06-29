@@ -124,7 +124,7 @@ stopifnot(abs(num_h - ana_h) < 1e-5)
 
 ### check logdcopula against numerical mixed partial derivative of pcopula 
 eps <- 1e-4
-thetas <- list(gaussian = 0.5, clayton = 2, gumbel = 3)
+thetas <- list(gaussian = 0.5, clayton = 2, gumbel = 3, frank = 2.5)
 test_u12 <- list(c(0.3,0.4), c(0.5, 0.5), c(0.7, 0.2), c(0.1, 0.9))
 
 for (cop_name in names(thetas)){
@@ -275,4 +275,21 @@ result <- tryCatch(gamboostLSS:::get_copula("unknown"),
 stopifnot(identical(result, "error"))
 
 
+### check ngradient_theta against numDeriv for gaussian copula
+library(numDeriv)
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 0.3
+num_grad <- numDeriv::grad(function(f) -cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-5)
 
