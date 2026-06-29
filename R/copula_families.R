@@ -268,14 +268,19 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   # copula
   # loss
   loss_theta <- function(y, f){
-    theta_current <- f # no response for dependence param implemented yet
+    theta_current <- cop$response(f) # no response for dependence param implemented yet
     return(-loglik(y, marginal1, marginal2, current_params1, 
                    current_params2, copula, theta_current))
   }
   
   # ngradient
   ngradient_theta <- function(y, f, w=1){
-    NULL
+    theta_current <- cop$response(f)
+    u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+    u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
+    outer_deriv <- cop$dlogdcopula_theta(u1, u2, theta_current)
+    inner_deriv <- cop$dresponse(f)
+    return(outer_deriv * inner_deriv)
     }
   
   # offset
