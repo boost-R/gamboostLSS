@@ -293,3 +293,19 @@ num_grad <- numDeriv::grad(function(f) -cf$theta@risk(y, f), f0)
 ana_grad <- sum(cf$theta@ngradient(y, f0))
 stopifnot(abs(num_grad - ana_grad) < 1e-5)
 
+### check ngradient_theta against numDeriv for clayton copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "clayton")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 0.5
+num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-4)
