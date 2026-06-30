@@ -51,10 +51,16 @@
     log(theta + 1) - (theta + 1) * (log(u1) + log(u2)) - 
       (2 + 1/theta) * log(u1^(-theta) + u2^(-theta) - 1)
   },
+  dlogdcopula_theta = function(u1, u2, theta){
+    term1 <- u1^(-theta) + u2^(-theta) -1 
+    return(1/(theta+1) - log(u1) - log(u2) + log(term1)/theta^2 + 
+             (2 + 1/theta) * (u1^(-theta)*log(u1) + u2^(-theta)*log(u2)) / term1)
+  },
   h = function(u1, u2, theta){
     u2^(-theta - 1) * (u1^(-theta) + u2^(-theta) - 1)^(-1 - 1/theta)
   },
   response = function(f) exp(f),
+  dresponse = function(f) exp(f),
   name = "Clayton copula: theta (exp link)"
 )
 }
