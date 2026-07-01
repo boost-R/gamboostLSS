@@ -87,7 +87,7 @@ get_marginal_logpdf <- function(marginal, y, params){
          stop("Unknown family without pdf: '", fam_name, "'"))
 }
 
-# Input:    y                       - n x 2 matrix of observations
+# Input:    y                       - n x 2 matrix of responses
 #           marginal1, marginal2    - families-objects
 #           params1, params2        - named lists of parameter values
 #           copula                  - character, e.g. "gaussian"
@@ -105,7 +105,7 @@ continuous_continuous_loglik <- function(y, marginal1, marginal2, params1,
     get_marginal_logpdf(marginal2, y[,2], params2)
 }
 
-# Input:    y                       - n x 2 matrix of observations
+# Input:    y                       - n x 2 matrix of responses
 #           marginal1, marginal2    - families-objects
 #           params1, params2        - named lists of parameter values
 #           copula                  - character, e.g. "gaussian" 
@@ -127,7 +127,7 @@ discrete_discrete_loglik <- function(y, marginal1, marginal2, params1,
   return(log(p))
 }
 
-# Input:    y                       - n x 2 matrix of observations
+# Input:    y                       - n x 2 matrix of responses
 #           marginal1, marginal2    - families-objects
 #           params1, params2        - named lists of parameter values
 #           copula                  - character, e.g. "gaussian" 
@@ -146,7 +146,7 @@ binary_continuous_loglik <- function(y, marginal1, marginal2, params1,
   
 }
 
-# Input:    y                       - n x 2 matrix of observations
+# Input:    y                       - n x 2 matrix of responses
 #           marginal1, marginal2    - families-objects
 #           params1, params2        - named lists of parameter values
 #           copula                  - character, e.g. "gaussian" 
@@ -163,6 +163,31 @@ continuous_binary_loglik <- function(y, marginal1, marginal2, params1,
   d <- pmax(d, 1e-10)
   return(log(d) + get_marginal_logpdf(marginal1, y[,1], params1))
   
+}
+
+# Input:    marginal              - gamboostLSS families-object
+#           y                     - response vector
+#           params                - named list of parameter values
+#           param_name            - character e.g. "mu"
+# Output    
+get_marginal_dcdf <- function(marginal, y, params, param_name){
+  fam_name <- tolower(attr(marginal, "name"))
+  switch(fam_name,
+         "gaussian" = {
+           if (param_name == "mu")
+             -dnorm(y, mean = params$mu, sd = params$sigma)
+           else if (param_name == "sigma")
+             -dnorm(y, mean = params$mu, sd = params$sigma) * (y - params$mu) /
+             params$sigma
+         },
+         sapply(y, function(yi){
+           numDeriv::grad(function(p){
+             params_p <- params
+             params_p[[param_name]] <- p
+             get_marginal_cdf(marginal, yi, params_p)
+           }, params[[param_name]])
+         })
+  )
 }
 
 
