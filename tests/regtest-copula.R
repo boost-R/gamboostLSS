@@ -309,3 +309,44 @@ f0 <- 0.5
 num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
 ana_grad <- sum(cf$theta@ngradient(y, f0))
 stopifnot(abs(num_grad - ana_grad) < 1e-4)
+
+### check get_marginal_dcdf analytical formula for gaussian
+eps <- 1e-6
+y <- c(0.5, -1.2, 2.0)
+params <- list(mu = 0.3, sigma = 1.5)
+
+num_dmu <- (gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                            list(mu = params$mu + eps,
+                                                 sigma = params$sigma)) -
+              gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                              list(mu = params$mu - eps,
+                                                   sigma = params$sigma))) / 
+  (2*eps)
+ana_dmu <- gamboostLSS:::get_marginal_dcdf(GaussianLSS(), y, params, "mu")
+stopifnot(max(abs(num_dmu - ana_dmu)) < 1e-5)
+
+num_dsigma <- (gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                              list(mu = params$mu,
+                                                   sigma = params$sigma + eps)) -
+                 gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                                list(mu = params$mu,
+                                                     sigma = params$sigma- eps))) / 
+  (2*eps)
+ana_dsigma <- gamboostLSS:::get_marginal_dcdf(GaussianLSS(), y, params, "sigma")
+stopifnot(max(abs(num_dsigma - ana_dsigma)) < 1e-5)
+
+### check get_marginal_dcdf fallback for negative binomial
+y_nb <- c(1, 3, 5)
+params_nb <- list(mu = 2, sigma = 1)
+d_nb <- gamboostLSS:::get_marginal_dcdf(NBinomialLSS(), y_nb, params_nb, "mu")
+stopifnot(all(is.finite(d_nb)))
+
+
+
+
+
+
+
+
+
+
