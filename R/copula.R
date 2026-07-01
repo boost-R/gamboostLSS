@@ -51,6 +51,10 @@
     log(theta + 1) - (theta + 1) * (log(u1) + log(u2)) - 
       (2 + 1/theta) * log(u1^(-theta) + u2^(-theta) - 1)
   },
+  dlogdcopula_u1 = function(u1, u2, theta){
+    term1 <- u1^(-theta) + u2^(-theta) -1 
+    return(-(theta+1)/u1 + (2*theta+1) * u1^(-theta-1) / term1)
+  },
   dlogdcopula_theta = function(u1, u2, theta){
     term1 <- u1^(-theta) + u2^(-theta) -1 
     return(1/(theta+1) - log(u1) - log(u2) + log(term1)/theta^2 + 
