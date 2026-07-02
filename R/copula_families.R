@@ -225,6 +225,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   # closure variables
   current_params1 <- setNames(vector("list", length(params1)), params1)
   current_params2 <- setNames(vector("list", length(params2)), params2)
+  current_theta <- theta
   
   # marginal 1
   sub_families1 <- list()
@@ -240,7 +241,22 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       }
       
       # ngradient
-      ngradient_p <- function(y, f, w=1){NULL}
+      ngradient_p <- function(y, f, w=1){
+        marg_ngradient <- marginal1[[param_name]]@ngradient(y[,1], f, w)
+        
+        if (marginal_case != "continuous_continuous" ||
+            is.null(cop$dlogdcopula_u1))
+          return(marg_ngradient)
+        
+        u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+        u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
+        dcdf <- get_marginal_dcdf(marginal1, y[,1], current_params1, param_name)
+        dresponse_f <- sapply(f, function(fi) 
+          numDeriv::grad(marginal1[[param_name]]@response, fi))
+        
+        return(cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf * dresponse_f + 
+                 marg_ngradient)
+      }
       
       # offset
       offset_p <- function(y, w){
@@ -272,7 +288,22 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       }
       
       # ngradient
-      ngradient_p <- function(y, f, w=1){NULL}
+      ngradient_p <- function(y, f, w=1){
+        marg_ngradient <- marginal2[[param_name]]@ngradient(y[,2], f, w)
+        
+        if (marginal_case != "continuous_continuous" ||
+            is.null(cop$dlogdcopula_u1))
+          return(marg_ngradient)
+        
+        u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+        u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
+        dcdf <- get_marginal_dcdf(marginal1, y[,2], current_params1, param_name)
+        dresponse_f <- sapply(f, function(fi) 
+          numDeriv::grad(marginal2[[param_name]]@response, fi))
+        
+        return(cop$dlogdcopula_u1(u2, u1, current_theta) * dcdf * dresponse_f + 
+                 marg_ngradient)
+      }
       
       # offset 
       offset_p <- function(y, w){
