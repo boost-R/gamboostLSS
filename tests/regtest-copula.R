@@ -341,8 +341,28 @@ params_nb <- list(mu = 2, sigma = 1)
 d_nb <- gamboostLSS:::get_marginal_dcdf(NBinomialLSS(), y_nb, params_nb, "mu")
 stopifnot(all(is.finite(d_nb)))
 
+### check ngradient_p (mu1, sigma1) against numDeriv for gaussian copula 
+set.seed(42)
+y <- cbind(rnorm(10, 0.5, 1.5), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
 
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y,w))
+invisible(cf$sigma1@offset(y,w))
+invisible(cf$mu2@offset(y,w))
+invisible(cf$sigma2@offset(y,w))
 
+f0 <- 0.3
+num_grad_mu1 <- numDeriv::grad(function(f) -cf$mu1@risk(y, f, w=w), f0)
+ana_grad_mu1 <- sum(cf$mu1@ngradient(y, f0, w))
+stopifnot(abs(num_grad_mu1 - ana_grad_mu1) < 1e-4)
+
+f0_sigma <- log(1.5)
+num_grad_sigma1 <- numDeriv::grad(function(f) - cf$sigma1@risk(y, f, w=w),
+                                  f0_sigma)
+ana_grad_sigma1 <- sum(cf$sigma1@ngradient(y, f0_sigma, w))
+stopifnot(abs(num_grad_sigma1 - ana_grad_sigma1) < 1e-4)
 
 
 
