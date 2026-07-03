@@ -237,7 +237,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       loss_p <- function(y, f){
         current_params1[[param_name]] <- marginal1[[param_name]]@response(f)
         return(-loglik(y, marginal1, marginal2, current_params1, 
-                              current_params2, copula, theta))
+                              current_params2, copula, current_theta))
       }
       
       # ngradient
@@ -284,7 +284,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       loss_p <- function(y, f){
         current_params2[[param_name]] <- marginal2[[param_name]]@response(f)
         return(-loglik(y, marginal1, marginal2, current_params1, 
-                       current_params2, copula, theta))
+                       current_params2, copula, current_theta))
       }
       
       # ngradient
@@ -324,7 +324,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   # copula
   # loss
   loss_theta <- function(y, f){
-    theta_current <- cop$response(f) # no response for dependence param implemented yet
+    theta_current <- cop$response(f) 
     return(-loglik(y, marginal1, marginal2, current_params1, 
                    current_params2, copula, theta_current))
   }
@@ -341,10 +341,9 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   
   # offset
   offset_theta <- function(y, w){
-    NULL
+    return(0)
   }
-  # also not possible to implement yet, since we need response-function for 
-  # chosen copula
+
   
   theta_family <- Family(loss = loss_theta,
          ngradient = ngradient_theta,
