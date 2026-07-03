@@ -364,9 +364,23 @@ num_grad_sigma1 <- numDeriv::grad(function(f) - cf$sigma1@risk(y, f, w=w),
 ana_grad_sigma1 <- sum(cf$sigma1@ngradient(y, f0_sigma, w))
 stopifnot(abs(num_grad_sigma1 - ana_grad_sigma1) < 1e-4)
 
+### verify all ngradients return finite values after initialization
+set.seed(42)
+y <- cbind(rnorm(20), rnorm(20))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+w <- rep(1, nrow(y))
 
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+invisible(cf$theta@offset(y, w))
 
-
-
+stopifnot(all(is.finite(cf$mu1@ngradient(y, 0.5, w))))
+stopifnot(all(is.finite(cf$sigma1@ngradient(y, log(1.5), w))))
+stopifnot(all(is.finite(cf$mu2@ngradient(y, 0.5, w))))
+stopifnot(all(is.finite(cf$sigma2@ngradient(y, log(1.5), w))))
+stopifnot(all(is.finite(cf$theta@ngradient(y, 0.3, w))))
 
 
