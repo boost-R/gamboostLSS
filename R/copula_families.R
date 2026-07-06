@@ -242,17 +242,28 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       
       # ngradient
       ngradient_p <- function(y, f, w=1){
-        marg_ngradient <- marginal1[[param_name]]@ngradient(y[,1], f, w)
+        params1_f <- current_params1
+        params1_f[[param_name]] <- marginal1[[param_name]]@response(f)
+        
+        eps <- 1e-7
+        pv <- params1_f[[param_name]]
+        p_plus <- params1_f; p_plus[[param_name]] <- pv + eps
+        p_minus <- params1_f; p_minus[[param_name]] <- pv - eps
+        dlogf1_dparam <- (get_marginal_logpdf(marginal1, y[,1], p_plus) -
+                            get_marginal_logpdf(marginal1, y[,1], p_minus)) / 
+                            (2*eps)
+        dresponse_f <- sapply(f, function(fi) 
+                              numDeriv::grad(marginal1[[param_name]]@response,
+                                             fi))
+        marg_ngradient <- dlogf1_dparam * dresponse_f
         
         if (marginal_case != "continuous_continuous" ||
             is.null(cop$dlogdcopula_u1))
           return(marg_ngradient)
         
-        u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+        u1 <- get_marginal_cdf(marginal1, y[,1], params1_f)
         u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
-        dcdf <- get_marginal_dcdf(marginal1, y[,1], current_params1, param_name)
-        dresponse_f <- sapply(f, function(fi) 
-          numDeriv::grad(marginal1[[param_name]]@response, fi))
+        dcdf <- get_marginal_dcdf(marginal1, y[,1], params1_f, param_name)
         
         return(cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf * dresponse_f + 
                  marg_ngradient)
@@ -289,19 +300,30 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       
       # ngradient
       ngradient_p <- function(y, f, w=1){
-        marg_ngradient <- marginal2[[param_name]]@ngradient(y[,2], f, w)
+        params2_f <- current_params2
+        params2_f[[param_name]] <- marginal2[[param_name]]@response(f)
+        
+        eps <- 1e-7
+        pv <- params2_f[[param_name]]
+        p_plus <- params2_f; p_plus[[param_name]] <- pv + eps
+        p_minus <- params2_f; p_minus[[param_name]] <- pv - eps
+        dlogf2_dparam <- (get_marginal_logpdf(marginal2, y[,1], p_plus) -
+                            get_marginal_logpdf(marginal2, y[,1], p_minus)) / 
+                            (2*eps)
+        dresponse_f <- sapply(f, function(fi) 
+          numDeriv::grad(marginal2[[param_name]]@response,
+                         fi))
+        marg_ngradient <- dlogf2_dparam * dresponse_f
         
         if (marginal_case != "continuous_continuous" ||
             is.null(cop$dlogdcopula_u1))
           return(marg_ngradient)
         
         u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
-        u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
-        dcdf <- get_marginal_dcdf(marginal1, y[,2], current_params1, param_name)
-        dresponse_f <- sapply(f, function(fi) 
-          numDeriv::grad(marginal2[[param_name]]@response, fi))
+        u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
+        dcdf <- get_marginal_dcdf(marginal1, y[,1], params2_f, param_name)
         
-        return(cop$dlogdcopula_u1(u2, u1, current_theta) * dcdf * dresponse_f + 
+        return(cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf * dresponse_f + 
                  marg_ngradient)
       }
       
