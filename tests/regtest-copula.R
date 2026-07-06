@@ -79,6 +79,33 @@ for (p in test_points){
   stopifnot(abs(num_grad_theta - ana_grad_theta) < 1e-5)
 }
 
+### numerical gradient check of Gumbel copula 
+cop <- gamboostLSS:::get_copula("gumbel")
+test_points_gumbel <- list(
+  # standard case - all params non-problematic
+  list(u1 = 0.3, u2 = 0.6, theta = 1.4), 
+  # negative correlation
+  list(u1 = 0.7, u2 = 0.2, theta = 3),
+  # strong dependence 
+  list(u1 = 0.5, u2 = 0.5, theta = 1.5),
+  # no correlation
+  list(u1 = 0.1, u2 = 0.9, theta = 4)
+)
+eps <- 1e-5
+
+# check analytical against numerical gradient of Gumbel copula (u1)
+for (p in test_points_gumbel){
+  num_grad_u1 <- (cop$logdcopula(p$u1 + eps, p$u2, p$theta) - 
+                    cop$logdcopula(p$u1 - eps, p$u2, p$theta)) / (2*eps)
+  
+  stopifnot(abs(num_grad_u1 - cop$dlogdcopula_u1(p$u1, p$u2, p$theta)) < 1e-3)
+
+  num_grad_theta <- (cop$logdcopula(p$u1, p$u2, p$theta + eps) -
+                       cop$logdcopula(p$u1, p$u2, p$theta - eps)) / (2*eps)
+  
+  stopifnot(abs(num_grad_theta - cop$dlogdcopula_theta(p$u1, p$u2, p$theta)) < 1e-3)
+}
+
 ### check boundary consistency of clayton copula
 cop <- gamboostLSS:::get_copula("clayton")
 u <- c(0.2, 0.5, 0.8)
@@ -310,6 +337,23 @@ num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
 ana_grad <- sum(cf$theta@ngradient(y, f0))
 stopifnot(abs(num_grad - ana_grad) < 1e-4)
 
+### check ngradient_theta against numDeriv for gumbel copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gumbel")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 0.5
+num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-4)
+
 ### check get_marginal_dcdf analytical formula for gaussian
 eps <- 1e-6
 y <- c(0.5, -1.2, 2.0)
@@ -345,7 +389,7 @@ stopifnot(all(is.finite(d_nb)))
 set.seed(42)
 y <- cbind(rnorm(10, 0.5, 1.5), rnorm(10))
 cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
-                                   copula = "gaussian")
+                                   copula = "gaussian", theta = 0)
 
 w <- rep(1, nrow(y))
 invisible(cf$mu1@offset(y,w))
@@ -368,7 +412,7 @@ stopifnot(abs(num_grad_sigma1 - ana_grad_sigma1) < 1e-4)
 set.seed(42)
 y <- cbind(rnorm(20), rnorm(20))
 cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
-                                   copula = "gaussian")
+                                   copula = "gaussian", theta = 0)
 w <- rep(1, nrow(y))
 
 invisible(cf$mu1@offset(y, w))
