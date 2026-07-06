@@ -83,6 +83,26 @@
       log(term2) - log(u1) - log(u2) + (2/theta - 2) * log(term1) +
         (theta - 1) * log(x * y) + log(1 + (theta - 1) * term1^(-1/theta))
     },
+    dlogdcopula_u1 = function(u1, u2, theta){
+      x <- -log(u1); y <- -log(u2)
+      term1 <- x^theta + y^theta
+      term2 <- term1^(1/theta)
+      term3 <- 1 + (theta-1)/term2
+      
+      return((x^(theta-1)/term1 * (term2 + 2*theta - 2 + (theta-1)/
+                                     (term2*term3)) - 1 - (theta-1)/x) / u1)
+    },
+    dlogdcopula_theta = function(u1, u2, theta){
+      x <- -log(u1); y <- -log(u2)
+      term1 <- x^theta + y^theta
+      term12 <- x^theta * log(x) + y^theta * log(y)
+      term2 <- term1^(1/theta)
+      term3 <- 1 + (theta-1)/term2
+      term4 <- log(term1)/theta^2 - term12/(theta*term1)
+      
+      return(term2*term4 - 2*log(term1)/theta^2 + (2/theta - 2)*term12/term1 +
+               log(x*y) + (1 + (theta-1)*term4) / (term2 * term3))
+    },
     h = function(u1, u2, theta){
       x <- -log(u1); y <- -log(u2)
       term1 <- x^theta + y^theta
@@ -90,6 +110,7 @@
       term2 * term1^(1/theta - 1) * y^(theta - 1) / u2
     },
     response = function(f) exp(f) + 1,
+    dresponse = function(f) exp(f),
     name = "Gumbel copula: theta (exp+1 link)"
   )
 }
