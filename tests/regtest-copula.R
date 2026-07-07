@@ -141,6 +141,22 @@ u <- c(0.2, 0.5, 0.8)
 stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
 stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
 
+### numerical gradient check of Frank copula
+cop <- gamboostLSS:::get_copula("frank")
+test_points_frank <- list(
+  list(u1 = 0.3, u2 = 0.6, theta = 2),
+  list(u1 = 0.7, u2 = 0.2, theta = 5),
+  list(u1 = 0.5, u2 = 0.5, theta = 0.5),
+  list(u1 = 0.1, u2 = 0.9, theta = 1)
+)
+
+for (p in test_points_frank){
+  num_u1 <- numDeriv::grad(function(u) cop$logdcopula(u, p$u2, p$theta), p$u1)
+  stopifnot(abs(num_u1 - cop$dlogdcopula_u1(p$u1, p$u2, p$theta)) < 1e-4)
+  num_theta <- numDeriv::grad(function(th) cop$logdcopula(p$u1, p$u2, th), p$theta)
+  stopifnot(abs(num_theta - cop$dlogdcopula_theta(p$u1, p$u2, p$theta)) < 1e-4)
+}
+
 ### check h against numeric derivative of pcopula for frank copula
 eps <- 1e-6
 theta <- 2
