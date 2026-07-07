@@ -128,12 +128,28 @@
       log(theta) + log(1 - exp(-theta)) - theta*(u1+u2) - 2 * 
         log((1 - exp(-theta)) - term1 * term2)
     },
+    dlogdcopula_u1 = function(u1, u2, theta){
+      a <- 1 - exp(-theta)
+      t1 <- 1 - exp(-theta*u1)
+      t2 <- 1 - exp(-theta*u2)
+      D <- a - t1*t2
+      theta * (-1 + 2*t2*exp(-theta*u1) / D)
+    },
+    dlogdcopula_theta = function(u1, u2, theta){
+      a <- 1 - exp(-theta)
+      t1 <- 1 - exp(-theta*u1)
+      t2 <- 1 - exp(-theta*u2)
+      D <- a - t1*t2
+      dD <- exp(-theta) - u1*exp(-theta*u1)*t2 - t1*u2*exp(-theta*u2)
+      1/theta + exp(-theta)/a - (u1+u2) - 2*dD/D
+    },
     h = function(u1, u2, theta){
       (-exp(theta) * (exp(theta*u1) - 1)) / 
         (exp(theta*u1+theta*u2) - exp(theta*u1+theta) - exp(theta*u2 + theta) +
         exp(theta))
     },
     response = function(f) f,
+    dresponse = function(f) 1,
     name = "Frank copula: theta (identity link)"
   )
 }
