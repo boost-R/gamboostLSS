@@ -443,4 +443,19 @@ stopifnot(all(is.finite(cf$mu2@ngradient(y, 0.5, w))))
 stopifnot(all(is.finite(cf$sigma2@ngradient(y, log(1.5), w))))
 stopifnot(all(is.finite(cf$theta@ngradient(y, 0.3, w))))
 
+### check ngradient_theta against numDeriv for Frank copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "frank")
 
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 2
+num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-4)
