@@ -227,6 +227,21 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   current_params2 <- setNames(vector("list", length(params2)), params2)
   current_theta <- theta
   
+  update_current_params <- function(env){
+    for (p in params1){
+      nm <- paste0(p, "1")
+      if (exists(nm, envir = env, inherits = FALSE))
+        current_params1[[p]] <<- get(nm, envir = env)
+    }
+    for (p in params2){
+      nm <- paste0(p, "2")
+      if (exists(nm, envir = env, inherits = FALSE))
+        current_params2[[p]] <<- get(nm, envir = env)
+    }
+    if (exists("theta", envir = env, inherits = FALSE))
+      current_theta <<- get("theta", envir = env)
+  }
+  
   # marginal 1
   sub_families1 <- list()
   for (p in params1){
@@ -242,6 +257,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       
       # ngradient
       ngradient_p <- function(y, f, w=1){
+        update_current_params(parent.env(environment()))
         params1_f <- current_params1
         params1_f[[param_name]] <- marginal1[[param_name]]@response(f)
         
@@ -300,6 +316,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
       
       # ngradient
       ngradient_p <- function(y, f, w=1){
+        update_current_params(parent.env(environment()))
         params2_f <- current_params2
         params2_f[[param_name]] <- marginal2[[param_name]]@response(f)
         
@@ -307,8 +324,8 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         pv <- params2_f[[param_name]]
         p_plus <- params2_f; p_plus[[param_name]] <- pv + eps
         p_minus <- params2_f; p_minus[[param_name]] <- pv - eps
-        dlogf2_dparam <- (get_marginal_logpdf(marginal2, y[,1], p_plus) -
-                            get_marginal_logpdf(marginal2, y[,1], p_minus)) / 
+        dlogf2_dparam <- (get_marginal_logpdf(marginal2, y[,2], p_plus) -
+                            get_marginal_logpdf(marginal2, y[,2], p_minus)) / 
                             (2*eps)
         dresponse_f <- sapply(f, function(fi) 
           numDeriv::grad(marginal2[[param_name]]@response,
@@ -321,7 +338,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         
         u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
         u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
-        dcdf <- get_marginal_dcdf(marginal1, y[,1], params2_f, param_name)
+        dcdf <- get_marginal_dcdf(marginal2, y[,2], params2_f, param_name)
         
         return(cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf * dresponse_f + 
                  marg_ngradient)
