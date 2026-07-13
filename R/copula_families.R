@@ -380,7 +380,9 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   
   # offset
   offset_theta <- function(y, w){
-    return(0)
+    RET <- if (is.null(cop$offset)) 0 else cop$offset
+    current_theta <<- cop$response(RET)
+    return(RET)
   }
 
   
