@@ -38,6 +38,7 @@
     },
     response = function(f) tanh(f),
     dresponse = function(f) 1 - tanh(f)^2,
+    offset = 0,
     name = "Gaussian copula: rho (tanh link)"
   )
 }
@@ -65,6 +66,7 @@
   },
   response = function(f) exp(f),
   dresponse = function(f) exp(f),
+  offset = 0,
   name = "Clayton copula: theta (exp link)"
 )
 }
@@ -111,6 +113,7 @@
     },
     response = function(f) exp(f) + 1,
     dresponse = function(f) exp(f),
+    offset = 0,
     name = "Gumbel copula: theta (exp+1 link)"
   )
 }
@@ -125,8 +128,8 @@
     logdcopula = function(u1, u2, theta){
       term1 <- 1 - exp(-theta*u1)
       term2 <- 1 - exp(-theta*u2)
-      log(theta) + log(1 - exp(-theta)) - theta*(u1+u2) - 2 * 
-        log((1 - exp(-theta)) - term1 * term2)
+      D <- (1 - exp(-theta)) - term1 * term2
+      log(theta * (1 - exp(-theta))) - theta*(u1+u2) - 2 * log(abs(D))
     },
     dlogdcopula_u1 = function(u1, u2, theta){
       a <- 1 - exp(-theta)
@@ -150,6 +153,7 @@
     },
     response = function(f) f,
     dresponse = function(f) 1,
+    offset = 1,
     name = "Frank copula: theta (identity link)"
   )
 }
