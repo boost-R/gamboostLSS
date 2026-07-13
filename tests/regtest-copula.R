@@ -147,7 +147,8 @@ test_points_frank <- list(
   list(u1 = 0.3, u2 = 0.6, theta = 2),
   list(u1 = 0.7, u2 = 0.2, theta = 5),
   list(u1 = 0.5, u2 = 0.5, theta = 0.5),
-  list(u1 = 0.1, u2 = 0.9, theta = 1)
+  list(u1 = 0.1, u2 = 0.9, theta = 1),
+  list(u1 = 0.5, u2 = 0.5, theta = -3)
 )
 
 for (p in test_points_frank){
@@ -459,3 +460,33 @@ f0 <- 2
 num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
 ana_grad <- sum(cf$theta@ngradient(y, f0))
 stopifnot(abs(num_grad - ana_grad) < 1e-4)
+
+### check theta offsets
+y <- cbind(rnorm(20), rnorm(20))
+w <- rep(1, 20)
+for (cop_name in c("gaussian", "clayton", "gumbel")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = cop_name)
+  stopifnot(cf$theta@offset(y, w) == 0)
+}
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "frank")
+stopifnot(cf$theta@offset(y, w) == 1)
+
+### end-to-end test 
+set.seed(42)
+n <- 100
+x <- rnorm(n)
+rho <- 0.5
+eps <- matrix(rnorm(2*n), n, 2) %*% chol(matrix(c(1, rho, rho, 1), 2, 2))
+y <- cbind(x + eps[, 1], -x + eps[,2])
+df <- data.frame(x = x)
+
+for (cop_name in c("gaussian", "clayton", "gumbel", "frank")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = cop_name)
+  fit <- gamboostLSS(y ~ x, families = cf, data = df, 
+                     control = boost_control(mstop = 10, nu = 0.1))
+  stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+}
+
