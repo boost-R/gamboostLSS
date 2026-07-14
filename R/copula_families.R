@@ -271,18 +271,19 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         dresponse_f <- sapply(f, function(fi) 
                               numDeriv::grad(marginal1[[param_name]]@response,
                                              fi))
-        marg_ngradient <- dlogf1_dparam * dresponse_f
+        ngr <- dlogf1_dparam * dresponse_f
         
         if (marginal_case != "continuous_continuous" ||
-            is.null(cop$dlogdcopula_u1))
-          return(marg_ngradient)
+            is.null(cop$dlogdcopula_u1)){
+          u1 <- get_marginal_cdf(marginal1, y[,1], params1_f)
+          u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
+          dcdf <- get_marginal_dcdf(marginal1, y[,1], params1_f, param_name)
+          ngr <- ngr + cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf *
+            dresponse_f
+        }
         
-        u1 <- get_marginal_cdf(marginal1, y[,1], params1_f)
-        u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
-        dcdf <- get_marginal_dcdf(marginal1, y[,1], params1_f, param_name)
-        
-        return(cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf * dresponse_f + 
-                 marg_ngradient)
+        ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+        return(ngr)
       }
       
       # offset
@@ -330,18 +331,19 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         dresponse_f <- sapply(f, function(fi) 
           numDeriv::grad(marginal2[[param_name]]@response,
                          fi))
-        marg_ngradient <- dlogf2_dparam * dresponse_f
+        ngr <- dlogf2_dparam * dresponse_f
         
         if (marginal_case != "continuous_continuous" ||
-            is.null(cop$dlogdcopula_u1))
-          return(marg_ngradient)
+            is.null(cop$dlogdcopula_u1)){
+          u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+          u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
+          dcdf <- get_marginal_dcdf(marginal2, y[,2], params2_f, param_name)
+          ngr <- ngr + cop$dlogdcopula_u1(u2, u1, current_theta) * dcdf *
+            dresponse_f
+        }
         
-        u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
-        u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
-        dcdf <- get_marginal_dcdf(marginal2, y[,2], params2_f, param_name)
-        
-        return(cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf * dresponse_f + 
-                 marg_ngradient)
+        ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+        return(ngr)
       }
       
       # offset 
@@ -370,12 +372,13 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   
   # ngradient
   ngradient_theta <- function(y, f, w=1){
+    update_current_params(parent.env(environment()))
     theta_current <- cop$response(f)
     u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
     u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
-    outer_deriv <- cop$dlogdcopula_theta(u1, u2, theta_current)
-    inner_deriv <- cop$dresponse(f)
-    return(outer_deriv * inner_deriv)
+    ngr <- cop$dlogdcopula_theta(u1, u2, theta_current) * cop$dresponse(f)
+    ngr <- stabilize_ngradient(ngr, w = w, stabilization)
+    return(ngr)
     }
   
   # offset
