@@ -425,6 +425,16 @@ num_grad_sigma1 <- numDeriv::grad(function(f) - cf$sigma1@risk(y, f, w=w),
 ana_grad_sigma1 <- sum(cf$sigma1@ngradient(y, f0_sigma, w))
 stopifnot(abs(num_grad_sigma1 - ana_grad_sigma1) < 1e-4)
 
+### check ngradient_p for mu2 and sigma2 against numDeriv
+num_grad_mu2 <- numDeriv::grad(function(f) -cf$mu2@risk(y, f, w = w), 0.3)
+ana_grad_mu2 <- sum(cf$mu2@ngradient(y, 0.3, w))
+stopifnot(abs(num_grad_mu2 - ana_grad_mu2) < 1e-4)
+
+num_grad_sigma2 <- numDeriv::grad(function(f) -cf$sigma2@risk(y, f, w = w), 
+                                  log(1.5))
+ana_grad_sigma2 <- sum(cf$sigma2@ngradient(y, log(1.5), 2))
+stopifnot(abs(num_grad_sigma2 - ana_grad_sigma2) < 1e-4)
+
 ### verify all ngradients return finite values after initialization
 set.seed(42)
 y <- cbind(rnorm(20), rnorm(20))
@@ -489,4 +499,39 @@ for (cop_name in c("gaussian", "clayton", "gumbel", "frank")){
                      control = boost_control(mstop = 10, nu = 0.1))
   stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
 }
+
+### check stabilization methods for theta ngradient  
+set.seed(42)
+y <- cbind(rnorm(20), rnorm(20))
+w <- rep(1, 20)
+
+make_cf <- function(stabilization){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = "gaussian", 
+                                     stabilization = stabilization)
+  for (p in c("mu1", "sigma1", "mu2", "sigma2", "theta"))
+    invisible(cf[[p]]@offset(y, w))
+  cf
+}
+
+cf_none <- make_cf("none")
+cf_mad <- make_cf("MAD")
+cf_l2 <- make_cf("L2")
+
+f0 <- 0.3
+raw <- cf_none$theta@ngradient(y, f0, w)
+
+div_mad <- weighted.median(
+  abs(raw - weighted.median(raw, w = w)), w = w)
+stopifnot(all.equal(cf_mad$theta@ngradient(y, f0, w), raw/div_mad))
+
+div_l2 <- sqrt(weighted.mean(raw^2, w = w))
+stopifnot(all.equal(cf_l2$theta@ngradient(y, f0, w), raw / div_l2))
+
+### check stabilization for marginal ngradient
+raw_mu <- cf_none$mu1@ngradient(y, f0, w)
+div_mu <- weighted.median(abs(raw_mu - weighted.median(raw_mu, w = w)), w = w)
+stopifnot(all.equal(cf_mad$mu1@ngradient(y, f0, w), raw_mu / div_mu))
+
+
 
