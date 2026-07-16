@@ -38,7 +38,11 @@
     },
     response = function(f) tanh(f),
     dresponse = function(f) 1 - tanh(f)^2,
+    response_inv = function(theta) atanh(theta),
     offset = 0,
+    tau = function(theta) 2/pi * asin(theta),
+    tau_inv = function(tau) sin(pi * tau/2),
+    tau_range = c(-0.95, 0.95),
     name = "Gaussian copula: rho (tanh link)"
   )
 }
@@ -66,7 +70,11 @@
   },
   response = function(f) exp(f),
   dresponse = function(f) exp(f),
+  response_inv = function(theta) log(theta),
   offset = 0,
+  tau = function(theta) theta / (theta + 2),
+  tau_inv = function(tau) 2 * tau / (1 - tau),
+  tau_range = c(0.01, 0.95),
   name = "Clayton copula: theta (exp link)"
 )
 }
@@ -113,7 +121,11 @@
     },
     response = function(f) exp(f) + 1,
     dresponse = function(f) exp(f),
+    response_inv = function(theta) log(theta - 1),
     offset = 0,
+    tau = function(theta) 1 - 1/theta,
+    tau_inv = function(tau) 1 / (1-tau),
+    tau_range = c(0.01, 0.95),
     name = "Gumbel copula: theta (exp+1 link)"
   )
 }
@@ -153,7 +165,26 @@
     },
     response = function(f) f,
     dresponse = function(f) 1,
+    response_inv = function(theta) theta,
     offset = 1,
+    tau = function(theta){      #no closed solution for tau-conversion
+      sapply(theta, function(th){
+        D1 <- integrate(function(t) ifelse(t == 0, 1, t/expm1(t)),
+                        0, th)$value / th
+        1 - 4/th * (1 - D1)
+      })
+    },
+    tau_inv = function(tau){
+      sapply(tau, function(tv){
+        interval <- if (tv > 0) c(1e-6, 100) else c(-100, -1e-6)
+        uniroot(function(th){
+          D1 <- integrate(function(t) ifelse(t == 0, 1, t/expm1(t)),
+                          0, th)$value / th
+          1 - 4/th * (1-D1) - tv
+        }, interval = interval, tol = 1e-9)$root
+      })
+    },
+    tau_range = c(-0.95, 0.95),
     name = "Frank copula: theta (identity link)"
   )
 }
