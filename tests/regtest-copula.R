@@ -534,4 +534,35 @@ div_mu <- weighted.median(abs(raw_mu - weighted.median(raw_mu, w = w)), w = w)
 stopifnot(all.equal(cf_mad$mu1@ngradient(y, f0, w), raw_mu / div_mu))
 
 
+### check Kendall's tau conversion
+cop <- gamboostLSS:::get_copula("gaussian")
+stopifnot(abs(cop$tau(0.5) - 2/pi * asin(0.5)) < 1e-10)
+for (th in c(-0.8, -0.3, 0.2, 0.9))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-8)
+
+cop <- gamboostLSS:::get_copula("clayton")
+stopifnot(abs(cop$tau(2) - 0.5) < 1e-10)
+for (th in c(0.5, 1, 2, 8))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-8)
+
+cop <- gamboostLSS:::get_copula("gumbel")
+stopifnot(abs(cop$tau(2) - 0.5) < 1e-10)
+for (th in c(1.2, 2, 5, 10))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-8)
+
+cop <- gamboostLSS:::get_copula("frank")
+stopifnot(abs(cop$tau(3) + cop$tau(-3)) < 1e-8)
+stopifnot(cop$tau(8) > cop$tau(2))
+for (th in c(-8, -2, 1, 5, 20))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-6)
+
+### check response_inv
+for (cn in c("gaussian", "clayton", "gumbel", "frank")){
+  cop <- gamboostLSS:::get_copula(cn)
+  for (f in c(-1, 0.3, 2))
+    stopifnot(abs(cop$response_inv(cop$response(f)) - f) < 1e-10)
+}
+
+
+
 
