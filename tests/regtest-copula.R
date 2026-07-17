@@ -472,16 +472,38 @@ ana_grad <- sum(cf$theta@ngradient(y, f0))
 stopifnot(abs(num_grad - ana_grad) < 1e-4)
 
 ### check theta offsets
-y <- cbind(rnorm(20), rnorm(20))
-w <- rep(1, 20)
-for (cop_name in c("gaussian", "clayton", "gumbel")){
-  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
-                                     copula = cop_name)
-  stopifnot(cf$theta@offset(y, w) == 0)
-}
+set.seed(42)
+y <- cbind(rnorm(40), rnorm(40))
+y[, 2] <- y[, 1] + rnorm(40)
+w <- rep(1, 40)
+tau_hat <- cor(y[, 1], y[, 2], method = "kendall")
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+stopifnot(abs(cf$theta@offset(y, w) - atanh(sin(pi * tau_hat / 2))) < 1e-10)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "clayton")
+stopifnot(abs(cf$theta@offset(y, w) - log(2 * tau_hat / (1 - tau_hat))) < 1e-10)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gumbel")
+stopifnot(abs(cf$theta@offset(y, w) - log(tau_hat / (1 - tau_hat))) < 1e-10)
+
 cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
                                    copula = "frank")
-stopifnot(cf$theta@offset(y, w) == 1)
+stopifnot(abs(cop$tau(cf$theta@offset(y, w)) - tau_hat) < 1e-6)
+
+### check fallback for negative dependence in Clayton/Gumbel 
+y_neg <- y; y_neg[, 2] <- -y[, 2]
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                  copula = "clayton")
+stopifnot(cf$theta@offset(y_neg, w) == 0)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                  copula = "gumbel")
+stopifnot(cf$theta@offset(y_neg, w) == 0)
+
 
 ### end-to-end test 
 set.seed(42)
