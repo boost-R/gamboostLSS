@@ -384,6 +384,13 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   # offset
   offset_theta <- function(y, w){
     RET <- if (is.null(cop$offset)) 0 else cop$offset
+    if (!is.null(cop$tau_inv) && !is.null(cop$response_inv)){
+      ys <- y[w > 0, , drop = FALSE]
+      tau_hat <- cor(ys[, 1], ys[, 2], method = "kendall")
+      if (!is.na(tau_hat) && abs(tau_hat) >= 0.01 && 
+          tau_hat >= cop$tau_range[1] && tau_hat <= cop$tau_range[2])
+        RET <- cop$response_inv(cop$tau_inv(tau_hat))
+    }
     current_theta <<- cop$response(RET)
     return(RET)
   }
