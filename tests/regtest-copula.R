@@ -585,6 +585,32 @@ for (cn in c("gaussian", "clayton", "gumbel", "frank")){
     stopifnot(abs(cop$response_inv(cop$response(f)) - f) < 1e-10)
 }
 
+### check cvrisk works with CopulaFamilies
+set.seed(42)
+n <- 80
+x <- rnorm(n)
+eps <- matrix(rnorm(2*n), n, 2) %*% chol(matrix(c(1, .6, .6, 1), 2, 2))
+y <- cbind(x + eps[, 1], -x + eps[, 2])
+df <- data.frame(x = x)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ x, families = cf, data = df,
+                   control = boost_control(mstop = 20, nu = 0.1))
+
+ms <- seq(5, 20, by = 5)
+grid <- matrix(ms, nrow = length(ms), ncol = length(fit))
+colnames(grid) <- names(fit)
+
+cvr <- cvrisk(fit, folds = cv(model.weights(fit), type = "subsampling", B =2),
+              grid = grid, papply = lapply, trace = FALSE)
+
+stopifnot(all(is.finite(cvr)))
+stopifnot(all(mstop(cvr) %in% ms))
+
+mstop(fit) <- mstop(cvr)
+stopifnot(all(mstop(fit) == mstop(cvr)))
+
 
 
 
