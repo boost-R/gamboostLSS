@@ -268,12 +268,11 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         dlogf1_dparam <- (get_marginal_logpdf(marginal1, y[,1], p_plus) -
                             get_marginal_logpdf(marginal1, y[,1], p_minus)) / 
                             (2*eps)
-        dresponse_f <- sapply(f, function(fi) 
-                              numDeriv::grad(marginal1[[param_name]]@response,
-                                             fi))
+        resp <- marginal1[[param_name]]@response
+        dresponse_f <- (resp(f + eps) - resp(f - eps)) / (2*eps)
         ngr <- dlogf1_dparam * dresponse_f
         
-        if (marginal_case != "continuous_continuous" ||
+        if (marginal_case != "continuous_continuous" &&
             is.null(cop$dlogdcopula_u1)){
           u1 <- get_marginal_cdf(marginal1, y[,1], params1_f)
           u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
@@ -328,12 +327,11 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         dlogf2_dparam <- (get_marginal_logpdf(marginal2, y[,2], p_plus) -
                             get_marginal_logpdf(marginal2, y[,2], p_minus)) / 
                             (2*eps)
-        dresponse_f <- sapply(f, function(fi) 
-          numDeriv::grad(marginal2[[param_name]]@response,
-                         fi))
+        resp <- marginal2[[param_name]]@response
+        dresponse_f <- (resp(f + eps) - resp(f - eps)) / (2 * eps)
         ngr <- dlogf2_dparam * dresponse_f
         
-        if (marginal_case != "continuous_continuous" ||
+        if (marginal_case != "continuous_continuous" &&
             is.null(cop$dlogdcopula_u1)){
           u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
           u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
