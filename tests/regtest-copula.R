@@ -611,6 +611,25 @@ stopifnot(all(mstop(cvr) %in% ms))
 mstop(fit) <- mstop(cvr)
 stopifnot(all(mstop(fit) == mstop(cvr)))
 
+### check vectorized dresponse matches numDeriv per-observation 
+f <- seq(-2, 2, length.out = 50)
+eps <- 1e-7
+for (link in list(tanh, exp, function(f) exp(f) + 1, identity)){
+  vec <- (link(f + eps) - link(f - eps)) / (2*eps)
+  ref <- sapply(f, function(fi) numDeriv::grad(link, fi))
+  stopifnot(max(abs(vec - ref)) < 1e-6)
+}
 
+### check ngradient_p call - should not call numDeriv per obs
+set.seed(42)
+n <- 300
+y <- cbind(rnorm(n), rnorm(n))
+w <- rep(1, n)
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+invisible(cf$mu1@offset(y, w)); invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w)); invisible(cf$sigma2@offset(y, w))
+invisible(cf$theta@offset(y, w))
 
-
+t <- system.time(for (i in 1:20) cf$mu1@ngradient(y, 0.3, w))
+stopifnot(t[3] < 1)
