@@ -180,13 +180,14 @@ get_marginal_dcdf <- function(marginal, y, params, param_name){
              -dnorm(y, mean = params$mu, sd = params$sigma) * (y - params$mu) /
              params$sigma
          },
-         sapply(y, function(yi){
-           numDeriv::grad(function(p){
-             params_p <- params
-             params_p[[param_name]] <- p
-             get_marginal_cdf(marginal, yi, params_p)
-           }, params[[param_name]])
-         })
+         {
+           eps <- 1e-7
+           pv <- params[[param_name]]
+           p_plus <- params; p_plus[[param_name]] <- pv + eps
+           p_minus <- params; p_minus[[param_name]] <- pv - eps
+           (get_marginal_cdf(marginal, y, p_plus) - 
+               get_marginal_cdf(marginal, y, p_minus)) / (2*eps)
+         }
   )
 }
 
