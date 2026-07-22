@@ -633,3 +633,45 @@ invisible(cf$theta@offset(y, w))
 
 t <- system.time(for (i in 1:20) cf$mu1@ngradient(y, 0.3, w))
 stopifnot(t[3] < 1)
+
+### check get_marginal_dcdf fallback - must return vector 
+y <- c(1, 3, 5)
+mu <- c(1.5, 2.5, 4)
+sig <- c(1, 1.2, 0.8)
+params <- list(mu = mu, sigma = sig)
+
+d <- gamboostLSS:::get_marginal_dcdf(NBinomialLSS(), y, params, "mu")
+stopifnot(is.null(dim(d)))
+stopifnot(length(d) == length(y))
+
+ref <- sapply(seq_along(y), function(i){
+  eps <- 1e-6
+  (gamboostLSS:::get_marginal_cdf(NBinomialLSS(), y[i], 
+                                  list(mu = mu[i] + eps, sigma = sig[i])) - 
+      gamboostLSS:::get_marginal_cdf(NBinomialLSS(), y[i], 
+                                     list(mu = mu[i] - eps, sigma = sig[i]))) /
+    (2 * eps)
+})
+stopifnot(max(abs(d-ref)) < 1e-5)
+
+### check end-to-end a non-Gaussian marginal fit 
+set.seed(42)
+n <- 60
+x <- rnorm(n)
+y1 <- rgamma(n, shape = 2, rate = 2 / exp(0.3 * x))
+y2 <- rnorm(n)
+y <- cbind(y1, y2)
+df <- data.frame(x = x)
+
+cf <- gamboostLSS:::CopulaFamilies(GammaLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ x, families = cf, data = df,
+                   control = boost_control(mstop = 20, nu = 0.1))
+stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+
+
+
+
+
+
+
