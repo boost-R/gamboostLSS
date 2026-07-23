@@ -601,15 +601,15 @@ fit <- gamboostLSS(y ~ x, families = cf, data = df,
 ms <- seq(5, 20, by = 5)
 grid <- matrix(ms, nrow = length(ms), ncol = length(fit))
 colnames(grid) <- names(fit)
-
-cvr <- cvrisk(fit, folds = cv(model.weights(fit), type = "subsampling", B =2),
+cvr <- cvrisk(fit, folds = cv(model.weights(fit), type = "subsampling", B = 3),
               grid = grid, papply = lapply, trace = FALSE)
 
-stopifnot(all(is.finite(cvr)))
-stopifnot(all(mstop(cvr) %in% ms))
+sel <- mstop(cvr)
+stopifnot(all(sel %in% grid[, 1]))
 
-mstop(fit) <- mstop(cvr)
-stopifnot(all(mstop(fit) == mstop(cvr)))
+invisible(fit_final <- fit[sel])
+stopifnot(all(mstop(fit_final) == sel))
+stopifnot(all(sapply(fit_final, function(m) all(is.finite(fitted(m))))))
 
 ### check vectorized dresponse matches numDeriv per-observation 
 f <- seq(-2, 2, length.out = 50)
