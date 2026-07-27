@@ -669,9 +669,28 @@ fit <- gamboostLSS(y ~ x, families = cf, data = df,
                    control = boost_control(mstop = 20, nu = 0.1))
 stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
 
+### check generic mboostLSS methods for CopulaFamilies fit 
+set.seed(3)
+n <- 60
+x <- rnorm(n)
+eps <- matrix(rnorm(2*n), n, 2) %*% chol(matrix(c(1, 0.5, 0.5, 1), 2, 2))
+y <- cbind(x + eps[, 1], -x + eps[, 2])
+df <- data.frame(x = x)
 
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ x, families = cf, data = df,
+                   control = boost_control(mstop = 20, nu = 0.1))
 
+stopifnot(is.list(summary(fit)) || is.null(summary(fit)))
+invisible(capture.output(print(summary(fit))))
+                                   
+pdf(NULL); on.exit(dev.off(), add = TRUE)
+invisible(plot(fit))
 
+stopifnot(is.list(coef(fit)))
+stopifnot(is.list(selected(fit)))
+stopifnot(length(selected(fit)) == length(fit))
 
-
-
+stopifnot(grepl("margin 1", cf$mu1@name))
+stopifnot(grepl("margin 2", cf$mu2@name))
