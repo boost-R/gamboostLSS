@@ -297,7 +297,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
              ngradient = ngradient_p,
              offset = offset_p,
              response = marginal1[[param_name]]@response,
-             name = marginal1[[param_name]]@name)
+             name = paste0(marginal1[[param_name]]@name, " (margin 1)"))
     })
   }
   names(sub_families1) <- paste0(params1, "1")
@@ -356,7 +356,7 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
              ngradient = ngradient_p,
              offset = offset_p,
              response = marginal2[[param_name]]@response,
-             name = marginal2[[param_name]]@name)
+             name = paste0(marginal2[[param_name]]@name, " (margin 2)"))
     })
   }
   
