@@ -10,6 +10,9 @@ importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize",
            "qweibull", "rmultinom", "update", "var", "variable.names", "weighted.mean")
 importFrom("utils", "tail")
 importFrom("stats", "setNames")
+importFrom("stats", "cor", "dbeta", "dgamma", "dlnorm", "dnbinom",
+           "dpois", "dt", "dweibull", "integrate", "pbeta", "pgamma",
+           "plnorm", "pnbinom", "ppois", "pt", "pweibull", "uniroot")
 
 export(glmboostLSS,
        gamboostLSS,
