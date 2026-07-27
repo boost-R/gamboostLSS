@@ -260,7 +260,7 @@ params_bin <- list(mu = mu1_val)
 params_norm <- list(mu = 0, sigma = 1)
 
 loglik_bc <- gamboostLSS:::binary_continuous_loglik(
-  y_bc, BernoulliLSS(), GaussianLSS(), params_bin, params_norm, "gaussian", 0)
+  y_bc, gamboostLSS:::BernoulliLSS(), GaussianLSS(), params_bin, params_norm, "gaussian", 0)
 
 expected_bc <- log(ifelse(y_bc[,1] == 1, mu1_val, 1 - mu1_val)) + 
   dnorm(y_bc[,2], log = TRUE)
@@ -271,7 +271,7 @@ stopifnot(max(abs(loglik_bc - expected_bc)) < 1e-6)
 ### reference value test for binary_continuous_loglik
 y_ref <- cbind(0, 1)
 ref_val <- gamboostLSS:::binary_continuous_loglik(
-  y_ref, BernoulliLSS(), GaussianLSS(), list(mu = 0.4), list(mu = 0, sigma =1),
+  y_ref, gamboostLSS:::BernoulliLSS(), GaussianLSS(), list(mu = 0.4), list(mu = 0, sigma =1),
   "gaussian", 0.5)
 
 stopifnot(abs(ref_val - (-2.36596)) < 1e-2)
