@@ -694,3 +694,89 @@ stopifnot(length(selected(fit)) == length(fit))
 
 stopifnot(grepl("margin 1", cf$mu1@name))
 stopifnot(grepl("margin 2", cf$mu2@name))
+
+
+### check if ngradient includes the copula correction
+# binary_continuous
+set.seed(42)
+n <- 30 
+w <- rep(1, n)
+
+y_bc <- cbind(rbinom(n, 1, 0.4), rnorm(n, 1, 1.2))
+cf_bc <- gamboostLSS:::CopulaFamilies(gamboostLSS:::BernoulliLSS(), 
+                                      GaussianLSS(), copula = "gaussian",
+                                      theta = 0.5)
+invisible(cf_bc$mu1@offset(y_bc,w)); invisible(cf_bc$mu2@offset(y_bc, w))
+invisible(cf_bc$sigma2@offset(y_bc, w))
+
+num_mu1 <- numDeriv::grad(function(f) -cf_bc$mu1@risk(y_bc, f, w=w), 0.3)
+ana_mu1 <- sum(cf_bc$mu1@ngradient(y_bc, 0.3, w))
+stopifnot(abs(num_mu1 - ana_mu1) < 1e-4)
+
+num_mu2 <- numDeriv::grad(function(f) -cf_bc$mu2@risk(y_bc, f, w=w), 0.3)
+ana_mu2 <- sum(cf_bc$mu2@ngradient(y_bc, 0.3, w))
+stopifnot(abs(num_mu2 - ana_mu2) < 1e-4)
+
+# discrete_discrete
+y_dd <- cbind(rpois(n, 2), rpois(n, 4))
+cf_dd <- gamboostLSS:::CopulaFamilies(NBinomialLSS(), NBinomialLSS(),
+                                      copula = "gaussian", theta = 0.5)
+invisible(cf_dd$mu1@offset(y_dd, w)); invisible(cf_dd$mu2@offset(y_dd, w))
+invisible(cf_dd$sigma1@offset(y_dd, w)); invisible(cf_dd$sigma2@offset(y_dd, w))
+
+num_dd <- numDeriv::grad(function(f) -cf_dd$mu1@risk(y_dd, f, w = w), 1.0)
+ana_dd <- sum(cf_dd$mu1@ngradient(y_dd, 1.0, w))
+stopifnot(abs(num_dd - ana_dd) < 1e-4)
+
+### check end-to-end fit for previously untested marginal cases
+set.seed(1)
+n <- 80
+x <- rnorm(n)
+
+fit_case <- function(m1, m2, y){
+  cf <- gamboostLSS:::CopulaFamilies(m1, m2, copula = "gaussian")
+  fit <- gamboostLSS(y ~ x, families = cf, data = data.frame(x = x),
+                     control = boost_control(mstop = 20, nu = 0.1))
+  stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+}
+
+fit_case(NBinomialLSS(), NBinomialLSS(),
+         cbind(rpois(n, exp(0.3*x+1)), rpois(n, exp(-0.2*x+1))))
+fit_case(BernoulliLSS(), BernoulliLSS(),
+         cbind(rbinom(n, 1, plogis(x)), rbinom(n, 1, plogis(x))))
+fit_case(BernoulliLSS(), GaussianLSS(),
+         cbind(rbinom(n, 1, plogis(x)), rnorm(n)))
+fit_case(GaussianLSS(), BernoulliLSS(),
+         cbind(rnorm(n), rbinom(n, 1, plogis(x))))
+
+### check if generic methods are sensible for every marginal case
+set.seed(1)
+n <- 100
+x <- rnorm(n)
+
+y_bb <- cbind(rbinom(n, 1, plogis(x)), rbinom(n, 1, plogis(-x)))
+cf_bb <- gamboostLSS:::CopulaFamilies(gamboostLSS:::BernoulliLSS(),
+                                      gamboostLSS:::BernoulliLSS(),
+                                      copula = "gaussian")
+fit_bb <- gamboostLSS(y_bb ~ x, families = cf_bb, data = data.frame(x = x),
+                      control = boost_control(mstop = 50, nu = 0.01))
+pr_bb <- predict(fit_bb, newdata = data.frame(x = c(-1, 0, 1)), type = "response")
+stopifnot(all(pr_bb$mu1 > 0 & pr_bb$mu1 < 1))
+stopifnot(all(pr_bb$mu2 > 0 & pr_bb$mu2 < 1))
+stopifnot(all(abs(tanh(pr_bb$theta)) < 1))
+
+y_dd <- cbind(rpois(n, exp(0.3*x+1)), rpois(n, exp(-0.2*x+1)))
+cf_dd <- gamboostLSS:::CopulaFamilies(NBinomialLSS(), NBinomialLSS(),
+                                      copula = "gaussian")
+fit_dd <- gamboostLSS(y_dd ~ x, families = cf_dd, data = data.frame(x = x),
+                      control = boost_control(mstop = 50, nu = 0.1))
+pr_dd <- predict(fit_dd, newdata = data.frame(x = c(-1, 0, 1)), type = "response")
+stopifnot(all(pr_dd$mu1 > 0), all(pr_dd$mu2 > 0), all(pr_dd$sigma1 > 0))
+
+y_bc <- cbind(rbinom(n, 1, plogis(x)), rnorm(n))
+cf_bc <- gamboostLSS:::CopulaFamilies(gamboostLSS:::BernoulliLSS(),
+                                      GaussianLSS(), copula = "gaussian")
+fit_bc <- gamboostLSS(y_bc ~ x, families = cf_bc, data = data.frame(x = x), 
+                      control = boost_control(mstop = 20, nu = 0.1))
+s <- capture.output(print(summary(fit_bc)))
+stopifnot(any(grepl("margin 1", s)), any(grepl("margin 2", s)))
