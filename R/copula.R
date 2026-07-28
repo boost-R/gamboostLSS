@@ -23,13 +23,13 @@
       )
     },
     pcopula = function(u1, u2, theta){
-      rho <- theta
+      rho <- rep_len(theta, length(u1))
       z1 <- qnorm(u1)
       z2 <- qnorm(u2)
       sapply(seq_along(u1), function(i)
       mvtnorm::pmvnorm(lower = c(-Inf, -Inf),
                               upper = c(z1[i], z2[i]),
-                              corr = matrix(c(1, rho, rho, 1), nrow = 2)))
+                              corr = matrix(c(1, rho[i], rho[i], 1), nrow = 2)))
     },
     h = function(u1, u2, theta){
       rho <- theta
@@ -42,7 +42,7 @@
     offset = 0,
     tau = function(theta) 2/pi * asin(theta),
     tau_inv = function(tau) sin(pi * tau/2),
-    tau_range = c(-0.95, 0.95),
+    tau_range = c(-0.99, 0.99),
     name = "Gaussian copula: rho (tanh link)"
   )
 }
@@ -74,7 +74,7 @@
   offset = 0,
   tau = function(theta) theta / (theta + 2),
   tau_inv = function(tau) 2 * tau / (1 - tau),
-  tau_range = c(0.01, 0.95),
+  tau_range = c(0.01, 0.99),
   name = "Clayton copula: theta (exp link)"
 )
 }
@@ -125,7 +125,7 @@
     offset = 0,
     tau = function(theta) 1 - 1/theta,
     tau_inv = function(tau) 1 / (1-tau),
-    tau_range = c(0.01, 0.95),
+    tau_range = c(0.01, 0.99),
     name = "Gumbel copula: theta (exp+1 link)"
   )
 }
@@ -184,7 +184,7 @@
         }, interval = interval, tol = 1e-9)$root
       })
     },
-    tau_range = c(-0.95, 0.95),
+    tau_range = c(-0.99, 0.99),
     name = "Frank copula: theta (identity link)"
   )
 }
