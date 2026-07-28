@@ -84,6 +84,9 @@ get_marginal_logpdf <- function(marginal, y, params){
                             dnbinom(y, size = 1/params$sigma, mu = params$mu)),
                           log((1-params$nu) * 
                             dnbinom(y, size = 1/params$sigma, mu = params$mu))),
+         "bernoulli (probit)" = ,
+         "bernoulli (logit)" = ,
+         "bernoulli (cloglog)" = dbinom(y, size = 1, prob = params$mu, log = TRUE),
          stop("Unknown family without pdf: '", fam_name, "'"))
 }
 
@@ -219,10 +222,6 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   params1 <- names(marginal1)
   params2 <- names(marginal2)
   
-  # Extract the quantile functions
-  qfun1 <- attr(marginal1, "qfun")
-  qfun2 <- attr(marginal2, "qfun")
-  
   # closure variables
   current_params1 <- setNames(vector("list", length(params1)), params1)
   current_params2 <- setNames(vector("list", length(params2)), params2)
@@ -266,20 +265,27 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         pv <- params1_f[[param_name]]
         p_plus <- params1_f; p_plus[[param_name]] <- pv + eps
         p_minus <- params1_f; p_minus[[param_name]] <- pv - eps
+        resp <- marginal1[[param_name]]@response
+        dresponse_f <- (resp(f + eps) - resp(f - eps)) / (2*eps)
+        
+        if (marginal_case == "continuous_continuous"){
         dlogf1_dparam <- (get_marginal_logpdf(marginal1, y[,1], p_plus) -
                             get_marginal_logpdf(marginal1, y[,1], p_minus)) / 
                             (2*eps)
-        resp <- marginal1[[param_name]]@response
-        dresponse_f <- (resp(f + eps) - resp(f - eps)) / (2*eps)
         ngr <- dlogf1_dparam * dresponse_f
-        
-        if (marginal_case != "continuous_continuous" &&
-            is.null(cop$dlogdcopula_u1)){
-          u1 <- get_marginal_cdf(marginal1, y[,1], params1_f)
-          u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
-          dcdf <- get_marginal_dcdf(marginal1, y[,1], params1_f, param_name)
-          ngr <- ngr + cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf *
-            dresponse_f
+          if (!is.null(cop$dlogdcopula_u1)){
+            u1 <- get_marginal_cdf(marginal1, y[,1], params1_f)
+            u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
+            dcdf <- get_marginal_dcdf(marginal1, y[,1], params1_f, param_name)
+            ngr <- ngr + cop$dlogdcopula_u1(u1, u2, current_theta) * dcdf *
+              dresponse_f
+          }
+        } else {
+          ll_plus <- loglik(y, marginal1, marginal2, p_plus, current_params2,
+                            copula, current_theta)
+          ll_minus <- loglik(y, marginal1, marginal2, p_minus, current_params2,
+                             copula, current_theta)
+          ngr <- ((ll_plus - ll_minus) / (2*eps)) * dresponse_f
         }
         
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
@@ -325,20 +331,28 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
         pv <- params2_f[[param_name]]
         p_plus <- params2_f; p_plus[[param_name]] <- pv + eps
         p_minus <- params2_f; p_minus[[param_name]] <- pv - eps
+        resp <- marginal2[[param_name]]@response
+        dresponse_f <- (resp(f + eps) - resp(f - eps)) / (2 * eps)
+        
+        if (marginal_case == "continuous_continuous"){
         dlogf2_dparam <- (get_marginal_logpdf(marginal2, y[,2], p_plus) -
                             get_marginal_logpdf(marginal2, y[,2], p_minus)) / 
                             (2*eps)
-        resp <- marginal2[[param_name]]@response
-        dresponse_f <- (resp(f + eps) - resp(f - eps)) / (2 * eps)
         ngr <- dlogf2_dparam * dresponse_f
         
-        if (marginal_case != "continuous_continuous" &&
-            is.null(cop$dlogdcopula_u1)){
-          u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
-          u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
-          dcdf <- get_marginal_dcdf(marginal2, y[,2], params2_f, param_name)
-          ngr <- ngr + cop$dlogdcopula_u1(u2, u1, current_theta) * dcdf *
-            dresponse_f
+          if (!is.null(cop$dlogdcopula_u1)){
+            u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+            u2 <- get_marginal_cdf(marginal2, y[,2], params2_f)
+            dcdf <- get_marginal_dcdf(marginal2, y[,2], params2_f, param_name)
+            ngr <- ngr + cop$dlogdcopula_u1(u2, u1, current_theta) * dcdf *
+              dresponse_f
+          }
+        } else {
+          ll_plus <- loglik(y, marginal1, marginal2, current_params1,
+                            p_plus, copula, current_theta)
+          ll_minus <- loglik(y, marginal1, marginal2, current_params1,
+                             p_minus, copula, current_theta)
+          ngr <- ((ll_plus - ll_minus) / (2*eps)) * dresponse_f
         }
         
         ngr <- stabilize_ngradient(ngr, w = w, stabilization)
@@ -373,9 +387,21 @@ CopulaFamilies <- function(marginal1, marginal2, copula = "gaussian", theta = 1,
   ngradient_theta <- function(y, f, w=1){
     update_current_params(parent.env(environment()))
     theta_current <- cop$response(f)
-    u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
-    u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
-    ngr <- cop$dlogdcopula_theta(u1, u2, theta_current) * cop$dresponse(f)
+    
+    if (marginal_case == "continuous_continuous"){
+      u1 <- get_marginal_cdf(marginal1, y[,1], current_params1)
+      u2 <- get_marginal_cdf(marginal2, y[,2], current_params2)
+      ngr <- cop$dlogdcopula_theta(u1, u2, theta_current) * cop$dresponse(f)
+    }
+    else {
+      eps <- 1e-7
+      ll_plus <- loglik(y, marginal1, marginal2, current_params1, 
+                        current_params2, copula, theta_current + eps)
+      ll_minus <- loglik(y, marginal1, marginal2, current_params1, 
+                         current_params2, copula, theta_current - eps)
+      ngr <- ((ll_plus - ll_minus) / (2*eps)) * cop$dresponse(f)
+    }
+    
     ngr <- stabilize_ngradient(ngr, w = w, stabilization)
     return(ngr)
     }
