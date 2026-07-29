@@ -98,7 +98,7 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
 #           by        - spacing between candidate mstop values
 # Output:   matrix with one row per candidate mstop and one column per parameter
 #           of the model, for cvrisk() grid argument
-make_mstop_grid <- function(model, from = 5, by = 5){
+make_copula_grid <- function(model, from = 5, by = 5){
   ms <- seq(from, min(mstop(model)), by = by)
   grid <- matrix(ms, nrow = length(ms), ncol = length(model))
   colnames(grid) <- names(model)
