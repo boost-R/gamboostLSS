@@ -599,7 +599,7 @@ fit <- gamboostLSS(y ~ x, families = cf, data = df,
                    control = boost_control(mstop = 20, nu = 0.1))
 
 ms <- seq(5, 20, by = 5)
-grid <- matrix(ms, nrow = length(ms), ncol = length(fit))
+grid <- gamboostLSS:::make_copula_grid(fit, from = 5, by = 5)
 colnames(grid) <- names(fit)
 cvr <- cvrisk(fit, folds = cv(model.weights(fit), type = "subsampling", B = 3),
               grid = grid, papply = lapply, trace = FALSE)
@@ -780,3 +780,18 @@ fit_bc <- gamboostLSS(y_bc ~ x, families = cf_bc, data = data.frame(x = x),
                       control = boost_control(mstop = 20, nu = 0.1))
 s <- capture.output(print(summary(fit_bc)))
 stopifnot(any(grepl("margin 1", s)), any(grepl("margin 2", s)))
+
+### check if exported API is reachable without :::
+stopifnot(is.function(CopulaFamilies))
+stopifnot(is.function(BernoulliLSS))
+stopifnot(is.function(make_copula_grid))
+
+cf_exported <- CopulaFamilies(GaussianLSS(), BernoulliLSS(),
+                              copula = "gaussian")
+stopifnot(all(c("mu1", "sigma1", "mu2", "theta") %in% names(cf_exported)))
+
+
+
+
+
+
