@@ -194,6 +194,26 @@ get_marginal_dcdf <- function(marginal, y, params, param_name){
   )
 }
 
+# Input:    model   - mboostLSS object fitted with CopulaFamilies()
+#           newdata - optional data.frame; if NULL, the training data is used
+# Output:   Kendall's tau implied by the fitted copula parameter
+copula_tau <- function(model, newdata = NULL){
+  fam <- attr(model, "families")
+  nm <- attr(fam, "name")
+  if(is.null(nm) || !grepl("^Copula Families: ", nm))
+    stop(sQuote("model"), " must be fitted with ", sQuote("CopulaFamilies"))
+  
+  cop <- get_copula(sub("^Copula Families: ", "", nm))
+  if (is.null(cop$tau))
+    stop("no Kendall's tau conversion available for this copula")
+  
+  theta <- if(is.null(newdata))
+    predict(model, type = "response")$theta
+  else 
+    predict(model, newdata = newdata, type = "response")$theta
+  
+  cop$tau(as.vector(theta))
+}
 
 # Input:    marginal1, marginal2  - gamboostLSS families-objects
 #           copula                - character e.g. "gaussian"
