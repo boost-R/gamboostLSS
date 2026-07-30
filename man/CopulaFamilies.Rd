@@ -1,5 +1,6 @@
 \name{CopulaFamilies}
 \alias{CopulaFamilies}
+\alias{copula_tau}
 
 \title{ Bivariate Copula Families for Boosting GAMLSS-models}
 
@@ -13,6 +14,7 @@
 CopulaFamilies(marginal1, marginal2, copula = "gaussian", theta = 1,
                stabilization = c("none", "MAD", "L2"))
 }
+copula_tau(model, newdata = NULL)
 
 \arguments{
   \item{marginal1, marginal2}{
@@ -35,6 +37,14 @@ CopulaFamilies(marginal1, marginal2, copula = "gaussian", theta = 1,
     governs if the negative gradient should be standardized in each boosting
     step. It can be either \code{"none"}, \code{"MAD"} or \code{"L2"}. See
     \code{\link{Families}}.
+  }
+  \item{model}{
+  a fitted \code{mboostLSS} model whose families were built by 
+  \code{CopulaFamilies}.
+  }
+  \item{newdata}{
+  optionally, a data frame at which to evaluate the copula parameter. If omitted,
+  the traning data is used.
   }
 }
 
@@ -65,6 +75,13 @@ CopulaFamilies(marginal1, marginal2, copula = "gaussian", theta = 1,
   tau-to-theta relationship. If the empirical tau lies outside what the
   copula can represent -- Clayton and Gumbel cannot express negative
   dependence -- a copula-specific static default is used instead.
+  
+  \code{copula_tau} converts the fitted copula parameter into Kendall's tau, 
+  which unlike \code{theta} is comparable across copula families: a Clayton 
+  \code{theta} of 2 and a Gumbel \code{theta} of 2 both correspond to a tau of 
+  0.5. Not that Clayton and Gumbel cannot represent negative dependence, so a 
+  positive tau from those families fitted to negatively associated data 
+  indicates misspecification rather than a real positive association.
 }
 
 \value{
