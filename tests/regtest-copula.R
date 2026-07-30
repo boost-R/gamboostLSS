@@ -685,8 +685,11 @@ fit <- gamboostLSS(y ~ x, families = cf, data = df,
 stopifnot(is.list(summary(fit)) || is.null(summary(fit)))
 invisible(capture.output(print(summary(fit))))
                                    
-pdf(NULL); on.exit(dev.off(), add = TRUE)
+tmp <- tempfile(fileext = ".pdf")
+pdf(tmp)
 invisible(plot(fit))
+dev.off()
+unlink(tmp)
 
 stopifnot(is.list(coef(fit)))
 stopifnot(is.list(selected(fit)))
@@ -790,8 +793,35 @@ cf_exported <- CopulaFamilies(GaussianLSS(), BernoulliLSS(),
                               copula = "gaussian")
 stopifnot(all(c("mu1", "sigma1", "mu2", "theta") %in% names(cf_exported)))
 
+### check copula_tau maps fitted theta onto comparable dependence scale
+set.seed(1)
+n <- 100
+x <- rnorm(n)
+eps <- matrix(rnorm(2 * n), n, 2) %*% chol(matrix(c(1, 0.3, 0.3, 1), 2, 2))
+y <- cbind(x + eps[, 1], 0.5 * x + eps[, 2])
 
+for (cn in c("gaussian", "clayton", "gumbel", "frank")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = cn)
+  fit <- gamboostLSS(y ~ x, families = cf, data = data.frame(x = x), 
+                     control = boost_control(mstop = 30, nu = 0.1))
+  tt <- copula_tau(fit)
+  stopifnot(length(tt) == n)
+  stopifnot(all(is.finite(tt)))
+  stopifnot(all(tt >= -1 & tt <= 1))
+  
+  # predict theta by hand and compare
+  cop <- gamboostLSS:::get_copula(cn)
+  th <- as.vector(predict(fit, type = "response")$theta)
+  stopifnot(max(abs(tt - cop$tau(th))) < 1e-8)
+}
 
+### check if newdata-path returns one value per new observation 
+nd <- data.frame(x = c(-1, 0, 1))
+stopifnot(length(copula_tau(fit, newdata = nd)) == 3)
 
-
+### check error output on a model that is not built with CopulaFamilies
+fit_plain <- gamboostLSS(y[, 1] ~ x, families = GaussianLSS(),
+                         data = data.frame(x = x), 
+                         control = boost_control(mstop = 10))
+stopifnot(inherits(try(copula_tau(fit_plain), silent = TRUE), "try-error"))
 
