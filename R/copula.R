@@ -36,8 +36,11 @@
       z1 <- qnorm(u1); z2 <- qnorm(u2)
       pnorm((z1 - rho*z2) / sqrt(1 - rho^2))
     },
-    response = function(f) tanh(f),
-    dresponse = function(f) 1 - tanh(f)^2,
+    response = function(f) tanh(ifelse(abs(f) > 8.75, sign(f) * 8.75, f)),
+    dresponse = function(f){
+      f <- ifelse(abs(f) > 8.75, sign(f) * 8.75, f)
+      1 - tanh(f)^2
+      },
     response_inv = function(theta) atanh(theta),
     offset = 0,
     tau = function(theta) 2/pi * asin(theta),
@@ -163,7 +166,10 @@
         (exp(theta*u1+theta*u2) - exp(theta*u1+theta) - exp(theta*u2 + theta) +
         exp(theta))
     },
-    response = function(f) f,
+    response = function(f){
+      eps <- sqrt(.Machine$double.eps)
+      ifelse(abs(f) < eps, eps, f)
+    },
     dresponse = function(f) 1,
     response_inv = function(theta) theta,
     offset = 1,
