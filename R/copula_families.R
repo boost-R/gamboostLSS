@@ -30,8 +30,7 @@ get_marginal_case <- function(marginal1, marginal2){
 # Output:   F(y|params) - vector in (0,1)
 get_marginal_cdf <- function(marginal, y, params){
   fam_name <- tolower(attr(marginal, "name"))
-  
-  switch(fam_name,
+  u <- switch(fam_name,
          "gaussian" = pnorm(y, mean = params$mu, sd = params$sigma),
          "gamma" = pgamma(y, shape = params$sigma,
                           rate = params$sigma / params$mu),
@@ -50,6 +49,9 @@ get_marginal_cdf <- function(marginal, y, params){
          "bernoulli (logit)" = ,
          "bernoulli (cloglog)" = ifelse(y<0, 0, ifelse(y<1, 1 - params$mu, 1)),
          stop("Unknown family without cdf: '", fam_name, "'"))
+  
+  # keep PIT values inside (0,1)
+  pmin(pmax(u, 1e-10), 1 - 1e-10)
 }
 
 # Input:    marginal  - families-object
