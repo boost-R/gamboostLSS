@@ -825,3 +825,36 @@ fit_plain <- gamboostLSS(y[, 1] ~ x, families = GaussianLSS(),
                          control = boost_control(mstop = 10))
 stopifnot(inherits(try(copula_tau(fit_plain), silent = TRUE), "try-error"))
 
+### check that link functions stay inside their parameter domain
+cop <- gamboostLSS:::get_copula("gaussian")
+stopifnot(all(abs(cop$response(c(-100, -20, 20, 100))) < 1))
+stopifnot(all(cop$dresponse(c(-100, 100)) > 0))
+
+# response and dresponse must clamp identically
+f <- 20 ; eps_fd <- 1e-6
+stopifnot(abs((cop$response(f + eps_fd) - cop$response(f - eps_fd)) / 
+                (2 * eps_fd) - cop$dresponse(f)) < 1e-4)
+
+cop <- gamboostLSS:::get_copula("frank")
+stopifnot(cop$response(0) != 0)
+stopifnot(is.finite(cop$logdcopula(0.3, 0.6, cop$response(0))))
+
+### check if PIT values stay in (0,1)
+u <- gamboostLSS:::get_marginal_cdf(GaussianLSS(), c(-1e6, 0, 1e6),
+                                    list(mu = 0, sigma = 1))
+stopifnot(all(u > 0), all(u < 1))
+stopifnot(all(is.finite(qnorm(u))))
+
+### check if strong dependence does not abort the fit
+set.seed(42)
+n <- 100
+x <- rnorm(n)
+e <- matrix(rnorm(2 * n), n, 2) %*% chol(matrix(c(1, 0.6, 0.6, 1), 2, 2))
+y_dep <- cbind(x + e[,1], x + e[,2])
+for (cn in c("clayton", "gumbel", "frank")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = cn)
+  fit <- gamboostLSS(y_dep ~ x, families = cf, data = data.frame(x = x),
+                     control = boost_control(mstop = 30, nu = 0.1))
+  stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+}
+
