@@ -858,3 +858,14 @@ for (cn in c("clayton", "gumbel", "frank")){
   stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
 }
 
+### check that finite difference doesnt push parameter out of domain
+set.seed(11)
+y_s <- cbind(rnorm(40), rnorm(40))
+w_s <- rep(1, 40)
+cf_s <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = "gaussian", theta = 0.3)
+for (p in c("mu1", "sigma1", "mu2", "sigma2")) 
+  invisible(cf_s[[p]]@offset(y_s, w_s))
+
+g <- cf_s$sigma1@ngradient(y_s, log(1e-8), w_s)
+stopifnot(all(is.finite(g)))
