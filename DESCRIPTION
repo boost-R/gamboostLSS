@@ -15,7 +15,8 @@ Description: Boosting models for fitting generalized additive models for
   data.
 Depends: R (>= 2.10.0), gamlss.dist, mboost (>= 2.8-0), stabs (>= 0.5-0), parallel
 Imports: graphics, grDevices, stats, utils, mvtnorm
-Suggests: gamlss, survival, BayesX, R2BayesX, DirichletReg, numDeriv
+Suggests: gamlss, survival, BayesX, R2BayesX, DirichletReg, numDeriv, knitr, rmarkdown
+VignetteBuilder: knitr
 LazyLoad: yes
 LazyData: yes
 License: GPL-2
