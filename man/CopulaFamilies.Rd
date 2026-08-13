@@ -1,6 +1,7 @@
 \name{CopulaFamilies}
 \alias{CopulaFamilies}
 \alias{copula_tau}
+\encoding{UTF-8}
 
 \title{ Bivariate Copula Families for Boosting GAMLSS-models}
 
@@ -13,8 +14,9 @@
 \usage{
 CopulaFamilies(marginal1, marginal2, copula = "gaussian", theta = 1,
                stabilization = c("none", "MAD", "L2"))
-}
+               
 copula_tau(model, newdata = NULL)
+}
 
 \arguments{
   \item{marginal1, marginal2}{
@@ -97,6 +99,21 @@ copula_tau(model, newdata = NULL)
 }
 
 \references{
+  N. Hans, N. Klein, F. Faschingbauer, M. Schneider and A. Mayr (2023),
+  Boosting distributional copula regression. \emph{Biometrics} \bold{79}(3),
+  2298--2310. \doi{10.1111/biom.13765}
+  
+  \enc{G. Briseño}{G. Briseno} Sanchez, N. Klein, H. Klinkhammer and A. Mayr (2025),
+  Boosting distributional copula regression for bivariate binary, discrete
+  and mixed responses. \emph{Statistical Methods in Medical Research}
+  \bold{34}(5), 887--902. \doi{10.1177/09622802241313294}
+  
+  U. Schepsmeier and J. \enc{Stöber}{Stoeber} (2014), Derivatives and Fisher
+  information of bivariate copulas. \emph{Statistical Papers} \bold{55}(2),
+  525--542. \doi{10.1007/s00362-013-0498-x}
+
+  R. B. Nelsen (2006), \emph{An Introduction to Copulas}, 2nd edition.
+  Springer, New York.
 }
 
 \seealso{
