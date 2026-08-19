@@ -869,3 +869,28 @@ for (p in c("mu1", "sigma1", "mu2", "sigma2"))
 
 g <- cf_s$sigma1@ngradient(y_s, log(1e-8), w_s)
 stopifnot(all(is.finite(g)))
+
+### check if variable selection works correctly
+set.seed(2026)
+n <- 400
+x1 <- rnorm(n); x2 <- rnorm(n); x3 <- rnorm(n); x4 <- rnorm(n); x5 <- rnorm(n)
+sigma1 <- exp(0.3 * x2)
+rho <- tanh(0.8 * x3)
+y <- t(sapply(seq_len(n), function(i){
+  S <- matrix(c(sigma1[i]^2, rho[i]*sigma1[i], rho[i]*sigma1[i], 1), 2, 2)
+  c(2*x1[i], -1.5*x1[i]) + as.vector(t(chol(S)) %*% rnorm(2))
+}))
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ bols(x1) + bols(x2) + bols(x3) + bols(x4) + bols(x5),
+                   families = cf, data = data.frame(x1, x2, x3, x4, x5), 
+                   control = boost_control(mstop = 50, nu = 0.05))
+
+top <- function(p) which.max(tabulate(selected(fit)[[p]], nbins = 5))
+stopifnot(top("mu1") == 1) # x1
+stopifnot(top("mu2") == 1) # x1
+stopifnot(top("theta") == 3) # x3 
+
+
+
