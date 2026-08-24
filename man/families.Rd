@@ -38,6 +38,7 @@
 
 \alias{ZIPoLSS}
 \alias{ZINBLSS}
+\alias{BernoulliLSS}
 
 \alias{DirichletAlpha}
 \alias{DirichletLSS}
@@ -99,6 +100,10 @@ ZIPoLSS(mu = NULL, sigma = NULL,
 # Zero-inflated negative binomial distribution
 ZINBLSS(mu = NULL, sigma = NULL, nu = NULL,
         stabilization = c("none", "MAD", "L2"))
+        
+# Bernoulli distribution
+BernoulliLSS(mu = NULL, link = c("probit", "logit", "cloglog"), 
+            stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Families for survival models (accelerated failure time
@@ -141,6 +146,8 @@ Families(..., qfun = NULL, name = NULL)
     "MAD" or "L2". See also Details below.
   }
   \item{K}{An integer specifying the number of categories in the Dirichlet distribution. This must be provided.}
+  \item{link}{link function for the Bernoulli mean. One of "probit", "logit" or
+  cloglog}
 }
 \details{
 
@@ -167,6 +174,11 @@ Families(..., qfun = NULL, name = NULL)
   location and scale parameters (with log link) of the negative binomial
   component of the model. The zero-generating process (with logit link)
   is represented by \code{nu}.
+  
+  \code{BernoulliLSS} provides a one-parameter family for binary responses. On 
+  its own it is equivalent to boosting a binary GLM; its main use here is as a
+  marginal distribution in \code{\link{CopulaFamilies}}, where it enables the 
+  binary_binary and mixed binary-continuous cases.
   
   The \code{DirichletLSS} family can be used to fit Dirichlet regression models.
   Here, \code{DirichletAlpha} corresponds to the distributional parameters in

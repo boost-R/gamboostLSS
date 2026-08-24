@@ -93,6 +93,18 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
     return(RET)
 }
 
+# Input:    model     - mboostLSS object fitted with method = "cyclic"
+#           from      - smallest candidate mstop value 
+#           by        - spacing between candidate mstop values
+# Output:   matrix with one row per candidate mstop and one column per parameter
+#           of the model, for cvrisk() grid argument
+make_copula_grid <- function(model, from = 5, by = 5){
+  ms <- seq(from, min(mstop(model)), by = by)
+  grid <- matrix(ms, nrow = length(ms), ncol = length(model))
+  colnames(grid) <- names(model)
+  return(grid)
+}
+
 ###
 # cvrisk, adapted version from mboost (2.2-2)
 cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),

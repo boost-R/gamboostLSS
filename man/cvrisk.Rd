@@ -3,6 +3,7 @@
 \alias{cvrisk.mboostLSS}
 \alias{cvrisk.nc_mboostLSS}
 \alias{make.grid}
+\alias{make_copula_grid}
 \alias{plot.cvriskLSS}
 \alias{plot.nc_cvriskLSS}
 
@@ -18,6 +19,8 @@
 
 make.grid(max, length.out = 10, min = NULL, log = TRUE,
           dense_mu_grid = TRUE)
+          
+make_copula_grid(model, from = 5, by = 5)
           
 \method{cvrisk}{nc_mboostLSS}(object, folds = cv(model.weights(object)),
        grid = 1:sum(mstop(object)), papply = mclapply,
@@ -104,6 +107,14 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
     These values can be computed without or with very little additional
     computational costs. For details see examples.
   }
+  \item{model}{
+  an object of class \code{mboostLSS} fitted with \code{method = "cyclic"}.
+  }
+  \item{from, by}{
+  smalles candidate \code{mstop} value, and the spacing between candidates. 
+  Candidates run from \code{from} up to \code{min(mstop(model))} in steps of 
+  \code{by}.
+  }
   \item{x}{
     an object of class \code{cvriskLSS} (cyclic fitting) or \code{nc_cvriskLSS}
     (non-cyclic fitting), which results from running \code{cvrisk}.
@@ -135,6 +146,12 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   \code{make.grid} eases the creation of an equidistand, integer-valued
   grids, which can be used with \code{cvrisk}. Per default, the grid is
   equidistant on a logarithmic scale.
+  \code{make_copula_grid} instead searches over a single shared stopping 
+  iteration applied to all parameters at once, which matches how cyclic fitting
+  advances. This method for grid building is intended for families with more 
+  than two or three parameters, such as those from \code{\link{CopulaFamilies}},
+  where the grid size grows exponentially and becomes unfeasible.
+  
 
   The line plot depicts the avarage risk for each grid point and
   additionally shows information on the variability of the risk from
