@@ -94,7 +94,6 @@ for (i in 1:length(FAMILIES)) {
 }
 
 FAMILIES <- list("BCT")
-require("gamlss.dist")
 dat$y <- rBCT(1000, mu = 100, sigma = 0.1, nu = 0, tau = 2)
 for (i in 1:length(FAMILIES)) {
     m_none <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
@@ -130,8 +129,9 @@ FAMILIES <- list(
     WeibullLSS,
     LogLogLSS)
 families <- c("LogNormalLSS", "WeibullLSS", "LogLogLSS")
-require(survival)
-for (i in 1:length(FAMILIES)) {
+
+if (require(survival)) {
+  for (i in 1:length(FAMILIES)) {
     cat(families[i], "\n\n")
     m_none <- glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
                           families = FAMILIES[[i]](stabilization = "none"),
@@ -139,25 +139,26 @@ for (i in 1:length(FAMILIES)) {
     m_MAD <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
                              families = FAMILIES[[i]](stabilization = "MAD"),
                              data=dat), silent = TRUE)
-
+    
     if (inherits(m_MAD, "try-error")) {
-        warning(families[i], " cannot be fitted with stabilization = 'MAD'", immediate. = TRUE)
-        break
+      warning(families[i], " cannot be fitted with stabilization = 'MAD'", immediate. = TRUE)
+      break
     }
     m_L2 <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
-                             families = FAMILIES[[i]](stabilization = "L2"),
-                             data=dat), silent = TRUE)
+                            families = FAMILIES[[i]](stabilization = "L2"),
+                            data=dat), silent = TRUE)
     
     if (inherits(m_L2, "try-error")) {
       warning(families[i], " cannot be fitted with stabilization = 'L2'", immediate. = TRUE)
       break
     }
-        cat('Risks:\n  stabilization = "none":',
+    cat('Risks:\n  stabilization = "none":',
         tail(risk(m_none, merge = TRUE), 1),
         '\n  stabilization = "MAD":',
         tail(risk(m_MAD, merge = TRUE), 1), 
         '\n  stabilization = "L2":', 
         tail(risk(m_L2, merge = TRUE), 1), "\n")
+  }
 }
 
 ## check count data

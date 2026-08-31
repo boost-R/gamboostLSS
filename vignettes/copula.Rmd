@@ -1,0 +1,178 @@
+---
+title: "Bivariate Copula Regression with gamboostLSS"
+author: "Bjarne Herbst"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Bivariate Copula Regression with gamboostLSS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4)
+library(gamboostLSS)
+```
+
+## Introduction 
+`gamboostLSS` fits one additive predictor per distribution parameter. With 
+`CopulaFamilies` this is extended to a bivariate response: each margin keeps its
+own parameters, and an additional parameter `theta` describes how the two 
+responses depend on each other. Every one of these parameters gets its own 
+predictor and its own variable selection. 
+
+By Sklar's theorem the joint density of two continuous responses factorises into
+a copula density evaluated at the marginal CDFs and the two marginal densities,
+
+$$
+f(y_1, y_2) = c(F_1(y_1), F_2(y_2);\theta)f_1(y_1)f_2(y_2)
+$$
+
+so the joint log-likelihood is a sum of a dependence term and two marginal terms.
+This is what `CopulaFamilies()` boosts. 
+
+## A first model
+The response is a two-column matrix. Everything else works exactly as in a normal
+`gamboostLSS()` call.
+
+```{r}
+set.seed(1)
+n <- 150
+x <- rnorm(n)
+eps <- matrix(rnorm(2 * n), n, 2) %*% chol(matrix(c(1, 0.3, 0.3, 1), 2, 2))
+y <- cbind(x + eps[, 1], 0.5 * x + eps[, 2])
+
+cf <- CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = "clayton")
+fit <- gamboostLSS(y ~ bbs(x), families = cf, data = data.frame(x = x),
+                   control = boost_control(mstop = 50, nu = 0.1))
+
+names(fit)
+```
+
+Five sub-models: two parameters per margin and the copula parameter. The suffixes 
+`1` and `2` indicate which margin a parameter belongs to. 
+
+`predict()` with `type = "response"` returns every parameter on its natural 
+scale, including `theta` on the copula's own scale. 
+
+```{r}
+pr <- predict(fit, newdata = data.frame(x = c(-1, 0, 1)), type = "response")
+round(cbind(mu1 = pr$mu1, sigma1 = pr$sigma1, theta = pr$theta), 3)
+```
+
+## Choosing a copula 
+Four copulas are available. They differ in how they distribute dependence across 
+the range of the data, in particular the tails. 
+
+```{r}
+data.frame(
+  copula = c("gaussian", "clayton", "gumbel", "frank"),
+  range = c("(-1,1)", "(0, Inf)", "[1, Inf)", "R \\ {0}"),
+  tail = c("none", "lower", "upper", "none")
+)
+```
+
+Clayton captures joint *low* values, Gumbel joint *high* values. 
+Gaussian and Frank are symmetric. Note that Clayton and Gumbel cannot represent
+negative dependence at all. 
+
+Because `theta` lives on a different scale in each family, the fitted values are 
+not comparable across copulas. `copula_tau()` converts them to Kendall's tau, 
+which is 
+
+```{r}
+taus <- sapply(c("clayton", "gumbel", "frank"), function(cop){
+  cf <- CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = cop)
+  fit <- gamboostLSS(y ~ bbs(x), families = cf, data = data.frame(x = x),
+                     control = boost_control(mstop = 50, nu = 0.1))
+  c(theta = mean(predict(fit, type = "response")$theta),
+    tau = mean(copula_tau(fit)))
+})
+round(taus, 3)
+```
+
+The `theta` row is not comparable across columns, while the `tau` row is.
+
+## Discrete and binary margins 
+The marginal combination is detected automatically, and the likelihood is built
+accordingly - from copula CDF differences for discrete margins and from the 
+`h`-function (conditional copula CDF) for mixed cases.
+
+```{r}
+set.seed(42)
+y_mix <- cbind(rbinom(n, 1, plogis(x)), rnorm(n))
+cf_mix <- CopulaFamilies(BernoulliLSS(), GaussianLSS(), copula = "frank")
+fit_mix <- gamboostLSS(y_mix ~ bbs(x), families = cf_mix, 
+                       data = data.frame(x = x),
+                       control = boost_control(mstop = 30, nu = 0.1))
+names(fit_mix)
+```
+
+The binary margin contributes a single parameter, so this model has four 
+sub-models rather than five.
+
+## Selecting `mstop`
+`mstop` is the main tuning parameter. `make.grid()` builds the full factorial 
+grid over all parameters, which is infeasible - five parameters at ten candidate
+values each is $10^5 = 100000$ combinations. `make_copula_grid()` instead 
+searches a single shared stopping iteration. 
+
+```{r}
+grid <- make_copula_grid(fit, from = 10, by = 10)
+dim(grid)
+cvr <- cvrisk(fit, folds = cv(model.weights(fit), type = "subsampling", B = 3),
+              grid = grid, papply = lapply, trace = FALSE)
+mstop(cvr)
+```
+
+The selected values is applied with:
+
+```{r}
+invisible(fit[mstop(cvr)])
+mstop(fit)
+```
+
+Note that `[` modifies the model in place. 
+
+## A worked example
+The `india` dataset records childhood malnutrition in India (see `gamboostLSS_Tutorial` for more information). We model two child health outcomes jointly: `stunting` (height-for-age z-score) and `cbmi` (BMI of the child), as smooth functions of the child's age `cage`.
+
+```{r}
+data(india)
+y_india <- cbind(india$stunting, india$cbmi)
+
+cf_india <- CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = "gaussian")
+fit_india <- gamboostLSS(y_india ~ bbs(cage), families = cf_india, data = india,
+                         control = boost_control(mstop = 100, nu = 0.1))
+
+fv <- lapply(fit_india, fitted)
+round(c(mu1 = mean(fv$mu1), mu2 = mean(fv$mu2)), 3)
+round(c(observed1 = mean(india$stunting), observed2 = mean(india$cbmi)), 3)
+```
+
+The fitted means recover the observed ones. The interesting part is the dependence, which is allowed to vary with age: 
+
+```{r}
+tau_india <- copula_tau(fit_india)
+plot(india$cage, tau_india, pch = 16, cex = 0.4, xlab = "child age (months)",
+     ylab = expression(hat(tau)))
+abline(h = cor(india$stunting, india$cbmi, method = "kendall"), col = "red", 
+       lty = 2)
+```
+
+The dashed line is the unconditional Kendall's tau of the two responses. The fitted curve shows how the association changes with age - something a single correlation coefficient cannot express.
+
+## Practical Notes
+**Starting values for theta**
+The offset for `theta` is derived from the empirical Kendall's tau of the responses, inverted through the copula's tau-to-theta relationship. When that value lies outside what a copula can represent (e.g. negative dependence with Clayton) a static default is used instead. 
+
+**Numerical stability** 
+Very strong dependence combined with a large step size can destabilise the fit. If a fit aborts with "Infinite residuals" or "could not fit base-learner", reduce `nu`! The same data usually fits at `nu = 0.05` or `0.01`. 
+
+## Session info
+
+```{r}
+sessionInfo()
+```

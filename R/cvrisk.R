@@ -1,6 +1,6 @@
 ###################################################################
 ## cross-validation (bootstrap, k-fold cv etc.) of empirical risk
-## for boosting algorithms for gamLSS models
+## for boosting algorithms for GAMLSS models
 
 make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
                       dense_mu_grid = TRUE) {
@@ -93,12 +93,24 @@ make.grid <- function(max, length.out = 10, min = NULL, log = TRUE,
     return(RET)
 }
 
+# Input:    model     - mboostLSS object fitted with method = "cyclic"
+#           from      - smallest candidate mstop value 
+#           by        - spacing between candidate mstop values
+# Output:   matrix with one row per candidate mstop and one column per parameter
+#           of the model, for cvrisk() grid argument
+make_copula_grid <- function(model, from = 5, by = 5){
+  ms <- seq(from, min(mstop(model)), by = by)
+  grid <- matrix(ms, nrow = length(ms), ncol = length(model))
+  colnames(grid) <- names(model)
+  return(grid)
+}
+
 ###
 # cvrisk, adapted version from mboost (2.2-2)
 cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
                              grid = make.grid(mstop(object)),
                              papply = mclapply, trace = TRUE,
-                             fun = NULL, ...) {
+                             mc.preschedule = FALSE, fun = NULL, ...) {
     
     weights <- model.weights(object)
     if (any(weights == 0))
@@ -191,9 +203,17 @@ cvrisk.mboostLSS <- function(object, folds = cv(model.weights(object)),
     
     OOBweights <- matrix(rep(weights, ncol(folds)), ncol = ncol(folds))
     OOBweights[folds > 0] <- 0
-    oobrisk <- papply(1:ncol(folds),
-                      function(i) dummyfct(i, weights = folds[, i],
-                                           oobweights = OOBweights[, i]), ...)
+    if (identical(papply, mclapply)) {
+        oobrisk <- papply(1:ncol(folds),
+                          function(i) dummyfct(i, weights = folds[, i],
+                                               oobweights = OOBweights[, i]),
+                          mc.preschedule = mc.preschedule, ...)
+    } else {
+        oobrisk <- papply(1:ncol(folds),
+                          function(i) dummyfct(i, weights = folds[, i],
+                                               oobweights = OOBweights[, i]), 
+                          ...)
+    }
     ## get errors if mclapply is used
     if (any(idx <- sapply(oobrisk, is.character)))
         stop(sapply(oobrisk[idx], function(x) x))
@@ -302,68 +322,3 @@ mstop.cvriskLSS <- function(object, parameter = NULL, ...) {
     return(res)
 }
 
-if (FALSE) {
-    library(gamboostLSS)
-    
-    ## check cvrisk
-    set.seed(1907)
-    x1 <- rnorm(1000)
-    x2 <- rnorm(1000)
-    x3 <- rnorm(1000)
-    x4 <- rnorm(1000)
-    x5 <- rnorm(1000)
-    x6 <- rnorm(1000)
-    mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
-    sigma <- exp(-0.2 * x3)
-    y <- numeric(1000)
-    for( i in 1:1000)
-        y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
-    dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
-    model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                         control = boost_control(mstop = 400),
-                         center = TRUE)
-    grid <- make.grid(c(mu = 1000, sigma = 1000), length.out = 5)
-    plot(grid)
-    abline(0,1)
-    cvr <- cvrisk(model, folds = cv(model.weights(model), B = 5), grid = grid,
-                  papply = lapply)
-    
-    ### check timings:
-    
-    ### Data generating process:
-    set.seed(1907)
-    x1 <- rnorm(1000)
-    x2 <- rnorm(1000)
-    x3 <- rnorm(1000)
-    x4 <- rnorm(1000)
-    x5 <- rnorm(1000)
-    x6 <- rnorm(1000)
-    mu    <- exp(1.5 +1 * x1 +0.5 * x2 -0.5 * x3 -1 * x4)
-    sigma <- exp(-0.4 * x3 -0.2 * x4 +0.2 * x5 +0.4 * x6)
-    y <- numeric(1000)
-    for( i in 1:1000)
-        y[i] <- rnbinom(1, size = sigma[i], mu = mu[i])
-    dat <- data.frame(x1, x2, x3, x4, x5, x6, y)
-    
-    system.time({
-        ## linear model with y ~ . for both components: 1 boosting iterations
-        model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                             control = boost_control(mstop = 1),
-                             center = TRUE)
-        for (i in 10:1000) {
-            model[c(i, 10)]
-        }
-    })
-    ## langsamer als:
-    system.time({
-        ## linear model with y ~ . for both components: 1 boosting iterations
-        model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
-                             control = boost_control(mstop = 1),
-                             center = TRUE)
-        model[c(1000, 10)]
-        
-    })
-    
-    
-    ## what about the warnings in 3d?
-}

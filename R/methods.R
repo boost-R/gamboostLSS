@@ -47,7 +47,7 @@ risk.mboostLSS <- function(object, merge = FALSE, parameter = names(object), ...
         RES <- sapply(parameter, get_rsk,
                       object = object)
         RES <- as.vector(t(RES))
-        names(RES) <- rep(names(parameter), mstop(object)[1])
+        names(RES) <- rep(names(parameter), mstop(object)[1] + 1)
         ## drop unwanted NAs
         if (lo != 1)
             RES <- RES[!is.na(RES)]
@@ -97,13 +97,17 @@ selected.mboostLSS <- function(object, merge = FALSE, parameter = names(object),
     #merge is different for noncyclical fitting
     if (merge) {
         if (inherits(object, "nc_mboostLSS")){
-            RET <- names(attr(object, "combined_risk")())
             
+            #get the names of parameter selected in each iteration (drop initial offset risk values)
+            RET <- names(attr(object, "combined_risk")())[-seq_along(parameter)]
+            names(RET) <- RET #set the names of the vector as we will overwrite the values.
+            
+            #overwrite names in the vector with the selected BLs in the correct order
             for(p in names(parameter)){
                 RET[RET == p] <- object[[p]]$xselect()
             }
-            RET <- as.numeric(RET)
-            names(RET) <- names(attr(object, "combined_risk")())
+            mode(RET) = "numeric" #ensure numeric values -> as.numeric drops the names
+         
             return(RET)
         }
         else {
@@ -231,7 +235,7 @@ PI <- predint <- function(x, which, pi = 0.9, newdata = NULL, ...) {
              "base-learners of one numeric variable")
     
     pred_vars <- lapply(x, extract, what = "variable.names")
-    pred_vars <- unique(unlist(pred_vars))
+    pred_vars <- unique(trimws(unlist(strsplit(unlist(pred_vars), ",")))) # fixing bug #55
     if ("(Intercept)" %in% pred_vars)
         pred_vars <- pred_vars[pred_vars != "(Intercept)"]
     
@@ -362,16 +366,22 @@ summary.mboostLSS <- function(object, ...) {
         }
     }
     
-    cat("Selection frequencies:\n")
-    for (i in 1:length(object)) {
-        cat("Parameter ", names(object)[i], ":\n", sep = "")
-        nm <- variable.names(object[[i]])
-        selprob <- tabulate(selected(object[[i]]), nbins = length(nm)) /
-            length(selected(object[[i]]))
-        names(selprob) <- names(nm)
-        selprob <- sort(selprob, decreasing = TRUE)
-        selprob <- selprob[selprob > 0]
-        print(selprob)
+    if (!all(is_null <- sapply(selected(object), is.null))) {
+        cat("Selection frequencies:\n")
+        for (i in 1:length(object)) {
+            cat("Parameter ", names(object)[i], ":\n", sep = "")
+            if (is_null[i]){
+                print(NULL)
+                next
+            }
+            nm <- variable.names(object[[i]])
+            selprob <- tabulate(selected(object[[i]]), nbins = length(nm)) /
+                length(selected(object[[i]]))
+            names(selprob) <- names(nm)
+            selprob <- sort(selprob, decreasing = TRUE)
+            selprob <- selprob[selprob > 0]
+            print(selprob)
+        }
     }
     invisible(object)
 }
@@ -386,12 +396,20 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
     
     cll <- match.call()
     p <- sum(sapply(x, function(obj) length(variable.names(obj))))
-    n <- if(inherits(x, "FDboostLSS")) {
-        x[[1]]$ydim[1]
-    } else {
-        nrow(attr(x, "data"))
-    }
     
+    if(inherits(x, "FDboostLSS")) {
+      if(is.null(x[[1]]$ydim)){
+        n <- length(attr(x, "(weights)")) # scalar response
+      }else{
+        n <- x[[1]]$ydim[1] # functional reponse 
+        # correct the wrong default folds if necessary
+        if(nrow(folds) == length(model.weights(x))){
+          folds <- subsample(rep(1, n), B = B)
+        }
+      }
+    } else {
+      n <- nrow(attr(x, "data"))
+    }
     
     ## extract names of base-learners (and add paramter name)
     nms <- lapply(x, function(obj) variable.names(obj))
@@ -413,13 +431,11 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
             stop(sQuote("mstop"), " has to be an integer larger than ",
                  length(x))
         }
-        mstop_min <- length(x)
     }
     else {
         if (is.null(mstop))
             mstop <- mstop(x)
         mstop <- check(mstop, "mstop", names(x))
-        mstop_min <- 1
     }
     
     if (length(unique(mstop)) != 1)
@@ -429,39 +445,43 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
     if (verbose)
         cat("Run stabsel ")
     
-    ## set mstop = 1 to speed things up
-    x <- update(x, weights = model.weights(x), mstop = mstop_min)
+    ## set mstop = 0 to speed things up
+    x <- update(x, weights = model.weights(x), mstop = 0)
     
     ## define the fitting function (args.fitfun is not used but needed for
     ## compatibility with run_stabsel
     fit_model <- function(i, folds, q, args.fitfun) {
         if (verbose)
             cat(".")
-        ## start by fitting 1 step in each component
-        mod <- update(x, weights = folds[, i], mstop = mstop_min)
+        ## start by setting up model on subset and fit first q iterations
+        mod <- update(x, weights = folds[, i], mstop = q)
         ## make sure dispatch works correctly
         class(mod) <- class(x)
         xs <- selected(mod)
         nsel <- length(mod)
         ## now update model until we obtain q different base-learners altogether
-        for (m in mstop_min:max(mstop)) {
+        for (m in (q+1):max(mstop)) {
             if (nsel >= q)
                 break
-            
             mstop(mod) <- m
             xs <- selected(mod)
             nsel <- sum(sapply(xs, function(selection)
                 length(unique(selection))))
-            if (nsel >= q)
-                break
         }
         #this changes nothing for method = "cyclic" but fixes mstop for method = "noncyclic"
         mstop <- check(mstop, "mstop", names(x))
         ## complete paths
         if (any(sapply(xs, length) < mstop)) {
             for (j in 1:length(xs)) {
+                
+## <FIXME> What happens if component j was never selected, i.e. xs[[j]] = NULL?
+## Can we use NA as proposed? We need to see what happens later.
+                if (is.null(xs[[j]]))
+                    xs[[j]][1] <- NA
                 start <- length(xs[[j]]) + 1
                 xs[[j]][start:mstop[j]] <- xs[[j]][1]
+## </FIXME>   
+                
             }
         }
         
@@ -484,9 +504,13 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                     res[xs[[i]][j], j:mstop[[i]]] <- TRUE
                 res
             })
-            
+
+## <FIXME> What is this error message about? No user will know what you mean. Please fix coding issue and remove stop() or 
+## provide a relevant error message.            
             if (any(mstop < max(mstop)))
                 stop("simply add the last column to the smaller matrices")
+## </FIXME>
+            
             ## now merge sequences
             for (i in 1:ncol(sequences[[1]])) {
                 for (j in 1:length(sequences)) {
@@ -496,8 +520,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                             sequence <- matrix(c(sequences[[i]][, j],
                                                  other_params))
                         } else {
-                            tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                               i]))
+                            tmp <- unlist(lapply(sequences[1:j], function(x) x[, i]))
                             other_params <- rep(FALSE, sum(sapply(sequences,
                                                                   nrow)[-(1:j)]))
                             tmp <- c(tmp, other_params)
@@ -509,8 +532,7 @@ stabsel.mboostLSS <- function(x, cutoff, q, PFER,
                                             lapply(sequences[(j+1):length(sequences)],
                                                    function(x) x[, i - 1])))
                         } else {
-                            tmp <- unlist(lapply(sequences[1:j], function(x) x[,
-                                                                               i]))
+                            tmp <- unlist(lapply(sequences[1:j], function(x) x[, i]))
                         }
                         sequence <- cbind(sequence, tmp)
                     }

@@ -17,7 +17,7 @@
 \alias{gamlss4parTau}
 
 \title{
-  Include \code{gamlss} families in the boosting framework of \code{gamboostLSS}
+  Include \pkg{gamlss.dist} families in the boosting framework of \code{gamboostLSS}
 }
 
 \description{
@@ -78,7 +78,7 @@ gamlss.Families(...)
   corresponding family in \code{gamlss.dist} are applied. 
 
   To extract the necessary information regarding partial derivatives
-  (for the \code{ngradient} - see \code{\link{Family}} for details) and
+  (for the \code{ngradient} - see \code{\link[mboost]{Family}} for details) and
   the log-likelihood (for the \code{loss}) the \code{gamlss.dist}
   package is loaded. If the package is not installed yet, this will
   prompt an error message.
@@ -87,12 +87,12 @@ gamlss.Families(...)
   \code{gamlss2parSigma}, ... , \code{gamlss4parTau} are called
   internally to construct the sub-families. For one-parametric
   distributions, the function will prompt a warning and returns a
-  \code{\link{mboost}} family, which can be then used by the fitting
-  functions of the \code{\link{mboost}} package.
+  \code{mboost} family, which can be then used by the fitting
+  functions of the \code{mboost} package.
 
   For information on GAMLSS theory see Rigby and Stasinopoulos (2005),
   lists of available distributions are provided at
-  \url{http://gamlss.org}. For more on details boosting GAMLSS see Mayr
+  \url{https://www.gamlss.com/}. For more on details boosting GAMLSS see Mayr
   et al. (2012). Hofner et al. (2016) provides a worked example and more
   details on \code{as.families}.
 
@@ -159,12 +159,12 @@ if (require("gamlss.dist")) {
 
 coef(glmss, off2int = TRUE)
 
-## compare to gamlss
-library(gamlss)
-glmss2 <- gamlss(y ~ x, sigma.formula = ~x, family = "NO")
-coef(glmss2)
-glmss2$sigma.coef
-
+## compare to gamlss if available
+if (require(gamlss)) {
+    glmss2 <- gamlss(y ~ x, sigma.formula = ~x, family = "NO")
+    coef(glmss2)
+    glmss2$sigma.coef
+}
 }
 
 \keyword{models}

@@ -1,7 +1,7 @@
 
-R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -23,9 +23,6 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.6-0. See 'package?mboost' and 'news(package  = "mboost")'
-for a complete list of changes.
-
 
 Attaching package: 'gamboostLSS'
 
@@ -118,6 +115,34 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
+<bytecode: 0x000002cd6f764658>
+<environment: namespace:gamboostLSS>
+attr(,"name")
+[1] "Gaussian"
+> GaussianLSS(stabilization = "L2")
+$mu
+
+	 Normal distribution: mu(id link) 
+
+Loss function: -dnorm(x = y, mean = f, sd = sigma, log = TRUE) 
+ 
+
+$sigma
+
+	 Normal distribution: sigma (log link) 
+
+Loss function: -dnorm(x = y, mean = mu, sd = exp(f), log = TRUE) 
+ 
+
+attr(,"class")
+[1] "families"
+attr(,"qfun")
+function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE) 
+{
+    qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
+        log.p = log.p)
+}
+<bytecode: 0x000002cd6f764658>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
@@ -144,16 +169,17 @@ function (p, mu = 0, sigma = 1, lower.tail = TRUE, log.p = FALSE)
     qnorm(p = p, mean = mu, sd = sigma, lower.tail = lower.tail, 
         log.p = log.p)
 }
+<bytecode: 0x000002cd6f764658>
 <environment: namespace:gamboostLSS>
 attr(,"name")
 [1] "Gaussian"
 > res <- try(GaussianLSS(stabilization = "test"), silent = TRUE)
 > res
-[1] "Error in match.arg(stabilization) : 'arg' should be one of \"none\", \"MAD\"\n"
+[1] "Error in match.arg(stabilization) : \n  'arg' should be one of \"none\", \"MAD\", \"L2\"\n"
 attr(,"class")
 [1] "try-error"
 attr(,"condition")
-<simpleError in match.arg(stabilization): 'arg' should be one of "none", "MAD">
+<simpleError in match.arg(stabilization): 'arg' should be one of "none", "MAD", "L2">
 > 
 > 
 > ############################################################
@@ -171,24 +197,34 @@ attr(,"condition")
 +     m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
 +                          families = FAMILIES[[i]](stabilization = "MAD"),
 +                          data=dat)
++     m_L2 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
++                          families = FAMILIES[[i]](stabilization = "L2"),
++                          data=dat)
++     
 +     stopifnot(tail(risk(m_none, merge = TRUE), 1) != tail(risk(m_MAD, merge = TRUE), 1))
 +     cat('Risks:\n  stabilization = "none":',
 +         tail(risk(m_none, merge = TRUE), 1),
 +         '\n  stabilization = "MAD":',
-+         tail(risk(m_MAD, merge = TRUE), 1), "\n")
++         tail(risk(m_MAD, merge = TRUE), 1), 
++         '\n  stabilization = "L2":', 
++         tail(risk(m_L2, merge = TRUE), 1), "\n")
 + }
 Risks:
   stabilization = "none": 126.3867 
   stabilization = "MAD": 126.3865 
+  stabilization = "L2": 126.3866 
 Risks:
   stabilization = "none": 152.9363 
   stabilization = "MAD": 151.7991 
+  stabilization = "L2": 152.3966 
 Risks:
   stabilization = "none": -16.74875 
   stabilization = "MAD": -16.85658 
+  stabilization = "L2": -16.81103 
 Risks:
   stabilization = "none": 126.3869 
   stabilization = "MAD": 126.3865 
+  stabilization = "L2": 126.3868 
 > 
 > ## check as.families interface for 2:4 parametric families
 > dat$y <- rnorm(1000, mean = 10, sd = 1)
@@ -202,22 +238,28 @@ Risks:
 +     m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
 +                          families = as.families(FAMILIES[[i]], stabilization = "MAD"),
 +                          data=dat)
++     m_L2 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
++                          families = as.families(FAMILIES[[i]], stabilization = "L2"),
++                          data=dat)
 +     cat('Risks:\n  stabilization = "none":',
 +         tail(risk(m_none, merge = TRUE), 1),
 +         '\n  stabilization = "MAD":',
-+         tail(risk(m_MAD, merge = TRUE), 1), "\n")
++         tail(risk(m_MAD, merge = TRUE), 1), 
++         '\n  stabilization = "L2":', 
++         tail(risk(m_L2, merge = TRUE), 1), "\n")
 + }
 Risks:
   stabilization = "none": 1417.42 
   stabilization = "MAD": 1417.416 
+  stabilization = "L2": 1417.42 
 Risks:
   stabilization = "none": 1424.665 
   stabilization = "MAD": 1417.082 
+  stabilization = "L2": 1419.756 
 > 
 > FAMILIES <- list("BCT")
 > require("gamlss.dist")
 Loading required package: gamlss.dist
-Loading required package: MASS
 
 Attaching package: 'gamlss.dist'
 
@@ -234,32 +276,28 @@ The following object is masked from 'package:mboost':
 +                              families = as.families(FAMILIES[[i]], stabilization = "MAD"),
 +                              data=dat), silent = TRUE)
 +     if (inherits(m_MAD, "try-error")) {
-+         warning("BCT cannot be fitted with stabilization", immediate. = TRUE)
++         warning("BCT cannot be fitted with stabilization = 'MAD'", immediate. = TRUE)
 +         break
++     }
++     
++     m_L2 <- try(glmboostLSS(y ~ x1 + x2 + x3 + x4,
++                              families = as.families(FAMILIES[[i]], stabilization = "L2"),
++                              data=dat), silent = TRUE)
++     if (inherits(m_L2, "try-error")) {
++       warning("BCT cannot be fitted with stabilization = 'L2'", immediate. = TRUE)
++       break
 +     }
 +     cat('Risks:\n  stabilization = "none":',
 +         tail(risk(m_none, merge = TRUE), 1),
 +         '\n  stabilization = "MAD":',
-+         tail(risk(m_MAD, merge = TRUE), 1), "\n")
++         tail(risk(m_MAD, merge = TRUE), 1), 
++         '\n  stabilization = "L2":', 
++         tail(risk(m_L2, merge = TRUE), 1), "\n")
 + }
-Warning: BCT cannot be fitted with stabilization
-Warning messages:
-1: In min(which(cumsum(w)/sum(w) > 0.5)) :
-  no non-missing arguments to min; returning Inf
-2: In max(which(cumsum(w)/sum(w) <= 0.5)) :
-  no non-missing arguments to max; returning -Inf
-3: In min(which(cumsum(w)/sum(w) > 0.5)) :
-  no non-missing arguments to min; returning Inf
-4: In max(which(cumsum(w)/sum(w) <= 0.5)) :
-  no non-missing arguments to max; returning -Inf
-5: In min(which(cumsum(w)/sum(w) > 0.5)) :
-  no non-missing arguments to min; returning Inf
-6: In max(which(cumsum(w)/sum(w) <= 0.5)) :
-  no non-missing arguments to max; returning -Inf
-7: In min(which(cumsum(w)/sum(w) > 0.5)) :
-  no non-missing arguments to min; returning Inf
-8: In max(which(cumsum(w)/sum(w) <= 0.5)) :
-  no non-missing arguments to max; returning -Inf
+Risks:
+  stabilization = "none": 4336.164 
+  stabilization = "MAD": 4289.131 
+  stabilization = "L2": 4303.955 
 > 
 > ## check survival families
 > dat$zens <- sample(c(0, 1), 1000, replace = TRUE)
@@ -280,22 +318,42 @@ Loading required package: survival
 +                              data=dat), silent = TRUE)
 + 
 +     if (inherits(m_MAD, "try-error")) {
-+         warning(families[i], "cannot be fitted with stabilization", immediate. = TRUE)
++         warning(families[i], " cannot be fitted with stabilization = 'MAD'", immediate. = TRUE)
 +         break
 +     }
-+     cat('Risks:\n  stabilization = "none":',
++     m_L2 <- try(glmboostLSS(Surv(y, zens) ~ x1 + x2 + x3 + x4,
++                              families = FAMILIES[[i]](stabilization = "L2"),
++                              data=dat), silent = TRUE)
++     
++     if (inherits(m_L2, "try-error")) {
++       warning(families[i], " cannot be fitted with stabilization = 'L2'", immediate. = TRUE)
++       break
++     }
++         cat('Risks:\n  stabilization = "none":',
 +         tail(risk(m_none, merge = TRUE), 1),
 +         '\n  stabilization = "MAD":',
-+         tail(risk(m_MAD, merge = TRUE), 1), "\n")
++         tail(risk(m_MAD, merge = TRUE), 1), 
++         '\n  stabilization = "L2":', 
++         tail(risk(m_L2, merge = TRUE), 1), "\n")
 + }
 LogNormalLSS 
 
 Risks:
-  stabilization = "none": 385.8235 
-  stabilization = "MAD": 385.5457 
+  stabilization = "none": 341.8219 
+  stabilization = "MAD": 341.7978 
+  stabilization = "L2": 342.3934 
 WeibullLSS 
 
-Warning: WeibullLSScannot be fitted with stabilization
+Risks:
+  stabilization = "none": 3610.826 
+  stabilization = "MAD": 705.8757 
+  stabilization = "L2": 599.4504 
+LogLogLSS 
+
+Risks:
+  stabilization = "none": 522.9556 
+  stabilization = "MAD": 538.4426 
+  stabilization = "L2": 518.0424 
 > 
 > ## check count data
 > dat$y <- rnbinom(1000, size=10, mu=5)
@@ -310,21 +368,30 @@ Warning: WeibullLSScannot be fitted with stabilization
 +     m_MAD <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
 +                          families = FAMILIES[[i]](stabilization = "MAD"),
 +                          data=dat)
++     m_L2 <- glmboostLSS(y ~ x1 + x2 + x3 + x4,
++                          families = FAMILIES[[i]](stabilization = "L2"),
++                          data=dat)
++     
 +     cat('Risks:\n  stabilization = "none":',
 +         tail(risk(m_none, merge = TRUE), 1),
 +         '\n  stabilization = "MAD":',
-+         tail(risk(m_MAD, merge = TRUE), 1), "\n")
++         tail(risk(m_MAD, merge = TRUE), 1), 
++         '\n  stabilization = "L2":', 
++         tail(risk(m_L2, merge = TRUE), 1), "\n")
 + }
 Risks:
   stabilization = "none": 2364.811 
   stabilization = "MAD": 2363.998 
+  stabilization = "L2": 2364.279 
 Risks:
   stabilization = "none": 2414.483 
   stabilization = "MAD": 2401.002 
+  stabilization = "L2": 2393.06 
 Risks:
-  stabilization = "none": 2366.661 
-  stabilization = "MAD": 2363.148 
+  stabilization = "none": 2366.663 
+  stabilization = "MAD": 2362.5 
+  stabilization = "L2": 2364.284 
 > 
 > proc.time()
    user  system elapsed 
- 19.599   0.078  19.842 
+  16.76    0.35   17.17 

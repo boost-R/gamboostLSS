@@ -1,7 +1,7 @@
 
-R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-pc-linux-gnu (64-bit)
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -24,9 +24,6 @@ Loading required package: gamboostLSS
 Loading required package: mboost
 Loading required package: parallel
 Loading required package: stabs
-This is mboost 2.6-0. See 'package?mboost' and 'news(package  = "mboost")'
-for a complete list of changes.
-
 
 Attaching package: 'gamboostLSS'
 
@@ -98,13 +95,13 @@ The following object is masked from 'package:stats':
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = ms, trace = TRUE),
 +                       center = TRUE)
-[  1] ..................
+[  1] ...................
 Final risk: 3197.832 
 > 
 > model[c(20, 30)]   # check if two values can be specified
 Model first reduced to mstop = 10.
 Now continue ...
-[ 11] ..................
+[ 11] ...................
 Final risk: 3150.898 
 
 	 LSS Models fitted via Model-based Boosting
@@ -132,7 +129,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > modela <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = ms, trace = TRUE),
 +                      center = TRUE)
-[  1] ............................
+[  1] .............................
 Final risk: 3150.898 
 > stopifnot(max(abs(coef(model)[[1]] - coef(modela)[[1]]))
 +           < sqrt(.Machine$double.eps))
@@ -142,7 +139,7 @@ Final risk: 3150.898
 > model[40]          # check if one value can be specified
 Model first reduced to mstop = 20.
 Now continue ...
-[ 21] ..................
+[ 21] ...................
 Final risk: 3098.51 
 
 	 LSS Models fitted via Model-based Boosting
@@ -172,17 +169,17 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > modelb <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                        control = boost_control(mstop = 40, trace = TRUE),
 +                        center = TRUE)
-[  1] ......................................
+[  1] .......................................
 Final risk: 3098.51 
 > stopifnot(all.equal(risk(model), risk(modelb)))
 > 
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = 10, trace = TRUE),
 +                      center = TRUE)
-[  1] ........
+[  1] .........
 Final risk: 3209.164 
 > model[20]
-[ 11] ........
+[ 11] .........
 Final risk: 3162.029 
 
 	 LSS Models fitted via Model-based Boosting
@@ -209,7 +206,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = 20, trace = TRUE),
 +                       center = TRUE)
-[  1] ..................
+[  1] ...................
 Final risk: 3162.029 
 > stopifnot(all.equal(risk(model), risk(model2)))
 > 
@@ -217,12 +214,12 @@ Final risk: 3162.029
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = ms, trace = TRUE),
 +                      center = TRUE)
-[  1] ..................
+[  1] ...................
 Final risk: 3197.832 
 > model[c(5,10)]
 Model first reduced to mstop = 5.
 Now continue ...
-[ 6] ...
+[ 6] ....
 Final risk: 3232.999 
 
 	 LSS Models fitted via Model-based Boosting
@@ -250,7 +247,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = ms, trace = TRUE),
 +                       center = TRUE)
-[  1] ........
+[  1] .........
 Final risk: 3232.999 
 > stopifnot(all.equal(risk(model), risk(model2)))
 > 
@@ -261,10 +258,10 @@ Final risk: 3232.999
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = ms, trace = TRUE),
 +                      center = TRUE)
-[  1] ..................
+[  1] ...................
 Final risk: 3197.832 
 > model[c(10,25)]
-[21] ...
+[21] ....
 Final risk: 3193.834 
 
 	 LSS Models fitted via Model-based Boosting
@@ -295,7 +292,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = ms, trace = TRUE),
 +                       center = TRUE)
-[  1] .......................
+[  1] ........................
 Final risk: 3193.834 
 > stopifnot(all.equal(risk(model), risk(model2)))
 > 
@@ -304,7 +301,7 @@ Final risk: 3193.834
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = ms, trace = TRUE),
 +                      center = TRUE)
-[  1] ..................
+[  1] ...................
 Final risk: 3197.832 
 > model[c(10,15)]
 Model first reduced to mstop = 15.
@@ -338,7 +335,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = ms, trace = TRUE),
 +                       center = TRUE)
-[  1] .............
+[  1] ..............
 Final risk: 3202.876 
 > stopifnot(all.equal(risk(model), risk(model2)))
 > 
@@ -347,7 +344,7 @@ Final risk: 3202.876
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                      control = boost_control(mstop = ms, trace = TRUE),
 +                      center = TRUE)
-[  1] ..................
+[  1] ...................
 Final risk: 3197.832 
 > model[c(10,9)]
 Model first reduced to mstop = 9.
@@ -383,7 +380,7 @@ Loss function: -(lgamma(y + exp(f)) - lgamma(exp(f)) - lgamma(y + 1) + exp(f) *
 > model2 <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = ms, trace = TRUE),
 +                       center = TRUE)
-[  1] ........
+[  1] .........
 Final risk: 3210.562 
 > stopifnot(all.equal(risk(model), risk(model2)))
 > 
@@ -393,11 +390,11 @@ Final risk: 3210.562
 > model <- glmboostLSS(y ~ ., families = NBinomialLSS(), data = dat,
 +                       control = boost_control(mstop = 10, nu = nus, trace = TRUE),
 +                       center = TRUE)
-[  1] ........
+[  1] .........
 Final risk: 3261.092 
 > stopifnot(all(coef(model)[[1]] == 0))
 > stopifnot(any(coef(model)[[2]] != 0))
 > 
 > proc.time()
    user  system elapsed 
-  3.761   0.078   4.077 
+   1.93    0.10    2.00 

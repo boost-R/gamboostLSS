@@ -38,6 +38,10 @@
 
 \alias{ZIPoLSS}
 \alias{ZINBLSS}
+\alias{BernoulliLSS}
+
+\alias{DirichletAlpha}
+\alias{DirichletLSS}
 
 \alias{options}
 \alias{stab_ngrad}
@@ -96,6 +100,10 @@ ZIPoLSS(mu = NULL, sigma = NULL,
 # Zero-inflated negative binomial distribution
 ZINBLSS(mu = NULL, sigma = NULL, nu = NULL,
         stabilization = c("none", "MAD", "L2"))
+        
+# Bernoulli distribution
+BernoulliLSS(mu = NULL, link = c("probit", "logit", "cloglog"), 
+            stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Families for survival models (accelerated failure time
@@ -112,6 +120,10 @@ LogLogLSS(mu = NULL, sigma = NULL,
 # Weibull distribution
 WeibullLSS(mu = NULL, sigma = NULL,
            stabilization = c("none", "MAD", "L2"))
+           
+############################################################
+# Family for Dirichlet regression models
+DirichletLSS(K = NULL, stabilization = c("none", "MAD", "L2"))
 
 ############################################################
 # Constructor function for new GAMLSS distributions
@@ -133,6 +145,9 @@ Families(..., qfun = NULL, name = NULL)
     standardized in each boosting step. It can be either "none", 
     "MAD" or "L2". See also Details below.
   }
+  \item{K}{An integer specifying the number of categories in the Dirichlet distribution. This must be provided.}
+  \item{link}{link function for the Bernoulli mean. One of "probit", "logit" or
+  cloglog}
 }
 \details{
 
@@ -159,22 +174,35 @@ Families(..., qfun = NULL, name = NULL)
   location and scale parameters (with log link) of the negative binomial
   component of the model. The zero-generating process (with logit link)
   is represented by \code{nu}.
+  
+  \code{BernoulliLSS} provides a one-parameter family for binary responses. On 
+  its own it is equivalent to boosting a binary GLM; its main use here is as a
+  marginal distribution in \code{\link{CopulaFamilies}}, where it enables the 
+  binary_binary and mixed binary-continuous cases.
+  
+  The \code{DirichletLSS} family can be used to fit Dirichlet regression models.
+  Here, \code{DirichletAlpha} corresponds to the distributional parameters in
+  the Dirichlet distribution which are dependent on the number of categories 
+  in the respective compositional data (that is, proportions, amounts or rates.)
+  The number of categories, thereby distributional parameters in the data set
+  (K) has to be specified manually in the beginning of the fitting process
+  of the model.
 
   The \code{Families} function can be used to implements a new GAMLSS
   distribution which can be used for fitting by \code{\link{mboostLSS}}.
   Thereby, the function builds a list of sub-families, one for each
   distribution parameter. The sub-families themselves are objects of the
   class \code{boost_family}, and can be constructed via the function
-  \code{\link[mboost]{Family}} of the \code{mboost} Package.
+  \code{\link[mboost]{Family}} of the \pkg{mboost} Package.
 
-  Arguments to be passed to \code{Family}: The \code{loss} for every
+  Arguments to be passed to \code{\link[mboost]{Family}}: The \code{loss} for every
   distribution parameter (contained in objects of class
   \code{boost_family}) is the negative log-likelihood of the
   corresponding distribution. The \code{ngradient} is the negative
   partial derivative of the loss function with respect to the
   distribution parameter. For a two-parameter distribution (e.g. mu and
   sigma), the user therefore has to specify two sub-families with
-  \code{\link{Family}}. The \code{loss} is basically the same function
+  \code{\link[mboost]{Family}}. The \code{loss} is basically the same function
   for both paramters, only \code{ngradient} differs. Both sub-families
   are passed to the \code{Families} constructor, which returns an object
   of the class \code{families}.
@@ -184,7 +212,10 @@ Families(..., qfun = NULL, name = NULL)
   the families. If \code{stabilization = "MAD"}, the negative gradient
   is divided by its (weighted) median absolute deviation \deqn{median_i
   (|u_{k,i} - median_j(u_{k,j})|)} in each boosting step. See Hofner et 
-  al. (2016) for details. An alternative is \code{stabilization = "L2"}, where the gradient is divided by its (weighted) mean L2 norm. This results in negative gradient vectors (and hence also updates) of similar size for each distribution parameter, but also for every boosting iteration.  
+  al. (2016) for details. An alternative is \code{stabilization = "L2"}, 
+  where the gradient is divided by its (weighted) mean L2 norm. This 
+  results in negative gradient vectors (and hence also updates) of similar 
+  size for each distribution parameter, but also for every boosting iteration.  
 
 }
 \value{
@@ -192,8 +223,10 @@ Families(..., qfun = NULL, name = NULL)
 }
 
 \author{
-  \code{BetaLSS} for boosting beta regression was implmented by Florian
+  \code{BetaLSS} for boosting beta regression was implemented by Florian
   Wickler.
+  \code{DirichletLSS} for boosting Dirichlet regression models was implemented by
+  Michael Balzer.
 }
 
 \references{
@@ -218,7 +251,7 @@ Families(..., qfun = NULL, name = NULL)
 
 \seealso{
   \code{\link{as.families}} for applying GAMLSS distributions provided
-  in the framework of the \code{gamlss} package.
+  in the framework of the \pkg{gamlss} package (via \pkg{gamlss.dist}).
 
   The functions \code{\link{gamboostLSS}} and \code{\link{glmboostLSS}}
   can be used for model fitting.
@@ -252,9 +285,9 @@ newStudentTMu  <- function(mu, df){
     }
 
     # use the Family constructor of mboost
-    Family(ngradient = ngradient, risk = risk, loss = loss,
-           response = function(f) f,
-           name = "new Student's t-distribution: mu (id link)")
+    mboost::Family(ngradient = ngradient, risk = risk, loss = loss,
+                   response = function(f) f,
+                   name = "new Student's t-distribution: mu (id link)")
 }
 
 ## sub-Family for df
@@ -279,9 +312,9 @@ newStudentTDf <- function(mu, df){
                    (y - mu)^2 / (1 + (y - mu)^2 / exp(f)) * (exp(-f) + 1)/2)
     }
     # use the Family constructor of mboost
-    Family(ngradient = ngradient, risk = risk, loss = loss,
-           response = function(f) exp(f),
-           name = "Student's t-distribution: df (log link)")
+    mboost::Family(ngradient = ngradient, risk = risk, loss = loss,
+                   response = function(f) exp(f),
+                   name = "Student's t-distribution: df (log link)")
 }
 
 ## families object for new distribution
@@ -290,7 +323,6 @@ newStudentT <- Families(mu= newStudentTMu(mu=mu, df=df),
 
 \donttest{### Do not test the following code per default on CRAN as it takes some time to run:
 ### usage of the new Student's t distribution:
-library(gamlss)   ## required for rTF
 set.seed(1907)
 n <- 5000
 x1  <- runif(n)

@@ -1,3 +1,4 @@
+import("gamlss.dist", except = c("Family"))
 import("mboost")
 importFrom("stabs", "stabsel", "subsample", "run_stabsel")
 import("parallel")
@@ -8,18 +9,26 @@ importFrom("stats", "coef", "dlogis", "dnorm", "fitted", "median", "optimize",
            "plogis", "pnorm", "predict", "qlnorm", "qlogis", "qnorm", "qt",
            "qweibull", "rmultinom", "update", "var", "variable.names", "weighted.mean")
 importFrom("utils", "tail")
+importFrom("stats", "setNames")
+importFrom("stats", "cor", "dbeta", "dbinom", "dgamma", "dlnorm", "dnbinom",
+           "dpois", "dt", "dweibull", "integrate", "pbeta", "pgamma",
+           "plnorm", "pnbinom", "ppois", "pt", "pweibull", "uniroot")
 
 export(glmboostLSS,
        gamboostLSS,
        blackboostLSS,
        mboostLSS,
        mboostLSS_fit,
+       plot.glmboostLSS, plot.gamboostLSS,
        model.weights,
        PI, predint, plot.predint,
-       make.grid, cvrisk.mboostLSS,
+       predict.mboostLSS,
+       make.grid, make_copula_grid, cvrisk.mboostLSS, cvrisk.nc_mboostLSS,
+       plot.cvriskLSS, plot.nc_cvriskLSS, 
        selected, selected.mboostLSS, selected.stabsel_mboostLSS,
        stabsel.mboostLSS,
        Families,
+       CopulaFamilies, copula_tau,
        NBinomialLSS, NBinomialMu, NBinomialSigma,
        StudentTLSS, StudentTMu, StudentTSigma, StudentTDf,
        LogNormalLSS, LogNormalMu, LogNormalSigma,
@@ -29,6 +38,8 @@ export(glmboostLSS,
        BetaLSS, BetaMu, BetaPhi,
        WeibullLSS, WeibullMu, WeibullSigma,
        ZIPoLSS, ZINBLSS,
+       BernoulliLSS,
+       DirichletAlpha, DirichletLSS,
        gamlss.Families, as.families,
        gamlss1parMu,
        gamlss2parMu, gamlss2parSigma,
