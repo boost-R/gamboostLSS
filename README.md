@@ -60,3 +60,17 @@ For issues, bugs, feature requests etc. please use the [GitHub Issues](https://g
   install.packages("devtools")
   ```
 
+## Example: Basic Usage of gamboostLSS
+
+```r
+library(gamboostLSS)
+
+data("bodyfat", package = "TH.data")
+
+model <- gamboostLSS(
+  DEXfat ~ age + waistcirc + hipcirc,
+  data = bodyfat,
+  families = GaussianLSS()
+)
+
+summary(model)
