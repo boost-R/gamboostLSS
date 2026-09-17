@@ -9,7 +9,8 @@ Authors@R: c(person("Benjamin", "Hofner", role = c("aut", "cre"),
              person("Andreas", "Mayr", role = "aut"),           
              person("Nora", "Fenske", role = "aut"),
              person("Janek", "Thomas", role = "aut"),
-             person("Matthias", "Schmid", role = "aut"))
+             person("Matthias", "Schmid", role = "aut"),
+             person("Bjarne", "Herbst", role = "aut"))
 Description: Boosting models for fitting generalized additive models for
   location, shape and scale ('GAMLSS') to potentially high dimensional
   data.
