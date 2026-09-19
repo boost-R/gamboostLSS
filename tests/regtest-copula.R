@@ -1,0 +1,896 @@
+require("gamboostLSS")
+
+### check continuous_continuous_loglik() accuracy at theta = 0
+theta <- 0
+y <- cbind(c(-2, -1, 0, 1, 2), c(-2, -1, 0, 1, 2))
+stopifnot(max(abs(gamboostLSS:::continuous_continuous_loglik(y, 
+                                                             GaussianLSS(), 
+                                                             GaussianLSS(), 
+                                                             list(mu=0, sigma=1), 
+                                                             list(mu=0, sigma=1), 
+                                                             "gaussian", 0) -
+                    (gamboostLSS:::get_marginal_logpdf(GaussianLSS(),
+                                                       y[,1],
+                                                       list(mu=0, sigma=1)) +
+                       gamboostLSS:::get_marginal_logpdf(GaussianLSS(),
+                                                         y[,2],
+                                                         list(mu=0, sigma=1)
+                                                         )))) < 1e-6)
+
+### check discrete_discrete_loglik() accuracy at theta = 0
+theta <- 0
+y <- cbind(c(0, 1, 2, 5), c(0, 2, 3, 1))
+
+stopifnot(max(abs(gamboostLSS:::discrete_discrete_loglik(y, 
+                                                             NBinomialLSS(), 
+                                                             NBinomialLSS(), 
+                                                             list(mu=2, sigma=1), 
+                                                             list(mu=2, sigma=1), 
+                                                             "gaussian", theta) -
+                    (gamboostLSS:::get_marginal_logpdf(NBinomialLSS(),
+                                                       y[,1],
+                                                       list(mu=2, sigma=1)) +
+                       gamboostLSS:::get_marginal_logpdf(NBinomialLSS(),
+                                                         y[,2],
+                                                         list(mu=2, sigma=1)
+                       )))) < 1e-3) # lower accuracy threshold due to accuracy 
+                                    # of pmvnorm
+
+### check discrete_discrete_loglik() accuracy for large theta and extreme 
+### combination of response
+theta <- 0.95
+y <- cbind(0, 20)
+stopifnot(is.finite(gamboostLSS:::discrete_discrete_loglik(y, 
+                                                           NBinomialLSS(), 
+                                                           NBinomialLSS(), 
+                                                           list(mu=2, sigma=1), 
+                                                           list(mu=2, sigma=1), 
+                                                           "gaussian", theta)))
+
+### numerical gradient check of gaussian copula 
+cop <- gamboostLSS:::get_copula("gaussian")
+test_points <- list(
+  # standard case - all params non-problematic
+  list(u1 = 0.3, u2 = 0.6, theta = 0.4), 
+  # negative correlation
+  list(u1 = 0.7, u2 = 0.2, theta = -0.5),
+  # strong dependence 
+  list(u1 = 0.5, u2 = 0.5, theta = 0.85),
+  # no correlation
+  list(u1 = 0.1, u2 = 0.9, theta = 0)
+)
+eps <- 1e-6
+
+# check analytical against numerical gradient of gaussian-copula (u1)
+for (p in test_points){
+  num_grad_u1 <- (cop$logdcopula(p$u1 + eps, p$u2, p$theta) - 
+                    cop$logdcopula(p$u1 - eps, p$u2, p$theta)) / (2*eps)
+  ana_grad_u1 <- cop$dlogdcopula_u1(p$u1, p$u2, p$theta)
+  
+  stopifnot(abs(num_grad_u1 - ana_grad_u1) < 1e-5)
+}
+
+# check analytical against numerical gradient of gaussian-copula (theta)
+for (p in test_points){
+  num_grad_theta <- (cop$logdcopula(p$u1, p$u2, p$theta + eps) -
+                       cop$logdcopula(p$u1, p$u2, p$theta - eps)) / (2*eps)
+  ana_grad_theta <- cop$dlogdcopula_theta(p$u1, p$u2, p$theta)
+  
+  stopifnot(abs(num_grad_theta - ana_grad_theta) < 1e-5)
+}
+
+### numerical gradient check of Gumbel copula 
+cop <- gamboostLSS:::get_copula("gumbel")
+test_points_gumbel <- list(
+  # standard case - all params non-problematic
+  list(u1 = 0.3, u2 = 0.6, theta = 1.4), 
+  # negative correlation
+  list(u1 = 0.7, u2 = 0.2, theta = 3),
+  # strong dependence 
+  list(u1 = 0.5, u2 = 0.5, theta = 1.5),
+  # no correlation
+  list(u1 = 0.1, u2 = 0.9, theta = 4)
+)
+eps <- 1e-5
+
+# check analytical against numerical gradient of Gumbel copula (u1)
+for (p in test_points_gumbel){
+  num_grad_u1 <- (cop$logdcopula(p$u1 + eps, p$u2, p$theta) - 
+                    cop$logdcopula(p$u1 - eps, p$u2, p$theta)) / (2*eps)
+  
+  stopifnot(abs(num_grad_u1 - cop$dlogdcopula_u1(p$u1, p$u2, p$theta)) < 1e-3)
+
+  num_grad_theta <- (cop$logdcopula(p$u1, p$u2, p$theta + eps) -
+                       cop$logdcopula(p$u1, p$u2, p$theta - eps)) / (2*eps)
+  
+  stopifnot(abs(num_grad_theta - cop$dlogdcopula_theta(p$u1, p$u2, p$theta)) < 1e-3)
+}
+
+### check boundary consistency of clayton copula
+cop <- gamboostLSS:::get_copula("clayton")
+u <- c(0.2, 0.5, 0.8)
+stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
+stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
+
+
+### check h against numeric derivative of pcopula for clayton copula
+eps <- 1e-6
+theta <- 2
+u1 <- 0.4; u2 <- 0.6
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(abs(num_h - ana_h) < 1e-5)
+
+### check boundary consistency of gumbel copula
+cop <- gamboostLSS:::get_copula("gumbel")
+u <- c(0.2, 0.5, 0.8)
+stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
+stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
+
+### check h against numeric derivative of pcopula for gumbel copula
+eps <- 1e-6
+theta <- 2
+u1 <- 0.4; u2 <- 0.6
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(abs(num_h - ana_h) < 1e-5)
+
+### check boundary consistency of frank copula
+cop <- gamboostLSS:::get_copula("frank")
+u <- c(0.2, 0.5, 0.8)
+stopifnot(max(abs(cop$pcopula(u, 1, 2) - u)) < 1e-8)
+stopifnot(max(abs(cop$pcopula(1, u, 2) - u)) < 1e-8)
+
+### numerical gradient check of Frank copula
+cop <- gamboostLSS:::get_copula("frank")
+test_points_frank <- list(
+  list(u1 = 0.3, u2 = 0.6, theta = 2),
+  list(u1 = 0.7, u2 = 0.2, theta = 5),
+  list(u1 = 0.5, u2 = 0.5, theta = 0.5),
+  list(u1 = 0.1, u2 = 0.9, theta = 1),
+  list(u1 = 0.5, u2 = 0.5, theta = -3)
+)
+
+for (p in test_points_frank){
+  num_u1 <- numDeriv::grad(function(u) cop$logdcopula(u, p$u2, p$theta), p$u1)
+  stopifnot(abs(num_u1 - cop$dlogdcopula_u1(p$u1, p$u2, p$theta)) < 1e-4)
+  num_theta <- numDeriv::grad(function(th) cop$logdcopula(p$u1, p$u2, th), p$theta)
+  stopifnot(abs(num_theta - cop$dlogdcopula_theta(p$u1, p$u2, p$theta)) < 1e-4)
+}
+
+### check h against numeric derivative of pcopula for frank copula
+eps <- 1e-6
+theta <- 2
+u1 <- 0.4; u2 <- 0.6
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) / (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(abs(num_h - ana_h) < 1e-5)
+
+### check logdcopula against numerical mixed partial derivative of pcopula 
+eps <- 1e-4
+thetas <- list(gaussian = 0.5, clayton = 2, gumbel = 3, frank = 2.5)
+test_u12 <- list(c(0.3,0.4), c(0.5, 0.5), c(0.7, 0.2), c(0.1, 0.9))
+
+for (cop_name in names(thetas)){
+  cop <- gamboostLSS:::get_copula(cop_name)
+  theta <- thetas[[cop_name]]
+  for (p in test_u12){
+    u1 <- p[1]; u2 <- p[2]
+    num_c <- (cop$pcopula(u1+eps, u2+eps, theta) - 
+                cop$pcopula(u1+eps, u2-eps, theta) -
+                cop$pcopula(u1-eps, u2+eps, theta) +
+                cop$pcopula(u1-eps, u2-eps, theta)) / (4*eps^2)
+    ana_logc <- cop$logdcopula(u1, u2, theta)
+    stopifnot(abs(num_c - exp(ana_logc)) < 1e-4)
+  }
+}
+
+
+### check numerical gradient of continuous_continuous_loglik
+set.seed(42)
+y <- cbind(rlnorm(10), rbeta(10, 5, 1))
+marginal1 <- LogNormalLSS()
+marginal2 <- BetaLSS()
+params1 <- list(mu = 0.25, sigma = 0.95)
+params2 <- list(mu = 0.8, phi = 5)
+copula <- "gaussian"
+theta <- 0.5
+
+eps <- 1e-6
+u1 <- gamboostLSS:::get_marginal_cdf(marginal1, y[,1], params1)
+u2 <- gamboostLSS:::get_marginal_cdf(marginal2, y[,2], params2)
+cop <- gamboostLSS:::get_copula(copula)
+
+num_grad_loglik <- (gamboostLSS:::continuous_continuous_loglik(y, 
+                                                               marginal1,
+                                                               marginal2,
+                                                               params1,
+                                                               params2,
+                                                               copula,
+                                                               theta + eps) - 
+                      gamboostLSS:::continuous_continuous_loglik(y, 
+                                                                 marginal1,
+                                                                 marginal2,
+                                                                 params1,
+                                                                 params2,
+                                                                 copula,
+                                                                 theta - eps)) /
+  (2*eps)
+ana_grad_loglik <- cop$dlogdcopula_theta(u1, u2, theta)
+
+stopifnot(max(abs(num_grad_loglik - ana_grad_loglik)) < 1e-5)
+
+### reference value test for discrete_discrete_loglik 
+y <- cbind(1, 2)
+theta <- 0.5
+stopifnot(abs(gamboostLSS:::discrete_discrete_loglik(y, 
+                                                     NBinomialLSS(),
+                                                     NBinomialLSS(),
+                                                     list(mu=2, sigma=1),
+                                                     list(mu=2, sigma=1),
+                                                     "gaussian", theta) - 
+                (-3.328349)) < 1e-3)  # reference computed manually via 
+                                      # mvtnorm::pmvnorm 
+
+### check h against numeric derivative of pcopula for gaussian copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+eps <- 1e-3
+theta <- 0.5
+copula <- "gaussian"
+marginal1 <- GaussianLSS()
+marginal2 <- GaussianLSS()
+params1 <- list(mu = 0, sigma = 1)
+params2 <- list(mu = 0, sigma = 1)
+
+cop <- gamboostLSS:::get_copula(copula)
+u1 <- gamboostLSS:::get_marginal_cdf(marginal1, y[,1], params1)
+u2 <- gamboostLSS:::get_marginal_cdf(marginal2, y[,2], params2)
+
+num_h <- (cop$pcopula(u1, u2 + eps, theta) - cop$pcopula(u1, u2 - eps, theta)) /
+  (2*eps)
+ana_h <- cop$h(u1, u2, theta)
+stopifnot(max(abs(num_h - ana_h)) < 1e-3)
+
+
+### check binary_continuous_loglik at theta = 0
+y_bc <- cbind(c(0, 1, 0, 1), rnorm(4))
+mu1_val <- 0.3
+params_bin <- list(mu = mu1_val)
+params_norm <- list(mu = 0, sigma = 1)
+
+loglik_bc <- gamboostLSS:::binary_continuous_loglik(
+  y_bc, gamboostLSS:::BernoulliLSS(), GaussianLSS(), params_bin, params_norm, "gaussian", 0)
+
+expected_bc <- log(ifelse(y_bc[,1] == 1, mu1_val, 1 - mu1_val)) + 
+  dnorm(y_bc[,2], log = TRUE)
+
+stopifnot(max(abs(loglik_bc - expected_bc)) < 1e-6)
+
+
+### reference value test for binary_continuous_loglik
+y_ref <- cbind(0, 1)
+ref_val <- gamboostLSS:::binary_continuous_loglik(
+  y_ref, gamboostLSS:::BernoulliLSS(), GaussianLSS(), list(mu = 0.4), list(mu = 0, sigma =1),
+  "gaussian", 0.5)
+
+stopifnot(abs(ref_val - (-2.36596)) < 1e-2)
+
+  
+### test correct naming of sub-family parameters
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(GaussianLSS(),
+                                                       GaussianLSS())),
+                    c("mu1", "sigma1", "mu2", "sigma2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(NBinomialLSS(),
+                                                       NBinomialLSS())),
+                    c("mu1", "sigma1", "mu2", "sigma2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
+  gamboostLSS:::BernoulliLSS(), 
+  gamboostLSS:::BernoulliLSS())),
+  c("mu1", "mu2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
+  gamboostLSS:::BernoulliLSS(), GaussianLSS())),
+  c("mu1", "mu2", "sigma2", "theta")))
+
+stopifnot(identical(names(gamboostLSS:::CopulaFamilies(
+  GaussianLSS(), gamboostLSS:::BernoulliLSS())),
+  c("mu1", "sigma1", "mu2", "theta")))
+
+
+### check CopulaFamilies copula response/name
+for (cop_name in c("gaussian", "clayton", "gumbel", "frank")){
+  copula_family <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                                copula = cop_name)
+  cop <- gamboostLSS:::get_copula(cop_name)
+  stopifnot(identical(copula_family$theta@name, cop$name))
+  
+  # compare responses
+  f_vals <- c(-2, -0.5, 0, 0.5, 2)
+  stopifnot(max(abs(copula_family$theta@response(f_vals) - 
+                      cop$response(f_vals))) < 1e-5)
+}
+
+### check "unknown-copula" case for get_copula
+result <- tryCatch(gamboostLSS:::get_copula("unknown"),
+                   error = function(e) "error")
+stopifnot(identical(result, "error"))
+
+
+### check ngradient_theta against numDeriv for gaussian copula
+library(numDeriv)
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 0.3
+num_grad <- numDeriv::grad(function(f) -cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-5)
+
+### check ngradient_theta against numDeriv for clayton copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "clayton")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 0.5
+num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-4)
+
+### check ngradient_theta against numDeriv for gumbel copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gumbel")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 0.5
+num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-4)
+
+### check get_marginal_dcdf analytical formula for gaussian
+eps <- 1e-6
+y <- c(0.5, -1.2, 2.0)
+params <- list(mu = 0.3, sigma = 1.5)
+
+num_dmu <- (gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                            list(mu = params$mu + eps,
+                                                 sigma = params$sigma)) -
+              gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                              list(mu = params$mu - eps,
+                                                   sigma = params$sigma))) / 
+  (2*eps)
+ana_dmu <- gamboostLSS:::get_marginal_dcdf(GaussianLSS(), y, params, "mu")
+stopifnot(max(abs(num_dmu - ana_dmu)) < 1e-5)
+
+num_dsigma <- (gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                              list(mu = params$mu,
+                                                   sigma = params$sigma + eps)) -
+                 gamboostLSS:::get_marginal_cdf(GaussianLSS(), y, 
+                                                list(mu = params$mu,
+                                                     sigma = params$sigma- eps))) / 
+  (2*eps)
+ana_dsigma <- gamboostLSS:::get_marginal_dcdf(GaussianLSS(), y, params, "sigma")
+stopifnot(max(abs(num_dsigma - ana_dsigma)) < 1e-5)
+
+### check get_marginal_dcdf fallback for negative binomial
+y_nb <- c(1, 3, 5)
+params_nb <- list(mu = 2, sigma = 1)
+d_nb <- gamboostLSS:::get_marginal_dcdf(NBinomialLSS(), y_nb, params_nb, "mu")
+stopifnot(all(is.finite(d_nb)))
+
+### check ngradient_p (mu1, sigma1) against numDeriv for gaussian copula 
+set.seed(42)
+y <- cbind(rnorm(10, 0.5, 1.5), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian", theta = 0)
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y,w))
+invisible(cf$sigma1@offset(y,w))
+invisible(cf$mu2@offset(y,w))
+invisible(cf$sigma2@offset(y,w))
+
+f0 <- 0.3
+num_grad_mu1 <- numDeriv::grad(function(f) -cf$mu1@risk(y, f, w=w), f0)
+ana_grad_mu1 <- sum(cf$mu1@ngradient(y, f0, w))
+stopifnot(abs(num_grad_mu1 - ana_grad_mu1) < 1e-4)
+
+f0_sigma <- log(1.5)
+num_grad_sigma1 <- numDeriv::grad(function(f) - cf$sigma1@risk(y, f, w=w),
+                                  f0_sigma)
+ana_grad_sigma1 <- sum(cf$sigma1@ngradient(y, f0_sigma, w))
+stopifnot(abs(num_grad_sigma1 - ana_grad_sigma1) < 1e-4)
+
+### check ngradient_p for mu2 and sigma2 against numDeriv
+num_grad_mu2 <- numDeriv::grad(function(f) -cf$mu2@risk(y, f, w = w), 0.3)
+ana_grad_mu2 <- sum(cf$mu2@ngradient(y, 0.3, w))
+stopifnot(abs(num_grad_mu2 - ana_grad_mu2) < 1e-4)
+
+num_grad_sigma2 <- numDeriv::grad(function(f) -cf$sigma2@risk(y, f, w = w), 
+                                  log(1.5))
+ana_grad_sigma2 <- sum(cf$sigma2@ngradient(y, log(1.5), 2))
+stopifnot(abs(num_grad_sigma2 - ana_grad_sigma2) < 1e-4)
+
+### verify all ngradients return finite values after initialization
+set.seed(42)
+y <- cbind(rnorm(20), rnorm(20))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gaussian", theta = 0)
+w <- rep(1, nrow(y))
+
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+invisible(cf$theta@offset(y, w))
+
+stopifnot(all(is.finite(cf$mu1@ngradient(y, 0.5, w))))
+stopifnot(all(is.finite(cf$sigma1@ngradient(y, log(1.5), w))))
+stopifnot(all(is.finite(cf$mu2@ngradient(y, 0.5, w))))
+stopifnot(all(is.finite(cf$sigma2@ngradient(y, log(1.5), w))))
+stopifnot(all(is.finite(cf$theta@ngradient(y, 0.3, w))))
+
+### check ngradient_theta against numDeriv for Frank copula
+set.seed(42)
+y <- cbind(rnorm(10), rnorm(10))
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "frank")
+
+w <- rep(1, nrow(y))
+invisible(cf$mu1@offset(y, w))
+invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w))
+invisible(cf$sigma2@offset(y, w))
+
+f0 <- 2
+num_grad <- numDeriv::grad(function(f) - cf$theta@risk(y, f), f0)
+ana_grad <- sum(cf$theta@ngradient(y, f0))
+stopifnot(abs(num_grad - ana_grad) < 1e-4)
+
+### check theta offsets
+set.seed(42)
+y <- cbind(rnorm(40), rnorm(40))
+y[, 2] <- y[, 1] + rnorm(40)
+w <- rep(1, 40)
+tau_hat <- cor(y[, 1], y[, 2], method = "kendall")
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+stopifnot(abs(cf$theta@offset(y, w) - atanh(sin(pi * tau_hat / 2))) < 1e-10)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "clayton")
+stopifnot(abs(cf$theta@offset(y, w) - log(2 * tau_hat / (1 - tau_hat))) < 1e-10)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gumbel")
+stopifnot(abs(cf$theta@offset(y, w) - log(tau_hat / (1 - tau_hat))) < 1e-10)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "frank")
+stopifnot(abs(cop$tau(cf$theta@offset(y, w)) - tau_hat) < 1e-6)
+
+### check fallback for negative dependence in Clayton/Gumbel 
+y_neg <- y; y_neg[, 2] <- -y[, 2]
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                  copula = "clayton")
+stopifnot(cf$theta@offset(y_neg, w) == 0)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                  copula = "gumbel")
+stopifnot(cf$theta@offset(y_neg, w) == 0)
+
+
+### end-to-end test 
+set.seed(42)
+n <- 100
+x <- rnorm(n)
+rho <- 0.5
+eps <- matrix(rnorm(2*n), n, 2) %*% chol(matrix(c(1, rho, rho, 1), 2, 2))
+y <- cbind(x + eps[, 1], -x + eps[,2])
+df <- data.frame(x = x)
+
+for (cop_name in c("gaussian", "clayton", "gumbel", "frank")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = cop_name)
+  fit <- gamboostLSS(y ~ x, families = cf, data = df, 
+                     control = boost_control(mstop = 10, nu = 0.1))
+  stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+}
+
+### check stabilization methods for theta ngradient  
+set.seed(42)
+y <- cbind(rnorm(20), rnorm(20))
+w <- rep(1, 20)
+
+make_cf <- function(stabilization){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = "gaussian", 
+                                     stabilization = stabilization)
+  for (p in c("mu1", "sigma1", "mu2", "sigma2", "theta"))
+    invisible(cf[[p]]@offset(y, w))
+  cf
+}
+
+cf_none <- make_cf("none")
+cf_mad <- make_cf("MAD")
+cf_l2 <- make_cf("L2")
+
+f0 <- 0.3
+raw <- cf_none$theta@ngradient(y, f0, w)
+
+div_mad <- weighted.median(
+  abs(raw - weighted.median(raw, w = w)), w = w)
+stopifnot(all.equal(cf_mad$theta@ngradient(y, f0, w), raw/div_mad))
+
+div_l2 <- sqrt(weighted.mean(raw^2, w = w))
+stopifnot(all.equal(cf_l2$theta@ngradient(y, f0, w), raw / div_l2))
+
+### check stabilization for marginal ngradient
+raw_mu <- cf_none$mu1@ngradient(y, f0, w)
+div_mu <- weighted.median(abs(raw_mu - weighted.median(raw_mu, w = w)), w = w)
+stopifnot(all.equal(cf_mad$mu1@ngradient(y, f0, w), raw_mu / div_mu))
+
+
+### check Kendall's tau conversion
+cop <- gamboostLSS:::get_copula("gaussian")
+stopifnot(abs(cop$tau(0.5) - 2/pi * asin(0.5)) < 1e-10)
+for (th in c(-0.8, -0.3, 0.2, 0.9))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-8)
+
+cop <- gamboostLSS:::get_copula("clayton")
+stopifnot(abs(cop$tau(2) - 0.5) < 1e-10)
+for (th in c(0.5, 1, 2, 8))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-8)
+
+cop <- gamboostLSS:::get_copula("gumbel")
+stopifnot(abs(cop$tau(2) - 0.5) < 1e-10)
+for (th in c(1.2, 2, 5, 10))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-8)
+
+cop <- gamboostLSS:::get_copula("frank")
+stopifnot(abs(cop$tau(3) + cop$tau(-3)) < 1e-8)
+stopifnot(cop$tau(8) > cop$tau(2))
+for (th in c(-8, -2, 1, 5, 20))
+  stopifnot(abs(cop$tau_inv(cop$tau(th)) - th) < 1e-6)
+
+### check response_inv
+for (cn in c("gaussian", "clayton", "gumbel", "frank")){
+  cop <- gamboostLSS:::get_copula(cn)
+  for (f in c(-1, 0.3, 2))
+    stopifnot(abs(cop$response_inv(cop$response(f)) - f) < 1e-10)
+}
+
+### check cvrisk works with CopulaFamilies
+set.seed(42)
+n <- 80
+x <- rnorm(n)
+eps <- matrix(rnorm(2*n), n, 2) %*% chol(matrix(c(1, .6, .6, 1), 2, 2))
+y <- cbind(x + eps[, 1], -x + eps[, 2])
+df <- data.frame(x = x)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ x, families = cf, data = df,
+                   control = boost_control(mstop = 20, nu = 0.1))
+
+ms <- seq(5, 20, by = 5)
+grid <- gamboostLSS:::make_copula_grid(fit, from = 5, by = 5)
+colnames(grid) <- names(fit)
+cvr <- cvrisk(fit, folds = cv(model.weights(fit), type = "subsampling", B = 3),
+              grid = grid, papply = lapply, trace = FALSE)
+
+sel <- mstop(cvr)
+stopifnot(all(sel %in% grid[, 1]))
+
+invisible(fit_final <- fit[sel])
+stopifnot(all(mstop(fit_final) == sel))
+stopifnot(all(sapply(fit_final, function(m) all(is.finite(fitted(m))))))
+
+### check vectorized dresponse matches numDeriv per-observation 
+f <- seq(-2, 2, length.out = 50)
+eps <- 1e-7
+for (link in list(tanh, exp, function(f) exp(f) + 1, identity)){
+  vec <- (link(f + eps) - link(f - eps)) / (2*eps)
+  ref <- sapply(f, function(fi) numDeriv::grad(link, fi))
+  stopifnot(max(abs(vec - ref)) < 1e-6)
+}
+
+### check ngradient_p call - should not call numDeriv per obs
+set.seed(42)
+n <- 300
+y <- cbind(rnorm(n), rnorm(n))
+w <- rep(1, n)
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+invisible(cf$mu1@offset(y, w)); invisible(cf$sigma1@offset(y, w))
+invisible(cf$mu2@offset(y, w)); invisible(cf$sigma2@offset(y, w))
+invisible(cf$theta@offset(y, w))
+
+t <- system.time(for (i in 1:20) cf$mu1@ngradient(y, 0.3, w))
+stopifnot(t[3] < 1)
+
+### check get_marginal_dcdf fallback - must return vector 
+y <- c(1, 3, 5)
+mu <- c(1.5, 2.5, 4)
+sig <- c(1, 1.2, 0.8)
+params <- list(mu = mu, sigma = sig)
+
+d <- gamboostLSS:::get_marginal_dcdf(NBinomialLSS(), y, params, "mu")
+stopifnot(is.null(dim(d)))
+stopifnot(length(d) == length(y))
+
+ref <- sapply(seq_along(y), function(i){
+  eps <- 1e-6
+  (gamboostLSS:::get_marginal_cdf(NBinomialLSS(), y[i], 
+                                  list(mu = mu[i] + eps, sigma = sig[i])) - 
+      gamboostLSS:::get_marginal_cdf(NBinomialLSS(), y[i], 
+                                     list(mu = mu[i] - eps, sigma = sig[i]))) /
+    (2 * eps)
+})
+stopifnot(max(abs(d-ref)) < 1e-5)
+
+### check end-to-end a non-Gaussian marginal fit 
+set.seed(42)
+n <- 60
+x <- rnorm(n)
+y1 <- rgamma(n, shape = 2, rate = 2 / exp(0.3 * x))
+y2 <- rnorm(n)
+y <- cbind(y1, y2)
+df <- data.frame(x = x)
+
+cf <- gamboostLSS:::CopulaFamilies(GammaLSS(), GaussianLSS(), 
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ x, families = cf, data = df,
+                   control = boost_control(mstop = 20, nu = 0.1))
+stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+
+### check generic mboostLSS methods for CopulaFamilies fit 
+set.seed(3)
+n <- 60
+x <- rnorm(n)
+eps <- matrix(rnorm(2*n), n, 2) %*% chol(matrix(c(1, 0.5, 0.5, 1), 2, 2))
+y <- cbind(x + eps[, 1], -x + eps[, 2])
+df <- data.frame(x = x)
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ x, families = cf, data = df,
+                   control = boost_control(mstop = 20, nu = 0.1))
+
+stopifnot(is.list(summary(fit)) || is.null(summary(fit)))
+invisible(capture.output(print(summary(fit))))
+                                   
+tmp <- tempfile(fileext = ".pdf")
+pdf(tmp)
+invisible(plot(fit))
+dev.off()
+unlink(tmp)
+
+stopifnot(is.list(coef(fit)))
+stopifnot(is.list(selected(fit)))
+stopifnot(length(selected(fit)) == length(fit))
+
+stopifnot(grepl("margin 1", cf$mu1@name))
+stopifnot(grepl("margin 2", cf$mu2@name))
+
+
+### check if ngradient includes the copula correction
+# binary_continuous
+set.seed(42)
+n <- 30 
+w <- rep(1, n)
+
+y_bc <- cbind(rbinom(n, 1, 0.4), rnorm(n, 1, 1.2))
+cf_bc <- gamboostLSS:::CopulaFamilies(gamboostLSS:::BernoulliLSS(), 
+                                      GaussianLSS(), copula = "gaussian",
+                                      theta = 0.5)
+invisible(cf_bc$mu1@offset(y_bc,w)); invisible(cf_bc$mu2@offset(y_bc, w))
+invisible(cf_bc$sigma2@offset(y_bc, w))
+
+num_mu1 <- numDeriv::grad(function(f) -cf_bc$mu1@risk(y_bc, f, w=w), 0.3)
+ana_mu1 <- sum(cf_bc$mu1@ngradient(y_bc, 0.3, w))
+stopifnot(abs(num_mu1 - ana_mu1) < 1e-4)
+
+num_mu2 <- numDeriv::grad(function(f) -cf_bc$mu2@risk(y_bc, f, w=w), 0.3)
+ana_mu2 <- sum(cf_bc$mu2@ngradient(y_bc, 0.3, w))
+stopifnot(abs(num_mu2 - ana_mu2) < 1e-4)
+
+# discrete_discrete
+y_dd <- cbind(rpois(n, 2), rpois(n, 4))
+cf_dd <- gamboostLSS:::CopulaFamilies(NBinomialLSS(), NBinomialLSS(),
+                                      copula = "gaussian", theta = 0.5)
+invisible(cf_dd$mu1@offset(y_dd, w)); invisible(cf_dd$mu2@offset(y_dd, w))
+invisible(cf_dd$sigma1@offset(y_dd, w)); invisible(cf_dd$sigma2@offset(y_dd, w))
+
+num_dd <- numDeriv::grad(function(f) -cf_dd$mu1@risk(y_dd, f, w = w), 1.0)
+ana_dd <- sum(cf_dd$mu1@ngradient(y_dd, 1.0, w))
+stopifnot(abs(num_dd - ana_dd) < 1e-4)
+
+### check end-to-end fit for previously untested marginal cases
+set.seed(1)
+n <- 80
+x <- rnorm(n)
+
+fit_case <- function(m1, m2, y){
+  cf <- gamboostLSS:::CopulaFamilies(m1, m2, copula = "gaussian")
+  fit <- gamboostLSS(y ~ x, families = cf, data = data.frame(x = x),
+                     control = boost_control(mstop = 20, nu = 0.1))
+  stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+}
+
+fit_case(NBinomialLSS(), NBinomialLSS(),
+         cbind(rpois(n, exp(0.3*x+1)), rpois(n, exp(-0.2*x+1))))
+fit_case(BernoulliLSS(), BernoulliLSS(),
+         cbind(rbinom(n, 1, plogis(x)), rbinom(n, 1, plogis(x))))
+fit_case(BernoulliLSS(), GaussianLSS(),
+         cbind(rbinom(n, 1, plogis(x)), rnorm(n)))
+fit_case(GaussianLSS(), BernoulliLSS(),
+         cbind(rnorm(n), rbinom(n, 1, plogis(x))))
+
+### check if generic methods are sensible for every marginal case
+set.seed(1)
+n <- 100
+x <- rnorm(n)
+
+y_bb <- cbind(rbinom(n, 1, plogis(x)), rbinom(n, 1, plogis(-x)))
+cf_bb <- gamboostLSS:::CopulaFamilies(gamboostLSS:::BernoulliLSS(),
+                                      gamboostLSS:::BernoulliLSS(),
+                                      copula = "gaussian")
+fit_bb <- gamboostLSS(y_bb ~ x, families = cf_bb, data = data.frame(x = x),
+                      control = boost_control(mstop = 50, nu = 0.01))
+pr_bb <- predict(fit_bb, newdata = data.frame(x = c(-1, 0, 1)), type = "response")
+stopifnot(all(pr_bb$mu1 > 0 & pr_bb$mu1 < 1))
+stopifnot(all(pr_bb$mu2 > 0 & pr_bb$mu2 < 1))
+stopifnot(all(abs(tanh(pr_bb$theta)) < 1))
+
+y_dd <- cbind(rpois(n, exp(0.3*x+1)), rpois(n, exp(-0.2*x+1)))
+cf_dd <- gamboostLSS:::CopulaFamilies(NBinomialLSS(), NBinomialLSS(),
+                                      copula = "gaussian")
+fit_dd <- gamboostLSS(y_dd ~ x, families = cf_dd, data = data.frame(x = x),
+                      control = boost_control(mstop = 50, nu = 0.1))
+pr_dd <- predict(fit_dd, newdata = data.frame(x = c(-1, 0, 1)), type = "response")
+stopifnot(all(pr_dd$mu1 > 0), all(pr_dd$mu2 > 0), all(pr_dd$sigma1 > 0))
+
+y_bc <- cbind(rbinom(n, 1, plogis(x)), rnorm(n))
+cf_bc <- gamboostLSS:::CopulaFamilies(gamboostLSS:::BernoulliLSS(),
+                                      GaussianLSS(), copula = "gaussian")
+fit_bc <- gamboostLSS(y_bc ~ x, families = cf_bc, data = data.frame(x = x), 
+                      control = boost_control(mstop = 20, nu = 0.1))
+s <- capture.output(print(summary(fit_bc)))
+stopifnot(any(grepl("margin 1", s)), any(grepl("margin 2", s)))
+
+### check if exported API is reachable without :::
+stopifnot(is.function(CopulaFamilies))
+stopifnot(is.function(BernoulliLSS))
+stopifnot(is.function(make_copula_grid))
+
+cf_exported <- CopulaFamilies(GaussianLSS(), BernoulliLSS(),
+                              copula = "gaussian")
+stopifnot(all(c("mu1", "sigma1", "mu2", "theta") %in% names(cf_exported)))
+
+### check copula_tau maps fitted theta onto comparable dependence scale
+set.seed(1)
+n <- 100
+x <- rnorm(n)
+eps <- matrix(rnorm(2 * n), n, 2) %*% chol(matrix(c(1, 0.3, 0.3, 1), 2, 2))
+y <- cbind(x + eps[, 1], 0.5 * x + eps[, 2])
+
+for (cn in c("gaussian", "clayton", "gumbel", "frank")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = cn)
+  fit <- gamboostLSS(y ~ x, families = cf, data = data.frame(x = x), 
+                     control = boost_control(mstop = 30, nu = 0.1))
+  tt <- copula_tau(fit)
+  stopifnot(length(tt) == n)
+  stopifnot(all(is.finite(tt)))
+  stopifnot(all(tt >= -1 & tt <= 1))
+  
+  # predict theta by hand and compare
+  cop <- gamboostLSS:::get_copula(cn)
+  th <- as.vector(predict(fit, type = "response")$theta)
+  stopifnot(max(abs(tt - cop$tau(th))) < 1e-8)
+}
+
+### check if newdata-path returns one value per new observation 
+nd <- data.frame(x = c(-1, 0, 1))
+stopifnot(length(copula_tau(fit, newdata = nd)) == 3)
+
+### check error output on a model that is not built with CopulaFamilies
+fit_plain <- gamboostLSS(y[, 1] ~ x, families = GaussianLSS(),
+                         data = data.frame(x = x), 
+                         control = boost_control(mstop = 10))
+stopifnot(inherits(try(copula_tau(fit_plain), silent = TRUE), "try-error"))
+
+### check that link functions stay inside their parameter domain
+cop <- gamboostLSS:::get_copula("gaussian")
+stopifnot(all(abs(cop$response(c(-100, -20, 20, 100))) < 1))
+stopifnot(all(cop$dresponse(c(-100, 100)) > 0))
+
+# response and dresponse must clamp identically
+f <- 20 ; eps_fd <- 1e-6
+stopifnot(abs((cop$response(f + eps_fd) - cop$response(f - eps_fd)) / 
+                (2 * eps_fd) - cop$dresponse(f)) < 1e-4)
+
+cop <- gamboostLSS:::get_copula("frank")
+stopifnot(cop$response(0) != 0)
+stopifnot(is.finite(cop$logdcopula(0.3, 0.6, cop$response(0))))
+
+### check if PIT values stay in (0,1)
+u <- gamboostLSS:::get_marginal_cdf(GaussianLSS(), c(-1e6, 0, 1e6),
+                                    list(mu = 0, sigma = 1))
+stopifnot(all(u > 0), all(u < 1))
+stopifnot(all(is.finite(qnorm(u))))
+
+### check if strong dependence does not abort the fit
+set.seed(42)
+n <- 100
+x <- rnorm(n)
+e <- matrix(rnorm(2 * n), n, 2) %*% chol(matrix(c(1, 0.6, 0.6, 1), 2, 2))
+y_dep <- cbind(x + e[,1], x + e[,2])
+for (cn in c("clayton", "gumbel", "frank")){
+  cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), copula = cn)
+  fit <- gamboostLSS(y_dep ~ x, families = cf, data = data.frame(x = x),
+                     control = boost_control(mstop = 30, nu = 0.1))
+  stopifnot(all(sapply(fit, function(m) all(is.finite(fitted(m))))))
+}
+
+### check that finite difference doesnt push parameter out of domain
+set.seed(11)
+y_s <- cbind(rnorm(40), rnorm(40))
+w_s <- rep(1, 40)
+cf_s <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(), 
+                                     copula = "gaussian", theta = 0.3)
+for (p in c("mu1", "sigma1", "mu2", "sigma2")) 
+  invisible(cf_s[[p]]@offset(y_s, w_s))
+
+g <- cf_s$sigma1@ngradient(y_s, log(1e-8), w_s)
+stopifnot(all(is.finite(g)))
+
+### check if variable selection works correctly
+set.seed(2026)
+n <- 400
+x1 <- rnorm(n); x2 <- rnorm(n); x3 <- rnorm(n); x4 <- rnorm(n); x5 <- rnorm(n)
+sigma1 <- exp(0.3 * x2)
+rho <- tanh(0.8 * x3)
+y <- t(sapply(seq_len(n), function(i){
+  S <- matrix(c(sigma1[i]^2, rho[i]*sigma1[i], rho[i]*sigma1[i], 1), 2, 2)
+  c(2*x1[i], -1.5*x1[i]) + as.vector(t(chol(S)) %*% rnorm(2))
+}))
+
+cf <- gamboostLSS:::CopulaFamilies(GaussianLSS(), GaussianLSS(),
+                                   copula = "gaussian")
+fit <- gamboostLSS(y ~ bols(x1) + bols(x2) + bols(x3) + bols(x4) + bols(x5),
+                   families = cf, data = data.frame(x1, x2, x3, x4, x5), 
+                   control = boost_control(mstop = 50, nu = 0.05))
+
+top <- function(p) which.max(tabulate(selected(fit)[[p]], nbins = 5))
+stopifnot(top("mu1") == 1) # x1
+stopifnot(top("mu2") == 1) # x1
+stopifnot(top("theta") == 3) # x3 
+
+
+

@@ -3,6 +3,7 @@
 \alias{cvrisk.mboostLSS}
 \alias{cvrisk.nc_mboostLSS}
 \alias{make.grid}
+\alias{make_copula_grid}
 \alias{plot.cvriskLSS}
 \alias{plot.nc_cvriskLSS}
 
@@ -14,29 +15,36 @@
 \usage{
 \method{cvrisk}{mboostLSS}(object, folds = cv(model.weights(object)),
        grid = make.grid(mstop(object)), papply = mclapply,
-       trace = TRUE, fun = NULL, ...)
+       trace = TRUE, mc.preschedule = FALSE, fun = NULL, ...)
 
 make.grid(max, length.out = 10, min = NULL, log = TRUE,
           dense_mu_grid = TRUE)
+          
+make_copula_grid(model, from = 5, by = 5)
+          
+\method{cvrisk}{nc_mboostLSS}(object, folds = cv(model.weights(object)),
+       grid = 1:sum(mstop(object)), papply = mclapply,
+       trace = TRUE, mc.preschedule = FALSE, fun = NULL, ...)          
 
 \method{plot}{cvriskLSS}(x, type = c("heatmap", "lines"),
      xlab = NULL, ylab = NULL, ylim = range(x),
      main = attr(x, "type"), ...)
      
-\method{plot}{nc_cvriskLSS}(x, type = "lines",
-     xlab = "Number of boosting iterations", ylab = NULL,
+\method{plot}{nc_cvriskLSS}(x, xlab = "Number of boosting iterations", ylab = NULL,
      ylim = range(x), main = attr(x, "type"), ...)
 }
 
 \arguments{
   \item{object}{
-    an object of class \code{mboostLSS}, i.e., a boosted GAMLSS model.
+    an object of class \code{mboostLSS} (i.e., a boosted GAMLSS model with 
+    \code{method = "cyclic"}) or class \code{nc_mboostLSS} (i.e., a boosted
+    GAMLSS model with \code{method = "noncyclic"})
   }
   \item{folds}{
     a weight matrix with number of rows equal to the number of
     observations. The number of columns corresponds to the number of
     cross-validation runs. Can be computed using function
-    \code{\link{cv}} from package \pkg{mboost} and defaults to 25
+    \code{\link[mboost]{cv}} from package \pkg{mboost} and defaults to 25
     bootstrap samples.
   }
   \item{grid}{
@@ -59,6 +67,10 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   \item{trace}{
     should status information beein printed during cross-validation?
     Default: \code{TRUE}.
+  }
+  \item{mc.preschedule}{
+    preschedule tasks if are parallelized using \code{\link{mclapply}}
+    (default: \code{FALSE})? For details see \code{\link{mclapply}}.
   }
   \item{fun}{
     if \code{fun} is NULL, the out-of-sample risk is returned. \code{fun},
@@ -95,9 +107,17 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
     These values can be computed without or with very little additional
     computational costs. For details see examples.
   }
+  \item{model}{
+  an object of class \code{mboostLSS} fitted with \code{method = "cyclic"}.
+  }
+  \item{from, by}{
+  smalles candidate \code{mstop} value, and the spacing between candidates. 
+  Candidates run from \code{from} up to \code{min(mstop(model))} in steps of 
+  \code{by}.
+  }
   \item{x}{
-    an object of class \code{cvriskLSS}, which results from running
-    \code{cvrisk}.
+    an object of class \code{cvriskLSS} (cyclic fitting) or \code{nc_cvriskLSS}
+    (non-cyclic fitting), which results from running \code{cvrisk}.
   }
   \item{type}{
     should \code{"lines"} or a \code{"heatmap"} (default) be plotted?
@@ -121,26 +141,34 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   for different stopping parameters \code{mstop} are computed by
   this function which can be utilized to choose an appropriate
   number of boosting iterations to be applied. For details see
-  \code{\link{cvrisk.mboost}}.
+  \code{\link[mboost]{cvrisk.mboost}}.
 
   \code{make.grid} eases the creation of an equidistand, integer-valued
   grids, which can be used with \code{cvrisk}. Per default, the grid is
   equidistant on a logarithmic scale.
+  \code{make_copula_grid} instead searches over a single shared stopping 
+  iteration applied to all parameters at once, which matches how cyclic fitting
+  advances. This method for grid building is intended for families with more 
+  than two or three parameters, such as those from \code{\link{CopulaFamilies}},
+  where the grid size grows exponentially and becomes unfeasible.
+  
 
   The line plot depicts the avarage risk for each grid point and
   additionally shows information on the variability of the risk from
   fold to fold. The heatmap shows only the average risk but in a nicer
   fashion.
   
-  For the \code{method = "noncyclic"} only the line plot for exists.
+  For the \code{method = "noncyclic"} only the line plot exists.
 
   Hofner et al. (2016) provide a detailed description of
   cross-validation for \code{\link{gamboostLSS}} models and show a
-  worked example.
+  worked example. Thomas et al. (2018) compare cross-validation for the
+  the cyclic and non-cyclic boosting approach and provide worked examples.
 }
 \value{
-  An object of class \code{cvriskLSS} (when \code{fun} wasn't
-  specified), basically a matrix containing estimates of the empirical
+  An object of class \code{cvriskLSS} or \code{nc_cvriskLSS} for cyclic and
+  non-cyclic fitting, respectively, (when \code{fun} wasn't specified); 
+  Basically a matrix containing estimates of the empirical
   risk for a varying number of bootstrap iterations. \code{plot} and
   \code{print} methods are available as well as an \code{mstop} method.
 }
@@ -150,9 +178,16 @@ make.grid(max, length.out = 10, min = NULL, log = TRUE,
   Journal of Statistical Software, 74(1), 1-31.
 
   Available as \code{vignette("gamboostLSS_Tutorial")}.
+  
+  Thomas, J., Mayr, A., Bischl, B., Schmid, M., Smith, A., and Hofner, B. (2018), 
+  Gradient boosting for distributional regression - faster tuning and improved 
+  variable selection via noncyclical updates. 
+  \emph{Statistics and Computing}. 28: 673-687. 
+  \doi{10.1007/s11222-017-9754-6}\cr
+  (Preliminary version: \url{https://arxiv.org/abs/1611.10171}).
 }
 \seealso{
-  \code{\link{cvrisk.mboost}} and \code{\link{cv}} (both in package
+  \code{\link[mboost]{cvrisk.mboost}} and \code{\link[mboost]{cv}} (both in package
   \pkg{mboost})
 }
 \examples{

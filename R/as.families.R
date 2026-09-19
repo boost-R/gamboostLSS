@@ -30,8 +30,22 @@ as.families <- function(fname = "NO", stabilization = c("none", "MAD", "L2"),
         fname <- as.character(substitute(fname))
     
     gamlss.fam <- try(gamlss.dist::gamlss.family(fname), silent = TRUE)
-    if (inherits(gamlss.fam, "try-error"))
-        stop(sQuote("fname"), " specifies no valid gamlss family")
+    if (inherits(gamlss.fam, "try-error")){
+      suffix <- substr(fname, nchar(fname)-1, nchar(fname))
+      distName <- substr(fname, 1, nchar(fname)-2)
+      isCens <- c(as.integer(gregexpr("r",suffix)),
+                  as.integer(gregexpr("l",suffix)),
+                  as.integer(gregexpr("i",suffix)))
+      typeCens <- which(isCens > 0)
+      typesCens <- c("right", "left", "interval")
+      if(length(typeCens)==1 && as.integer(gregexpr("c",suffix))>0 && is.list(try(gamlss.dist::gamlss.family(distName), silent = TRUE))){
+        print(paste0(fname, " specifies no valid gamlss family. Try to define a ",
+                     "censored family with the following command first and then,",
+                     " run your code again:"))
+        print(paste0("gen.cens(family = '", distName, "', name = 'cens', type = '", typesCens[typeCens], "')"))
+      }
+      stop(sQuote(fname), " specifies no valid gamlss family")
+    }
     
     stabilization <- check_stabilization(stabilization)
     

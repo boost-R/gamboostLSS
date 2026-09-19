@@ -2,7 +2,6 @@
 # check glmboostLSS()
 
 require("gamboostLSS")
-require("gamlss")
 
 set.seed(1907)
 n <- 5000
